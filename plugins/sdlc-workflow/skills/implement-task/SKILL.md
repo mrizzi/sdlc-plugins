@@ -79,12 +79,11 @@ This ensures the issue status reflects that implementation is underway.
 ## Step 4 – Understand the Code
 
 Inspect the files listed in Files to Modify and Files to Create locations using
-the dedicated Serena instance for the task's repository:
+the dedicated Serena instance for the task's repository. Look up the correct
+Serena Instance name in the **Repository Registry** section of the project's CLAUDE.md.
 
-- `mcp__serena-trustify__*` for trustify
-- `mcp__serena-trustify-ui__*` for trustify-ui
-- `mcp__serena-trustify-helm-charts__*` for trustify-helm-charts
-- `mcp__serena-scale-testing__*` for scale-testing
+Tools are called as `mcp__<serena-instance>__<tool>`, where `<serena-instance>` is
+the instance name from the Repository Registry.
 
 1. **Overview without full reads**: use `get_symbols_overview` on files to modify to see
    their structure (classes, functions, types) without reading the entire file.
@@ -95,9 +94,9 @@ the dedicated Serena instance for the task's repository:
 4. **Non-symbolic search**: use `search_for_pattern` for configuration, string literals,
    or patterns not captured as symbols.
 
-> **Note:** The YAML language server used by `serena-trustify-helm-charts` does not support
-> `textDocument/references`, so `find_referencing_symbols` will fail with error `-32601`.
-> Use `search_for_pattern` instead for impact analysis on Helm chart files.
+> **Note:** Check the **Code Intelligence** section of the project's CLAUDE.md for
+> per-instance limitations (e.g., some language servers may not support certain operations).
+> Adapt your tool usage accordingly.
 
 **Fallback**: if no Serena instance is available for the repository, use Read, Grep, and Glob tools directly.
 
@@ -120,7 +119,8 @@ Follow the **Implementation Notes** for patterns and code references on how to i
 
 ### Serena symbolic editing (preferred)
 
-Use the dedicated Serena instance for the task's repository (e.g. `mcp__serena-trustify__*`, `mcp__serena-trustify-helm-charts__*`, `mcp__serena-scale-testing__*`):
+Use the dedicated Serena instance for the task's repository (look up the instance name
+in the project's **Repository Registry**):
 
 - `replace_symbol_body` — rewrite an entire function, method, struct, or component
 - `insert_after_symbol` / `insert_before_symbol` — add new code relative to existing symbols
@@ -197,7 +197,7 @@ jira.transition_issue → In Review
 
 ## Important Rules
 
-- Do not guess — use the dedicated Serena instance for the target repo (`mcp__serena-trustify__*`, `mcp__serena-trustify-ui__*`, `mcp__serena-trustify-helm-charts__*`, or `mcp__serena-scale-testing__*`) with tools like `get_symbols_overview`, `find_symbol`, `find_referencing_symbols` to inspect code before modifying it. Fall back to Read/Grep/Glob for repos without a Serena instance.
+- Do not guess — use the Serena instance specified in the project's **Repository Registry** (CLAUDE.md) for the target repo, with tools like `get_symbols_overview`, `find_symbol`, `find_referencing_symbols` to inspect code before modifying it. Check the **Code Intelligence** section for per-instance limitations. Fall back to Read/Grep/Glob for repos without a Serena instance.
 - Follow the Implementation Notes closely — they reference real code patterns.
 - If the structured description is incomplete, ask the user rather than improvising.
 - Keep changes scoped to what the task describes — no unrelated refactoring.

@@ -95,15 +95,13 @@ Analyze relevant repositories to identify impacted modules, APIs, and tests.
 
 ### Serena-first workflow
 
-Each target repository has a dedicated Serena MCP server instance:
+Each target repository has a dedicated Serena MCP server instance, as specified in
+the **Repository Registry** section of the project's CLAUDE.md. Look up the Serena
+Instance column to determine the correct instance name for each repository.
 
-- `serena-trustify` — for the trustify Rust backend
-- `serena-trustify-ui` — for the trustify-ui TypeScript frontend
-- `serena-trustify-helm-charts` — for the trustify-helm-charts Helm charts
-- `serena-scale-testing` — for the scale-testing Rust performance tests
-
-Use the instance matching the repository you are analyzing. Tools are called directly
-(not via `query_project`), prefixed by the instance name.
+Use the instance matching the repository you are analyzing. Tools are called as
+`mcp__<serena-instance>__<tool>`, where `<serena-instance>` is the instance name
+from the Repository Registry.
 
 For each target repository with a Serena instance:
 
@@ -116,13 +114,13 @@ For each target repository with a Serena instance:
 4. **Non-symbolic search**: use `search_for_pattern` for string literals, configuration keys,
    route definitions, or anything not captured as a symbol.
 
-> **Note:** The YAML language server used by `serena-trustify-helm-charts` does not support
-> `textDocument/references`, so `find_referencing_symbols` will fail with error `-32601`.
-> Use `search_for_pattern` instead for impact analysis on Helm chart files.
+> **Note:** Check the **Code Intelligence** section of the project's CLAUDE.md for
+> per-instance limitations (e.g., some language servers may not support certain operations).
+> Adapt your tool usage accordingly.
 
 Example:
 
-    mcp__serena-trustify__find_symbol(
+    mcp__<serena-instance>__find_symbol(
       name_path_pattern="SbomService",
       substring_matching=true,
       include_body=false
@@ -278,7 +276,7 @@ Include:
 
 ## Important Rules
 
-- Do not guess repository structure — use the dedicated Serena instance for the target repo (`mcp__serena-trustify__*`, `mcp__serena-trustify-ui__*`, `mcp__serena-trustify-helm-charts__*`, or `mcp__serena-scale-testing__*`) with tools like `get_symbols_overview`, `find_symbol`, `find_referencing_symbols`, `search_for_pattern`. Fall back to Glob/Grep/Read for repos without a Serena instance.
+- Do not guess repository structure — use the Serena instance specified in the project's **Repository Registry** (CLAUDE.md) for the target repo, with tools like `get_symbols_overview`, `find_symbol`, `find_referencing_symbols`, `search_for_pattern`. Check the **Code Intelligence** section for per-instance limitations. Fall back to Glob/Grep/Read for repos without a Serena instance.
 - Prefer inspecting real code before planning.
 - Ensure every task has clear implementation notes.
 - Ensure tasks remain small enough for a single engineer.
