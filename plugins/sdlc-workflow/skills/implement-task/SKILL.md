@@ -178,9 +178,10 @@ Push the branch and open a pull request.
 
 ## Step 10 – Update Jira
 
-Update the **Git Pull Request** custom field on the Jira issue with the PR URL:
+Update the **Git Pull Request** custom field on the Jira issue with the PR URL.
+This field requires ADF (Atlassian Document Format), not a plain string:
 
-jira.update_issue(<jira-issue-id>, fields={"customfield_12310220": "<PR-URL>"})
+jira.update_issue(<jira-issue-id>, fields={"customfield_10875": {"type": "doc", "version": 1, "content": [{"type": "paragraph", "content": [{"type": "text", "text": "<PR-URL>"}]}]}})
 
 Add a comment to the Jira task:
 

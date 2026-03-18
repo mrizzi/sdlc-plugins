@@ -81,7 +81,7 @@ that skills need to create issues, query tasks, and update fields.
 
 | Field | Description | Example |
 |---|---|---|
-| Git Pull Request custom field | Custom field ID for storing PR URLs | `customfield_12310220` |
+| Git Pull Request custom field | Custom field ID for storing PR URLs (requires ADF format) | `customfield_10875` |
 | Default labels | Labels to apply to AI-generated issues | `ai-generated-jira` |
 
 #### Structure
@@ -92,7 +92,7 @@ that skills need to create issues, query tasks, and update fields.
 - Project key: TC
 - Cloud ID: https://issues.redhat.com
 - Feature issue type ID: 10142
-- Git Pull Request custom field: customfield_12310220
+- Git Pull Request custom field: customfield_10875
 ```
 
 #### How skills use it
@@ -189,7 +189,7 @@ replacing the values with their own.
 - Project key: TC
 - Cloud ID: https://issues.redhat.com
 - Feature issue type ID: 10142
-- Git Pull Request custom field: customfield_12310220
+- Git Pull Request custom field: customfield_10875
 
 ## Code Intelligence
 
