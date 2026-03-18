@@ -1,16 +1,4 @@
 {
   "name": "sdlc-workflow",
-  "description": "AI-assisted SDLC workflow skills for planning features and implementing tasks with full Jira traceability.",
-  "skills": [
-    {
-      "name": "plan-feature",
-      "description": "Generate an implementation plan and Jira tasks from a Jira feature and Figma mockups.",
-      "path": "./skills/plan-feature/SKILL.md"
-    },
-    {
-      "name": "implement-task",
-      "description": "Implement a Jira task by reading its structured description, modifying code, running tests, and updating Jira.",
-      "path": "./skills/implement-task/SKILL.md"
-    }
-  ]
+  "description": "AI-assisted SDLC workflow skills for planning features and implementing tasks with full Jira traceability."
 }
