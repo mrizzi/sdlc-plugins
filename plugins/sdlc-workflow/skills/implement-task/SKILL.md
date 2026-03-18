@@ -68,13 +68,23 @@ jira.get_issue(<dependency-id>)
 
 Verify status is Done or equivalent. If not, stop and inform the user.
 
-## Step 3 – Transition to In Progress
+## Step 3 – Transition to In Progress and Assign
 
-Transition the Jira issue to indicate work has started:
+Transition the Jira issue to indicate work has started, and assign it to the current user:
+
+1. Retrieve the current user's Jira account ID:
+
+jira.user_info()
+
+2. Assign the task to the current user:
+
+jira.edit_issue(<jira-issue-id>, assignee=<current-user-account-id>)
+
+3. Transition the issue to In Progress:
 
 jira.transition_issue → In Progress
 
-This ensures the issue status reflects that implementation is underway.
+This ensures both ownership and status are reflected in Jira as soon as implementation begins.
 
 ## Step 4 – Understand the Code
 
