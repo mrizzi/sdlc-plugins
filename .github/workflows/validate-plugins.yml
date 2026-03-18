@@ -1,0 +1,67 @@
+# Validates all plugins under plugins/ using Claude Code CLI.
+#
+# Pre-release manual testing (interactive session required):
+# 1. claude --plugin-dir ./plugins/sdlc-workflow
+# 2. /sdlc-workflow:plan-feature — verify skill loads and responds
+# 3. /sdlc-workflow:implement-task — verify skill loads and responds
+# 4. /agents — verify no plugin agents are missing
+# 5. Edit a SKILL.md, then /reload-plugins — verify changes are picked up
+
+name: Validate Plugins
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Plugin Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Claude Code
+        run: curl -fsSL https://claude.ai/install.sh | bash
+
+      - name: Validate plugins
+        run: |
+          exit_code=0
+          for plugin_dir in plugins/*/; do
+            plugin_name=$(basename "$plugin_dir")
+            echo "::group::Validating $plugin_name"
+            if ! claude plugin validate "./$plugin_dir"; then
+              echo "::error::Validation failed for $plugin_name"
+              exit_code=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $exit_code
+
+  smoke-test:
+    name: Plugin Load Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Claude Code
+        run: curl -fsSL https://claude.ai/install.sh | bash
+
+      - name: Smoke test plugin loading
+        run: |
+          exit_code=0
+          for plugin_dir in plugins/*/; do
+            plugin_name=$(basename "$plugin_dir")
+            echo "::group::Smoke testing $plugin_name"
+            output=$(claude --plugin-dir "./$plugin_dir" --debug -p "exit" 2>&1) || true
+            echo "$output"
+            if echo "$output" | grep -qi "error.*plugin\|failed to load\|plugin.*error"; then
+              echo "::error::Smoke test failed for $plugin_name — errors detected in debug output"
+              exit_code=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $exit_code
