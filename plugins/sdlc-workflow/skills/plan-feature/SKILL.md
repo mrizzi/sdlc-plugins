@@ -202,6 +202,9 @@ Reference actual file paths and symbol names found during repository analysis.>
 - [ ] Test description 1
 - [ ] Test description 2
 
+## Verification Commands
+- `<command>` — <expected outcome>
+
 ## Dependencies
 - Depends on: Task N — <task title> (if any)
 ```
@@ -212,6 +215,7 @@ Reference actual file paths and symbol names found during repository analysis.>
 - File paths must be real paths discovered during repository analysis (Step 3)
 - Implementation Notes must reference existing patterns, not abstract guidance
 - Each task must be small enough for a single engineer to implement
+- Verification Commands are optional — include them when acceptance criteria can be verified by running a command against the built or running service
 
 ## Step 6 – Create Tasks in Jira
 
