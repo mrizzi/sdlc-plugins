@@ -169,7 +169,33 @@ Fix any failures before proceeding.
 Go through each Acceptance Criterion and verify it is satisfied.
 If any criterion cannot be met, stop and explain to the user.
 
-## Step 9 – Commit and Push
+## Step 9 – Self-Verification
+
+Before committing, verify that all changes are in scope and free of common errors.
+
+### Scope containment
+
+1. Run `git diff --name-only` to list all modified and created files.
+2. Compare the list against the **Files to Modify** and **Files to Create** parsed in Step 1.
+3. If any file is out-of-scope (not listed in either section):
+   - List the out-of-scope file(s).
+   - Explain why each was modified.
+   - Ask the user to approve or revert each out-of-scope change.
+   - Do **not** proceed to commit without explicit user approval for every out-of-scope file.
+
+### Sensitive-pattern check
+
+Search the staged diff for secrets, credentials, or environment files that should not be committed:
+
+git diff --cached | grep -iE '(password\s*=|API_KEY|SECRET_KEY|BEGIN.*PRIVATE KEY|\.env)'
+
+If any match is found, flag it to the user and do not proceed until the issue is resolved.
+
+### Compiler / linter warnings
+
+If the project has a build or lint step, compare the current warning output against the pre-implementation baseline captured during Step 7. If new warnings were introduced, fix them before proceeding.
+
+## Step 10 – Commit and Push
 
 Commit following the Conventional Commits specification (https://www.conventionalcommits.org/en/v1.0.0/):
 
@@ -186,7 +212,7 @@ Always include `--trailer="Assisted-by: Claude Code"` to attribute AI assistance
 
 Push the branch and open a pull request.
 
-## Step 10 – Update Jira
+## Step 11 – Update Jira
 
 Look up the **Git Pull Request custom field** ID from the project's **Jira Configuration**
 section in CLAUDE.md (the field is listed as `Git Pull Request custom field: <field-id>`).
