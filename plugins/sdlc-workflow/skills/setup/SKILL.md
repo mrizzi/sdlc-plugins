@@ -97,7 +97,16 @@ Check if `docs/constraints.md` already exists in the target project.
 - **If it does NOT exist**: Read `constraints.template.md` from this skill's directory and write its content to `docs/constraints.md` in the target project. Report "Created docs/constraints.md from template."
 - **If it DOES exist**: Report "Constraints document already exists — skipping" and preserve the user's customized version.
 
-## Step 7 – Validate
+## Step 7 – Scaffold CONVENTIONS.md
+
+For each repository in the **Repository Registry**, check if a `CONVENTIONS.md` file exists at the repository root (using the **Path** column from the Registry table).
+
+- **If it exists**: Report "CONVENTIONS.md already exists in <repository> — skipping" and move to the next repository.
+- **If it does NOT exist**: Ask the user whether they want to scaffold a `CONVENTIONS.md` for that repository. If yes, read `conventions.template.md` from this skill's directory and write its content to `CONVENTIONS.md` at the repository root. Report "Created CONVENTIONS.md in <repository> from template."
+
+This step is optional and does not block the rest of the setup. If the user declines for any repository, continue to the next one.
+
+## Step 8 – Validate
 
 After writing, read the CLAUDE.md back and verify:
 - `# Project Configuration` heading exists
