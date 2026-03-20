@@ -90,7 +90,14 @@ Present the planned changes to the user for review before writing. Clearly show 
 
 After the user approves, write the changes.
 
-## Step 6 – Validate
+## Step 6 – Copy Constraints Template
+
+Check if `docs/constraints.md` already exists in the target project.
+
+- **If it does NOT exist**: Read `constraints.template.md` from this skill's directory and write its content to `docs/constraints.md` in the target project. Report "Created docs/constraints.md from template."
+- **If it DOES exist**: Report "Constraints document already exists — skipping" and preserve the user's customized version.
+
+## Step 7 – Validate
 
 After writing, read the CLAUDE.md back and verify:
 - `# Project Configuration` heading exists
@@ -98,6 +105,7 @@ After writing, read the CLAUDE.md back and verify:
 - `## Jira Configuration` contains at minimum: Project key, Cloud ID, Feature issue type ID
 - `## Code Intelligence` documents the `mcp__<instance>__<tool>` naming convention
 - `## Code Intelligence` has a `### Limitations` subheading
+- `docs/constraints.md` exists in the target project
 
 Report the validation results to the user.
 
