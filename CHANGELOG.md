@@ -5,6 +5,21 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-03-20
+
+### Changed
+
+- Enhanced `/setup` skill to ship a `constraints.md` template
+- Enhanced `/plan-feature` with constraint-aware task generation
+- Clarified PR link fallback in `/implement-task` when custom field is not configured
+
+### Documentation
+
+- Added workflow, tools, and conventions documentation
+- Added documentation table of contents to CLAUDE.md
+- Added PR description format to conventions-spec
+- Added release process and changelog entries for v0.2.0 and v0.2.2
+
 ## [0.3.0] - 2025-03-20
 
 ### Added
