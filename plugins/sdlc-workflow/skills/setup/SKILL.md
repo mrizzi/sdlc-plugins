@@ -15,6 +15,10 @@ This skill is **idempotent and incremental**:
 - If new MCP servers (Serena instances, Atlassian) have been added since the last run, only the new entries are added.
 - Existing configuration entries are never removed or overwritten.
 
+## Template
+
+Read the file `project-config.template.md` in this skill's directory. Use it as the structural reference for generating the `# Project Configuration` section. Replace the `{{placeholder}}` markers with actual values gathered during the steps below. Preserve the exact headings, table format, and section order from the template.
+
 ## Step 1 – Read Existing Configuration
 
 Read the project's CLAUDE.md file. If it exists, parse it for:

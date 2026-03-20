@@ -166,50 +166,16 @@ sections are absent — they adapt gracefully.
 
 ---
 
-## Complete Example
+## Template
 
-Below is a complete `# Project Configuration` section for a Trustify
-project. A new project adopter can use this as a starting template,
-replacing the values with their own.
+The canonical template for the `# Project Configuration` section is
+maintained in the `/setup` skill at:
 
-```markdown
-# Project Configuration
+    plugins/sdlc-workflow/skills/setup/project-config.template.md
 
-## Repository Registry
-
-| Repository | Role | Serena Instance | Path |
-|---|---|---|---|
-| trustify | Rust backend | serena-trustify | /home/dev/repos/trustify |
-| trustify-ui | TypeScript frontend | serena-trustify-ui | /home/dev/repos/trustify-ui |
-| trustify-helm-charts | Helm charts / YAML | serena-trustify-helm-charts | /home/dev/repos/trustify-helm-charts |
-| scale-testing | Rust scale/perf tests | serena-scale-testing | /home/dev/repos/scale-testing |
-
-## Jira Configuration
-
-- Project key: TC
-- Cloud ID: https://issues.redhat.com
-- Feature issue type ID: 10142
-- Git Pull Request custom field: customfield_10875
-
-## Code Intelligence
-
-Tools are prefixed by Serena instance name: `mcp__<instance>__<tool>`.
-
-For example, to search for a symbol in the trustify backend:
-
-    mcp__serena-trustify__find_symbol(
-      name_path_pattern="SbomService",
-      substring_matching=true,
-      include_body=false
-    )
-
-### Limitations
-
-- `serena-trustify-helm-charts`: The YAML language server does not support
-  `textDocument/references`, so `find_referencing_symbols` will fail with
-  error `-32601`. Use `search_for_pattern` instead for impact analysis on
-  Helm chart files.
-```
+Replace the `{{placeholder}}` markers with your project's actual values.
+Running `/setup` performs this automatically by discovering your MCP
+servers and prompting for any missing information.
 
 ---
 
