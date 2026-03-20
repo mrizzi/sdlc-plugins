@@ -129,6 +129,14 @@ Goals:
 - confirm the patterns referenced in Implementation Notes exist
 - identify any conflicts with recent changes
 
+### CONVENTIONS.md lookup
+
+Check for a `CONVENTIONS.md` file at the repository root (using `list_dir`, `search_for_pattern`,
+or Glob). If present, read it and follow its conventions throughout implementation. This includes
+naming rules, directory structure for new files, code patterns, and test conventions.
+
+This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
+
 ## Step 5 – Create Branch
 
 Create a feature branch named after the Jira issue:

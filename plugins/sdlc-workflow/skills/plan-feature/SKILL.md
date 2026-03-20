@@ -145,6 +145,15 @@ Example:
 If no Serena instance is available for a repository,
 use Explore agents with Glob, Grep, and Read tools.
 
+### CONVENTIONS.md lookup
+
+For each target repository, check for a `CONVENTIONS.md` file at the repository root
+(using `list_dir` or Glob). If present, read it and use its conventions — naming rules,
+directory structure, code patterns, test conventions — to inform the **Implementation Notes**
+in generated task descriptions. Reference specific conventions by name when they apply to a task.
+
+This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
+
 ### Goals
 
 - Identify modules related to the feature
