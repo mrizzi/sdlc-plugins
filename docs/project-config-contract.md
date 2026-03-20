@@ -169,9 +169,8 @@ sections are absent — they adapt gracefully.
 ## Template
 
 The canonical template for the `# Project Configuration` section is
-maintained in the `/setup` skill at:
-
-    plugins/sdlc-workflow/skills/setup/project-config.template.md
+maintained in the `/setup` skill at
+[plugins/sdlc-workflow/skills/setup/project-config.template.md](../plugins/sdlc-workflow/skills/setup/project-config.template.md).
 
 Replace the `{{placeholder}}` markers with your project's actual values.
 Running `/setup` performs this automatically by discovering your MCP
