@@ -27,11 +27,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.3] - 2025-03-18
 
+### Added
+
+- Assign-to-me on task start in implement-task
+
 ### Fixed
 
 - Removed hardcoded Git Pull Request custom field ID from implement-task
 
-## [0.2.1] - 2025-03-17
+## [0.2.2] - 2025-03-17
 
 ### Added
 
@@ -41,11 +45,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Added version and author fields to plugin manifest
-- Updated Git Pull Request custom field ID
+- Updated Git Pull Request custom field ID to customfield_10875
 - Removed smoke-test job that requires authentication
 - Fixed version reference and marketplace add command in README
 - Removed invalid skills array from plugin manifest
+
+## [0.2.1] - 2025-03-17
+
+### Fixed
+
 - Added missing description field to skill entries
+
+## [0.2.0] - 2025-03-16
+
+### Changed
+
+- Genericized skill files to use project configuration contract references
 
 ## [0.1.0] - 2025-03-16
 
