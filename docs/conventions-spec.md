@@ -30,7 +30,19 @@ Assisted-by: Claude Code
 ### PR Workflow
 
 1. **Branch naming:** The feature branch MUST be named after the Jira issue ID (e.g., `TC-123`)
-2. **PR body:** Should summarize the changes and reference the Jira issue
+2. **PR description:** MUST follow this format:
+
+```
+## Summary
+- <bullet point describing a change>
+- <bullet point describing a change>
+
+## Jira
+Implements [<JIRA-ID>](https://<jira-host>/browse/<JIRA-ID>)
+```
+
+   Each further commit on the same feature branch MUST update the Summary bullet points to reflect the current state of changes in the PR.
+
 3. **Jira linking:** After opening a PR, its link MUST be posted as a comment on the Jira task
 4. **Custom field:** If the project's Jira Configuration includes a Git Pull Request custom field, the PR URL is also set on that field (in ADF format)
 5. **Transition:** The Jira task is transitioned to In Review after the PR is opened
