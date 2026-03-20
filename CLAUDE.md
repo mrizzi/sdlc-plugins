@@ -1,5 +1,16 @@
 # sdlc-plugins
 
+## Documentation
+
+- [docs/methodology.md](docs/methodology.md) — Core principles and SDLC phases
+- [docs/workflow.md](docs/workflow.md) — Execution workflow (plan, implement, verify) and skill invocation
+- [docs/tools.md](docs/tools.md) — MCP server catalog (Jira, Figma, Serena)
+- [docs/conventions-spec.md](docs/conventions-spec.md) — Cross-repo workflow conventions and per-repo template reference
+- [docs/constraints.md](docs/constraints.md) — Deterministic rules for agent behavior
+- [docs/project-config-contract.md](docs/project-config-contract.md) — Project Configuration contract for CLAUDE.md
+- [docs/metrics.md](docs/metrics.md) — Workflow metrics and measurement
+- [docs/releasing.md](docs/releasing.md) — Release process and changelog
+
 ## Version Management
 
 The plugin version must be kept in sync in two files:
