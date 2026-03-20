@@ -182,6 +182,11 @@ jira.add_comment(<jira-issue-id>, <impact-map>)
 
 **Reminder:** This step generates task descriptions for Jira. Do not implement any code — only create structured task descriptions and then post them to Jira in Step 6.
 
+Before generating task descriptions, read `docs/constraints.md` from the project repository. For each task, include any constraints from that document that are relevant to the task's scope in the **Implementation Notes** section. Specifically:
+- For tasks that modify or create code: include the commit rules (§2), PR rules (§3), and code change rules (§5).
+- For tasks that create Jira issues: include the task template rules (§4).
+- For all tasks: include the skill scope rules (§1) that apply to the skill executing the task.
+
 Create implementation tasks for each unit of work. Each task description MUST follow this template exactly:
 
 ### Task Description Template
