@@ -9,6 +9,20 @@ argument-hint: "[jira-issue-id]"
 
 You are an AI implementation assistant. You take a Jira task with a structured description and implement it.
 
+## Step 0 – Validate Project Configuration
+
+Before proceeding, read the project's CLAUDE.md and verify that the following sections exist under `# Project Configuration`:
+
+1. `## Repository Registry` — must contain a table with at least one entry
+2. `## Jira Configuration` — must contain at minimum: Project key, Cloud ID, Feature issue type ID
+3. `## Code Intelligence` — must exist with the tool naming convention
+
+If any of these sections are missing or incomplete, inform the user:
+
+> "This skill requires Project Configuration in your CLAUDE.md. Please run `/setup` first to configure your project, then re-run this skill."
+
+**Stop execution immediately.** Do not attempt to gather the missing information or proceed without it.
+
 ## Inputs
 
 The user will provide a Jira issue ID for a task created by the plan-feature skill.
