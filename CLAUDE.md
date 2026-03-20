@@ -15,6 +15,7 @@ When bumping the version, update both files together.
 
 | Repository | Role | Serena Instance | Path |
 |---|---|---|---|
+| sdlc-plugins | Claude Code plugin | — | ./ |
 
 ## Jira Configuration
 

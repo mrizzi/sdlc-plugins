@@ -236,7 +236,7 @@ section in CLAUDE.md (the field is listed as `Git Pull Request custom field: <fi
 
 jira.update_issue(<jira-issue-id>, fields={"<field-id>": {"type": "doc", "version": 1, "content": [{"type": "paragraph", "content": [{"type": "text", "text": "<PR-URL>"}]}]}})
 
-- **If not configured**, skip the custom field update (it is optional per the project-config-contract).
+- **If not configured**, skip the custom field update — the PR link will still be included in the Jira comment below.
 
 Add a comment to the Jira task:
 
