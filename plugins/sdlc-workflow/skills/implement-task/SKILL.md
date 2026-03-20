@@ -266,3 +266,6 @@ jira.transition_issue → In Review
 - If the structured description is incomplete, ask the user rather than improvising.
 - Keep changes scoped to what the task describes — no unrelated refactoring.
 - Every commit must reference the Jira issue ID.
+- If the same test fails 3 times with the same error, stop and ask the user for guidance — do not retry the same approach.
+- If the same file is edited more than 5 times for the same change, stop and reassess your approach — present the problem and proposed alternatives to the user.
+- If a build or compile error persists after 2 fix attempts, stop and present the error and proposed alternatives to the user — do not keep trying the same fix.
