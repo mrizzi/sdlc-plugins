@@ -101,10 +101,49 @@ Check if `docs/constraints.md` already exists in the target project.
 
 For each repository in the **Repository Registry**, check if a `CONVENTIONS.md` file exists at the repository root (using the **Path** column from the Registry table).
 
-- **If it exists**: Report "CONVENTIONS.md already exists in <repository> — skipping" and move to the next repository.
+- **If it exists with real content** (no `{{placeholder}}` markers): Report "CONVENTIONS.md already exists in <repository> — skipping" and move to the next repository.
+- **If it exists but still contains `{{placeholder}}` markers**: Treat it as not yet populated and proceed to the fill-in prompt below (skip scaffolding since the file already exists).
 - **If it does NOT exist**: Ask the user whether they want to scaffold a `CONVENTIONS.md` for that repository. If yes, read `conventions.template.md` from this skill's directory and write its content to `CONVENTIONS.md` at the repository root. Report "Created CONVENTIONS.md in <repository> from template."
 
-This step is optional and does not block the rest of the setup. If the user declines for any repository, continue to the next one.
+This step is optional and does not block the rest of the setup. If the user declines scaffolding for any repository, continue to the next one.
+
+### Fill-in Prompt
+
+After scaffolding a new `CONVENTIONS.md` (or finding an existing one with `{{placeholder}}` markers), ask the user:
+
+> "Would you like me to fill in the CONVENTIONS.md for **<repository-name>** now? I can use code intelligence to analyze the codebase and populate the conventions automatically."
+
+- **If the user declines**: Continue to the next repository without changes.
+- **If the user accepts**: Analyze the codebase and populate the conventions as described below.
+
+#### Analyzing the codebase
+
+**For repositories with a Serena instance** (check the **Serena Instance** column in the Repository Registry):
+1. Use `get_symbols_overview` on key source files to discover languages, frameworks, and code structure.
+2. Use `search_for_pattern` to find naming patterns, error handling idioms, test patterns, and commit message conventions.
+3. Use `find_symbol` to inspect representative examples of each convention category.
+
+**For repositories without a Serena instance**:
+1. Use Explore agents with Glob, Grep, and Read to analyze the codebase.
+2. Glob for source files to identify languages and frameworks.
+3. Grep for patterns like error handling, test structures, and naming conventions.
+4. Read representative files to confirm discovered patterns.
+
+#### Populating the template
+
+For each section in the `CONVENTIONS.md` template, replace the `{{placeholder}}` marker with the discovered conventions:
+- **Language and Framework** — primary languages, frameworks, and build tools
+- **Code Style** — formatting tools, linters, style rules
+- **Naming Conventions** — casing patterns for types, functions, files, endpoints
+- **File Organization** — directory structure and where new files should go
+- **Error Handling** — error types, patterns, and idioms
+- **Testing Conventions** — test frameworks, patterns, coverage expectations
+- **Commit Messages** — commit format and conventions
+- **Dependencies** — dependency management policies
+
+#### User review
+
+Present the populated `CONVENTIONS.md` to the user for review before writing. Clearly show the content that will be written. Only write the file after the user approves.
 
 ## Step 8 – Validate
 
