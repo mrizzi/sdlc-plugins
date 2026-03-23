@@ -262,7 +262,7 @@ section in CLAUDE.md (the field is listed as `Git Pull Request custom field: <fi
 - **If configured**, update that custom field on the Jira issue with the PR URL.
   The field requires ADF (Atlassian Document Format), not a plain string:
 
-jira.update_issue(<jira-issue-id>, fields={"<field-id>": {"type": "doc", "version": 1, "content": [{"type": "paragraph", "content": [{"type": "text", "text": "<PR-URL>"}]}]}})
+jira.update_issue(<jira-issue-id>, fields={"<field-id>": {"type": "doc", "version": 1, "content": [{"type": "paragraph", "content": [{"type": "inlineCard", "attrs": {"url": "<PR-URL>"}}]}]}})
 
 - **If not configured**, skip the custom field update — the PR link will still be included in the Jira comment below.
 
