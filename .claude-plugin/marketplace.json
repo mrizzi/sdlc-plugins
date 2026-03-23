@@ -11,7 +11,7 @@
     {
       "name": "sdlc-workflow",
       "source": "./plugins/sdlc-workflow",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "description": "AI-assisted SDLC workflow skills for planning features and implementing tasks with full Jira traceability."
     }
   ]
