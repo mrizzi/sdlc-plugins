@@ -92,6 +92,8 @@ Parse the structured description expecting these sections:
 - **Test Requirements** — tests to write or update
 - **Dependencies** — prerequisite tasks (verify they are Done)
 
+Also capture the issue's `webUrl` field from the API response (e.g. `https://redhat.atlassian.net/browse/PROJ-231`). This URL will be used later to create a clickable link in the PR description.
+
 If any required section is missing or the description doesn't follow the template, stop and ask the user for clarification.
 
 ## Step 2 – Verify Dependencies
@@ -252,7 +254,12 @@ Use a scope when relevant (e.g. `feat(api): add AIBOM endpoint`).
 The footer MUST reference the Jira issue ID.
 Always include `--trailer="Assisted-by: Claude Code"` to attribute AI assistance.
 
-Push the branch and open a pull request.
+Push the branch and open a pull request. In the PR description, use a Markdown link
+for the "Implements" line so the Jira issue is clickable:
+
+Implements [<JIRA-ID>](<webUrl>)
+
+where `<webUrl>` is the issue URL captured in Step 1 (e.g. `Implements [PROJ-231](https://redhat.atlassian.net/browse/PROJ-231)`).
 
 ## Step 11 – Update Jira
 
