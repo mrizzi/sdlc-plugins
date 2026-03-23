@@ -82,6 +82,7 @@ that skills need to create issues, query tasks, and update fields.
 | Field | Description | Example |
 |---|---|---|
 | Git Pull Request custom field | Custom field ID for storing PR URLs (requires ADF format) | `customfield_10875` |
+| GitHub Issue custom field | Custom field ID containing a GitHub issue URL (plain string or ADF) | `customfield_10747` |
 | Default labels | Labels to apply to AI-generated issues | `ai-generated-jira` |
 
 #### Structure
@@ -93,6 +94,7 @@ that skills need to create issues, query tasks, and update fields.
 - Cloud ID: https://issues.redhat.com
 - Feature issue type ID: 10142
 - Git Pull Request custom field: customfield_10875
+- GitHub Issue custom field: customfield_10747
 ```
 
 #### How skills use it
@@ -101,6 +103,7 @@ that skills need to create issues, query tasks, and update fields.
 - "Use the Cloud ID as the `cloudId` parameter in all Jira MCP tool calls."
 - "Use the Feature issue type ID when creating feature-level issues."
 - "If a Git Pull Request custom field is configured, update it with the PR URL."
+- "If a GitHub Issue custom field is configured, read it from the Jira issue and add a `Closes` reference to the PR description."
 
 ---
 

@@ -94,6 +94,18 @@ Parse the structured description expecting these sections:
 
 If any required section is missing or the description doesn't follow the template, stop and ask the user for clarification.
 
+### GitHub Issue extraction
+
+Look up the **GitHub Issue custom field** ID from the project's **Jira Configuration**
+section in CLAUDE.md (the field is listed as `GitHub Issue custom field: <field-id>`).
+
+- **If configured**, read the custom field value from the fetched issue's fields.
+  The value may be a plain URL string or an ADF document containing a URL — extract
+  the URL in either case. Parse the GitHub issue URL to extract `owner`, `repo`, and
+  `number` from the pattern `https://github.com/<owner>/<repo>/issues/<number>`.
+  Store the parsed reference as `<owner>/<repo>#<number>` for use in Step 10.
+- **If not configured or the field is empty**, skip silently — this is optional.
+
 ## Step 2 – Verify Dependencies
 
 If the task has Dependencies, check each one:
@@ -253,6 +265,11 @@ The footer MUST reference the Jira issue ID.
 Always include `--trailer="Assisted-by: Claude Code"` to attribute AI assistance.
 
 Push the branch and open a pull request.
+
+If a GitHub issue reference was extracted in Step 1, append a `Closes <owner>/<repo>#<number>`
+line to the PR description body. GitHub recognizes this keyword and will auto-close the
+linked issue when the PR is merged. Do **not** add this to the commit message — only the
+PR description.
 
 ## Step 11 – Update Jira
 
