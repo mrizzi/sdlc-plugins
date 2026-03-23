@@ -162,6 +162,7 @@ Goals:
 - understand the current state of files to be modified
 - confirm the patterns referenced in Implementation Notes exist
 - identify any conflicts with recent changes
+- search for existing utilities, helpers, and shared modules that provide functionality overlapping with the planned changes — if equivalent logic already exists, plan to reuse or extend it rather than writing new code
 
 ### CONVENTIONS.md lookup
 
@@ -182,6 +183,11 @@ git checkout -b <jira-issue-id>
 The **Description** section is your primary specification — implement exactly what it describes.
 Use **Files to Modify**, **Files to Create**, and **API Changes** as your working scope.
 Follow the **Implementation Notes** for patterns and code references on how to implement the changes.
+
+**Reuse first:** Before writing new logic, check whether the Implementation Notes list reusable
+code (utilities, helpers, shared modules). If they do, use or extend the existing code. If you
+discover additional reusable code during implementation that was not listed, prefer reusing it
+over creating duplicated logic.
 
 ### Serena symbolic editing (preferred)
 
@@ -246,6 +252,13 @@ Search the staged diff for secrets, credentials, or environment files that shoul
 git diff --cached | grep -iE '(password\s*=|API_KEY|SECRET_KEY|BEGIN.*PRIVATE KEY|\.env)'
 
 If any match is found, flag it to the user and do not proceed until the issue is resolved.
+
+### Duplication check
+
+Search for functions, methods, or logic in the repository that overlap with the code you wrote.
+Use Grep or Serena's `search_for_pattern` to look for similar function names, string literals,
+or algorithmic patterns. If you find that your new code substantially duplicates existing
+utilities or helpers, refactor to reuse the existing code before proceeding.
 
 ### Compiler / linter warnings
 

@@ -76,6 +76,20 @@
 
 {{commit-messages}}
 
+## Shared Modules and Reuse
+
+<!-- Document shared utilities, helpers, and common abstractions that should be
+     reused instead of duplicating logic. This helps AI assistants find existing
+     code before writing new implementations.
+     Example:
+     - Utility directory: `src/utils/` — common helpers (string formatting, date parsing)
+     - Shared HTTP client: `src/common/http.ts` — use `apiClient` for all API calls
+     - Error types: `modules/error/` — use `AppError` and existing error variants
+     - Shared components: `client/src/components/` — reuse PatternFly wrappers
+     - Database helpers: `src/db/helpers.rs` — use `paginate()` for paginated queries -->
+
+{{shared-modules-and-reuse}}
+
 ## Dependencies
 
 <!-- Document policies for adding dependencies.

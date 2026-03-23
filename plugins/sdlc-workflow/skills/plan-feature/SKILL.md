@@ -180,6 +180,7 @@ This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
 - Detect relevant APIs and endpoints
 - Detect test locations and patterns
 - Discover existing code patterns to reference in implementation notes
+- Search for reusable utilities, helpers, and shared modules that overlap with the planned feature — flag these as reuse opportunities in Implementation Notes rather than planning new code that duplicates them
 
 ## Step 4 – Build Repository Impact Map
 
@@ -261,7 +262,7 @@ Reference actual file paths and symbol names found during repository analysis.>
 - Omit sections that don't apply (e.g. no API Changes for a pure UI task, no Files to Create if only modifying)
 - Repository must be a single repository per task
 - File paths must be real paths discovered during repository analysis (Step 3)
-- Implementation Notes must reference existing patterns, not abstract guidance
+- Implementation Notes must reference existing patterns, not abstract guidance — when reusable utilities, helpers, or shared modules were found during repository analysis, list them with file paths and symbol names so the implementer can reuse them instead of writing new code
 - Each task must be small enough for a single engineer to implement
 - Verification Commands are optional — include them when acceptance criteria can be verified by running a command against the built or running service
 
