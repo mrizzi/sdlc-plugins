@@ -90,6 +90,18 @@
 
 {{shared-modules-and-reuse}}
 
+## Documentation
+
+<!-- Document where documentation lives and when it should be updated.
+     Example:
+     - README: `README.md` at repo root — update when setup steps or project overview changes
+     - API docs: `docs/api/` — update when public endpoints are added or modified
+     - Architecture: `docs/architecture.md` — update when major structural changes are made
+     - Formats: Markdown for all docs, OpenAPI 3.0 for API specs
+     - Triggers: update docs when public APIs, configuration, CLI commands, or setup steps change -->
+
+{{documentation}}
+
 ## Dependencies
 
 <!-- Document policies for adding dependencies.

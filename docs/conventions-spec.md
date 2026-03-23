@@ -91,4 +91,5 @@ The template includes the following sections (see the [template file](../plugins
 - **Testing Conventions** — testing patterns, frameworks, and coverage requirements
 - **Commit Messages** — project-specific commit message conventions (extending the workflow conventions above)
 - **Shared Modules and Reuse** — utility directories, shared helpers, and common abstractions that should be reused instead of duplicating logic
+- **Documentation** — documentation file locations, what changes trigger a doc update, and documentation formats used
 - **Dependencies** — policies for adding or managing dependencies

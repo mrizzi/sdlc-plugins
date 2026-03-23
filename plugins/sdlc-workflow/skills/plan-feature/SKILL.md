@@ -174,6 +174,17 @@ in generated task descriptions. Reference specific conventions by name when they
 
 This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
 
+### Documentation file discovery
+
+For each target repository, identify existing documentation files that may be impacted by the feature:
+- README files (`README.md`, `README`)
+- API documentation (e.g., `docs/api/`, OpenAPI specs)
+- Architecture and design docs (e.g., `docs/architecture.md`, `ARCHITECTURE.md`)
+- Convention files (`CONVENTIONS.md`)
+- Setup and configuration guides (e.g., `docs/setup.md`, `CONTRIBUTING.md`)
+
+Use Glob, `list_dir`, or `search_for_pattern` to locate these files. Record them for use in Step 5 when determining whether tasks need a **Documentation Updates** section.
+
 ### Goals
 
 - Identify modules related to the feature
@@ -181,6 +192,7 @@ This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
 - Detect test locations and patterns
 - Discover existing code patterns to reference in implementation notes
 - Search for reusable utilities, helpers, and shared modules that overlap with the planned feature — flag these as reuse opportunities in Implementation Notes rather than planning new code that duplicates them
+- Identify documentation files that may need updating when the feature changes public APIs, configuration, setup steps, or architectural patterns
 
 ## Step 4 – Build Repository Impact Map
 
@@ -254,17 +266,25 @@ Reference actual file paths and symbol names found during repository analysis.>
 ## Verification Commands
 - `<command>` — <expected outcome>
 
+## Documentation Updates
+- `path/to/doc.md` — <what content to add or revise>
+
 ## Dependencies
 - Depends on: Task N — <task title> (if any)
 ```
 
+### Documentation task guidance
+
+When a feature introduces significant new behavior (new user-facing capabilities, new APIs, or major architectural changes), consider generating a **dedicated documentation-only task** to cover cross-cutting documentation updates that span multiple implementation tasks. Use this when the documentation work is substantial enough to warrant its own task rather than being spread across individual implementation tasks.
+
 ### Template rules:
-- Omit sections that don't apply (e.g. no API Changes for a pure UI task, no Files to Create if only modifying)
+- Omit sections that don't apply (e.g. no API Changes for a pure UI task, no Files to Create if only modifying, no Documentation Updates if no docs are impacted)
 - Repository must be a single repository per task
 - File paths must be real paths discovered during repository analysis (Step 3)
 - Implementation Notes must reference existing patterns, not abstract guidance — when reusable utilities, helpers, or shared modules were found during repository analysis, list them with file paths and symbol names so the implementer can reuse them instead of writing new code
 - Each task must be small enough for a single engineer to implement
 - Verification Commands are optional — include them when acceptance criteria can be verified by running a command against the built or running service
+- Documentation Updates is optional — include it when the task changes public APIs, configuration, setup steps, or architectural patterns, listing which docs need updating and what content to add or revise (not the actual doc content)
 
 ## Step 6 – Create Tasks in Jira
 

@@ -158,11 +158,24 @@ the instance name from the Repository Registry.
 
 **Fallback**: if no Serena instance is available for the repository, use Read, Grep, and Glob tools directly.
 
+### Documentation file identification
+
+Identify documentation files related to the code being modified. Look for:
+- README files in the same directory or parent directories
+- API documentation referenced by or related to modified endpoints
+- Architecture or design docs that describe the modified components
+- `CONVENTIONS.md` at the repository root
+- Setup or configuration guides that cover the modified functionality
+
+Record these files for use during documentation-impact evaluation in Step 6 and
+the documentation-currency check in Step 9.
+
 Goals:
 - understand the current state of files to be modified
 - confirm the patterns referenced in Implementation Notes exist
 - identify any conflicts with recent changes
 - search for existing utilities, helpers, and shared modules that provide functionality overlapping with the planned changes — if equivalent logic already exists, plan to reuse or extend it rather than writing new code
+- identify nearby documentation files that may need updating
 
 ### CONVENTIONS.md lookup
 
@@ -215,6 +228,17 @@ For API Changes:
 - Implement endpoint logic
 - Update OpenAPI spec if applicable
 
+### Documentation impact
+
+After implementing code changes, evaluate whether documentation needs updating:
+
+1. Check if the task includes a **Documentation Updates** section — if so, apply those updates.
+2. If no Documentation Updates section exists, check the documentation files identified in Step 4:
+   - If public APIs, CLI commands, or endpoints were added or changed, update related API docs.
+   - If configuration options or setup steps were modified, update related guides.
+   - If architectural patterns were changed, update architecture docs.
+3. Keep documentation updates lightweight and scoped — only update docs directly impacted by the changes.
+
 ## Step 7 – Write Tests
 
 Implement the tests described in Test Requirements.
@@ -252,6 +276,14 @@ Search the staged diff for secrets, credentials, or environment files that shoul
 git diff --cached | grep -iE '(password\s*=|API_KEY|SECRET_KEY|BEGIN.*PRIVATE KEY|\.env)'
 
 If any match is found, flag it to the user and do not proceed until the issue is resolved.
+
+### Documentation currency
+
+If the implementation changed public APIs, configuration options, or setup steps,
+verify that related documentation files (identified in Step 4) are still accurate.
+If a doc file describes behavior that was changed and was not already updated in
+Step 6, update it now. This check is lightweight — only flag docs that directly
+describe the modified behavior.
 
 ### Duplication check
 

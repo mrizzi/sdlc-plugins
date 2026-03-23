@@ -142,6 +142,7 @@ For each section in the `CONVENTIONS.md` template, replace the `{{placeholder}}`
 - **Testing Conventions** — test frameworks, patterns, coverage expectations
 - **Commit Messages** — commit format and conventions
 - **Shared Modules and Reuse** — utility directories, shared helpers, common abstractions, and any reusable code that should be preferred over writing new implementations. Search for directories named `utils/`, `common/`, `shared/`, `helpers/`, or `lib/`, and for widely-imported modules. List the key modules with their paths and purpose.
+- **Documentation** — documentation file locations (README, API docs, architecture docs), what kinds of changes trigger a doc update, and documentation formats used. Search for `README.md`, `docs/` directories, API doc files, and architecture documents.
 - **Dependencies** — dependency management policies
 
 #### User review
