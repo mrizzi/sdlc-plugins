@@ -34,6 +34,7 @@ When bumping the version, update both files together.
 - Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432
 - Feature issue type ID: 10142
 - Git Pull Request custom field: customfield_10875
+- GitHub Issue custom field: customfield_10747
 
 ## Code Intelligence
 
