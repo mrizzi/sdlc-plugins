@@ -151,13 +151,13 @@ Record each finding as PASS (all files match), WARN (out-of-scope files), or FAI
 
 ## Step 5 – Diff Size Check
 
-Get the diff statistics:
+Get the diff statistics using the GitHub REST API:
 
 ```
-gh pr diff <pr-number> --stat -R <owner/repo>
+gh api repos/<owner/repo>/pulls/<pr-number> --jq '.additions, .deletions, .changed_files'
 ```
 
-Compare the total lines changed against the expected scope from the task. Flag a WARN if the diff size appears disproportionately large relative to the number of files and changes described in the task.
+This returns the number of additions, deletions, and changed files. Compare the total lines changed against the expected scope from the task. Flag a WARN if the diff size appears disproportionately large relative to the number of files and changes described in the task.
 
 ## Step 6 – Commit Traceability
 
