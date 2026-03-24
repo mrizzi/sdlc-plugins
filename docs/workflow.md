@@ -80,9 +80,39 @@ Takes a structured Jira task and implements it: modifies code, runs tests, commi
 
 ### Verify Phase
 
-**Skill:** `/sdlc-workflow:verify-pr` *(planned)*
+**Skill:** `/sdlc-workflow:verify-pr`
 
-Will review a pull request against its originating Jira task to verify acceptance criteria, test coverage, and convention compliance.
+Verifies a pull request against its originating Jira task's acceptance criteria and deterministic guardrails. The skill operates on local code for acceptance criteria verification, so it conditionally checks out the PR branch before inspecting files.
+
+**Use cases:**
+
+- **Author self-verification** — the contributor who ran `/implement-task` already has the PR branch checked out locally. The skill detects this and proceeds without a checkout.
+- **Reviewer/CI audit** — another person or a headless CI job runs `/verify-pr` from an arbitrary branch. The skill detects the branch mismatch and checks out the PR branch automatically.
+
+**Invocation:**
+
+```
+/sdlc-workflow:verify-pr PROJ-231
+```
+
+**Workflow:**
+1. Validate Project Configuration in CLAUDE.md
+2. Fetch and parse the Jira task description
+3. Identify the PR from the Jira custom field
+4. Checkout the PR branch if not already on it
+5. Scope containment — compare changed files against the task
+6. Diff size check
+7. Commit traceability — verify Jira ID in commit messages
+8. Sensitive pattern scan
+9. CI status check
+10. Acceptance criteria verification using local code inspection
+11. Verification commands (if specified in the task)
+12. Generate and post verification report to GitHub and Jira
+
+**Guardrails:**
+- Verification-only — does not merge the PR or transition the Jira issue
+- Criteria come from the Jira task description, not from reading the diff
+- Report is informational — a human reviewer decides whether to merge
 
 ---
 

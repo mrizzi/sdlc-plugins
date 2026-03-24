@@ -105,7 +105,36 @@ or not configured, ask the user to provide the PR URL.
 
 Extract the PR number and repository from the URL for use in subsequent `gh` commands.
 
-## Step 3 – Scope Containment
+## Step 3 – Checkout PR Branch
+
+Ensure the PR branch is checked out locally so that subsequent steps inspect the correct code.
+Use the PR number and repository extracted in Step 2.
+
+1. Resolve the PR's head branch name:
+
+```
+gh pr view <pr-number> --json headRefName -R <owner/repo>
+```
+
+2. Check the currently checked-out branch:
+
+```
+git branch --show-current
+```
+
+3. If the branches match, proceed without action — the correct code is already available locally (e.g. the author running self-verification after `/implement-task`).
+
+4. If they differ, check out the PR branch:
+
+```
+gh pr checkout <pr-number> -R <owner/repo>
+```
+
+This step supports two use cases:
+- **Author self-verification** — the contributor already has the PR branch checked out; no checkout needed.
+- **Reviewer/CI audit** — another person or CI job runs `/verify-pr` from an arbitrary branch; the PR branch must be checked out first.
+
+## Step 4 – Scope Containment
 
 List all files changed in the PR:
 
@@ -120,7 +149,7 @@ Compare the list against the **Files to Modify** and **Files to Create** section
 
 Record each finding as PASS (all files match), WARN (out-of-scope files), or FAIL (required files missing).
 
-## Step 4 – Diff Size Check
+## Step 5 – Diff Size Check
 
 Get the diff statistics:
 
@@ -130,7 +159,7 @@ gh pr diff <pr-number> --stat -R <owner/repo>
 
 Compare the total lines changed against the expected scope from the task. Flag a WARN if the diff size appears disproportionately large relative to the number of files and changes described in the task.
 
-## Step 5 – Commit Traceability
+## Step 6 – Commit Traceability
 
 Retrieve the commit list:
 
@@ -142,7 +171,7 @@ Verify that every commit message references the Jira issue ID (e.g. contains `<J
 
 Record PASS if all commits reference the issue, WARN if some do, FAIL if none do.
 
-## Step 6 – Sensitive Pattern Scan
+## Step 7 – Sensitive Pattern Scan
 
 Search the PR diff for patterns that should not be committed:
 
@@ -152,7 +181,7 @@ gh pr diff <pr-number> -R <owner/repo> | grep -iE '(password\s*=|secret|API_KEY|
 
 Record PASS if no matches are found, FAIL if any match is detected. List each match for the report.
 
-## Step 7 – CI Status
+## Step 8 – CI Status
 
 Check the status of CI checks on the PR:
 
@@ -162,7 +191,7 @@ gh pr checks <pr-number> -R <owner/repo>
 
 Report the status (pass/fail/pending) for each check. Record overall PASS if all checks pass, WARN if any are pending, FAIL if any have failed.
 
-## Step 8 – Acceptance Criteria Verification
+## Step 9 – Acceptance Criteria Verification
 
 For each criterion in the **Acceptance Criteria** section from the Jira task, verify it is satisfied by inspecting the code on the PR branch.
 
@@ -185,7 +214,7 @@ Repository Registry.
 
 Record PASS/FAIL for each individual criterion.
 
-## Step 9 – Verification Commands
+## Step 10 – Verification Commands
 
 If the task description includes a **Verification Commands** section, run each command and check the result against the expected outcome.
 
@@ -196,9 +225,9 @@ For each command:
 
 If no Verification Commands section exists in the task, skip this step and record N/A.
 
-## Step 10 – Generate Report
+## Step 11 – Generate Report
 
-Compile all findings from Steps 3–9 into a structured verification report:
+Compile all findings from Steps 4–10 into a structured verification report:
 
 ```
 ## Verification Report for <JIRA-ID>
@@ -223,7 +252,7 @@ Overall result rules:
 - **WARN** — at least one WARN but no FAIL
 - **FAIL** — at least one FAIL
 
-## Step 11 – Post Report
+## Step 12 – Post Report
 
 ### Post to GitHub PR
 
