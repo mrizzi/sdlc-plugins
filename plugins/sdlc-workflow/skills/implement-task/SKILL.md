@@ -340,6 +340,32 @@ utilities or helpers, refactor to reuse the existing code before proceeding.
 
 If the project has a build or lint step, compare the current warning output against the pre-implementation baseline captured during Step 7. If new warnings were introduced, fix them before proceeding.
 
+### Data-flow trace
+
+For each new feature or capability implemented, trace the data through its complete
+lifecycle to catch partial implementations:
+
+1. **Identify data-flow stages**: for each change, determine the input (where data enters
+   the system — API request, file read, user event), processing (where it is validated,
+   transformed, or enriched), and output (where results are produced — response, persistence,
+   UI render, event emission).
+2. **Verify connections**: confirm that each stage is connected to the next. A new API
+   endpoint must not just parse a request but also invoke the processing logic and return
+   or persist the result. A new parser must propagate its output to consumers.
+3. **Flag incomplete paths**: list any data-flow path where a stage is missing or
+   disconnected. For each gap, state which stage is incomplete and what is missing.
+4. **Fix before committing**: if incomplete paths are found, implement the missing
+   connections before proceeding. If the missing stage is intentionally out of scope
+   for this task, ask the user to confirm.
+
+Output the traced data flows and their completeness status to the user before proceeding.
+
+> **Example output:**
+>
+> **Data-flow trace results:**
+> - `POST /api/v2/sbom` → parse request ✓ → validate ✓ → persist to DB ✓ → return response ✓ — **COMPLETE**
+> - `parseLicense()` → extract license ID ✓ → resolve to SPDX ✓ → attach to package ✗ — **INCOMPLETE** (output not connected)
+
 ## Step 10 – Commit and Push
 
 Commit following the Conventional Commits specification (https://www.conventionalcommits.org/en/v1.0.0/):
