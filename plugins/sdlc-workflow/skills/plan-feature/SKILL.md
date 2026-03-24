@@ -192,6 +192,7 @@ Use Glob, `list_dir`, or `search_for_pattern` to locate these files. Record them
 - Detect test locations and patterns
 - Discover existing code patterns to reference in implementation notes
 - Search for reusable utilities, helpers, and shared modules that overlap with the planned feature — flag these as reuse opportunities in Implementation Notes rather than planning new code that duplicates them
+- Perform a systematic duplication-risk scan: for each planned change in the impact map, search for existing domain logic, similar components, and algorithmic patterns — not just utilities — that overlap with the planned work. Use `find_symbol`, `search_for_pattern`, or Grep to locate candidates. Record matches as reuse candidates for inclusion in the task description's **Reuse Candidates** section
 - Identify documentation files that may need updating when the feature changes public APIs, configuration, setup steps, or architectural patterns
 
 ## Step 4 – Build Repository Impact Map
@@ -255,6 +256,9 @@ Create implementation tasks for each unit of work. Each task description MUST fo
 key functions/structs/components to interact with.
 Reference actual file paths and symbol names found during repository analysis.>
 
+## Reuse Candidates
+- `path/to/file.ext::symbol_name` — <what it does and how it relates to this task>
+
 ## Acceptance Criteria
 - [ ] Criterion 1
 - [ ] Criterion 2
@@ -282,6 +286,7 @@ When a feature introduces significant new behavior (new user-facing capabilities
 - Repository must be a single repository per task
 - File paths must be real paths discovered during repository analysis (Step 3)
 - Implementation Notes must reference existing patterns, not abstract guidance — when reusable utilities, helpers, or shared modules were found during repository analysis, list them with file paths and symbol names so the implementer can reuse them instead of writing new code
+- Reuse Candidates is optional — include it when the duplication-risk scan (Step 3) found existing code (domain logic, components, utilities, or patterns) that overlaps with the planned changes, so the implementer has an explicit checklist of code to consider reusing before writing new code
 - Each task must be small enough for a single engineer to implement
 - Verification Commands are optional — include them when acceptance criteria can be verified by running a command against the built or running service
 - Documentation Updates is optional — include it when the task changes public APIs, configuration, setup steps, or architectural patterns, listing which docs need updating and what content to add or revise (not the actual doc content)
