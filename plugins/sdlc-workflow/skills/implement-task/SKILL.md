@@ -151,6 +151,10 @@ the instance name from the Repository Registry.
    to modify to identify all callers and ensure your changes won't break them.
 4. **Non-symbolic search**: use `search_for_pattern` for configuration, string literals,
    or patterns not captured as symbols.
+5. **Convention conformance analysis**: identify sibling files — files in the same directory
+   or module that serve a similar role to the files being modified or created. Use
+   `get_symbols_overview` on 2–3 siblings to understand their structure and patterns, or
+   Read/Glob if Serena is unavailable.
 
 > **Note:** Check the **Code Intelligence** section of the project's CLAUDE.md for
 > per-instance limitations (e.g., some language servers may not support certain operations).
@@ -176,6 +180,7 @@ Goals:
 - identify any conflicts with recent changes
 - search for existing utilities, helpers, and shared modules that provide functionality overlapping with the planned changes — if equivalent logic already exists, plan to reuse or extend it rather than writing new code
 - identify nearby documentation files that may need updating
+- identify established conventions from sibling code for use during implementation
 
 ### CONVENTIONS.md lookup
 
@@ -184,6 +189,40 @@ or Glob). If present, read it and follow its conventions throughout implementati
 naming rules, directory structure for new files, code patterns, and test conventions.
 
 This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
+
+### Convention conformance analysis
+
+After inspecting the files to modify, analyze established conventions in the surrounding
+code. This complements the CONVENTIONS.md lookup: while CONVENTIONS.md provides explicit
+project-level conventions, this analysis discovers implicit conventions from sibling code.
+
+For each file being modified or created:
+
+1. **Identify siblings**: find files in the same directory or module that serve a similar
+   role (e.g., other API handlers, other parsers, other providers, other components).
+   Use `get_symbols_overview` on 2–3 siblings to understand their structure, or Read/Glob
+   if Serena is unavailable.
+2. **Examine patterns**: inspect siblings for recurring patterns in:
+   - Naming conventions (functions, variables, types, files)
+   - Error handling strategies (return types, error wrapping, logging)
+   - Option/parameter propagation (how configuration flows through the code)
+   - Parsing and data transformation approaches
+   - API design patterns (request/response shapes, middleware usage)
+   - Import organization and module structure
+3. **Record conventions**: output the discovered conventions to the user in a structured
+   list, organized by category. This list serves as a binding reference during
+   implementation in Step 6.
+
+If a convention conflict is detected — the task description or Implementation Notes
+contradict an established convention — flag it to the user and ask for guidance before
+proceeding with implementation.
+
+> **Example output:**
+>
+> **Discovered conventions (from sibling analysis):**
+> - **Error handling:** All handlers in `src/handlers/` use `Result<T, AppError>` with `.context()` for wrapping
+> - **Naming:** Service methods follow `verb_noun` pattern (e.g., `get_advisory`, `create_sbom`)
+> - **Options:** All parsers accept an `Options` struct as the last parameter
 
 ## Step 5 – Create Branch
 
@@ -201,6 +240,11 @@ Follow the **Implementation Notes** for patterns and code references on how to i
 code (utilities, helpers, shared modules). If they do, use or extend the existing code. If you
 discover additional reusable code during implementation that was not listed, prefer reusing it
 over creating duplicated logic.
+
+**Follow conventions:** Apply the conventions discovered during Step 4's convention conformance
+analysis. When writing new code, match the patterns found in sibling files rather than inventing
+new approaches. If any Implementation Notes or task instructions conflict with a discovered
+convention, follow the guidance obtained from the user during Step 4.
 
 ### Serena symbolic editing (preferred)
 
