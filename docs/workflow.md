@@ -2,6 +2,62 @@
 
 This document describes the execution workflow for the sdlc-workflow plugin skills.
 
+## Workflow Overview
+
+```mermaid
+flowchart TD
+    subgraph Prerequisites
+        setup["/setup\n(one-time)"]
+    end
+
+    subgraph Plan Phase
+        plan["/plan-feature PROJ-123"]
+    end
+
+    subgraph Implement Phase
+        implement["/implement-task PROJ-231"]
+    end
+
+    subgraph Verify Phase
+        verify["/verify-pr PROJ-231"]
+    end
+
+    setup --> plan
+    plan -->|"Tasks created in Jira\n(status: New)"| human_review{"Human reviews\nplanned tasks"}
+    human_review -->|Approved| implement
+    implement -->|"Branch + PR created\n(status: In Review)"| verify_choice{"Who verifies?"}
+    verify_choice -->|"Author\n(self-verification)"| verify
+    verify_choice -->|"Reviewer / CI\n(audit)"| verify
+    verify -->|"Report posted to\nGitHub PR + Jira"| merge_decision{"Human decides\nto merge"}
+    merge_decision -->|Merged| done["Done"]
+
+    classDef skill fill:#4a90d9,stroke:#2c5f8a,color:#fff
+    classDef human fill:#f5a623,stroke:#c47d10,color:#fff
+    classDef state fill:#7ed321,stroke:#5a9e18,color:#fff
+
+    class setup,plan,implement,verify skill
+    class human_review,verify_choice,merge_decision human
+    class done state
+```
+
+**Jira state transitions:** New → In Progress (implement-task) → In Review (implement-task) → Done (human merge)
+
+---
+
+## Prerequisite: Setup
+
+**Skill:** `/sdlc-workflow:setup`
+
+Configures a project's CLAUDE.md with the required `# Project Configuration` section. This is a one-time prerequisite for all other skills — plan-feature, implement-task, and verify-pr all validate Project Configuration before executing and will stop if it is missing.
+
+**Invocation:**
+
+```
+/sdlc-workflow:setup
+```
+
+The setup skill is idempotent — running it multiple times on an already-configured project produces no changes. See [docs/project-config-contract.md](project-config-contract.md) for the required configuration structure.
+
 ---
 
 ## Execution Phases
@@ -89,6 +145,9 @@ Verifies a pull request against its originating Jira task's acceptance criteria 
 - **Author self-verification** — the contributor who ran `/implement-task` already has the PR branch checked out locally. The skill detects this and proceeds without a checkout.
 - **Reviewer/CI audit** — another person or a headless CI job runs `/verify-pr` from an arbitrary branch. The skill detects the branch mismatch and checks out the PR branch automatically.
 
+**Inputs:**
+- Jira task issue ID with an associated PR (required)
+
 **Invocation:**
 
 ```
@@ -107,28 +166,17 @@ Verifies a pull request against its originating Jira task's acceptance criteria 
 9. CI status check
 10. Acceptance criteria verification using local code inspection
 11. Verification commands (if specified in the task)
-12. Generate and post verification report to GitHub and Jira
+12. Generate and post verification report to GitHub PR and Jira
+
+**Output:**
+- Verification report posted to both GitHub PR (as a PR comment) and Jira (as an issue comment)
+- No merge action taken
+- No Jira status transition
 
 **Guardrails:**
-- Verification-only — does not merge the PR or transition the Jira issue
+- Verification-only — does not modify code, merge the PR, or transition the Jira issue
 - Criteria come from the Jira task description, not from reading the diff
 - Report is informational — a human reviewer decides whether to merge
-
----
-
-## Setup
-
-**Skill:** `/sdlc-workflow:setup`
-
-Configures a project's CLAUDE.md with the required `# Project Configuration` section. This is a prerequisite for all other skills.
-
-**Invocation:**
-
-```
-/sdlc-workflow:setup
-```
-
-The setup skill is idempotent — running it multiple times on an already-configured project produces no changes. See [docs/project-config-contract.md](project-config-contract.md) for the required configuration structure.
 
 ---
 
