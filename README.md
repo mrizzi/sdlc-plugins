@@ -2,15 +2,20 @@
 
 A Claude Code plugin marketplace for AI-assisted SDLC workflow skills.
 
-This repository hosts reusable skills that help engineers plan features and
-implement tasks with full Jira traceability. Any project can install these
-skills via Claude Code's plugin system.
+This repository hosts reusable skills that help engineers set up projects,
+plan features, implement tasks, and verify pull requests with full Jira
+traceability. Any project can install these skills via Claude Code's plugin
+system.
 
 ## Available Plugins
 
 ### sdlc-workflow
 
-AI-assisted SDLC workflow skills:
+AI-assisted SDLC workflow skills for setting up projects, planning features,
+implementing tasks, and verifying pull requests:
+
+- **setup** — Set up or update the Project Configuration in your CLAUDE.md for
+  use with sdlc-workflow skills.
 
 - **plan-feature** — Convert a Jira feature into an implementation plan with
   structured Jira tasks. Analyzes repositories using Serena LSP, builds an
@@ -19,6 +24,9 @@ AI-assisted SDLC workflow skills:
 - **implement-task** — Implement a Jira task by reading its structured
   description, modifying code, running tests, committing, opening a PR, and
   updating Jira.
+
+- **verify-pr** — Verify a PR against its Jira task's acceptance criteria and
+  deterministic guardrails.
 
 ## Installation
 
@@ -37,6 +45,15 @@ AI-assisted SDLC workflow skills:
 This copies the plugin's skills into your project, making them available as
 slash commands.
 
+### 3. Configure your project
+
+```
+/sdlc-workflow:setup
+```
+
+This interactively populates the required Project Configuration in your
+project's CLAUDE.md (repository registry, Jira settings, and code intelligence).
+
 ## Project Configuration
 
 For the skills to work with your project, your project's CLAUDE.md must
@@ -53,12 +70,17 @@ the full specification and a complete example.
 
 ## Documentation
 
-- [Project Configuration Contract](docs/project-config-contract.md) — interface
-  contract between skills and project configuration
-- [SDLC Methodology](docs/methodology.md) — core principles and phased roadmap
-- [Architecture Template](docs/templates/architecture.md) — template for
+- [Methodology](docs/methodology.md) — Core principles and SDLC phases
+- [Workflow](docs/workflow.md) — Execution workflow (plan, implement, verify) and skill invocation
+- [Tools](docs/tools.md) — MCP server catalog (Jira, Figma, Serena)
+- [Conventions Spec](docs/conventions-spec.md) — Cross-repo workflow conventions and per-repo template reference
+- [Constraints](docs/constraints.md) — Deterministic rules for agent behavior
+- [Project Configuration Contract](docs/project-config-contract.md) — Project Configuration contract for CLAUDE.md
+- [Metrics](docs/metrics.md) — Workflow metrics and measurement
+- [Releasing](docs/releasing.md) — Release process and changelog
+- [Architecture Template](docs/templates/architecture.md) — Template for
   documenting your project's architecture
-- [Conventions Template](docs/templates/conventions.md) — template for
+- [Conventions Template](docs/templates/conventions.md) — Template for
   documenting your project's coding conventions
 
 ## License
