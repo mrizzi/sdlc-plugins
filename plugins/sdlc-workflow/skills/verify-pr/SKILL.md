@@ -256,8 +256,10 @@ Overall result rules:
 
 ### Post to GitHub PR
 
-Post the verification report as a PR comment. Append a markdown footnote at the end
-of the report body, separated by a horizontal rule:
+Post the verification report as a PR comment using `--edit-last --create-if-none` for
+idempotent behavior — this updates an existing report comment or creates one if none
+exists, preventing duplicate reports on subsequent runs. Append a markdown footnote at
+the end of the report body, separated by a horizontal rule:
 
 ```
 ---
@@ -268,7 +270,7 @@ Read the plugin version from `plugins/sdlc-workflow/.claude-plugin/plugin.json` 
 substitute `{version}` before posting.
 
 ```
-gh pr review <pr-number> --comment --body "<report-with-footnote>" -R <owner/repo>
+gh pr comment <pr-number> --edit-last --create-if-none --body "<report-with-footnote>" -R <owner/repo>
 ```
 
 ### Revised reports
