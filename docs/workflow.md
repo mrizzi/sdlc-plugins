@@ -10,6 +10,10 @@ flowchart TD
         setup["/setup\n(one-time)"]
     end
 
+    subgraph Define Phase
+        define["/define-feature"]
+    end
+
     subgraph Plan Phase
         plan["/plan-feature PROJ-123"]
     end
@@ -22,7 +26,8 @@ flowchart TD
         verify["/verify-pr PROJ-231"]
     end
 
-    setup --> plan
+    setup --> define
+    define -->|"Feature created in Jira"| plan
     plan -->|"Tasks created in Jira\n(status: New)"| human_review{"Human reviews\nplanned tasks"}
     human_review -->|Approved| implement
     implement -->|"Branch + PR created\n(status: In Review)"| verify_choice{"Who verifies?"}
@@ -35,7 +40,7 @@ flowchart TD
     classDef human fill:#f5a623,stroke:#c47d10,color:#fff
     classDef state fill:#7ed321,stroke:#5a9e18,color:#fff
 
-    class setup,plan,implement,verify skill
+    class setup,define,plan,implement,verify skill
     class human_review,verify_choice,merge_decision human
     class done state
 ```
@@ -62,7 +67,41 @@ The setup skill is idempotent — running it multiple times on an already-config
 
 ## Execution Phases
 
-The workflow follows three phases: **Plan**, **Implement**, and **Verify**.
+The workflow follows four phases: **Define**, **Plan**, **Implement**, and **Verify**.
+
+### Define Phase
+
+**Skill:** `/sdlc-workflow:define-feature`
+
+Interactively walks the user through all Feature description template sections and creates a fully-described Feature issue in Jira.
+
+**Invocation:**
+
+```
+/sdlc-workflow:define-feature
+/sdlc-workflow:define-feature My Feature Title
+```
+
+**Workflow:**
+1. Validate Project Configuration in CLAUDE.md
+2. Present a roadmap of the 9 template sections
+3. Collect Feature summary (title)
+4. Walk through each section interactively (with skip support)
+5. Offer self-assignment
+6. Preview the full description and collect approval
+7. Create the Feature issue in Jira (labeled `ai-generated-jira`)
+8. Post a summary comment and suggest `/plan-feature` as the next step
+
+**Output:**
+- Feature issue created in Jira with a structured description
+- Summary comment on the created issue
+
+**Guardrails:**
+- Jira-only — no filesystem modifications permitted
+- All description content must come from user input — no fabrication
+- Issue is never created without user preview and approval
+
+---
 
 ### Plan Phase
 

@@ -16,6 +16,9 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.4 | `implement-task` MUST keep changes scoped to what the task describes — no unrelated refactoring. | `implement-task/SKILL.md` — Important Rules |
 | 1.5 | `implement-task` MUST NOT guess code structure — it must inspect code before modifying it using Serena or Read/Grep/Glob. | `implement-task/SKILL.md` — Important Rules |
 | 1.6 | `implement-task` MUST ask the user rather than improvising when the structured description is incomplete. | `implement-task/SKILL.md` — Important Rules |
+| 1.7 | `define-feature` MUST NOT modify, create, or delete any files in any repository. Only Jira MCP tools are permitted for output. | `define-feature/SKILL.md` — Guardrails |
+| 1.8 | `define-feature` MUST NOT fabricate content. All Feature description content must come from user input. | `define-feature/SKILL.md` — Guardrails |
+| 1.9 | `define-feature` MUST NOT create a Jira issue without showing a full preview and receiving explicit user approval. | `define-feature/SKILL.md` — Important Rules |
 
 ---
 
@@ -70,4 +73,5 @@ Each constraint above references its source. The full source files are:
 
 - `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Task Description Template (§4.1–4.8)
 - `plugins/sdlc-workflow/skills/implement-task/SKILL.md` — Important Rules (§1.4–1.6, §5.1–5.3), Step 5 (§3.1), Step 9 (§2.1–2.3), Step 10 (§3.2)
+- `plugins/sdlc-workflow/skills/define-feature/SKILL.md` — Guardrails (§1.7–1.8), Important Rules (§1.9)
 - `docs/methodology.md` — Core Principles (§2.1, §3.2, §5.4)
