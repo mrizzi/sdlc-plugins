@@ -164,7 +164,7 @@ This returns the number of additions, deletions, and changed files. Compare the 
 Retrieve the commit list:
 
 ```
-gh pr view <pr-number> --json commits -R <owner/repo>
+gh pr view <pr-number> --json commits --jq '.commits[] | .messageHeadline + "\n" + .messageBody' -R <owner/repo>
 ```
 
 Verify that every commit message references the Jira issue ID (e.g. contains `<JIRA-ID>` in the message, body, or trailer).
@@ -270,6 +270,19 @@ substitute `{version}` before posting.
 ```
 gh pr review <pr-number> --comment --body "<report-with-footnote>" -R <owner/repo>
 ```
+
+### Revised reports
+
+When a verification finding has been corrected and a revised comment must be posted,
+re-run the CI status check before generating the updated report:
+
+```
+gh pr checks <pr-number> -R <owner/repo>
+```
+
+Use the fresh CI results to populate the CI Status row in the revised report. This
+ensures the report reflects the latest CI state rather than stale data from the
+initial check.
 
 ### Post to Jira
 
