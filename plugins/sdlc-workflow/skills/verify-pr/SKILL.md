@@ -152,29 +152,83 @@ Group comments into threads using the `in_reply_to_id` field. Each top-level com
 
 If no reviews or comments exist, record Review Feedback as N/A and skip to Step 5.
 
-### Step 4b – Classify Feedback
+### Step 4b – Load Project Conventions
 
-For each review comment thread, classify the feedback into one of:
+Before classifying feedback, load the project's established conventions so they can
+inform classification decisions.
+
+1. **CONVENTIONS.md:** Check for a `CONVENTIONS.md` file at the repository root (using
+   `search_for_pattern`, Grep, or Glob). If present, read its contents. This provides
+   explicit, documented project conventions.
+
+2. **Codebase convention cache:** This step does not perform exhaustive codebase analysis
+   yet — that happens per-comment in Step 4c. The goal here is only to load CONVENTIONS.md
+   once for reuse across all comment classifications.
+
+If `CONVENTIONS.md` does not exist, proceed normally — Step 4c will still check for
+implicit conventions demonstrated by codebase usage patterns.
+
+### Step 4c – Classify Feedback
+
+For each review comment thread, perform an initial classification based on the
+reviewer's language:
 
 - **Code change request** — the reviewer asks for a code modification (e.g., "this should validate input", "add error handling here")
 - **Suggestion** — the reviewer proposes an alternative approach but does not require it
 - **Question** — the reviewer asks for clarification
 - **Nit** — minor style or formatting feedback
 
-Only **code change requests** trigger sub-task creation. Record all classifications for the report.
+#### Convention check (suggestion upgrade)
 
-### Step 4c – Analyze Code Context
+Before finalizing any comment classified as **suggestion**, check whether the suggested
+practice aligns with an established project convention:
 
-For each code change request, inspect the relevant code on the PR branch to understand
-the required fix. Use the Serena instance for the task's repository (from the
-**Repository Registry** in CLAUDE.md) or fall back to Read/Grep/Glob.
+1. **Check CONVENTIONS.md:** If loaded in Step 4b, search for documented conventions
+   that match the suggested practice. For example, if the reviewer suggests adding
+   indexes for foreign key columns, check whether CONVENTIONS.md documents index
+   creation patterns.
+
+2. **Check codebase patterns:** Use the Serena instance for the task's repository
+   (from the **Repository Registry** in CLAUDE.md) with `search_for_pattern`, or
+   fall back to Grep, to check if the suggested pattern is widely used in similar
+   files. Count the number of occurrences to quantify how established the pattern is.
+   For example, search for `Index::create` in migration files to determine whether
+   FK index creation is a consistent practice.
+
+3. **Performance-related scrutiny:** Suggestions related to performance (indexes,
+   caching, query optimization, connection pooling) should receive extra scrutiny.
+   Check whether the project has dedicated performance-related files (e.g., retroactive
+   index migrations, caching layers) or documented performance conventions.
+
+4. **Upgrade decision:** If the suggestion matches a documented convention in
+   CONVENTIONS.md **or** is demonstrated by consistent codebase usage (multiple
+   instances of the same pattern in similar files), upgrade the classification from
+   **suggestion** to **code change request**. Record the evidence for use in Step 4f:
+   - `"Matches documented convention: [CONVENTIONS.md section or quote]"`
+   - `"Matches codebase convention: [N occurrences of pattern in similar files]"`
+
+Suggestions that do not match any documented or demonstrated convention remain
+classified as **suggestion**.
+
+Only **code change requests** (including upgraded suggestions) trigger sub-task
+creation. Record all classifications and any upgrade evidence for the report.
+
+### Step 4d – Analyze Code Context
+
+For each code change request (including suggestions upgraded via the convention check),
+inspect the relevant code on the PR branch to understand the required fix. Use the
+Serena instance for the task's repository (from the **Repository Registry** in CLAUDE.md)
+or fall back to Read/Grep/Glob.
 
 Determine:
 - Which file(s) need modification
 - What the fix should achieve
 - Whether the fix is scoped to the current task or represents a broader concern
+- For upgraded suggestions: confirm the convention evidence gathered in Step 4c
+  (e.g., verify the pattern count, check that the convention applies to this specific
+  context)
 
-### Step 4d – Create Sub-tasks
+### Step 4e – Create Sub-tasks
 
 For each code change request that requires a fix, create a Jira sub-task:
 
@@ -187,7 +241,7 @@ jira.create_issue with:
   - **Repository** — same repository as the parent task
   - **Description** — what the fix should achieve, referencing the reviewer's comment
   - **Review Context** — the original review comment text and PR file/line reference
-  - **Files to Modify** — files identified in Step 4c
+  - **Files to Modify** — files identified in Step 4d
   - **Implementation Notes** — patterns to follow, referencing the parent task's code
   - **Acceptance Criteria** — pass/fail checklist for the fix
   - **Test Requirements** — tests to write or update for the fix
@@ -197,7 +251,7 @@ After creating each sub-task, create a "Blocks" issue link from the sub-task to 
 
 jira.create_issue_link(type="Blocks", inwardIssue=<sub-task-id>, outwardIssue=<parent-task-id>)
 
-### Step 4e – Reply to Review Comments
+### Step 4f – Reply to Review Comments
 
 Reply to **every** classified review comment thread with the classification label and
 reasoning, so the decision is transparent to the reviewer.
@@ -208,6 +262,16 @@ reasoning, so the decision is transparent to the reviewer.
 gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Classified as **code change request** — sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
 ```
 
+**For suggestions upgraded to code change requests via convention check:**
+
+Include the convention evidence in the reply so the upgrade reasoning is transparent:
+
+```
+gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Classified as **code change request** (upgraded from suggestion) — this matches project convention: <evidence>. Sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
+```
+
+Example: `"Classified as **code change request** (upgraded from suggestion) — this matches project convention: 17 migrations use Index::create for FK columns; CONVENTIONS.md §Indexes documents this pattern. Sub-task [PROJ-456](https://redhat.atlassian.net/browse/PROJ-456) created to address this feedback."`
+
 **For all other classifications (suggestion, question, nit):**
 
 Reply with a brief explanation of the classification and why no sub-task was created:
@@ -217,13 +281,13 @@ gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f bod
 ```
 
 Example replies:
-- `"Classified as **suggestion** — this proposes an alternative approach but is not required for acceptance criteria. No sub-task created."`
+- `"Classified as **suggestion** — this proposes an alternative approach that is not documented in CONVENTIONS.md and has no established codebase pattern. No sub-task created."`
 - `"Classified as **question** — this asks for clarification; no code change needed. No sub-task created."`
 - `"Classified as **nit** — minor style feedback that does not affect correctness. No sub-task created."`
 
-### Step 4f – Idempotency Check
+### Step 4g – Idempotency Check
 
-Before creating a sub-task (Step 4d) or posting a reply (Step 4e), check for existing
+Before creating a sub-task (Step 4e) or posting a reply (Step 4f), check for existing
 skill activity:
 
 1. **Classification reply check:** Search the comment thread for an existing reply
@@ -236,7 +300,7 @@ skill activity:
 This ensures re-running `/verify-pr` does not create duplicate sub-tasks or
 classification replies.
 
-### Step 4g – Record Result
+### Step 4h – Record Result
 
 Record the Review Feedback check result:
 - **N/A** — no reviews or comments exist on the PR
