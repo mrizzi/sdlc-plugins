@@ -199,25 +199,42 @@ jira.create_issue_link(type="Blocks", inwardIssue=<sub-task-id>, outwardIssue=<p
 
 ### Step 4e – Reply to Review Comments
 
-For each code change request that resulted in a sub-task, reply to the review comment
-on GitHub with a reference to the created sub-task:
+Reply to **every** classified review comment thread with the classification label and
+reasoning, so the decision is transparent to the reviewer.
+
+**For code change requests that resulted in a sub-task:**
 
 ```
-gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
+gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Classified as **code change request** — sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
 ```
+
+**For all other classifications (suggestion, question, nit):**
+
+Reply with a brief explanation of the classification and why no sub-task was created:
+
+```
+gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Classified as **<classification>** — <reasoning>. No sub-task created."
+```
+
+Example replies:
+- `"Classified as **suggestion** — this proposes an alternative approach but is not required for acceptance criteria. No sub-task created."`
+- `"Classified as **question** — this asks for clarification; no code change needed. No sub-task created."`
+- `"Classified as **nit** — minor style feedback that does not affect correctness. No sub-task created."`
 
 ### Step 4f – Idempotency Check
 
 Before creating a sub-task (Step 4d) or posting a reply (Step 4e), check for existing
 skill activity:
 
-1. **Reply check:** Search the comment thread for an existing reply containing both
-   "Sub-task" and a Jira issue key (e.g., `TC-123`). If found, skip creating a
-   duplicate sub-task and reply for that thread.
+1. **Classification reply check:** Search the comment thread for an existing reply
+   containing `"Classified as"`. If found, skip posting a duplicate classification
+   reply for that thread. This covers both sub-task replies and non-sub-task
+   classification replies.
 2. **Sub-task check:** Check the parent task's issue links for existing sub-tasks
    whose descriptions reference the same review comment. If found, skip creation.
 
-This ensures re-running `/verify-pr` does not create duplicate sub-tasks or replies.
+This ensures re-running `/verify-pr` does not create duplicate sub-tasks or
+classification replies.
 
 ### Step 4g – Record Result
 
@@ -403,7 +420,7 @@ If no Verification Commands section exists in the task, skip this step and recor
 Compile all findings from Steps 4–12 into a structured verification report:
 
 ```
-## Verification Report for <JIRA-ID>
+## Verification Report for <JIRA-ID> (commit <short-sha>)
 
 | Check | Result | Details |
 |-------|--------|---------|
@@ -433,12 +450,30 @@ from the PASS/WARN/FAIL determination.
 
 ## Step 14 – Post Report
 
+### Retrieve HEAD Commit SHA
+
+Before posting the report, retrieve the HEAD commit SHA of the PR to include in the
+report header:
+
+```
+gh pr view <pr-number> --json commits --jq '.commits[-1].oid' -R <owner/repo>
+```
+
+Store the full SHA and its short form (first 7 characters) for use in the report.
+
 ### Post to GitHub PR
 
-Post the verification report as a PR comment using `--edit-last --create-if-none` for
-idempotent behavior — this updates an existing report comment or creates one if none
-exists, preventing duplicate reports on subsequent runs. Append a markdown footnote at
-the end of the report body, separated by a horizontal rule:
+Each verification run creates a **new** PR comment (never overwrites previous reports).
+This provides a verification history over time, with each report clearly referencing
+the commit SHA it verified.
+
+Update the report header from Step 13 to include the commit SHA:
+
+```
+## Verification Report for <JIRA-ID> (commit <short-sha>)
+```
+
+Append a markdown footnote at the end of the report body, separated by a horizontal rule:
 
 ```
 ---
@@ -449,21 +484,8 @@ Read the plugin version from `plugins/sdlc-workflow/.claude-plugin/plugin.json` 
 substitute `{version}` before posting.
 
 ```
-gh pr comment <pr-number> --edit-last --create-if-none --body "<report-with-footnote>" -R <owner/repo>
+gh pr comment <pr-number> --body "<report-with-footnote>" -R <owner/repo>
 ```
-
-### Revised reports
-
-When a verification finding has been corrected and a revised comment must be posted,
-re-run the CI status check before generating the updated report:
-
-```
-gh pr checks <pr-number> -R <owner/repo>
-```
-
-Use the fresh CI results to populate the CI Status row in the revised report. This
-ensures the report reflects the latest CI state rather than stale data from the
-initial check.
 
 ### Post to Jira
 
