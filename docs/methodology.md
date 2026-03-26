@@ -50,6 +50,55 @@ Sources of truth:
 - Repository code
 - Serena LSP
 
+### Continuous Improvement Through Root-Cause Analysis
+
+When a PR reviewer flags a defect, the workflow does not just fix the immediate
+issue — it traces the root cause back through the full workflow chain to prevent
+similar mistakes in future tasks. This creates a quality flywheel: each
+investigation improves an upstream phase, which produces fewer mistakes, which
+generates fewer review sub-tasks.
+
+The `verify-pr` skill spawns a sub-agent to trace each reviewer-flagged defect
+through four upstream phases:
+- **define-feature** — was the requirement specified in the Feature description?
+- **plan-feature** — did the task's Acceptance Criteria, Implementation Notes, and
+  file references capture what was needed?
+- **implement-task** — did the implementation follow the task correctly, including
+  conventions and sibling patterns?
+- **project conventions** — does CONVENTIONS.md document the relevant pattern?
+
+The root-cause task targets the phase where the gap originated, not always the
+implementation phase. This distinction is critical: a fix applied at the wrong
+phase will not prevent recurrence.
+
+Example: a reviewer comments *"this endpoint should return paginated results"*.
+The same comment could trace to four different root causes:
+
+```
+/plan-feature PROJ-100 → /implement-task PROJ-201 → /verify-pr PROJ-201
+
+Reviewer: "this endpoint should return paginated results"
+
+Root cause 1 (define-feature): The Feature description never mentioned pagination
+  → Fix: improve Feature template guidance to prompt for pagination requirements
+
+Root cause 2 (plan-feature): The Feature mentioned pagination, but the task's
+  Acceptance Criteria omitted it
+  → Fix: improve plan-feature analysis to detect pagination in Feature descriptions
+
+Root cause 3 (implement-task): The task correctly specified pagination, but
+  implement-task missed a paginated sibling endpoint in the same module
+  → Fix: improve implement-task sibling analysis to detect pagination patterns
+
+Root cause 4 (conventions): The project uses pagination everywhere but
+  CONVENTIONS.md doesn't document the pattern
+  → Fix: add pagination convention to CONVENTIONS.md
+```
+
+The flywheel effect: each root-cause task improves the upstream phase →
+`implement-task` produces fewer mistakes → fewer review sub-tasks → a measurable
+decline in the `review-feedback` metric over time = system improving.
+
 ---
 
 ## SDLC Workflow Phases

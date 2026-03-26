@@ -90,9 +90,21 @@ Parse the structured description expecting these sections:
 - **Implementation Notes** — patterns and code references to follow
 - **Acceptance Criteria** — checklist to satisfy
 - **Test Requirements** — tests to write or update
+- **Target PR** — an existing PR URL to add commits to (optional, used for review feedback fixes)
+- **Review Context** — the original review comment that triggered this task (optional)
 - **Dependencies** — prerequisite tasks (verify they are Done)
 
 Also capture the issue's `webUrl` field from the API response (e.g. `https://redhat.atlassian.net/browse/PROJ-231`). This URL will be used later to create a clickable link in the PR description.
+
+### Target PR extraction
+
+If the task description contains a **Target PR** section, extract the PR URL. Parse the
+URL to extract `owner`, `repo`, and `pr-number` from the pattern
+`https://github.com/<owner>/<repo>/pull/<pr-number>`. Store these values for use in
+Steps 5, 10, and 11.
+
+When Target PR is present, the task is a review feedback fix — the implementation adds
+commits to the existing PR branch instead of creating a new branch and PR.
 
 If any required section is missing or the description doesn't follow the template, stop and ask the user for clarification.
 
@@ -226,9 +238,28 @@ proceeding with implementation.
 
 ## Step 5 – Create Branch
 
+**Default flow (no Target PR):**
+
 Create a feature branch named after the Jira issue:
 
 git checkout -b <jira-issue-id>
+
+**Target PR flow:**
+
+When Target PR is present (parsed in Step 1), check out the existing PR branch
+instead of creating a new one:
+
+1. Resolve the PR's head branch name:
+   ```
+   gh pr view <pr-number> --json headRefName -R <owner/repo>
+   ```
+2. Check out and update the branch:
+   ```
+   git checkout <branch-name>
+   git pull
+   ```
+
+This ensures the fix commits are added to the existing PR branch.
 
 ## Step 6 – Implement Changes
 
@@ -428,6 +459,8 @@ Use a scope when relevant (e.g. `feat(api): add AIBOM endpoint`).
 The footer MUST reference the Jira issue ID.
 Always include `--trailer="Assisted-by: Claude Code"` to attribute AI assistance.
 
+**Default flow (no Target PR):**
+
 Push the branch and open a pull request. In the PR description, use a Markdown link
 for the "Implements" line so the Jira issue is clickable:
 
@@ -440,7 +473,26 @@ line to the PR description body. GitHub recognizes this keyword and will auto-cl
 linked issue when the PR is merged. Do **not** add this to the commit message — only the
 PR description.
 
+**Target PR flow:**
+
+When Target PR is present, push to the existing branch and update the PR description
+instead of creating a new PR:
+
+1. Push the new commit(s) to the existing branch:
+   ```
+   git push
+   ```
+2. Update the PR description to reflect the additional changes:
+   ```
+   gh pr edit <pr-number> -R <owner/repo> --body "<updated-description>"
+   ```
+   Add the current task's Jira issue ID to the PR description's Summary section
+   (e.g., a new bullet point describing the fix). Preserve the existing PR description
+   content — only append to the Summary bullets.
+
 ## Step 11 – Update Jira
+
+**Default flow (no Target PR):**
 
 Look up the **Git Pull Request custom field** ID from the project's **Jira Configuration**
 section in CLAUDE.md (the field is listed as `Git Pull Request custom field: <field-id>`).
@@ -460,6 +512,25 @@ Include:
 - PR link
 - Summary of changes made
 - Any deviations from the plan
+
+Transition the task:
+
+jira.transition_issue → In Review
+
+**Target PR flow:**
+
+When Target PR is present, use the PR URL from the Target PR section (not a newly
+created PR). Skip the custom field update — the PR link was already set when the
+original task's PR was created.
+
+Add a comment to the Jira task:
+
+jira.add_comment
+
+Include:
+- PR link (from Target PR)
+- Summary of fix changes made
+- Reference to the review feedback that triggered the fix
 
 Transition the task:
 

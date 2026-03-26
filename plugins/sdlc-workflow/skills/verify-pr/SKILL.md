@@ -1,13 +1,13 @@
 ---
 name: verify-pr
 description: |
-  Verify a PR against its Jira task's acceptance criteria and deterministic guardrails.
+  Verify a PR against its Jira task's acceptance criteria and deterministic guardrails, read PR review feedback to create tracked sub-tasks, and investigate root causes across the full workflow chain.
 argument-hint: "[jira-issue-id]"
 ---
 
 # verify-pr skill
 
-You are an AI verification assistant. You verify a pull request against its Jira task's acceptance criteria and deterministic guardrails. You run objective checks and post findings to both GitHub and Jira, but you do **NOT** auto-merge.
+You are an AI verification assistant. You verify a pull request against its Jira task's acceptance criteria and deterministic guardrails. You read PR review feedback and create tracked Jira sub-tasks for required code fixes. You investigate root causes of implementation mistakes across the full workflow chain. You run objective checks and post findings to both GitHub and Jira, but you do **NOT** modify code and do **NOT** auto-merge.
 
 ## Step 0 – Validate Project Configuration
 
@@ -134,7 +134,180 @@ This step supports two use cases:
 - **Author self-verification** — the contributor already has the PR branch checked out; no checkout needed.
 - **Reviewer/CI audit** — another person or CI job runs `/verify-pr` from an arbitrary branch; the PR branch must be checked out first.
 
-## Step 4 – Scope Containment
+## Step 4 – Review Feedback Resolution
+
+Read PR review feedback and create tracked Jira sub-tasks for any required code changes.
+
+### Step 4a – Fetch Reviews and Comments
+
+Fetch all reviews and review comments from the PR:
+
+```
+gh api repos/<owner/repo>/pulls/<pr-number>/reviews
+gh api repos/<owner/repo>/pulls/<pr-number>/comments
+```
+
+Group comments into threads using the `in_reply_to_id` field. Each top-level comment
+(no `in_reply_to_id`) starts a thread; replies are grouped under their parent.
+
+If no reviews or comments exist, record Review Feedback as N/A and skip to Step 5.
+
+### Step 4b – Classify Feedback
+
+For each review comment thread, classify the feedback into one of:
+
+- **Code change request** — the reviewer asks for a code modification (e.g., "this should validate input", "add error handling here")
+- **Suggestion** — the reviewer proposes an alternative approach but does not require it
+- **Question** — the reviewer asks for clarification
+- **Nit** — minor style or formatting feedback
+
+Only **code change requests** trigger sub-task creation. Record all classifications for the report.
+
+### Step 4c – Analyze Code Context
+
+For each code change request, inspect the relevant code on the PR branch to understand
+the required fix. Use the Serena instance for the task's repository (from the
+**Repository Registry** in CLAUDE.md) or fall back to Read/Grep/Glob.
+
+Determine:
+- Which file(s) need modification
+- What the fix should achieve
+- Whether the fix is scoped to the current task or represents a broader concern
+
+### Step 4d – Create Sub-tasks
+
+For each code change request that requires a fix, create a Jira sub-task:
+
+jira.create_issue with:
+- **Parent:** the current task's Jira issue ID
+- **Summary:** concise description of the required fix
+- **Labels:** `["ai-generated-jira", "review-feedback"]`
+- **Description:** structured task description following the plan-feature template:
+
+  - **Repository** — same repository as the parent task
+  - **Description** — what the fix should achieve, referencing the reviewer's comment
+  - **Review Context** — the original review comment text and PR file/line reference
+  - **Files to Modify** — files identified in Step 4c
+  - **Implementation Notes** — patterns to follow, referencing the parent task's code
+  - **Acceptance Criteria** — pass/fail checklist for the fix
+  - **Test Requirements** — tests to write or update for the fix
+  - **Target PR** — the PR URL from Step 2 (so implement-task adds commits to the existing branch)
+
+After creating each sub-task, create a "Blocks" issue link from the sub-task to the parent task:
+
+jira.create_issue_link(type="Blocks", inwardIssue=<sub-task-id>, outwardIssue=<parent-task-id>)
+
+### Step 4e – Reply to Review Comments
+
+For each code change request that resulted in a sub-task, reply to the review comment
+on GitHub with a reference to the created sub-task:
+
+```
+gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
+```
+
+### Step 4f – Idempotency Check
+
+Before creating a sub-task (Step 4d) or posting a reply (Step 4e), check for existing
+skill activity:
+
+1. **Reply check:** Search the comment thread for an existing reply containing both
+   "Sub-task" and a Jira issue key (e.g., `TC-123`). If found, skip creating a
+   duplicate sub-task and reply for that thread.
+2. **Sub-task check:** Check the parent task's issue links for existing sub-tasks
+   whose descriptions reference the same review comment. If found, skip creation.
+
+This ensures re-running `/verify-pr` does not create duplicate sub-tasks or replies.
+
+### Step 4g – Record Result
+
+Record the Review Feedback check result:
+- **N/A** — no reviews or comments exist on the PR
+- **PASS** — reviews exist but contain no code change requests
+- **WARN** — code change requests exist; sub-tasks were created
+- **FAIL** — code change requests exist but sub-task creation failed
+
+## Step 5 – Root-Cause Investigation
+
+Investigate the root cause of each reviewer-flagged defect to identify systemic
+improvements that prevent similar mistakes in future tasks.
+
+### Step 5a – Sub-agent Investigation
+
+If Step 4 created any sub-tasks, spawn a sub-agent to investigate the root cause of
+each code change request. If no sub-tasks were created, record Root-Cause Investigation
+as N/A and skip to Step 6.
+
+The sub-agent receives these inputs:
+1. **Parent Feature description** — fetched by following the "incorporates" issue link
+   from the current task back to the Feature issue. Use:
+   ```
+   jira.get_issue(<task-id>) → find issue link with type "incorporates" (inward) → jira.get_issue(<feature-id>)
+   ```
+2. **Task description** — the structured description parsed in Step 1
+3. **Review comments** — the code change requests that triggered sub-tasks in Step 4
+4. **Relevant code** — the files on the PR branch related to each flagged defect
+5. **Project CONVENTIONS.md** — if it exists in the repository root
+
+The sub-agent must answer three questions, tracing through the full workflow chain:
+
+**(a) Was the Feature description sufficient?** (define-feature phase)
+Did the Feature specify the requirement that the reviewer flagged? If the Feature
+description never mentioned the requirement, the gap originated at the define-feature
+phase.
+
+**(b) Was the task description accurate?** (plan-feature phase)
+Did the Acceptance Criteria, Implementation Notes, and file references capture what
+was needed? If the Feature mentioned the requirement but the task omitted it, the
+gap originated at the plan-feature phase.
+
+**(c) Did implement-task follow the task correctly?** (implement-task phase)
+Did the implementation miss conventions, sibling patterns, or explicit task guidance?
+If the task was correct but the implementation deviated, the gap originated at the
+implement-task phase.
+
+If none of the above phases explain the gap, check whether the project's CONVENTIONS.md
+(or lack thereof) is the root cause — the convention may not be documented.
+
+### Step 5b – Create Root-Cause Tasks
+
+For each root cause identified, create a Jira task that targets the phase where the
+gap originated:
+
+- **define-feature gap** — task to improve Feature template guidance or define-feature
+  skill prompts so future Features capture the missing requirement type
+- **plan-feature gap** — task to improve task generation patterns or plan-feature
+  analysis so future tasks include the missing criteria or notes
+- **implement-task gap** — task to improve code analysis, convention adherence checks,
+  or sibling comparison in the implement-task skill
+- **convention gap** — task to update CONVENTIONS.md or project documentation to
+  document the undocumented convention
+
+jira.create_issue with:
+- **Summary:** "Root-cause: <brief description of the systemic improvement>"
+- **Labels:** `["ai-generated-jira", "root-cause"]`
+- **Description:** structured description including:
+  - What reviewer feedback exposed the gap
+  - Which workflow phase introduced the gap
+  - What preventive fix is recommended
+  - Reference: "Root-cause analysis from <PARENT-TASK-ID> verification"
+
+Link the root-cause task to the parent task:
+
+jira.create_issue_link(type="Relates", inwardIssue=<root-cause-task-id>, outwardIssue=<parent-task-id>)
+
+### Step 5c – Idempotency Check
+
+Before creating a root-cause task, check the parent task's issue links for existing
+tasks whose descriptions contain "Root-cause analysis from <PARENT-TASK-ID>". If a
+root-cause task already exists for the same phase and the same defect, skip creation.
+
+Record the Root-Cause Investigation result:
+- **N/A** — no sub-tasks were created in Step 4 (nothing to investigate)
+- **DONE** — investigation completed and root-cause tasks created
+- **SKIPPED** — investigation was skipped (e.g., root cause could not be determined)
+
+## Step 6 – Scope Containment
 
 List all files changed in the PR:
 
@@ -149,7 +322,7 @@ Compare the list against the **Files to Modify** and **Files to Create** section
 
 Record each finding as PASS (all files match), WARN (out-of-scope files), or FAIL (required files missing).
 
-## Step 5 – Diff Size Check
+## Step 7 – Diff Size Check
 
 Get the diff statistics using the GitHub REST API:
 
@@ -159,7 +332,7 @@ gh api repos/<owner/repo>/pulls/<pr-number> --jq '.additions, .deletions, .chang
 
 This returns the number of additions, deletions, and changed files. Compare the total lines changed against the expected scope from the task. Flag a WARN if the diff size appears disproportionately large relative to the number of files and changes described in the task.
 
-## Step 6 – Commit Traceability
+## Step 8 – Commit Traceability
 
 Retrieve the commit list:
 
@@ -171,7 +344,7 @@ Verify that every commit message references the Jira issue ID (e.g. contains `<J
 
 Record PASS if all commits reference the issue, WARN if some do, FAIL if none do.
 
-## Step 7 – Sensitive Pattern Scan
+## Step 9 – Sensitive Pattern Scan
 
 Search the PR diff for patterns that should not be committed:
 
@@ -181,7 +354,7 @@ gh pr diff <pr-number> -R <owner/repo> | grep -iE '(password\s*=|secret|API_KEY|
 
 Record PASS if no matches are found, FAIL if any match is detected. List each match for the report.
 
-## Step 8 – CI Status
+## Step 10 – CI Status
 
 Check the status of CI checks on the PR:
 
@@ -191,7 +364,7 @@ gh pr checks <pr-number> -R <owner/repo>
 
 Report the status (pass/fail/pending) for each check. Record overall PASS if all checks pass, WARN if any are pending, FAIL if any have failed.
 
-## Step 9 – Acceptance Criteria Verification
+## Step 11 – Acceptance Criteria Verification
 
 For each criterion in the **Acceptance Criteria** section from the Jira task, verify it is satisfied by inspecting the code on the PR branch.
 
@@ -214,7 +387,7 @@ Repository Registry.
 
 Record PASS/FAIL for each individual criterion.
 
-## Step 10 – Verification Commands
+## Step 12 – Verification Commands
 
 If the task description includes a **Verification Commands** section, run each command and check the result against the expected outcome.
 
@@ -225,15 +398,17 @@ For each command:
 
 If no Verification Commands section exists in the task, skip this step and record N/A.
 
-## Step 11 – Generate Report
+## Step 13 – Generate Report
 
-Compile all findings from Steps 4–10 into a structured verification report:
+Compile all findings from Steps 4–12 into a structured verification report:
 
 ```
 ## Verification Report for <JIRA-ID>
 
 | Check | Result | Details |
 |-------|--------|---------|
+| Review Feedback | PASS/WARN/FAIL/N/A | <summary> |
+| Root-Cause Investigation | DONE/SKIPPED/N/A | <summary> |
 | Scope Containment | PASS/WARN/FAIL | <summary> |
 | Diff Size | PASS/WARN | <summary> |
 | Commit Traceability | PASS/WARN/FAIL | <summary> |
@@ -252,7 +427,11 @@ Overall result rules:
 - **WARN** — at least one WARN but no FAIL
 - **FAIL** — at least one FAIL
 
-## Step 12 – Post Report
+**Note:** The Root-Cause Investigation row is informational and does **NOT** affect the
+Overall result. Its value (DONE/SKIPPED/N/A) is reported for visibility but excluded
+from the PASS/WARN/FAIL determination.
+
+## Step 14 – Post Report
 
 ### Post to GitHub PR
 
@@ -299,10 +478,13 @@ The report is informational — a human reviewer decides whether to merge.
 
 ## Important Rules
 
-- This skill does **NOT** auto-merge. It only verifies and reports.
+- This skill does **NOT** modify code. It only verifies, creates sub-tasks, and reports.
+- This skill does **NOT** auto-merge. Merging is always a human decision.
 - Verification criteria come from the Jira task description, not from reading the diff.
 - Use the Serena instance specified in the project's **Repository Registry** (CLAUDE.md) for the target repo, with tools like `find_symbol`, `find_referencing_symbols`, `search_for_pattern`. Check the **Code Intelligence** section for per-instance limitations. Fall back to Read/Grep/Glob for repos without a Serena instance.
 - Use `gh` CLI for all GitHub interactions.
 - Include the Comment Footnote on all Jira comments.
+- Sub-tasks created from review feedback use labels `["ai-generated-jira", "review-feedback"]` and "Blocks" issue links.
+- Root-cause tasks use labels `["ai-generated-jira", "root-cause"]` and "Relates" issue links.
 - If the structured description is incomplete, ask the user rather than improvising.
 - Keep verification scoped to what the task describes — do not evaluate unrelated code.

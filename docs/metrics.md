@@ -145,11 +145,56 @@ authors before merge).
 
 ---
 
+### 7. Review Feedback Sub-tasks per Task
+
+**What it measures:** The number of review feedback sub-tasks created by
+`verify-pr` for a given implementation task. This measures first-pass
+implementation quality — fewer sub-tasks means the agent produced code that
+better satisfied reviewer expectations on the first attempt.
+
+**Data source:** Jira — issues with the label `review-feedback` that are
+sub-tasks of an `ai-generated-jira` task.
+
+**How to query:**
+
+```jql
+labels = "review-feedback" AND parent = <TASK-KEY>
+```
+
+Count the results to get the number of review feedback sub-tasks for that task.
+Track this over time per task to measure whether first-pass quality is improving.
+A declining trend indicates that upstream improvements (root-cause fixes) are
+taking effect.
+
+---
+
+### 8. Root-Cause Improvements Created
+
+**What it measures:** The number of root-cause improvement tasks created by
+`verify-pr`'s root-cause investigation. This measures systemic improvement
+opportunities identified — each root-cause task targets an upstream workflow
+phase to prevent similar defects in future tasks.
+
+**Data source:** Jira — issues with the label `root-cause` linked to
+`ai-generated-jira` tasks.
+
+**How to query:**
+
+```jql
+labels = "root-cause"
+```
+
+Count the results to get the total number of root-cause improvements created.
+Group by the workflow phase targeted (define-feature, plan-feature,
+implement-task, conventions) to understand where gaps most frequently originate.
+
+---
+
 ## Data Sources Summary
 
 | Source | What it provides |
 |--------|-----------------|
-| Jira issues | Task counts, timestamps (`created`), status transitions, labels (`ai-generated-jira`) |
+| Jira issues | Task counts, timestamps (`created`), status transitions, labels (`ai-generated-jira`, `review-feedback`, `root-cause`) |
 | Jira transitions | Status change history with timestamps |
 | GitHub PRs | PR creation time, merge status, commit authors |
 | Git trailers | `Assisted-by: Claude Code` identifies agent commits |
