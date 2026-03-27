@@ -161,12 +161,13 @@ classification replies; the enumeration itself is what discovers new threads tha
 arrived between runs (e.g., a bot posting a review after a fix commit was pushed).
 
 For each top-level thread, check whether any reply in the thread contains the text
-`"Classified as"`. Partition all threads into two lists:
+`"[sdlc-workflow/verify-pr] Classified as"`. Partition all threads into two lists:
 
-1. **Unclassified threads** — no reply contains `"Classified as"`. These are new or
-   previously missed threads. Forward them to Steps 4b–4f for classification and
-   action.
-2. **Already-classified threads** — at least one reply contains `"Classified as"`.
+1. **Unclassified threads** — no reply contains `"[sdlc-workflow/verify-pr] Classified as"`.
+   These are new or previously missed threads. Forward them to Steps 4b–4f for
+   classification and action.
+2. **Already-classified threads** — at least one reply contains
+   `"[sdlc-workflow/verify-pr] Classified as"`.
    These were processed by a prior run. Skip them (do not re-classify, re-reply,
    or create duplicate sub-tasks).
 
@@ -282,7 +283,7 @@ reasoning, so the decision is transparent to the reviewer.
 **For code change requests that resulted in a sub-task:**
 
 ```
-gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Classified as **code change request** — sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
+gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="[sdlc-workflow/verify-pr] Classified as **code change request** — sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
 ```
 
 **For suggestions upgraded to code change requests via convention check:**
@@ -290,23 +291,23 @@ gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f bod
 Include the convention evidence in the reply so the upgrade reasoning is transparent:
 
 ```
-gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Classified as **code change request** (upgraded from suggestion) — this matches project convention: <evidence>. Sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
+gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="[sdlc-workflow/verify-pr] Classified as **code change request** (upgraded from suggestion) — this matches project convention: <evidence>. Sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
 ```
 
-Example: `"Classified as **code change request** (upgraded from suggestion) — this matches project convention: 17 migrations use Index::create for FK columns; CONVENTIONS.md §Indexes documents this pattern. Sub-task [PROJ-456](https://redhat.atlassian.net/browse/PROJ-456) created to address this feedback."`
+Example: `"[sdlc-workflow/verify-pr] Classified as **code change request** (upgraded from suggestion) — this matches project convention: 17 migrations use Index::create for FK columns; CONVENTIONS.md §Indexes documents this pattern. Sub-task [PROJ-456](https://redhat.atlassian.net/browse/PROJ-456) created to address this feedback."`
 
 **For all other classifications (suggestion, question, nit):**
 
 Reply with a brief explanation of the classification and why no sub-task was created:
 
 ```
-gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="Classified as **<classification>** — <reasoning>. No sub-task created."
+gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="[sdlc-workflow/verify-pr] Classified as **<classification>** — <reasoning>. No sub-task created."
 ```
 
 Example replies:
-- `"Classified as **suggestion** — this proposes an alternative approach that is not documented in CONVENTIONS.md and has no established codebase pattern. No sub-task created."`
-- `"Classified as **question** — this asks for clarification; no code change needed. No sub-task created."`
-- `"Classified as **nit** — minor style feedback that does not affect correctness. No sub-task created."`
+- `"[sdlc-workflow/verify-pr] Classified as **suggestion** — this proposes an alternative approach that is not documented in CONVENTIONS.md and has no established codebase pattern. No sub-task created."`
+- `"[sdlc-workflow/verify-pr] Classified as **question** — this asks for clarification; no code change needed. No sub-task created."`
+- `"[sdlc-workflow/verify-pr] Classified as **nit** — minor style feedback that does not affect correctness. No sub-task created."`
 
 ### Step 4g – Idempotency Guarantees
 
