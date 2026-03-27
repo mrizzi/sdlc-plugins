@@ -236,6 +236,38 @@ proceeding with implementation.
 > - **Naming:** Service methods follow `verb_noun` pattern (e.g., `get_advisory`, `create_sbom`)
 > - **Options:** All parsers accept an `Options` struct as the last parameter
 
+### Test convention analysis
+
+When the task includes a **Test Requirements** section, extend the convention conformance
+analysis to cover test files. This ensures new tests follow the same assertion patterns
+and structural conventions used throughout the test suite.
+
+For each test file being created or modified:
+
+1. **Identify sibling test files**: find test files in the same directory or in sibling
+   modules that test similar functionality (e.g., other endpoint tests, other parser tests,
+   other component tests). Use `get_symbols_overview` on 2–3 sibling test files, or
+   Read/Glob if Serena is unavailable.
+2. **Examine test patterns**: inspect sibling test files for recurring patterns in:
+   - Assertion style (e.g., `assert_eq!` vs custom matchers, `expect().toBe()` vs `assert`)
+   - Response shape validation (e.g., checking status codes, body structure, field presence)
+   - Field-level checks (e.g., verifying specific field values, types, or constraints)
+   - Error case coverage (e.g., 404 responses, validation errors, unauthorized access)
+   - Test setup and teardown (e.g., fixture creation, mock patterns, database seeding)
+   - Test naming conventions (e.g., `test_<action>_<scenario>`, `it('should ...')`)
+   - Test organization (e.g., grouping by feature, by HTTP method, by success/failure)
+3. **Record test conventions**: output the discovered test conventions to the user in a
+   structured list alongside the production code conventions. This list serves as a
+   binding reference during test implementation in Step 7.
+
+> **Example output:**
+>
+> **Discovered test conventions (from sibling test analysis):**
+> - **Assertion style:** All endpoint tests in `tests/api/` use `assert_eq!(resp.status(), StatusCode::OK)` followed by body deserialization
+> - **Response validation:** List endpoint tests validate `total_count`, `items.len()`, and at least one item's key fields
+> - **Error cases:** All endpoint tests include a 404 test with `assert_eq!(resp.status(), StatusCode::NOT_FOUND)`
+> - **Test naming:** Tests follow `test_<endpoint>_<scenario>` pattern (e.g., `test_list_advisories_filtered`)
+
 ## Step 5 – Create Branch
 
 **Default flow (no Target PR):**
@@ -317,6 +349,11 @@ After implementing code changes, evaluate whether documentation needs updating:
 ## Step 7 – Write Tests
 
 Implement the tests described in Test Requirements.
+
+**Follow test conventions:** Apply the test conventions discovered during Step 4's test
+convention analysis. When writing new tests, match the assertion patterns, response
+validation style, error case coverage, and naming conventions found in sibling test files
+rather than inventing new approaches.
 
 Run tests to verify:
 
