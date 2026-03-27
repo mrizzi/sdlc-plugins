@@ -138,7 +138,7 @@ This step supports two use cases:
 
 Read PR review feedback and create tracked Jira sub-tasks for any required code changes.
 
-### Step 4a – Fetch Reviews and Comments
+### Step 4a – Fetch and Enumerate All Comment Threads
 
 Fetch all reviews and review comments from the PR:
 
@@ -151,6 +151,33 @@ Group comments into threads using the `in_reply_to_id` field. Each top-level com
 (no `in_reply_to_id`) starts a thread; replies are grouped under their parent.
 
 If no reviews or comments exist, record Review Feedback as N/A and skip to Step 5.
+
+#### Mandatory thread enumeration
+
+After grouping, **enumerate every top-level comment thread** — this enumeration must
+run on every invocation, regardless of whether previous runs have already processed
+some threads. Do **not** short-circuit this step based on the presence of prior
+classification replies; the enumeration itself is what discovers new threads that
+arrived between runs (e.g., a bot posting a review after a fix commit was pushed).
+
+For each top-level thread, check whether any reply in the thread contains the text
+`"Classified as"`. Partition all threads into two lists:
+
+1. **Unclassified threads** — no reply contains `"Classified as"`. These are new or
+   previously missed threads. Forward them to Steps 4b–4f for classification and
+   action.
+2. **Already-classified threads** — at least one reply contains `"Classified as"`.
+   These were processed by a prior run. Skip them (do not re-classify, re-reply,
+   or create duplicate sub-tasks).
+
+Log both lists so the run output shows the full enumeration result, making it
+auditable that all threads were considered.
+
+> **Why this matters:** Without mandatory enumeration, a re-run can check only for
+> existing classification replies and conclude "nothing to do" — completely missing
+> new top-level comments that arrived after the previous run. This caused a real
+> failure where a bot review comment posted after `/implement-task` pushed a fix
+> commit was missed by the subsequent `/verify-pr` re-run.
 
 ### Step 4b – Load Project Conventions
 
@@ -170,8 +197,8 @@ implicit conventions demonstrated by codebase usage patterns.
 
 ### Step 4c – Classify Feedback
 
-For each review comment thread, perform an initial classification based on the
-reviewer's language:
+For each **unclassified** review comment thread (from Step 4a's enumeration),
+perform an initial classification based on the reviewer's language:
 
 - **Code change request** — the reviewer asks for a code modification (e.g., "this should validate input", "add error handling here")
 - **Suggestion** — the reviewer proposes an alternative approach but does not require it
@@ -281,20 +308,28 @@ Example replies:
 - `"Classified as **question** — this asks for clarification; no code change needed. No sub-task created."`
 - `"Classified as **nit** — minor style feedback that does not affect correctness. No sub-task created."`
 
-### Step 4g – Idempotency Check
+### Step 4g – Idempotency Guarantees
 
-Before creating a sub-task (Step 4e) or posting a reply (Step 4f), check for existing
-skill activity:
+Idempotency is enforced **within** Step 4a's mandatory thread enumeration, not as a
+separate gate before Steps 4e/4f. The enumeration in Step 4a partitions threads into
+unclassified and already-classified lists — only unclassified threads proceed to
+Steps 4b–4f. This design ensures that:
 
-1. **Classification reply check:** Search the comment thread for an existing reply
-   containing `"Classified as"`. If found, skip posting a duplicate classification
-   reply for that thread. This covers both sub-task replies and non-sub-task
-   classification replies.
-2. **Sub-task check:** Check the parent task's issue links for existing sub-tasks
-   whose descriptions reference the same review comment. If found, skip creation.
+- Every top-level thread is always discovered (enumeration cannot be bypassed).
+- Already-processed threads are filtered out per-thread (no duplicate replies or
+  sub-tasks).
+- New threads arriving between runs (e.g., from a bot re-analyzing code after a
+  fix commit) are always detected because the enumeration is unconditional.
 
-This ensures re-running `/verify-pr` does not create duplicate sub-tasks or
-classification replies.
+**Additional sub-task deduplication:** Before creating a sub-task in Step 4e, also
+check the parent task's issue links for existing sub-tasks whose descriptions
+reference the same review comment. If a matching sub-task already exists, skip
+creation. This guards against edge cases where a classification reply was not
+posted (e.g., due to a network error) but the sub-task was created.
+
+Do **not** interpret this step as a top-level decision that can skip thread
+enumeration. The enumeration in Step 4a is always mandatory; this step only
+documents the idempotency mechanisms embedded within that enumeration.
 
 ### Step 4h – Record Result
 
