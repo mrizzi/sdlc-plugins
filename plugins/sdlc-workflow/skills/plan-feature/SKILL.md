@@ -230,66 +230,11 @@ Before generating task descriptions, read `docs/constraints.md` from the project
 - For tasks that create Jira issues: include the task template rules (§4).
 - For all tasks: include the skill scope rules (§1) that apply to the skill executing the task.
 
-Create implementation tasks for each unit of work. Each task description MUST follow this template exactly:
-
-### Task Description Template
-
-```
-## Repository
-<repository-name>
-
-## Description
-<What this task achieves and why>
-
-## Files to Modify
-- `path/to/file.ext` — <brief reason>
-
-## Files to Create
-- `path/to/new_file.ext` — <purpose>
-
-## API Changes
-- `GET /v2/endpoint` — NEW: <description>
-- `PUT /v2/endpoint/{id}` — MODIFY: <what changes in request/response>
-
-## Implementation Notes
-<Specific guidance: patterns to follow, existing code to reuse,
-key functions/structs/components to interact with.
-Reference actual file paths and symbol names found during repository analysis.>
-
-## Reuse Candidates
-- `path/to/file.ext::symbol_name` — <what it does and how it relates to this task>
-
-## Acceptance Criteria
-- [ ] Criterion 1
-- [ ] Criterion 2
-
-## Test Requirements
-- [ ] Test description 1
-- [ ] Test description 2
-
-## Verification Commands
-- `<command>` — <expected outcome>
-
-## Documentation Updates
-- `path/to/doc.md` — <what content to add or revise>
-
-## Dependencies
-- Depends on: Task N — <task title> (if any)
-```
+Create implementation tasks for each unit of work. Each task description MUST follow the template defined in [`shared/task-description-template.md`](../shared/task-description-template.md) exactly — read the template and rules from that file before generating tasks.
 
 ### Documentation task guidance
 
 When a feature introduces significant new behavior (new user-facing capabilities, new APIs, or major architectural changes), consider generating a **dedicated documentation-only task** to cover cross-cutting documentation updates that span multiple implementation tasks. Use this when the documentation work is substantial enough to warrant its own task rather than being spread across individual implementation tasks.
-
-### Template rules:
-- Omit sections that don't apply (e.g. no API Changes for a pure UI task, no Files to Create if only modifying, no Documentation Updates if no docs are impacted)
-- Repository must be a single repository per task
-- File paths must be real paths discovered during repository analysis (Step 3)
-- Implementation Notes must reference existing patterns, not abstract guidance — when reusable utilities, helpers, or shared modules were found during repository analysis, list them with file paths and symbol names so the implementer can reuse them instead of writing new code
-- Reuse Candidates is optional — include it when the duplication-risk scan (Step 3) found existing code (domain logic, components, utilities, or patterns) that overlaps with the planned changes, so the implementer has an explicit checklist of code to consider reusing before writing new code
-- Each task must be small enough for a single engineer to implement
-- Verification Commands are optional — include them when acceptance criteria can be verified by running a command against the built or running service
-- Documentation Updates is optional — include it when the task changes public APIs, configuration, setup steps, or architectural patterns, listing which docs need updating and what content to add or revise (not the actual doc content)
 
 ## Step 6 – Create Tasks in Jira
 

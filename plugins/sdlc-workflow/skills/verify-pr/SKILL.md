@@ -236,15 +236,11 @@ jira.create_issue with:
 - **Parent:** the current task's Jira issue ID
 - **Summary:** concise description of the required fix
 - **Labels:** `["ai-generated-jira", "review-feedback"]`
-- **Description:** structured task description following the plan-feature template:
+- **Description:** structured task description following the template defined in
+  [`shared/task-description-template.md`](../shared/task-description-template.md).
+  Include the applicable base sections plus these extension sections:
 
-  - **Repository** — same repository as the parent task
-  - **Description** — what the fix should achieve, referencing the reviewer's comment
   - **Review Context** — the original review comment text and PR file/line reference
-  - **Files to Modify** — files identified in Step 4d
-  - **Implementation Notes** — patterns to follow, referencing the parent task's code
-  - **Acceptance Criteria** — pass/fail checklist for the fix
-  - **Test Requirements** — tests to write or update for the fix
   - **Target PR** — the PR URL from Step 2 (so implement-task adds commits to the existing branch)
 
 After creating each sub-task, create a "Blocks" issue link from the sub-task to the parent task:
@@ -364,24 +360,45 @@ gap originated:
 - **convention gap** — task to update CONVENTIONS.md or project documentation to
   document the undocumented convention
 
+#### Action 1 – Create the task with a structured description
+
 jira.create_issue with:
 - **Summary:** "Root-cause: <brief description of the systemic improvement>"
 - **Labels:** `["ai-generated-jira", "root-cause"]`
-- **Description:** structured description including:
-  - What reviewer feedback exposed the gap
-  - Which workflow phase introduced the gap
-  - What preventive fix is recommended
-  - Reference: "Root-cause analysis from <PARENT-TASK-ID> verification"
+- **Description:** structured task description following the template defined in
+  [`shared/task-description-template.md`](../shared/task-description-template.md).
+  The description must be actionable — it describes the concrete change to the
+  skill, prompt, or convention that prevents the gap from recurring. Do **not**
+  include the root-cause analysis narrative in the description.
 
 Link the root-cause task to the parent task:
 
 jira.create_issue_link(type="Relates", inwardIssue=<root-cause-task-id>, outwardIssue=<parent-task-id>)
 
+#### Action 2 – Post the root-cause analysis as a comment
+
+After creating the task, post a Jira comment on the newly created root-cause task
+with the root-cause analysis narrative:
+
+jira.add_comment(<root-cause-task-id>, <analysis>)
+
+The comment must include:
+- What reviewer feedback exposed the gap
+- Which workflow phase introduced the gap (define-feature, plan-feature,
+  implement-task, or convention)
+- What preventive fix is recommended
+- Reference: "Root-cause analysis from <PARENT-TASK-ID> verification"
+
+Include the **Comment Footnote** at the end of the comment (see the Comment Footnote
+section at the top of this skill for the required ADF format).
+
 ### Step 5c – Idempotency Check
 
-Before creating a root-cause task, check the parent task's issue links for existing
-tasks whose descriptions contain "Root-cause analysis from <PARENT-TASK-ID>". If a
-root-cause task already exists for the same phase and the same defect, skip creation.
+Before creating a root-cause task (Step 5b), check for existing root-cause tasks
+linked to the parent task. For each linked task with label `root-cause`, fetch its
+comments and search for a comment containing "Root-cause analysis from
+<PARENT-TASK-ID>". If a root-cause task already exists for the same phase and the
+same defect, skip creation.
 
 Record the Root-Cause Investigation result:
 - **N/A** — no sub-tasks were created in Step 4 (nothing to investigate)
