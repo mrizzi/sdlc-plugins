@@ -362,7 +362,39 @@ The sub-agent receives these inputs:
 4. **Relevant code** — the files on the PR branch related to each flagged defect
 5. **Project CONVENTIONS.md** — if it exists in the repository root
 
-The sub-agent must answer three questions, tracing through the full workflow chain:
+#### Classification gate — universality test
+
+Before attributing any defect to a skill phase, the sub-agent must classify each
+flagged defect using a universality test. This prevents skill drift — embedding
+repository-specific knowledge into general-purpose skills. Skills should contain
+methods (how to analyze), not facts (what patterns to look for). Facts belong in
+CONVENTIONS.md.
+
+For each reviewer-flagged defect, ask:
+
+> "Would the knowledge required to prevent this defect apply to ANY repository,
+> or only to repositories with this specific framework/pattern/architecture?"
+
+- **If repo-specific** → proceed to the **Convention Check** below.
+- **If universal** → proceed to the **Skill Phase Investigation** below.
+
+#### Convention Check (for repo-specific knowledge)
+
+When the universality test classifies a defect as repo-specific, determine whether
+the pattern is documented:
+
+1. **Is the pattern documented in CONVENTIONS.md?**
+   - **Yes, but the skill didn't follow it** → classify as **skill gap** (the
+     implement-task skill failed to read or apply documented conventions). Proceed
+     to Skill Phase Investigation question (c) to determine why.
+   - **No** → classify as **convention gap**. The root cause is the missing
+     documentation, not a skill deficiency. Create a task to document the pattern
+     in CONVENTIONS.md (see Step 5b).
+
+#### Skill Phase Investigation (for universal knowledge)
+
+For defects whose prevention requires universally applicable analysis techniques
+(not repo-specific patterns), trace through the full workflow chain:
 
 **(a) Was the Feature description sufficient?** (define-feature phase)
 Did the Feature specify the requirement that the reviewer flagged? If the Feature
@@ -379,8 +411,13 @@ Did the implementation miss conventions, sibling patterns, or explicit task guid
 If the task was correct but the implementation deviated, the gap originated at the
 implement-task phase.
 
-If none of the above phases explain the gap, check whether the project's CONVENTIONS.md
-(or lack thereof) is the root cause — the convention may not be documented.
+#### Decision matrix
+
+| Knowledge type | In CONVENTIONS.md? | Classification |
+|---|---|---|
+| Repo-specific pattern | Yes, skill didn't follow | Skill gap (failed to read conventions) |
+| Repo-specific pattern | No | Convention gap |
+| Universal technique | N/A | Skill gap (investigate which phase) |
 
 ### Step 5b – Create Root-Cause Tasks
 
