@@ -342,14 +342,18 @@ Record the Review Feedback check result:
 
 ## Step 5 – Root-Cause Investigation
 
-Investigate the root cause of each reviewer-flagged defect to identify systemic
-improvements that prevent similar mistakes in future tasks.
+Investigate the root cause of each defect — whether flagged by a reviewer (Step 4)
+or by a CI failure (Step 10) — to identify systemic improvements that prevent
+similar mistakes in future tasks.
 
 ### Step 5a – Sub-agent Investigation
 
-If Step 4 created any sub-tasks, spawn a sub-agent to investigate the root cause of
-each code change request. If no sub-tasks were created, record Root-Cause Investigation
-as N/A and skip to Step 6.
+If Step 4 or Step 10 created any sub-tasks, spawn a sub-agent to investigate the root
+cause of each defect. If no sub-tasks were created by either step, record Root-Cause
+Investigation as N/A and skip to Step 6.
+
+The sub-agent investigates both reviewer-flagged defects (from Step 4) and CI failures
+(from Step 10) using the same classification and investigation process below.
 
 The sub-agent receives these inputs:
 1. **Parent Feature description** — fetched by following the "incorporates" issue link
@@ -474,7 +478,7 @@ comments and search for a comment containing "Root-cause analysis from
 same defect, skip creation.
 
 Record the Root-Cause Investigation result:
-- **N/A** — no sub-tasks were created in Step 4 (nothing to investigate)
+- **N/A** — no sub-tasks were created in Step 4 or Step 10 (nothing to investigate)
 - **DONE** — investigation completed and root-cause tasks created
 - **SKIPPED** — investigation was skipped (e.g., root cause could not be determined)
 
@@ -533,7 +537,75 @@ Check the status of CI checks on the PR:
 gh pr checks <pr-number> -R <owner/repo>
 ```
 
-Report the status (pass/fail/pending) for each check. Record overall PASS if all checks pass, WARN if any are pending, FAIL if any have failed.
+Report the status (pass/fail/pending) for each check.
+
+If all checks pass, record CI Status as PASS and skip to Step 11.
+If any checks are pending, record CI Status as WARN and skip to Step 11.
+If any checks have failed, proceed to Steps 10a–10e below.
+
+### Step 10a – Fetch Failure Logs
+
+For each failed CI check, fetch the failure logs:
+
+```
+gh run view <run-id> --log-failed -R <owner/repo>
+```
+
+Extract the `run-id` from the failed check's URL or use:
+
+```
+gh run list --branch <pr-branch> --status failure --limit 5 -R <owner/repo>
+```
+
+Capture the relevant error output for analysis in Step 10b.
+
+### Step 10b – Analyze Failures
+
+For each failed CI check, analyze the failure log to determine:
+- **What failed** — the specific test, build step, or lint rule that failed
+- **Why it failed** — the root error message or assertion failure
+- **What fix is needed** — the concrete code change required to resolve the failure
+
+Use the Serena instance for the task's repository (from the **Repository Registry**
+in CLAUDE.md) or fall back to Read/Grep/Glob to inspect the relevant source files
+and understand the failure context.
+
+### Step 10c – Idempotency Check
+
+Before creating sub-tasks, check for existing CI-failure sub-tasks linked to the
+parent task. For each linked sub-task with labels `["ai-generated-jira", "review-feedback"]`,
+check whether its description references the same CI check name or failure. If a
+matching sub-task already exists, skip creation for that failure.
+
+### Step 10d – Create Sub-tasks
+
+For each CI failure that requires a fix (and has no existing sub-task per Step 10c),
+create a Jira sub-task:
+
+jira.create_issue with:
+- **Parent:** the current task's Jira issue ID
+- **Summary:** concise description of the CI fix needed (e.g., "Fix failing lint check: unused import in handler.rs")
+- **Labels:** `["ai-generated-jira", "review-feedback"]`
+- **Description:** structured task description following the template defined in
+  [`shared/task-description-template.md`](../shared/task-description-template.md).
+  Include the applicable base sections plus these extension sections:
+
+  - **Review Context** — the CI check name, failure log excerpt, and error summary
+  - **Target PR** — the PR URL from Step 2 (so implement-task adds commits to the existing branch)
+
+After creating each sub-task, create a "Blocks" issue link from the sub-task to the parent task:
+
+jira.create_issue_link(type="Blocks", inwardIssue=<sub-task-id>, outwardIssue=<parent-task-id>)
+
+### Step 10e – Record Result
+
+Record the CI Status check result:
+- **PASS** — all CI checks pass
+- **WARN** — some checks are pending, none failed; or CI failures exist but sub-task creation failed
+- **FAIL** — CI checks failed; sub-tasks were created to address failures
+
+Also record the list of CI-failure sub-tasks created in this step. These sub-tasks
+feed into Step 5 (Root-Cause Investigation) alongside any sub-tasks from Step 4.
 
 ## Step 11 – Acceptance Criteria Verification
 
@@ -571,7 +643,7 @@ If no Verification Commands section exists in the task, skip this step and recor
 
 ## Step 13 – Generate Report
 
-Compile all findings from Steps 4–12 into a structured verification report:
+Compile all findings from Steps 4–12 (including Step 10's CI failure sub-tasks) into a structured verification report:
 
 ```
 ## Verification Report for <JIRA-ID> (commit <short-sha>)
@@ -660,7 +732,7 @@ The report is informational — a human reviewer decides whether to merge.
 - Use the Serena instance specified in the project's **Repository Registry** (CLAUDE.md) for the target repo, with tools like `find_symbol`, `find_referencing_symbols`, `search_for_pattern`. Check the **Code Intelligence** section for per-instance limitations. Fall back to Read/Grep/Glob for repos without a Serena instance.
 - Use `gh` CLI for all GitHub interactions.
 - Include the Comment Footnote on all Jira comments.
-- Sub-tasks created from review feedback use labels `["ai-generated-jira", "review-feedback"]` and "Blocks" issue links.
+- Sub-tasks created from review feedback or CI failures use labels `["ai-generated-jira", "review-feedback"]` and "Blocks" issue links.
 - Root-cause tasks use labels `["ai-generated-jira", "root-cause"]` and "Relates" issue links.
 - If the structured description is incomplete, ask the user rather than improvising.
 - Keep verification scoped to what the task describes — do not evaluate unrelated code.
