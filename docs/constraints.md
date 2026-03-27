@@ -61,6 +61,7 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 4.8 | Every task created in Jira MUST include the `ai-generated-jira` label. | `plan-feature/SKILL.md` — Step 6a |
 | 4.9 | Tasks that change public APIs, configuration, setup steps, or architectural patterns SHOULD include an optional **Documentation Updates** section listing which docs need updating and what content to add or revise. | `plan-feature/SKILL.md` — Template rules |
 | 4.10 | Tasks SHOULD include a **Reuse Candidates** section when overlapping code (domain logic, components, utilities, or patterns) was found during repository analysis, listing file paths, symbol names, and relevance descriptions. | `plan-feature/SKILL.md` — Task Description Template |
+| 4.11 | When a task's scope matches a convention from CONVENTIONS.md (e.g., migrations with FK columns requiring indexes), the Implementation Notes MUST include explicit guidance referencing the convention by section name with a concrete example file. | `plan-feature/SKILL.md` — Step 5 (Convention-aware task enrichment) |
 
 ---
 
@@ -83,7 +84,7 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 
 Each constraint above references its source. The full source files are:
 
-- `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Task Description Template (§4.1–4.10)
+- `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Task Description Template (§4.1–4.10), Step 5 Convention-aware task enrichment (§4.11)
 - `plugins/sdlc-workflow/skills/implement-task/SKILL.md` — Important Rules (§1.4–1.6, §5.1–5.3), Step 4/6/9 (§5.4), Step 5 (§1.15, §3.1), Step 9 (§2.1–2.3, §5.6–5.8), Step 10 (§3.2)
 - `plugins/sdlc-workflow/skills/verify-pr/SKILL.md` — Step 4 (§1.10, §1.12), Important Rules (§1.11, §1.13), Step 5b (§1.14)
 - `plugins/sdlc-workflow/skills/define-feature/SKILL.md` — Guardrails (§1.7–1.8), Important Rules (§1.9)

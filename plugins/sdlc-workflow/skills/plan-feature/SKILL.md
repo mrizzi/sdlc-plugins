@@ -236,6 +236,39 @@ Create implementation tasks for each unit of work. Each task description MUST fo
 
 When a feature introduces significant new behavior (new user-facing capabilities, new APIs, or major architectural changes), consider generating a **dedicated documentation-only task** to cover cross-cutting documentation updates that span multiple implementation tasks. Use this when the documentation work is substantial enough to warrant its own task rather than being spread across individual implementation tasks.
 
+### Convention-aware task enrichment
+
+After drafting each task's Implementation Notes, cross-reference the conventions discovered
+during the CONVENTIONS.md lookup (Step 3) with the task's scope. If the task touches an area
+covered by a documented convention, include explicit guidance in the Implementation Notes
+referencing the convention by section name and describing the required action.
+
+This ensures that conventions are not merely discovered but actively propagated into every
+task where they apply — preventing gaps where implement-task follows the task faithfully but
+misses a convention that was never mentioned.
+
+**How to apply:**
+
+1. For each task, review its Files to Modify, Files to Create, and Description against the
+   conventions collected in Step 3.
+2. When a match is found, add a line to Implementation Notes of the form:
+   `"Per CONVENTIONS.md §<Section Name>: <specific action required>"`
+3. Include a reference to an existing file that demonstrates the convention in practice,
+   so the implementer has a concrete example to follow.
+
+**Example — database migrations with foreign keys:**
+
+When a task creates or modifies a database migration that defines foreign key columns,
+include guidance such as:
+
+> Per CONVENTIONS.md §Migration Patterns: add `Index::create()` for all FK columns.
+> See `migration/m0001200_source_document_fk_indexes.rs` for the established pattern.
+
+This applies equally to any convention pattern — error handling strategies, naming rules,
+test structure, API design patterns, logging conventions, etc. The goal is to make every
+relevant convention explicit in the task description rather than relying on the implementer
+to independently discover and apply it.
+
 ## Step 6 – Create Tasks in Jira
 
 ### 6a – Create the tasks
