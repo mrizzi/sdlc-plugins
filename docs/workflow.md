@@ -26,6 +26,7 @@ flowchart TD
         verify["/verify-pr PROJ-231"]
         has_subtasks{"Review feedback\nsub-tasks?"}
         implement_fix["/implement-task PROJ-232\n(Target PR flow)"]
+        root_cause["/implement-task PROJ-233\n(Root-cause fix)"]
     end
 
     setup --> define
@@ -36,8 +37,10 @@ flowchart TD
     verify_choice -->|"Author\n(self-verification)"| verify
     verify_choice -->|"Reviewer / CI\n(audit)"| verify
     verify -->|"Report posted to\nGitHub PR + Jira"| has_subtasks
-    has_subtasks -->|"Yes — sub-tasks\ncreated in Jira"| implement_fix
+    has_subtasks -->|"Yes — review-feedback\nsub-tasks created"| implement_fix
+    has_subtasks -->|"Yes — root-cause\ntasks created"| root_cause
     implement_fix -->|"Commits added\nto existing PR"| verify
+    root_cause -->|"New branch + PR\n(independent task)"| implement
     has_subtasks -->|"No"| merge_decision{"Human decides\nto merge"}
     merge_decision -->|Merged| done["Done"]
 
@@ -45,7 +48,7 @@ flowchart TD
     classDef human fill:#f5a623,stroke:#c47d10,color:#fff
     classDef state fill:#7ed321,stroke:#5a9e18,color:#fff
 
-    class setup,define,plan,implement,verify,implement_fix skill
+    class setup,define,plan,implement,verify,implement_fix,root_cause skill
     class human_review,verify_choice,has_subtasks,merge_decision human
     class done state
 ```
