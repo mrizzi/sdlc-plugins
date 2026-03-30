@@ -37,7 +37,7 @@ flowchart TD
     verify_choice -->|"Author\n(self-verification)"| verify
     verify_choice -->|"Reviewer / CI\n(audit)"| verify
     verify -->|"Report posted to\nGitHub PR + Jira"| has_subtasks
-    has_subtasks -->|"Yes — review-feedback\nsub-tasks created"| implement_fix
+    has_subtasks -->|"Yes — review feedback\nsub-tasks created"| implement_fix
     has_subtasks -->|"Yes — root-cause\ntasks created"| root_cause
     implement_fix -->|"Commits added\nto existing PR"| verify
     root_cause -->|"New branch + PR\n(independent task)"| implement
