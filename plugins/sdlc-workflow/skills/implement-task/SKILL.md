@@ -470,7 +470,43 @@ parity with sibling implementations.
    intentional (the new code deliberately omits a capability), ask the user to confirm
    before proceeding.
 
-Output the contract verification and sibling parity results to the user before proceeding.
+#### Caller-site parity
+
+When the implementation creates or modifies code that **calls** a shared abstraction
+(e.g., a mutation hook, API client method, service function, event emitter), verify
+that the call site follows the same patterns as existing callers of that abstraction.
+
+Sibling parity (above) checks the *definition* of shared code; caller-site parity
+checks how *consumers* invoke it. This catches anti-patterns introduced at the call
+site — such as `window.location.reload()` in a mutation success callback when no
+other caller in the codebase uses that pattern.
+
+1. **Identify shared abstractions called**: for each new or modified call site, determine
+   the shared abstraction being invoked (e.g., a custom hook like `useDeleteSbomMutation`,
+   an API client method like `apiClient.post()`, a service function like `notifyUser()`).
+2. **Find existing callers**: use Grep or Serena's `find_referencing_symbols` /
+   `search_for_pattern` to locate all other call sites of the same abstraction in the
+   codebase.
+3. **Compare call-site patterns**: for each existing caller, compare:
+   - Success/completion handling (e.g., what happens in `onSuccess`, `.then()`, or
+     after `await` — do callers use router navigation, cache invalidation, toast
+     notifications, or state updates?)
+   - Error handling (e.g., `onError`, `.catch()` — do callers show error toasts,
+     log errors, or retry?)
+   - Side effects (e.g., do callers trigger page reloads, modify global state, or
+     dispatch events? Are these side effects consistent across callers?)
+   - Parameter patterns (e.g., do callers pass the same option shapes, use the same
+     defaults?)
+4. **Flag caller-site anomalies**: if the new code uses a pattern that **no existing
+   caller** uses (e.g., `window.location.reload()` when all other callers use
+   `queryClient.invalidateQueries()`), flag it as a potential anti-pattern. State
+   what the new code does, what existing callers do instead, and how many existing
+   callers were checked.
+5. **Fix or confirm**: if anomalies are found, align the new code with the established
+   caller pattern before proceeding. If the deviation is intentional, ask the user to
+   confirm before proceeding.
+
+Output the contract verification, sibling parity, and caller-site parity results to the user before proceeding.
 
 > **Example output:**
 >
@@ -480,6 +516,11 @@ Output the contract verification and sibling parity results to the user before p
 >   - Retry logic ✓ (all siblings use exponential backoff)
 >   - Logging ✗ — `StorageProvider` missing `info!()` on successful operations — **GAP**
 >   - Config options ✓ (all accept `ProviderConfig`)
+> - Caller-site parity for `useDeleteSbomMutation`:
+>   - 3 existing callers found: `SbomList.tsx`, `SbomDetail.tsx`, `SbomActions.tsx`
+>   - Success handling: all use `queryClient.invalidateQueries()` + toast notification
+>   - New code uses `window.location.reload()` — **ANOMALY** (0 of 3 callers use this pattern)
+>   - Error handling ✓ (all callers including new code use `onError` toast)
 
 ## Step 10 – Commit and Push
 
