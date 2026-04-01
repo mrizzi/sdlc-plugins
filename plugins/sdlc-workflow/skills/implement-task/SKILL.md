@@ -335,6 +335,17 @@ For API Changes:
 - Implement endpoint logic
 - Update OpenAPI spec if applicable
 
+### Code quality practices
+
+After implementing code changes, verify the following quality practices:
+
+- **Documentation on new symbols**: every new struct, class, type, interface, enum, and
+  public/exported function must have a documentation comment using the language's
+  convention. One line describing what it is and what it's for is sufficient. For
+  functions where the name alone does not convey the full intent, add a brief
+  explanation of behavior, parameters, or return value so that human reviewers can
+  understand the code without reading the implementation.
+
 ### Documentation impact
 
 After implementing code changes, evaluate whether documentation needs updating:
@@ -354,6 +365,12 @@ Implement the tests described in Test Requirements.
 convention analysis. When writing new tests, match the assertion patterns, response
 validation style, error case coverage, and naming conventions found in sibling test files
 rather than inventing new approaches.
+
+**Prefer value-based assertions over length-only checks:** When verifying collections or
+response data, assert on the actual values — not just the count. Assert on specific items
+or key fields so that test failures reveal *what* changed, not just *how many*. Length
+checks alone hide regressions behind a passing count and prevent subsequent assertions
+from running.
 
 Run tests to verify:
 
