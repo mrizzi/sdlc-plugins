@@ -380,7 +380,33 @@ For each reviewer-flagged defect, ask:
 > or only to repositories with this specific framework/pattern/architecture?"
 
 - **If repo-specific** → proceed to the **Convention Check** below.
-- **If universal** → proceed to the **Skill Phase Investigation** below.
+- **If universal** → apply the **Method-vs-Fact Test** below.
+
+#### Method-vs-Fact Test (secondary discriminator for universal knowledge)
+
+When the universality test classifies a defect as "universal", apply a secondary
+test to determine whether the corrective guidance is a method or a fact:
+
+> "Can the guidance be expressed purely as a method — 'check for X', 'verify Y' —
+> without referencing language-specific APIs, types, syntax, or idioms? Or does
+> it require naming specific APIs, types, or idioms to be actionable?"
+
+- **Method** (language-agnostic analysis technique) → classify as **skill gap**.
+  Proceed to the **Skill Phase Investigation** below.
+- **Fact** (requires language-specific APIs, types, or idioms) → classify as
+  **convention gap**. The guidance belongs in the project's CONVENTIONS.md, not
+  in a general-purpose skill. Create a task to document the pattern in
+  CONVENTIONS.md (see Step 5b).
+
+> **Examples:**
+> - "Every new public symbol must have a documentation comment" → **method**
+>   (applies to any language, no specific API needed) → skill gap
+> - "Use `Vec<_>` for type inference in collect chains" → **fact**
+>   (Rust-specific syntax) → convention gap
+> - "Pre-allocate collections with `HashMap::with_capacity(n)`" → **fact**
+>   (Rust-specific API) → convention gap
+> - "Assert on specific values, not just collection length" → **method**
+>   (applies to any test framework) → skill gap
 
 #### Convention Check (for repo-specific knowledge)
 
@@ -417,11 +443,12 @@ implement-task phase.
 
 #### Decision matrix
 
-| Knowledge type | In CONVENTIONS.md? | Classification |
-|---|---|---|
-| Repo-specific pattern | Yes, skill didn't follow | Skill gap (failed to read conventions) |
-| Repo-specific pattern | No | Convention gap |
-| Universal technique | N/A | Skill gap (investigate which phase) |
+| Knowledge type | Method or Fact? | In CONVENTIONS.md? | Classification |
+|---|---|---|---|
+| Repo-specific pattern | N/A | Yes, skill didn't follow | Skill gap (failed to read conventions) |
+| Repo-specific pattern | N/A | No | Convention gap → document in CONVENTIONS.md |
+| Universal | Method (language-agnostic) | N/A | Skill gap (investigate which phase) |
+| Universal | Fact (language-specific) | N/A | Convention gap → document in CONVENTIONS.md |
 
 ### Step 5b – Create Root-Cause Tasks
 
