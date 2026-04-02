@@ -185,6 +185,39 @@ For each target repository, identify existing documentation files that may be im
 
 Use Glob, `list_dir`, or `search_for_pattern` to locate these files. Record them for use in Step 5 when determining whether tasks need a **Documentation Updates** section.
 
+### Backend API discovery for manual REST calls
+
+When a feature involves a frontend repository making REST calls to a backend API — and
+the auto-generated API client is not yet available or does not cover the needed endpoints —
+perform explicit backend API discovery to prevent path and shape mismatches.
+
+1. **Identify cross-repo API dependencies**: from the feature description and UI analysis,
+   determine which backend endpoints the frontend will need to call. Look for data-fetching
+   requirements, form submissions, and CRUD operations implied by the UI design.
+2. **Look up the backend Serena instance**: consult the **Repository Registry** in the
+   project's CLAUDE.md to find the Serena Instance for the backend repository. Tools are
+   called as `mcp__<serena-instance>__<tool>`.
+3. **Discover actual endpoints**: use `search_for_pattern` or `find_symbol` on the backend
+   repo to locate route definitions, controller methods, or handler functions for the
+   needed endpoints. Extract:
+   - Exact endpoint paths (e.g., `/api/v2/sboms`, `/api/v1/advisories/{id}`)
+   - HTTP methods (GET, POST, PUT, DELETE)
+   - Request body schemas or parameter types
+   - Response body shapes (struct definitions, serialization types)
+4. **Record API contracts**: document each discovered endpoint with its path, method,
+   request shape, and response shape. These will be included verbatim in the
+   **Implementation Notes** of frontend tasks generated in Step 5.
+
+If no Serena instance is available for the backend repository, use Grep, Glob, and Read
+on the backend repo to locate route definitions and type definitions.
+
+> **Example output:**
+>
+> **Discovered backend API contracts:**
+> - `GET /api/v2/sboms` — returns `{ items: Sbom[], total: number }` (see `SbomSummary` struct in `modules/fundamental/src/sbom/model/summary.rs`)
+> - `POST /api/v2/sbom` — accepts multipart upload, returns `IngestResult` (see `upload` handler in `modules/fundamental/src/sbom/endpoints/mod.rs`)
+> - `GET /api/v2/sbom/{id}` — returns `SbomDetails` (see `get` handler)
+
 ### Goals
 
 - Identify modules related to the feature
@@ -268,6 +301,37 @@ This applies equally to any convention pattern — error handling strategies, na
 test structure, API design patterns, logging conventions, etc. The goal is to make every
 relevant convention explicit in the task description rather than relying on the implementer
 to independently discover and apply it.
+
+### Backend API contract enrichment for manual REST calls
+
+When a frontend task requires manual REST calls (i.e., the auto-generated API client does
+not cover the needed endpoints), enrich the task description with the API contracts
+discovered during Step 3's backend API discovery.
+
+For each such task:
+
+1. Add a dedicated subsection to **Implementation Notes** titled "Backend API contracts"
+   that lists every endpoint the task must call, including:
+   - Exact path and HTTP method
+   - Request body shape or query parameters (with types)
+   - Response body shape (with field names and types)
+   - A reference to the backend source file where the endpoint is defined
+2. Include a note in Implementation Notes instructing the implementer to verify these
+   contracts against the backend repo at implementation time using the cross-repo API
+   verification step in implement-task.
+
+This ensures that frontend tasks carry precise, verified API details rather than
+assumptions — preventing mismatches between the frontend call and the actual backend
+endpoint.
+
+> **Example Implementation Notes entry:**
+>
+> **Backend API contracts:**
+> - `GET /api/v2/sboms?offset={offset}&limit={limit}` — response shape: `{ items: SbomSummary[], total: number }` (see `modules/fundamental/src/sbom/endpoints/mod.rs:list`)
+> - `DELETE /api/v2/sbom/{id}` — response: 204 No Content (see `modules/fundamental/src/sbom/endpoints/mod.rs:delete`)
+>
+> Verify these contracts against the backend repo during implementation using the
+> implement-task cross-repo API verification step.
 
 ## Step 6 – Create Tasks in Jira
 

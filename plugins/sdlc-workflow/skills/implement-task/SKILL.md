@@ -335,6 +335,48 @@ For API Changes:
 - Implement endpoint logic
 - Update OpenAPI spec if applicable
 
+### Cross-repo API contract verification
+
+When the task involves writing manual REST calls — HTTP requests written directly using
+`fetch()`, `axios`, or similar rather than an auto-generated API client — verify the
+endpoint contract against the backend repository before writing the call.
+
+1. **Detect manual REST calls**: review the task's Description and Implementation Notes
+   for indicators of manual REST calls. Look for:
+   - Explicit endpoint paths (e.g., `/api/v2/sboms`)
+   - References to `fetch()`, `axios`, or HTTP client usage
+   - Notes stating the auto-generated client is not yet available
+   - A "Backend API contracts" subsection in Implementation Notes (added by plan-feature)
+2. **Look up the backend Serena instance**: consult the **Repository Registry** in the
+   project's CLAUDE.md to find the Serena Instance for the backend repository that serves
+   the API. Tools are called as `mcp__<serena-instance>__<tool>`.
+3. **Verify each endpoint**: for every endpoint the task will call, use the backend
+   Serena instance (or Grep/Read as fallback) to confirm:
+   - The endpoint path exists in route definitions
+   - The HTTP method matches
+   - The request body shape or query parameters match what the frontend will send
+   - The response body shape matches what the frontend will consume (field names, types,
+     nesting structure)
+4. **Flag mismatches**: if any endpoint path, method, or shape does not match the backend
+   implementation, stop and report the discrepancy to the user before writing the
+   frontend code. Include:
+   - What the task description or Implementation Notes specify
+   - What the backend actually implements
+   - The backend source file and line where the endpoint is defined
+5. **Proceed with verified contracts**: once all endpoints are confirmed, use the verified
+   paths and shapes when writing the manual REST calls. Include a code comment referencing
+   the backend source file for each manual call, so future maintainers can trace the
+   contract origin.
+
+If no Serena instance is available for the backend repository, use Grep, Glob, and Read
+on the backend repo to perform the same verification.
+
+> **Example output:**
+>
+> **Cross-repo API verification results:**
+> - `GET /api/v2/sboms` — path ✓, method ✓, response shape ✓ (matches `SbomSummary` in `modules/fundamental/src/sbom/model/summary.rs`)
+> - `DELETE /api/v2/sbom/{id}` — path ✗ — **MISMATCH** (backend uses `/api/v2/sboms/{id}` with trailing 's', see `modules/fundamental/src/sbom/endpoints/mod.rs:48`)
+
 ### Code quality practices
 
 After implementing code changes, verify the following quality practices:
