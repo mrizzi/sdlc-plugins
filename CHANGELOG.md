@@ -5,6 +5,13 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.8] - 2026-04-02
+
+### Changed
+
+- Added cross-module shared entity analysis to implement-task sibling parity
+- Added cross-repo API contract verification for manual REST calls
+
 ## [0.5.7] - 2026-04-01
 
 ### Changed
