@@ -529,6 +529,44 @@ parity with sibling implementations.
    intentional (the new code deliberately omits a capability), ask the user to confirm
    before proceeding.
 
+#### Cross-module shared entity analysis
+
+Sibling parity (above) compares files in the same directory or module. When the
+implementation inserts into, updates, or deletes from a shared database entity
+(table, collection, or document store) that is used by multiple modules, extend
+the analysis across module boundaries to detect pattern inconsistencies.
+
+1. **Identify shared entities**: for each database operation in the new or modified
+   code (e.g., `insert()`, `update()`, `delete()`, ORM save/create calls, raw SQL),
+   determine the target entity (table name, model class, or schema object).
+2. **Search cross-module**: use Serena's `search_for_pattern` (or Grep as fallback)
+   to find all other modules that interact with the same entity. Look for:
+   - Insert/upsert operations on the same table or model
+   - Update or delete operations that reference the same entity
+   - Schema definitions or migrations for the entity
+3. **Compare patterns**: for each cross-module usage found, compare:
+   - Transaction handling (e.g., nested/savepoint transactions vs. bare operations)
+   - Constraint handling (e.g., duplicate-key/conflict handling, ON CONFLICT clauses,
+     try/catch around unique violations)
+   - Error handling (e.g., how constraint violations are caught and reported)
+   - Data validation (e.g., pre-insert checks, foreign key verification)
+   - Locking strategies (e.g., SELECT FOR UPDATE, advisory locks)
+4. **Flag cross-module anomalies**: if the new code uses a pattern that differs from
+   how other modules interact with the same entity, flag it as a potential anomaly.
+   State what the new code does, what the other module(s) do instead, and which
+   files contain the differing pattern.
+5. **Fix or confirm**: if anomalies are found, align the new code with the
+   established cross-module pattern before proceeding. If the deviation is
+   intentional, ask the user to confirm before proceeding.
+
+> **Example output:**
+>
+> **Cross-module shared entity analysis results:**
+> - Entity `source_document` — 2 modules interact:
+>   - `ingestor/graph/mod.rs`: uses nested transaction with `ON CONFLICT DO UPDATE` for duplicate-key handling
+>   - `risk_assessment/service/mod.rs` (new code): uses plain `insert()` with no conflict handling — **ANOMALY**
+>   - Recommendation: adopt the ingestor's `ON CONFLICT` pattern to handle duplicate inserts gracefully
+
 #### Caller-site parity
 
 When the implementation creates or modifies code that **calls** a shared abstraction
@@ -565,7 +603,7 @@ other caller in the codebase uses that pattern.
    caller pattern before proceeding. If the deviation is intentional, ask the user to
    confirm before proceeding.
 
-Output the contract verification, sibling parity, and caller-site parity results to the user before proceeding.
+Output the contract verification, sibling parity, cross-module shared entity, and caller-site parity results to the user before proceeding.
 
 > **Example output:**
 >
