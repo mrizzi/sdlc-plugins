@@ -357,6 +357,8 @@ endpoint contract against the backend repository before writing the call.
    - The request body shape or query parameters match what the frontend will send
    - The response body shape matches what the frontend will consume (field names, types,
      nesting structure)
+   - The sort order of list responses, when the frontend depends on positional selection
+     (see step 6 below for the detailed verification process)
 4. **Flag mismatches**: if any endpoint path, method, or shape does not match the backend
    implementation, stop and report the discrepancy to the user before writing the
    frontend code. Include:
@@ -367,6 +369,31 @@ endpoint contract against the backend repository before writing the call.
    paths and shapes when writing the manual REST calls. Include a code comment referencing
    the backend source file for each manual call, so future maintainers can trace the
    contract origin.
+6. **Verify sort order for list endpoints**: when the frontend consumes a list endpoint
+   and selects a specific element by position (e.g., `items[0]` for "latest",
+   `items[items.length - 1]` for "oldest"), verify the backend's actual sort order
+   before relying on positional selection.
+   - **Detect positional dependence**: review the task's Description, Implementation Notes,
+     and frontend code for patterns that assume a specific ordering of list responses.
+     Look for: array index access on response data (e.g., `response.data[0]`),
+     `.first()` / `.last()` calls, destructuring the first element (`const [latest] = items`),
+     or comments indicating "newest", "most recent", "latest".
+   - **Inspect the backend sort order**: use the backend Serena instance (or Grep/Read as
+     fallback) to find the query builder, ORM query, or SQL statement that populates the
+     list response. Look for `ORDER BY` clauses, `.sort()` calls, or sort parameters in
+     the query builder. Check whether a default sort is applied when no explicit sort
+     parameter is provided by the caller.
+   - **Compare expectations**: confirm that the backend's sort order matches the frontend's
+     positional assumption. For example, if the frontend picks `items[0]` expecting the
+     newest item, verify the backend sorts by `created_at DESC` (or equivalent), not
+     `created_at ASC`.
+   - **Flag sort order mismatches**: if the sort order does not match the frontend's
+     assumption, stop and report the discrepancy to the user. Include:
+     - What the frontend assumes (e.g., "picks `assessments[0]` expecting newest")
+     - What the backend actually returns (e.g., "`ORDER BY created_at ASC` — oldest first")
+     - The backend source file and line where the sort is defined
+     - A recommendation: either fix the frontend to sort explicitly or use a query
+       parameter, or request a backend change
 
 If no Serena instance is available for the backend repository, use Grep, Glob, and Read
 on the backend repo to perform the same verification.
@@ -376,6 +403,7 @@ on the backend repo to perform the same verification.
 > **Cross-repo API verification results:**
 > - `GET /api/v2/sboms` — path ✓, method ✓, response shape ✓ (matches `SbomSummary` in `modules/fundamental/src/sbom/model/summary.rs`)
 > - `DELETE /api/v2/sbom/{id}` — path ✗ — **MISMATCH** (backend uses `/api/v2/sboms/{id}` with trailing 's', see `modules/fundamental/src/sbom/endpoints/mod.rs:48`)
+> - `GET /api/v2/risk-assessment/group/{groupId}` — sort order ✗ — **MISMATCH** (frontend picks `assessments[0]` expecting newest, but backend returns `ORDER BY created_at ASC` — oldest first, see `modules/risk/src/assessment/endpoints/mod.rs:92`)
 
 ### Code quality practices
 
