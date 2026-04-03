@@ -190,6 +190,54 @@ of a step-specific or tab-specific frame, it renders per-context data.
 > - Final summary table on wizard step "Confirm" → **aggregated** —
 >   combine entries from all previous steps into a single view
 
+### Display text vs API value comparison
+
+When a Figma mockup shows data values in a table, list, or detail view (e.g., criterion
+names, status labels, category names, enum descriptions), compare the displayed text
+against the actual values returned by the backend API for the corresponding field. Figma
+designs often use human-readable labels that differ from the machine-oriented values the
+API returns — for example, a table cell showing "System scope and boundaries" when the
+backend returns `threat_identification` as the field value.
+
+1. **Identify display text in data components**: scan the Figma design for text elements
+   inside data display components (table cells, list items, card labels, dropdown options,
+   tag labels) that represent data values rather than static UI chrome. Focus on text that
+   appears to come from a backend data source — names, statuses, categories, types, or
+   any enumerated value.
+2. **Cross-reference with backend API values**: using the backend API contracts discovered
+   during Step 3's backend API discovery, compare each display text value against the
+   actual values the API returns for the corresponding field. Check for:
+   - **Format mismatches**: Figma shows human-readable text (e.g., "System scope and
+     boundaries") but the API returns identifiers or keys (e.g., `system_scope_and_boundaries`
+     or `threat_identification`)
+   - **Label vs key mismatches**: Figma shows a display label but the API returns an enum
+     key, code, or ID that does not match the displayed text
+   - **Case mismatches**: Figma shows title case or sentence case but the API returns
+     snake_case, camelCase, or UPPER_CASE values
+   - **Value set mismatches**: Figma shows a set of values (e.g., five table rows with
+     specific names) that does not match the set of values the API actually returns
+3. **Document mismatches in Implementation Notes**: for each mismatch found, add a note
+   to the relevant task's Implementation Notes in Step 5 specifying:
+   - Which field is affected and where the mismatch occurs
+   - The Figma display text vs the actual API value
+   - Whether a **frontend label mapping** is needed (the frontend must map API values
+     to display labels) or whether a **backend change** is needed (the backend should
+     return display-friendly values)
+   - If a frontend mapping is needed, list the complete mapping table so the implementer
+     does not need to re-discover the values
+
+> **Example output:**
+>
+> **Display text vs API value mismatches:**
+> - Field `criterion.name` in criteria table: Figma shows "System scope and boundaries"
+>   but API returns `threat_identification` — **frontend mapping needed** from API keys
+>   to display labels: `{ threat_identification: "Threat identification", system_scope:
+>   "System scope and boundaries", ... }`
+> - Field `status` in status badge: Figma shows "In Review" but API returns `in_review`
+>   — **frontend mapping needed** (case transformation: snake_case → Title Case)
+> - Field `category.label` in filter dropdown: Figma shows category names that match API
+>   response — **no mismatch** (no action needed)
+
 ## Step 3 – Repository Analysis
 
 Analyze relevant repositories to identify impacted modules, APIs, and tests.
