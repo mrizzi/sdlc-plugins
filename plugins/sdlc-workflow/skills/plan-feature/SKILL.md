@@ -231,8 +231,8 @@ backend returns `threat_identification` as the field value.
 > **Display text vs API value mismatches:**
 > - Field `criterion.name` in criteria table: Figma shows "System scope and boundaries"
 >   but API returns `threat_identification` — **frontend mapping needed** from API keys
->   to display labels: `{ threat_identification: "Threat identification", system_scope:
->   "System scope and boundaries", ... }`
+>   to display labels: `{ threat_identification: "System scope and boundaries",
+>   data_sensitivity: "Data sensitivity assessment", ... }`
 > - Field `status` in status badge: Figma shows "In Review" but API returns `in_review`
 >   — **frontend mapping needed** (case transformation: snake_case → Title Case)
 > - Field `category.label` in filter dropdown: Figma shows category names that match API
