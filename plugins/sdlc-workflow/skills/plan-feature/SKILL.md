@@ -123,6 +123,36 @@ Extract:
 - components involved
 - possible backend interactions
 
+### Custom sub-component extraction
+
+When the Figma design contains custom UI elements that do not map to standard framework
+components (e.g., PatternFly, Material UI), extract their visual specification so that
+implementers can reproduce them faithfully instead of falling back to plain text or
+generic approximations.
+
+1. **Identify custom sub-components**: look for Figma instances, variants, or layers
+   whose names suggest custom elements (e.g., "Wizard step number", "Status badge",
+   "Progress ring") and that have no direct equivalent in the project's component library.
+2. **Extract visual specification**: for each custom sub-component, record:
+   - **Dimensions**: width, height, border-radius (e.g., "24px circular")
+   - **Shape**: circle, rounded rectangle, pill, etc.
+   - **Color tokens for each state**: extract fill, border, and text colors for all
+     relevant states (active, inactive, completed, disabled, hover, error). Use design
+     token names when available; fall back to hex values with a note to map to the
+     nearest token.
+   - **Typography**: font size, weight, and color for any text within the element
+   - **Icons**: icon name and color for states that use icons instead of text
+     (e.g., a checkmark icon for "completed" state)
+3. **Include in task Implementation Notes**: add each custom sub-component's visual
+   specification to the relevant task's Implementation Notes in Step 5, formatted as
+   a concise one-liner per element.
+
+> **Example output:**
+>
+> **Custom sub-component specifications:**
+> - Step number indicators: 24px circular; active = primary fill + white text,
+>   inactive = neutral border + dark text, completed = green CheckCircleIcon replacing number
+
 ## Step 3 – Repository Analysis
 
 Analyze relevant repositories to identify impacted modules, APIs, and tests.
