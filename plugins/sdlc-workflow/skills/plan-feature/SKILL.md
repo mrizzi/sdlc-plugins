@@ -153,6 +153,43 @@ generic approximations.
 > - Step number indicators: 24px circular; active = primary fill + white text,
 >   inactive = neutral border + dark text, completed = green CheckCircleIcon replacing number
 
+### Data component rendering scope
+
+When a Figma design shows a data display component (table, card grid, list, chart) inside
+a contextual container (wizard step, tab panel, accordion section, modal, drawer), determine
+whether the component renders data scoped to its parent context or aggregated across all
+contexts. The Figma layer hierarchy is the primary signal: if the data component is a child
+of a step-specific or tab-specific frame, it renders per-context data.
+
+1. **Identify data-in-context pairs**: scan the Figma layer tree for data display components
+   (tables, card lists, summary panels, charts) that are nested inside contextual containers
+   (wizard steps, tab panels, accordion sections, detail views). A component is "in context"
+   when it is a direct or indirect child of a container-specific frame — not a sibling or
+   top-level element.
+2. **Determine rendering scope**: for each data-in-context pair, classify the data scope:
+   - **Per-context** — the data component is a child of a context-specific frame (e.g., a
+     table inside "Step 3 — Review Criteria" shows only the criteria for that step's
+     category, not all categories). This is the default when the component is nested inside
+     a step/tab-specific frame.
+   - **Aggregated** — the data component appears outside or across all context frames (e.g.,
+     a summary table at the wizard's final step that displays combined results from all
+     previous steps). Identify this when the component is at the same level as the context
+     container or explicitly labeled as "all" / "summary" / "total".
+3. **Include in task Implementation Notes**: for each data-in-context pair, add a rendering
+   scope annotation to the relevant task's Implementation Notes in Step 5. The annotation
+   must specify: the data component, the parent context, the scope classification, and the
+   filtering expression the implementer should use.
+
+> **Example output:**
+>
+> **Data component rendering scope:**
+> - Criteria summary table inside wizard step "Review by Category" → **per-context** —
+>   filter `results.categories` by `currentCategory.key`, do not `flatMap` across all categories
+> - Risk score chart inside tab "Current Assessment" → **per-context** —
+>   display only `assessment.risks` for the selected assessment, not aggregated across all assessments
+> - Final summary table on wizard step "Confirm" → **aggregated** —
+>   combine entries from all previous steps into a single view
+
 ## Step 3 – Repository Analysis
 
 Analyze relevant repositories to identify impacted modules, APIs, and tests.
