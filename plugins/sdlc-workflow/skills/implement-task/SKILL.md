@@ -484,6 +484,23 @@ If a doc file describes behavior that was changed and was not already updated in
 Step 6, update it now. This check is lightweight — only flag docs that directly
 describe the modified behavior.
 
+### Example consistency
+
+If the implementation wrote or modified documentation that includes examples combining
+narrative text with concrete data structures (mapping tables, code snippets, configuration
+blocks, example output), verify internal consistency:
+
+1. **Identify composite examples**: find every example in the changed documentation that
+   contains both a prose description of a scenario and a data structure illustrating it
+   (e.g., a paragraph explaining a mapping followed by a table or JSON snippet showing it).
+2. **Cross-check entries**: for each data structure entry, confirm it matches what the
+   narrative describes. Check field names, values, labels, enum variants, and
+   relationships. Every entry in the data structure must correspond to something stated
+   or implied by the prose, and vice versa.
+3. **Flag mismatches**: if any entry in the data structure contradicts or is absent from
+   the narrative (or the narrative describes something not reflected in the data
+   structure), fix the inconsistency before proceeding.
+
 ### Duplication check
 
 Search for functions, methods, or logic in the repository that overlap with the code you wrote.
