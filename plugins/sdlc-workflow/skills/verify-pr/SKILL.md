@@ -657,7 +657,42 @@ Repository Registry.
 
 Record PASS/FAIL for each individual criterion.
 
-## Step 12 – Verification Commands
+## Step 12 – Test Quality
+
+Scan test files in the PR for repetitive test functions that could be parameterized.
+This check applies the Meszaros heuristic: flag only when multiple test functions share
+the same algorithm (setup, action, assertion structure) with different data values.
+Do **not** flag tests with different behavior, setup, or assertions.
+
+1. **Identify test files in the PR**: filter the PR diff to test files:
+   ```
+   gh pr diff <pr-number> --name-only -R <owner/repo>
+   ```
+   Filter for files matching test patterns (e.g., `test_`, `_test.`, `.test.`, `tests/`,
+   `spec/`, `*_spec.`).
+
+2. **Inspect test function bodies**: for each test file with multiple test functions, use
+   the Serena instance for the task's repository (from the **Repository Registry** in
+   CLAUDE.md) with `find_symbol` and `include_body=true` to read the test function bodies.
+   Fall back to Read/Grep for repos without a Serena instance.
+
+3. **Detect repetitive patterns**: check whether any group of 2+ test functions shares
+   the same structure — identical assertions, same setup pattern, same control flow —
+   with only data values (inputs, expected outputs, fixture names) differing. If the
+   test body would need conditionals to handle parameter variations, the tests are
+   **not** candidates.
+
+4. **Record findings**: for each group of repetitive test functions, record:
+   - The file path
+   - The test function names
+   - A brief explanation of why they are parameterization candidates
+
+Record PASS if no repetitive test functions are found, WARN if candidates are flagged.
+
+**Note:** Test Quality WARN is advisory — it does **not** elevate the overall result
+to FAIL. Treat it like Diff Size: report for visibility, but do not block the PR.
+
+## Step 13 – Verification Commands
 
 If the task description includes a **Verification Commands** section, run each command and check the result against the expected outcome.
 
@@ -668,9 +703,9 @@ For each command:
 
 If no Verification Commands section exists in the task, skip this step and record N/A.
 
-## Step 13 – Generate Report
+## Step 14 – Generate Report
 
-Compile all findings from Steps 4–12 (including Step 10's CI failure sub-tasks) into a structured verification report:
+Compile all findings from Steps 4–13 (including Step 10's CI failure sub-tasks) into a structured verification report:
 
 ```
 ## Verification Report for <JIRA-ID> (commit <short-sha>)
@@ -685,6 +720,7 @@ Compile all findings from Steps 4–12 (including Step 10's CI failure sub-tasks
 | Sensitive Patterns | PASS/FAIL | <summary> |
 | CI Status | PASS/WARN/FAIL | <summary> |
 | Acceptance Criteria | PASS/FAIL | <N of M criteria met> |
+| Test Quality | PASS/WARN | <summary> |
 | Verification Commands | PASS/FAIL/N/A | <summary> |
 
 ### Overall: PASS / WARN / FAIL
@@ -697,11 +733,11 @@ Overall result rules:
 - **WARN** — at least one WARN but no FAIL
 - **FAIL** — at least one FAIL
 
-**Note:** The Root-Cause Investigation row is informational and does **NOT** affect the
-Overall result. Its value (DONE/SKIPPED/N/A) is reported for visibility but excluded
+**Note:** The Root-Cause Investigation and Test Quality rows are informational and do
+**NOT** affect the Overall result. Their values are reported for visibility but excluded
 from the PASS/WARN/FAIL determination.
 
-## Step 14 – Post Report
+## Step 15 – Post Report
 
 ### Retrieve HEAD Commit SHA
 
@@ -720,7 +756,7 @@ Each verification run creates a **new** PR comment (never overwrites previous re
 This provides a verification history over time, with each report clearly referencing
 the commit SHA it verified.
 
-Update the report header from Step 13 to include the commit SHA:
+Update the report header from Step 14 to include the commit SHA:
 
 ```
 ## Verification Report for <JIRA-ID> (commit <short-sha>)
