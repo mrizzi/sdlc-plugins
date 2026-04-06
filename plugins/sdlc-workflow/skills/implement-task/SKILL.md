@@ -458,6 +458,38 @@ pytest `@pytest.mark.parametrize`, Go table-driven tests, and Rust `rstest`. How
 if the sibling test analysis in Step 4 shows the project does not use parameterized
 tests, do not introduce them — follow the project's existing test patterns instead.
 
+**Document every test function:** Add a documentation comment before every test function
+explaining what it verifies — a single line using the language's doc comment convention
+(e.g., `///` in Rust, `/** */` in Java/TypeScript, `"""` docstring in Python). This applies
+regardless of whether sibling tests have documentation; AI-generated tests introduce this
+as a new standard that overrides the "Follow test conventions" guidance above for
+documentation specifically.
+
+For non-trivial tests — those with distinct setup, action, and assertion phases — also add
+given-when-then section comments (`// Given`, `// When`, `// Then`) inside the test body to
+make the structure navigable at a glance. A test is trivial (skip given-when-then) when it
+has a single assertion with no distinct setup phase.
+
+> **Example (Rust):**
+>
+> ```rust
+> /// Verifies that an SBOM with no dependencies produces an empty risk score.
+> #[test]
+> fn test_empty_sbom_risk_score() {
+>     // Given an SBOM with no dependencies
+>     let sbom = create_test_sbom(vec![]);
+>
+>     // When calculating the risk score
+>     let score = calculate_risk(&sbom);
+>
+>     // Then the score should be zero
+>     assert_eq!(score, RiskScore::default());
+> }
+> ```
+>
+> The doc comment convention varies by language — use `///` for Rust, `/** */` for
+> Java/TypeScript, `"""docstring"""` for Python, `//` doc comments for Go, etc.
+
 Run tests to verify:
 
 cargo test (for Rust)

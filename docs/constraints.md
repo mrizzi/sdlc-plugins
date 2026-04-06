@@ -80,6 +80,9 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 5.8 | Modified or created code MUST be compared against sibling implementations for parity on cross-cutting concerns (capabilities, error handling, logging, configuration) — gaps must be fixed or explicitly approved by the user before committing. | `implement-task/SKILL.md` — Step 9 |
 | 5.9 | implement-task SHOULD prefer parameterized tests when multiple test cases exercise the same behavior with different inputs, applying the Meszaros heuristic as the decision boundary. | `implement-task/SKILL.md` — Step 7 |
 | 5.10 | implement-task MUST NOT introduce parameterized test patterns if sibling test analysis shows the project does not use them. | `implement-task/SKILL.md` — Step 7 |
+| 5.11 | `implement-task` MUST add a doc comment to every test function it creates, regardless of sibling test documentation patterns. | `implement-task/SKILL.md` — Step 7 |
+| 5.12 | `implement-task` MUST add given-when-then inline comments to non-trivial test functions (tests with distinct setup, action, and assertion phases). | `implement-task/SKILL.md` — Step 7 |
+| 5.13 | `implement-task` MUST NOT add given-when-then comments to trivial tests (single assertion, no distinct setup phase). | `implement-task/SKILL.md` — Step 7 |
 
 ---
 
@@ -88,7 +91,7 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 Each constraint above references its source. The full source files are:
 
 - `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Task Description Template (§4.1–4.10), Step 5 Convention-aware task enrichment (§4.11)
-- `plugins/sdlc-workflow/skills/implement-task/SKILL.md` — Important Rules (§1.4–1.6, §5.1–5.3), Step 4/6/9 (§5.4), Step 5 (§1.15, §3.1), Step 7 (§5.9–5.10), Step 9 (§2.1–2.3, §5.6–5.8), Step 10 (§3.2)
+- `plugins/sdlc-workflow/skills/implement-task/SKILL.md` — Important Rules (§1.4–1.6, §5.1–5.3), Step 4/6/9 (§5.4), Step 5 (§1.15, §3.1), Step 7 (§5.9–5.13), Step 9 (§2.1–2.3, §5.6–5.8), Step 10 (§3.2)
 - `plugins/sdlc-workflow/skills/verify-pr/SKILL.md` — Step 4 (§1.10, §1.12), Important Rules (§1.11, §1.13), Step 5b (§1.14), Step 12 (§1.16)
 - `plugins/sdlc-workflow/skills/define-feature/SKILL.md` — Guardrails (§1.7–1.8), Important Rules (§1.9)
 - `docs/methodology.md` — Core Principles (§2.1, §3.2, §5.5)
