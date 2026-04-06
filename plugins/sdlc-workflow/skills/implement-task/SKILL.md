@@ -256,6 +256,9 @@ For each test file being created or modified:
    - Test setup and teardown (e.g., fixture creation, mock patterns, database seeding)
    - Test naming conventions (e.g., `test_<action>_<scenario>`, `it('should ...')`)
    - Test organization (e.g., grouping by feature, by HTTP method, by success/failure)
+   - Parameterized/data-driven test usage (e.g., `@ParameterizedTest` in JUnit 5,
+     `forEach`/data arrays in Mocha/Jest, `@pytest.mark.parametrize` in pytest,
+     table-driven patterns in Go, `#[rstest]`/`#[case]` in Rust)
 3. **Record test conventions**: output the discovered test conventions to the user in a
    structured list alongside the production code conventions. This list serves as a
    binding reference during test implementation in Step 7.
@@ -267,6 +270,7 @@ For each test file being created or modified:
 > - **Response validation:** List endpoint tests validate `total_count`, `items.len()`, and at least one item's key fields
 > - **Error cases:** All endpoint tests include a 404 test with `assert_eq!(resp.status(), StatusCode::NOT_FOUND)`
 > - **Test naming:** Tests follow `test_<endpoint>_<scenario>` pattern (e.g., `test_list_advisories_filtered`)
+> - **Parameterized tests:** Sibling tests use `#[rstest]` with `#[case]` for multi-ecosystem parsing tests (e.g., `test_parse_sbom` in `tests/parser/`)
 
 ## Step 5 – Create Branch
 
@@ -441,6 +445,18 @@ response data, assert on the actual values — not just the count. Assert on spe
 or key fields so that test failures reveal *what* changed, not just *how many*. Length
 checks alone hide regressions behind a passing count and prevent subsequent assertions
 from running.
+
+**Prefer parameterized tests for repetitive cases:** When multiple test cases exercise
+the same behavior with different inputs and expected outputs, use the project's
+parameterized test mechanism instead of writing individual test functions for each case.
+Apply the Meszaros heuristic as the decision boundary: parameterize when tests share the
+same algorithm (setup, action, assertion structure) with different data; use individual
+tests when behavior, setup, or assertions differ between cases. If the test body would
+need conditionals to handle parameter variations, use separate tests instead. Common
+mechanisms include JUnit 5 `@ParameterizedTest`, Mocha/Jest `forEach`/data arrays,
+pytest `@pytest.mark.parametrize`, Go table-driven tests, and Rust `rstest`. However,
+if the sibling test analysis in Step 4 shows the project does not use parameterized
+tests, do not introduce them — follow the project's existing test patterns instead.
 
 Run tests to verify:
 
