@@ -468,6 +468,41 @@ Before committing, verify that all changes are in scope and free of common error
    - Ask the user to approve or revert each out-of-scope change.
    - Do **not** proceed to commit without explicit user approval for every out-of-scope file.
 
+### Untracked file check
+
+The scope containment check above uses `git diff --name-only`, which only lists
+tracked file changes. Untracked files created during implementation — especially
+those referenced by code via compile-time includes (`include_str!`, `include_bytes!`),
+static imports, or configuration references — would be silently omitted from the
+commit.
+
+1. **List untracked files**: run `git status --short` and extract entries prefixed
+   with `??` (untracked files).
+2. **Filter by proximity**: from the untracked files, keep only those whose parent
+   directory matches a directory that contains at least one modified or created file
+   (from the `git diff --name-only` output). This focuses the check on directories
+   where implementation work occurred, ignoring unrelated untracked files elsewhere
+   in the repo.
+3. **Search for code references**: for each proximity-matched untracked file, search
+   the staged diff and modified files for references to its filename or relative path.
+   Look for patterns such as:
+   - Compile-time includes (`include_str!("...")`, `include_bytes!("...")`)
+   - Import or require statements (`import`, `require`, `use`)
+   - Configuration file references (paths in YAML, JSON, TOML, or XML)
+   - String literals containing the filename
+4. **Flag for review**: if any untracked file is referenced by code or is in a
+   directory with modified files, list it and ask the user to confirm whether it
+   should be staged for commit. Do **not** automatically stage untracked files —
+   always ask first.
+5. **Proceed**: once the user has approved or dismissed each flagged untracked file,
+   continue to commit.
+
+> **Example output:**
+>
+> **Untracked file check results:**
+> - `src/data/schema.json` — **REFERENCED** by `src/parser.rs` via `include_str!("data/schema.json")` — stage for commit?
+> - `src/data/fixtures.json` — in directory with modified files but no code references found — stage for commit?
+
 ### Sensitive-pattern check
 
 Search the staged diff for secrets, credentials, or environment files that should not be committed:
