@@ -202,6 +202,20 @@ naming rules, directory structure for new files, code patterns, and test convent
 
 This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
 
+#### Verification commands extraction
+
+When reading `CONVENTIONS.md`, search for a section that lists CI check commands — look for
+headings or labels such as "CI checks", "All CI checks", "Linting", "Pre-commit checks",
+"Verification", or similar. Extract every command listed in that section and record them
+for use in Step 9's CI verification sub-step.
+
+Also look for any commands that generate code artifacts (e.g., OpenAPI spec generation,
+code generation, schema generation). Record these separately — they may produce file
+changes that need to be committed alongside the implementation.
+
+If no CI check section is found in `CONVENTIONS.md`, proceed normally — Step 9 will
+fall back to standard build/lint checks.
+
 ### Convention conformance analysis
 
 After inspecting the files to modify, analyze established conventions in the surrounding
@@ -591,9 +605,28 @@ Use Grep or Serena's `search_for_pattern` to look for similar function names, st
 or algorithmic patterns. If you find that your new code substantially duplicates existing
 utilities or helpers, refactor to reuse the existing code before proceeding.
 
-### Compiler / linter warnings
+### CI checks from CONVENTIONS.md
 
-If the project has a build or lint step, compare the current warning output against the pre-implementation baseline captured during Step 7. If new warnings were introduced, fix them before proceeding.
+If `CONVENTIONS.md` was loaded in Step 4 and verification commands were extracted,
+run every CI check command recorded during the verification commands extraction.
+Execute each command in sequence. If any command fails, fix the issue before
+proceeding to the next command.
+
+1. **Run all CI check commands**: execute each command extracted from the
+   `CONVENTIONS.md` CI checks section (e.g., formatting, linting, type checking,
+   compilation). These commands are project-specific — do not hardcode or assume
+   which tools the project uses.
+2. **Run code generation commands**: if any code generation commands were extracted
+   (e.g., OpenAPI spec generation, schema generation, code scaffolding), run them
+   now. If they produce file changes, stage those changes for commit alongside the
+   implementation — they are part of the deliverable.
+3. **Fix failures**: if any CI check command fails, fix the underlying issue and
+   re-run the failing command until it passes. Do not skip failing checks.
+
+If `CONVENTIONS.md` was not found or contained no CI check section, fall back to
+running the project's standard build or lint step (if one exists) and compare the
+warning output against the pre-implementation baseline captured during Step 7. If
+new warnings were introduced, fix them before proceeding.
 
 ### Data-flow trace
 
