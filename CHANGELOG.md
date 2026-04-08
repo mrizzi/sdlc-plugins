@@ -5,6 +5,16 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.11] - 2026-04-08
+
+### Changed
+
+- Added CONVENTIONS.md CI check verification to implement-task Step 9
+- Added test documentation guidance with given-when-then structure to implement-task
+- Added test quality check for repetitive test functions to verify-pr
+- Added parameterized test preference guidance to implement-task
+- Added untracked file check to implement-task self-verification
+
 ## [0.5.10] - 2026-04-03
 
 ### Changed
