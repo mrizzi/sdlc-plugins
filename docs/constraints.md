@@ -26,6 +26,7 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.14 | `verify-pr` root-cause tasks MUST target the workflow phase where the gap originated, not always the implementation phase. | `verify-pr/SKILL.md` — Step 5b |
 | 1.15 | `implement-task` MUST check out the existing PR branch (instead of creating a new one) when a Target PR section is present in the task description. | `implement-task/SKILL.md` — Step 5 (Target PR flow) |
 | 1.16 | `verify-pr` MUST flag repetitive test functions that could be parameterized as a WARN finding, applying the Meszaros heuristic as the decision boundary. | `verify-pr/SKILL.md` — Step 12 |
+| 1.17 | `verify-pr` MUST flag test functions missing doc comments as a WARN finding. | `verify-pr/SKILL.md` — Step 12 |
 
 ---
 
@@ -92,6 +93,6 @@ Each constraint above references its source. The full source files are:
 
 - `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Task Description Template (§4.1–4.10), Step 5 Convention-aware task enrichment (§4.11)
 - `plugins/sdlc-workflow/skills/implement-task/SKILL.md` — Important Rules (§1.4–1.6, §5.1–5.3), Step 4/6/9 (§5.4), Step 5 (§1.15, §3.1), Step 7 (§5.9–5.13), Step 9 (§2.1–2.3, §5.6–5.8), Step 10 (§3.2)
-- `plugins/sdlc-workflow/skills/verify-pr/SKILL.md` — Step 4 (§1.10, §1.12), Important Rules (§1.11, §1.13), Step 5b (§1.14), Step 12 (§1.16)
+- `plugins/sdlc-workflow/skills/verify-pr/SKILL.md` — Step 4 (§1.10, §1.12), Important Rules (§1.11, §1.13), Step 5b (§1.14), Step 12 (§1.16, §1.17)
 - `plugins/sdlc-workflow/skills/define-feature/SKILL.md` — Guardrails (§1.7–1.8), Important Rules (§1.9)
 - `docs/methodology.md` — Core Principles (§2.1, §3.2, §5.5)
