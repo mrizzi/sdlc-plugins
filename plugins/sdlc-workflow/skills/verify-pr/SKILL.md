@@ -687,7 +687,31 @@ Do **not** flag tests with different behavior, setup, or assertions.
    - The test function names
    - A brief explanation of why they are parameterization candidates
 
-Record PASS if no repetitive test functions are found, WARN if candidates are flagged.
+### Doc comment check
+
+5. **Inspect test function documentation**: for each test file identified in step 1, check
+   whether each test function has a documentation comment (doc comment) immediately
+   preceding it. Use the Serena instance for the task's repository with `find_symbol` and
+   `include_body=true` to inspect test functions. Fall back to Read/Grep for repos without
+   a Serena instance.
+
+   Doc comment conventions vary by language:
+   - Rust: `///` or `//!`
+   - Java/TypeScript: `/** */`
+   - Python: `"""docstring"""`
+   - Go: `//` comment immediately before the function
+
+6. **Flag missing doc comments**: for each test function lacking a doc comment, record the
+   file path and function name.
+
+7. **Record findings**: append doc comment findings to the Test Quality result. If test
+   functions are missing doc comments, record WARN with the list of undocumented functions.
+   If all test functions have doc comments, this sub-check passes silently (does not change
+   the overall Test Quality result from the repetitive test check).
+
+Record PASS if both sub-checks pass (no repetitive tests and no missing doc comments).
+Record WARN if either repetitive tests are found OR doc comments are missing.
+Record N/A if no test files exist in the PR diff.
 
 **Note:** Test Quality WARN is advisory — it does **not** elevate the overall result
 to FAIL. Treat it like Diff Size: report for visibility, but do not block the PR.
