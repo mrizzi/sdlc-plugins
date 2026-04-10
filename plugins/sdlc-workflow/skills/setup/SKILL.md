@@ -15,6 +15,13 @@ This skill is **idempotent and incremental**:
 - If new MCP servers (Serena instances, Atlassian) have been added since the last run, only the new entries are added.
 - Existing configuration entries are never removed or overwritten.
 
+### Exception: JIRA REST API Fallback
+
+When Atlassian MCP is unavailable, this skill may use the Bash tool to invoke the JIRA REST API v3 via `python3 scripts/jira-client.py`. This is the **only** permitted use of the Bash tool beyond read-only operations.
+
+- ✅ Allowed: `bash -c "python3 scripts/jira-client.py <command>"`
+- ❌ Forbidden: any other Bash file modification commands
+
 ## Template
 
 Read the file `project-config.template.md` in this skill's directory. Use it as the structural reference for generating the `# Project Configuration` section. Replace the `{{placeholder}}` markers with actual values gathered during the steps below. Preserve the exact headings, table format, and section order from the template.
@@ -51,21 +58,93 @@ If `## Jira Configuration` already exists with all three required fields (Projec
 
 Otherwise, determine which fields are missing and gather them:
 
+### Step 3.1 – Attempt MCP First
+
 1. Check for an Atlassian MCP server among available tools (tools prefixed with `mcp__atlassian__`).
-2. If an Atlassian MCP is available:
-   a. Use `getVisibleJiraProjects` to list available projects and ask the user which one to use (this provides the Project key).
-   b. Use `getAccessibleAtlassianResources` to discover the Cloud ID.
-   c. Use `getJiraProjectIssueTypesMetadata` with the chosen project key to list issue types and ask the user which one is the Feature type (this provides the Feature issue type ID).
-   d. Ask the user if they have a Git Pull Request custom field ID (optional).
-   e. Ask the user if they have a GitHub Issue custom field ID (optional).
-3. If no Atlassian MCP is available, ask the user to provide the missing fields directly:
+2. If an Atlassian MCP is available, **try** to use it:
+   a. Try `getVisibleJiraProjects` to list available projects
+   b. Try `getAccessibleAtlassianResources` to discover the Cloud ID
+   c. Try `getJiraProjectIssueTypesMetadata` to list issue types
+
+### Step 3.2 – Handle MCP Failure (REST API Fallback)
+
+If any MCP operation fails, **always prompt the user** (even if REST API credentials exist in CLAUDE.md):
+
+```
+❌ Atlassian MCP failed: {error_message}
+
+Would you like to use JIRA REST API v3 fallback?
+
+Options:
+1. Yes - Use REST API (requires credentials)
+2. No - Skip auto-discovery, I'll provide fields manually
+3. Retry - I'll fix MCP configuration and retry
+
+Choose (1/2/3):
+```
+
+**If user chooses "1. Yes - Use REST API":**
+
+1. Check `CLAUDE.md` for existing REST API credentials under `### REST API Credentials (MCP Fallback)`
+2. If credentials exist:
+   - Read Server URL, Email, and API Token (or `$JIRA_API_TOKEN` env var reference)
+   - Set environment variables: `JIRA_SERVER_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`
+   - Proceed to Step 3.3 (use REST API)
+3. If credentials do not exist:
+   - Follow credential collection flow (see `shared/jira-rest-fallback.md`)
+   - Collect: Server URL, Email, API Token
+   - Validate with: `python3 scripts/jira-client.py get_user_info`
+   - On success: Display "✅ Authentication successful! Logged in as: {displayName}"
+   - Ask storage preference (all in CLAUDE.md / URL+email with env var / don't store)
+   - Store if requested under `### REST API Credentials (MCP Fallback)` in `## Jira Configuration`
+   - Proceed to Step 3.3 (use REST API)
+
+**If user chooses "2. No - Skip auto-discovery":**
+- Proceed to Step 3.4 (manual entry)
+
+**If user chooses "3. Retry":**
+- Retry MCP operations once
+- If still fails, return to this prompt
+
+### Step 3.3 – Use REST API for Discovery
+
+Use the Python client to gather Jira configuration:
+
+1. **Get project metadata:**
+   ```bash
+   python3 scripts/jira-client.py get_project_metadata <project-key>
+   ```
+   Ask user which project key to use if not already known. The response provides:
    - Project key
-   - Cloud ID (Jira instance URL or cloud UUID)
-   - Feature issue type ID
-   - Git Pull Request custom field (optional)
-   - GitHub Issue custom field (optional)
+   - Available issue types with IDs and names
+
+2. **Get user info:**
+   ```bash
+   python3 scripts/jira-client.py get_user_info
+   ```
+   Extract Cloud ID from the response (if present in user metadata).
+   If Cloud ID is not available via API, ask user to provide it manually.
+
+3. From the project metadata, list issue types and ask user which one is the Feature type (this provides the Feature issue type ID).
+
+4. Ask the user if they have a Git Pull Request custom field ID (optional).
+
+5. Ask the user if they have a GitHub Issue custom field ID (optional).
+
+Proceed to Step 4 with the gathered fields.
+
+### Step 3.4 – Manual Entry (Fallback)
+
+If MCP is not available and user chooses not to use REST API, ask the user to provide the missing fields directly:
+- Project key
+- Cloud ID (Jira cloud site URL, e.g., `redhat.atlassian.net`)
+- Feature issue type ID
+- Git Pull Request custom field (optional)
+- GitHub Issue custom field (optional)
 
 Only ask for fields that are not already configured.
+
+Proceed to Step 4 with the provided fields.
 
 ## Step 4 – Code Intelligence
 

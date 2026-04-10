@@ -17,6 +17,13 @@ You are an AI assistant that helps engineers define Jira Feature issues. You int
 - **Do NOT fabricate content.** Every section of the Feature description must come from the user's input. You may rephrase for clarity or formatting, but never invent requirements, goals, use cases, or other substantive content.
 - If any step fails (e.g., Jira MCP unavailable), stop and inform the user rather than attempting alternative actions.
 
+### Exception: JIRA REST API Fallback
+
+When Atlassian MCP is unavailable, this skill may use the Bash tool to invoke the JIRA REST API v3 via `python3 scripts/jira-client.py`. This is the **only** permitted use of the Bash tool beyond read-only operations.
+
+- ✅ Allowed: `bash -c "python3 scripts/jira-client.py <command>"`
+- ❌ Forbidden: any other Bash file modification commands
+
 ## Comment Footnote
 
 Every comment posted to Jira by this skill MUST end with the following footnote,
@@ -79,6 +86,49 @@ Extract the following from Jira Configuration for use in later steps:
 - **Project key** — used when creating the Feature issue
 - **Cloud ID** — used for all Jira API calls
 - **Feature issue type ID** — used to set the issue type
+
+## Step 0.5 – JIRA Access Initialization
+
+Before attempting JIRA operations, determine the access method. This initialization happens **before each JIRA operation** (Steps 6-7).
+
+1. **Attempt MCP first** (preferred method)
+2. **If MCP fails:**
+   - **Always prompt user** (even if REST API credentials exist in CLAUDE.md):
+     ```
+     ❌ Atlassian MCP failed: {error_message}
+     
+     Would you like to use JIRA REST API v3 fallback?
+     
+     Options:
+     1. Yes - Use REST API (requires credentials)
+     2. No - Skip JIRA integration for this operation
+     3. Retry - I'll fix MCP configuration and retry
+     
+     Choose (1/2/3):
+     ```
+   
+   - **If user chooses "1. Yes - Use REST API":**
+     - Check `CLAUDE.md` → `## Jira Configuration` → `### REST API Credentials (MCP Fallback)`
+     - If credentials exist:
+       - Read Server URL, Email, and API Token (or `$JIRA_API_TOKEN` env var reference)
+       - Set environment variables: `JIRA_SERVER_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`
+       - Use REST API for this operation
+     - If credentials do not exist:
+       - Follow credential collection flow (see `shared/jira-rest-fallback.md`)
+       - Collect: Server URL, Email, API Token
+       - Validate with: `python3 scripts/jira-client.py get_user_info`
+       - On success: Display "✅ Authentication successful! Logged in as: {displayName}"
+       - Ask storage preference (all in CLAUDE.md / URL+email with env var / don't store)
+       - Store if requested
+       - Use REST API for this operation
+   
+   - **If user chooses "2. No - Skip JIRA":**
+     - Inform user: "JIRA integration skipped. The Feature description has been collected but not created in JIRA. You can create it manually later."
+     - Stop execution (do not create issue)
+   
+   - **If user chooses "3. Retry":**
+     - Retry MCP operation once
+     - If still fails, return to this prompt
 
 ## Step 1 – Introduction and Roadmap
 
@@ -246,17 +296,25 @@ Repeat until the user approves.
 
 ## Step 6 – Create Feature in Jira
 
-Resolve the issue type display name by looking up the Feature issue type ID from
-the Jira Configuration:
+### Step 6.1 – Resolve Issue Type Name (if needed)
 
+If using MCP, resolve the issue type display name:
+
+**Try MCP first:**
 ```
 getJiraProjectIssueTypesMetadata(cloudId, projectKey)
 ```
 
+**On MCP failure, if REST API chosen (Step 0.5):**
+```bash
+python3 scripts/jira-client.py get_project_metadata <project-key>
+```
+
 Find the issue type whose ID matches the configured Feature issue type ID and use its name.
 
-Create the Feature issue:
+### Step 6.2 – Create the Feature Issue
 
+**Try MCP first:**
 ```
 createJiraIssue(
   cloudId=<cloud-id>,
@@ -270,23 +328,52 @@ createJiraIssue(
 ```
 
 If the user chose self-assignment in Step 4, include the assignee:
-
 ```
 additional_fields: { "labels": ["ai-generated-jira"], "assignee": { "accountId": "<user-account-id>" } }
 ```
 
-Record the created issue key and URL.
+**On MCP failure, if REST API chosen (Step 0.5):**
+
+First, if self-assignment was chosen, get the current user's account ID:
+```bash
+USER_INFO=$(python3 scripts/jira-client.py get_user_info)
+ACCOUNT_ID=$(echo "$USER_INFO" | python3 -c "import json,sys; print(json.load(sys.stdin)['accountId'])")
+```
+
+Then create the issue:
+```bash
+python3 scripts/jira-client.py create_issue \
+  --project <project-key> \
+  --summary "<collected-summary>" \
+  --description-md "<composed-description>" \
+  --issue-type "<feature-issue-type-id>" \
+  --labels ai-generated-jira \
+  --assignee-id "$ACCOUNT_ID"  # omit if no self-assignment
+```
+
+The Python client automatically converts markdown to ADF.
+
+Record the created issue key and URL from the JSON response.
 
 ## Step 7 – Post Comment
 
 Post a comment on the newly created Feature issue summarizing that it was created
 via the define-feature skill and listing which sections were included.
 
+**Try MCP first:**
 ```
 addCommentToJiraIssue(cloudId, issueIdOrKey=<created-issue-key>, comment=<summary-comment>)
 ```
 
-The comment must use the **Comment Footnote** format defined above.
+**On MCP failure, if REST API chosen (Step 0.5):**
+```bash
+python3 scripts/jira-client.py add_comment <created-issue-key> \
+  --comment-md "<summary-comment>"
+```
+
+The Python client automatically converts markdown to ADF.
+
+**Important:** The comment must use the **Comment Footnote** format defined above, regardless of whether MCP or REST API is used.
 
 ## Step 8 – Report Result
 

@@ -85,6 +85,22 @@ that skills need to create issues, query tasks, and update fields.
 | GitHub Issue custom field | Custom field ID containing a GitHub issue URL (plain string or ADF) | `customfield_10747` |
 | Default labels | Labels to apply to AI-generated issues | `ai-generated-jira` |
 
+#### Optional subsection: REST API Credentials (MCP Fallback)
+
+When Atlassian MCP is unavailable due to organizational policies, skills can fall back to JIRA REST API v3. This subsection stores the credentials needed for REST API access.
+
+| Field | Description | Example |
+|---|---|---|
+| Server URL | JIRA Cloud instance URL | `https://redhat.atlassian.net` |
+| Email | Atlassian account email | `user@redhat.com` |
+| API Token | API token or environment variable reference | `$JIRA_API_TOKEN` (recommended) or actual token |
+
+**Storage modes:**
+- **Environment variable (recommended)**: Store `$JIRA_API_TOKEN` reference in CLAUDE.md, actual token in shell environment
+- **Plaintext (less secure)**: Store actual token directly in CLAUDE.md
+
+**Important**: Credentials are only collected when MCP fails and user explicitly chooses to use REST API fallback. Skills always prompt before using REST API, even if credentials are already stored.
+
 #### Structure
 
 ```markdown
@@ -95,6 +111,11 @@ that skills need to create issues, query tasks, and update fields.
 - Feature issue type ID: 10142
 - Git Pull Request custom field: customfield_10875
 - GitHub Issue custom field: customfield_10747
+
+### REST API Credentials (MCP Fallback)
+- Server URL: https://redhat.atlassian.net
+- Email: user@redhat.com
+- API Token: $JIRA_API_TOKEN
 ```
 
 #### How skills use it
@@ -104,6 +125,7 @@ that skills need to create issues, query tasks, and update fields.
 - "Use the Feature issue type ID when creating feature-level issues."
 - "If a Git Pull Request custom field is configured, update it with the PR URL."
 - "If a GitHub Issue custom field is configured, read it from the Jira issue and add a `Closes` reference to the PR description."
+- "If Atlassian MCP fails, always prompt user to use REST API fallback. If user chooses REST API, check for REST API Credentials subsection. If present, use stored credentials; if absent, collect credentials from user and optionally store them."
 
 ---
 

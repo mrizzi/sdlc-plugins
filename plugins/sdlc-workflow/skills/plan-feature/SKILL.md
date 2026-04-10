@@ -17,6 +17,13 @@ You are an AI planning assistant helping engineers convert a Jira feature into a
 - **Complete all steps in a single session.** Do not stop after producing the plan — continue through Step 6 (Jira task creation).
 - If any step fails (e.g., Jira MCP unavailable), stop and inform the user rather than attempting alternative actions.
 
+### Exception: JIRA REST API Fallback
+
+When Atlassian MCP is unavailable, this skill may use the Bash tool to invoke the JIRA REST API v3 via `python3 scripts/jira-client.py`. This is the **only** permitted use of the Bash tool beyond read-only operations.
+
+- ✅ Allowed: `bash -c "python3 scripts/jira-client.py <command>"`
+- ❌ Forbidden: any other Bash file modification commands
+
 ## Comment Footnote
 
 Every comment posted to Jira by this skill MUST end with the following footnote,
@@ -74,6 +81,38 @@ If any of these sections are missing or incomplete, inform the user:
 > "This skill requires Project Configuration in your CLAUDE.md. Please run `/setup` first to configure your project, then re-run this skill."
 
 **Stop execution immediately.** Do not attempt to gather the missing information or proceed without it.
+
+## Step 0.5 – JIRA Access Initialization
+
+Before attempting any JIRA operations (Steps 1, 4, 6), determine the access method.
+
+**For every JIRA operation:**
+1. **Attempt MCP first** (preferred method)
+2. **If MCP fails, always prompt user:**
+   ```
+   ❌ Atlassian MCP failed: {error_message}
+   
+   Would you like to use JIRA REST API v3 fallback?
+   
+   Options:
+   1. Yes - Use REST API (requires credentials)
+   2. No - Skip this JIRA operation
+   3. Retry - I'll fix MCP configuration and retry
+   
+   Choose (1/2/3):
+   ```
+   
+3. **If "1. Yes":** Check CLAUDE.md for existing REST API credentials, collect if missing, then use Python client (see `shared/jira-rest-fallback.md`)
+4. **If "2. No":** Skip the JIRA operation and inform user
+5. **If "3. Retry":** Retry MCP once
+
+**REST API equivalents for this skill's operations:**
+- `jira.get_issue(id)` → `python3 scripts/jira-client.py get_issue <id> --fields "*all"`
+- `jira.add_comment(id, text)` → `python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
+- `jira.create_issue(...)` → `python3 scripts/jira-client.py create_issue --project <key> --summary "<summary>" --description-md "<desc>" --issue-type Task --labels <labels>`
+- `jira.create_issue_link(...)` → `python3 scripts/jira-client.py create_link --inward <issue1> --outward <issue2> --link-type <type>`
+
+Refer to `shared/jira-rest-fallback.md` for complete implementation details.
 
 ## Inputs
 

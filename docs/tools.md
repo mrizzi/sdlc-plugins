@@ -10,6 +10,8 @@ This document describes the MCP servers used by the sdlc-workflow plugin skills.
 
 **Tool prefix:** `mcp__atlassian__`
 
+**Access method:** MCP-first with REST API v3 fallback
+
 ### Key Operations
 
 | Operation | Tool | Used By |
@@ -24,12 +26,38 @@ This document describes the MCP servers used by the sdlc-workflow plugin skills.
 | Get current user | `mcp__atlassian__atlassianUserInfo` | implement-task |
 | Search issues (JQL) | `mcp__atlassian__searchJiraIssuesUsingJql` | plan-feature |
 
+### REST API Fallback
+
+When Atlassian MCP is unavailable (e.g., due to organizational policies restricting localhost access), skills automatically fall back to JIRA REST API v3.
+
+**How it works:**
+1. Skills always try MCP first (preferred method)
+2. If MCP fails, user is **always prompted** to choose: Use REST API, Skip JIRA, or Retry MCP
+3. If user chooses REST API:
+   - Skills check CLAUDE.md for existing REST API credentials
+   - If credentials exist: Use them (with user confirmation)
+   - If credentials don't exist: Collect from user, validate, and optionally store
+4. All operations use `scripts/jira-client.py` (Python stdlib only, no external dependencies)
+
+**Credential storage:**
+Credentials are stored in CLAUDE.md under `## Jira Configuration` → `### REST API Credentials (MCP Fallback)`. Users can choose:
+- Store all in CLAUDE.md (convenient, less secure)
+- Store URL/email only, use `$JIRA_API_TOKEN` env var (recommended, more secure)
+- Don't store (ask each time)
+
+**Documentation:**
+- Setup guide: `plugins/sdlc-workflow/shared/jira-api-token-guide.md`
+- Implementation guide: `plugins/sdlc-workflow/shared/jira-rest-fallback.md`
+- Access strategy: `plugins/sdlc-workflow/shared/jira-access-strategy.md`
+
 ### ADF Note
 
 Several Jira operations require Atlassian Document Format (ADF) rather than plain text. This applies to:
 - Issue descriptions (when using `contentFormat: "adf"`)
 - Comments (when using `contentFormat: "adf"`)
 - Custom fields (e.g., Git Pull Request custom field)
+
+The REST API fallback automatically converts markdown to ADF when needed.
 
 Refer to your project's CLAUDE.md for field IDs and formatting details specific to your Jira instance.
 

@@ -23,6 +23,42 @@ If any of these sections are missing or incomplete, inform the user:
 
 **Stop execution immediately.** Do not attempt to gather the missing information or proceed without it.
 
+## Step 0.5 – JIRA Access Initialization
+
+Before attempting any JIRA operations (Steps 1, 2, 3, 11), determine the access method.
+
+**For every JIRA operation:**
+1. **Attempt MCP first** (preferred method)
+2. **If MCP fails, always prompt user:**
+   ```
+   ❌ Atlassian MCP failed: {error_message}
+   
+   Would you like to use JIRA REST API v3 fallback?
+   
+   Options:
+   1. Yes - Use REST API (requires credentials)
+   2. No - Skip this JIRA operation
+   3. Retry - I'll fix MCP configuration and retry
+   
+   Choose (1/2/3):
+   ```
+   
+3. **If "1. Yes":** Check CLAUDE.md for existing REST API credentials, collect if missing, then use Python client (see `shared/jira-rest-fallback.md`)
+4. **If "2. No":** Skip the JIRA operation and inform user
+5. **If "3. Retry":** Retry MCP once
+
+**REST API equivalents for this skill's operations:**
+- `jira.get_issue(id)` → `python3 scripts/jira-client.py get_issue <id> --fields "*all"`
+- `jira.user_info()` → `python3 scripts/jira-client.py get_user_info`
+- `jira.edit_issue(id, assignee=accountId)` → `python3 scripts/jira-client.py update_issue <id> --fields-json '{"assignee": {"id": "<accountId>"}}'`
+- `jira.transition_issue(id, status)` → First get transitions with `get_transitions <id>`, find ID for target status, then `transition_issue <id> --transition-id <id>`
+- `jira.update_issue(id, fields)` → `python3 scripts/jira-client.py update_issue <id> --fields-json '<json>'`
+- `jira.add_comment(id, text)` → `python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
+
+**Exception for Bash tool:** When using REST API fallback, this skill may use `bash -c "python3 scripts/jira-client.py <command>"` for JIRA operations only.
+
+Refer to `shared/jira-rest-fallback.md` for complete implementation details.
+
 ## Inputs
 
 The user will provide a Jira issue ID for a task created by the plan-feature skill.
