@@ -10,6 +10,22 @@ Skills must implement a graceful fallback pattern:
 3. **Use stored credentials if available** (no re-collection needed)
 4. **Support three user choices**: Use REST API, Skip JIRA, or Retry MCP
 
+## Credential Storage
+
+Credentials are stored in **`.env` file** (recommended) or **CLAUDE.md** (legacy):
+
+**Recommended: `.env` file in repository root**
+- Industry-standard approach for environment variables
+- Automatically ignored by git (added to `.gitignore`)
+- Easy to use with `source .env` or `direnv`
+- `.env.example` provides template for other contributors
+- See Ruben's recommendation in PR #70
+
+**Legacy: CLAUDE.md `### REST API Credentials (MCP Fallback)` section**
+- Still supported for backward compatibility
+- Less standard than .env files
+- Requires manual env var management
+
 ## Credential Collection Flow
 
 ### Step 1: Detect MCP Failure and Prompt User
@@ -29,23 +45,26 @@ Options:
 Choose (1/2/3):
 ```
 
-**Important**: Always prompt, even if credentials already exist in CLAUDE.md. This ensures explicit user consent every time.
+**Important**: Always prompt, even if credentials already exist. This ensures explicit user consent every time.
 
 ### Step 2: Check for Existing Credentials
 
 If user chooses "1. Yes - Use REST API":
 
-1. Read `CLAUDE.md` → `## Jira Configuration` → `### REST API Credentials (MCP Fallback)`
-2. Look for:
-   - `Server URL: ...`
-   - `Email: ...`
-   - `API Token: ...` (may be `$JIRA_API_TOKEN` reference)
+1. **Check for `.env` file** in repository root (recommended location)
+   - If `.env` exists and contains `JIRA_SERVER_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`:
+     - Source the file: `source .env`
+     - Proceed to Step 5 (use REST API)
+     - Skip credential collection (Steps 3-4)
 
-3. If credentials exist:
-   - Set environment variables and proceed to Step 5
-   - Skip credential collection (Steps 3-4)
+2. **Fallback to CLAUDE.md** (legacy method):
+   - Read `CLAUDE.md` → `## Jira Configuration` → `### REST API Credentials (MCP Fallback)`
+   - Look for: `Server URL`, `Email`, `API Token` (may be `$JIRA_API_TOKEN` reference)
+   - If credentials exist:
+     - Set environment variables and proceed to Step 5
+     - Skip credential collection (Steps 3-4)
 
-4. If credentials do not exist:
+3. **No credentials found**:
    - Proceed to Step 3 (credential collection)
 
 ### Step 3: Collect Credentials (First Time Only)
@@ -125,23 +144,49 @@ Credentials validated successfully!
 
 How would you like to store these credentials?
 
-1. Store all details in CLAUDE.md (convenient, less secure)
-2. Store URL and email only; use $JIRA_API_TOKEN env var (recommended, more secure)
+1. Create .env file in repository root (recommended - secure, standard)
+2. Store in CLAUDE.md with $JIRA_API_TOKEN env var (legacy - less standard)
 3. Don't store - ask me each time (most secure, least convenient)
 
 Choose (1/2/3):
 ```
 
-**Option 1: Store all in CLAUDE.md**
-Add to CLAUDE.md:
-```markdown
-### REST API Credentials (MCP Fallback)
-- Server URL: https://your-domain.atlassian.net
-- Email: user@example.com
-- API Token: ATATT3xFfGF0...actual-token-here
+**Option 1: Create .env file (recommended)**
+Create `.env` file in repository root:
+```bash
+# JIRA REST API v3 credentials for sdlc-workflow fallback
+JIRA_SERVER_URL=https://your-domain.atlassian.net
+JIRA_EMAIL=user@example.com
+JIRA_API_TOKEN=ATATT3xFfGF0...actual-token-here
 ```
 
-**Option 2: Store URL/email, use env var (recommended)**
+Ensure `.env` is in `.gitignore`:
+```bash
+echo ".env" >> .gitignore
+```
+
+Create `.env.example` template (safe to commit):
+```bash
+# JIRA REST API v3 credentials for sdlc-workflow fallback
+# Copy this file to .env and fill in your actual values
+# Get your API token from: https://id.atlassian.com/manage-profile/security/api-tokens
+
+JIRA_SERVER_URL=https://your-company.atlassian.net
+JIRA_EMAIL=your-email@company.com
+JIRA_API_TOKEN=your-api-token-here
+```
+
+Inform user:
+```
+✅ Created .env file in repository root.
+   .env is in .gitignore (won't be committed)
+   .env.example created as a template for other contributors
+
+To use: source .env
+Or install direnv to auto-load when entering this directory.
+```
+
+**Option 2: Store in CLAUDE.md with env var (legacy)**
 Add to CLAUDE.md:
 ```markdown
 ### REST API Credentials (MCP Fallback)
@@ -150,7 +195,7 @@ Add to CLAUDE.md:
 - API Token: $JIRA_API_TOKEN
 ```
 
-Then inform user:
+Inform user:
 ```
 Set this environment variable in your shell:
   export JIRA_API_TOKEN="<your-token>"
@@ -159,7 +204,7 @@ Add to ~/.bashrc or ~/.zshrc to persist across sessions.
 ```
 
 **Option 3: Don't store**
-Skip CLAUDE.md update. Credentials will be asked for on every MCP failure.
+Skip credential storage. Credentials will be asked for on every MCP failure.
 
 ## Using the Python Client
 
@@ -167,8 +212,14 @@ All REST API operations use `scripts/jira-client.py`.
 
 ### Environment Setup
 
-Before calling the script, ensure environment variables are set:
+Before calling the script, ensure environment variables are set.
 
+**Option 1: Source .env file (recommended)**
+```bash
+source .env
+```
+
+**Option 2: Export manually**
 ```bash
 export JIRA_SERVER_URL="<from-CLAUDE.md-or-collected>"
 export JIRA_EMAIL="<from-CLAUDE.md-or-collected>"
@@ -460,8 +511,11 @@ catch mcp_error:
   read -p "Choose (1/2/3): " choice
   
   if [ "$choice" = "1" ]; then
-    # Check for existing credentials in CLAUDE.md
-    if grep -q "### REST API Credentials" CLAUDE.md; then
+    # Check for .env file first (recommended)
+    if [ -f ".env" ]; then
+      source .env
+    # Fallback to CLAUDE.md (legacy)
+    elif grep -q "### REST API Credentials" CLAUDE.md; then
       # Credentials exist - extract and use them
       SERVER_URL=$(grep "Server URL:" CLAUDE.md | sed 's/.*: //')
       EMAIL=$(grep "Email:" CLAUDE.md | sed 's/.*: //')

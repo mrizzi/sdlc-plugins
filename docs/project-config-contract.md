@@ -125,7 +125,7 @@ When Atlassian MCP is unavailable due to organizational policies, skills can fal
 - "Use the Feature issue type ID when creating feature-level issues."
 - "If a Git Pull Request custom field is configured, update it with the PR URL."
 - "If a GitHub Issue custom field is configured, read it from the Jira issue and add a `Closes` reference to the PR description."
-- "If Atlassian MCP fails, always prompt user to use REST API fallback. If user chooses REST API, check for REST API Credentials subsection. If present, use stored credentials; if absent, collect credentials from user and optionally store them."
+- "If Atlassian MCP fails, always prompt user to use REST API fallback. If user chooses REST API, check for `.env` file in repository root first (recommended), then fallback to CLAUDE.md REST API Credentials subsection (legacy). If credentials present, use them; if absent, collect credentials from user and optionally store them in .env file."
 
 ---
 
