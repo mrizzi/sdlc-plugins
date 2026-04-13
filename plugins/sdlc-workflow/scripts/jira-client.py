@@ -168,30 +168,29 @@ def markdown_to_adf(md_text: str) -> Dict[str, Any]:
     """
     doc = {"type": "doc", "version": 1, "content": []}
 
-    # Split by double newlines to get blocks
-    blocks = md_text.split('\n\n')
+    # Process line by line to handle fenced code blocks with blank lines
+    lines = md_text.split('\n')
+    i = 0
+    in_code_block = False
+    code_block_lines = []
+    code_language = 'text'
+    current_block_lines = []
 
-    for block in blocks:
-        block = block.strip()
+    def flush_current_block():
+        """Process accumulated non-code block lines."""
+        if not current_block_lines:
+            return
+
+        block = '\n'.join(current_block_lines).strip()
+        current_block_lines.clear()
+
         if not block:
-            continue
+            return
 
         # Horizontal rule
         if re.match(r'^-{3,}$', block):
             doc["content"].append({"type": "rule"})
-            continue
-
-        # Code block
-        code_block_match = re.match(r'^```(\w+)?\n(.*?)\n```$', block, re.DOTALL)
-        if code_block_match:
-            language = code_block_match.group(1) or 'text'
-            code = code_block_match.group(2)
-            doc["content"].append({
-                "type": "codeBlock",
-                "attrs": {"language": language},
-                "content": [{"type": "text", "text": code}]
-            })
-            continue
+            return
 
         # Heading level 1
         if block.startswith('# ') and not block.startswith('## '):
@@ -200,7 +199,7 @@ def markdown_to_adf(md_text: str) -> Dict[str, Any]:
                 "attrs": {"level": 1},
                 "content": parse_inline_formatting(block[2:])
             })
-            continue
+            return
 
         # Heading level 2 - render as bold paragraph for task descriptions
         if block.startswith('## '):
@@ -224,7 +223,7 @@ def markdown_to_adf(md_text: str) -> Dict[str, Any]:
                     "type": "paragraph",
                     "content": parse_inline_formatting(lines[1])
                 })
-            continue
+            return
 
         # Bullet list
         if re.match(r'^[-*]\s', block):
@@ -240,7 +239,7 @@ def markdown_to_adf(md_text: str) -> Dict[str, Any]:
                         }]
                     })
             doc["content"].append({"type": "bulletList", "content": items})
-            continue
+            return
 
         # Ordered list
         if re.match(r'^\d+\.\s', block):
@@ -256,13 +255,62 @@ def markdown_to_adf(md_text: str) -> Dict[str, Any]:
                         }]
                     })
             doc["content"].append({"type": "orderedList", "content": items})
-            continue
+            return
 
         # Regular paragraph
         doc["content"].append({
             "type": "paragraph",
             "content": parse_inline_formatting(block)
         })
+
+    while i < len(lines):
+        line = lines[i]
+
+        # Check for code block start
+        code_start_match = re.match(r'^```(\w+)?$', line)
+        if code_start_match and not in_code_block:
+            # Flush any accumulated non-code lines
+            flush_current_block()
+
+            in_code_block = True
+            code_language = code_start_match.group(1) or 'text'
+            code_block_lines = []
+            i += 1
+            continue
+
+        # Check for code block end
+        if line.strip() == '```' and in_code_block:
+            # End of code block
+            code = '\n'.join(code_block_lines)
+            doc["content"].append({
+                "type": "codeBlock",
+                "attrs": {"language": code_language},
+                "content": [{"type": "text", "text": code}]
+            })
+            in_code_block = False
+            code_block_lines = []
+            i += 1
+            continue
+
+        # Inside code block - accumulate all lines
+        if in_code_block:
+            code_block_lines.append(line)
+            i += 1
+            continue
+
+        # Outside code block - accumulate lines for block processing
+        # Empty line signals potential block boundary
+        if not line.strip():
+            flush_current_block()
+            i += 1
+            continue
+
+        # Non-empty line - add to current block
+        current_block_lines.append(line)
+        i += 1
+
+    # Flush any remaining block
+    flush_current_block()
 
     return doc
 
@@ -613,7 +661,13 @@ def main():
         )
 
     elif args.command == 'update_issue':
-        fields = json.loads(args.fields_json)
+        try:
+            fields = json.loads(args.fields_json)
+        except json.JSONDecodeError as e:
+            print(f"❌ Invalid JSON in --fields-json: {e.msg}", file=sys.stderr)
+            print(f"Position: line {e.lineno}, column {e.colno}", file=sys.stderr)
+            print("Ensure your JSON is properly formatted with quotes around strings.", file=sys.stderr)
+            sys.exit(1)
         update_issue(args.issue_key, fields)
         result = {"updated": True}
 
