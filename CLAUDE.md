@@ -36,16 +36,6 @@ When bumping the version, update both files together.
 - Git Pull Request custom field: customfield_10875
 - GitHub Issue custom field: customfield_10747
 
-### REST API Credentials (MCP Fallback)
-
-When Atlassian MCP is unavailable, skills can fall back to JIRA REST API v3. Credentials are optional and only needed if MCP fails.
-
-- Server URL: https://redhat.atlassian.net
-- Email: rravi@redhat.com
-- API Token: $JIRA_API_TOKEN
-
-See `plugins/sdlc-workflow/shared/jira-api-token-guide.md` for setup instructions.
-
 ## Code Intelligence
 
 No Serena MCP servers are configured. Code intelligence is not available.
