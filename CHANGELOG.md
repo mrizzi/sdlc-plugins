@@ -5,6 +5,12 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2026-04-14
+
+### Fixed
+
+- Fixed script execution context for jira-client.py — all examples now `cd` to plugin root before running the script, since it lives in the plugin cache, not the working directory
+
 ## [0.6.0] - 2026-04-14
 
 ### Changed
