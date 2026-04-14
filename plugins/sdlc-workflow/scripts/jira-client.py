@@ -578,8 +578,16 @@ def get_project_metadata(project_key: str) -> Dict[str, Any]:
 # CLI Interface
 # =============================================================================
 
-def main():
-    """CLI entry point with subcommand dispatch."""
+def main(argv=None):
+    """CLI entry point with subcommand dispatch.
+
+    Args:
+        argv: Command-line arguments (defaults to sys.argv[1:] if None).
+              Accepts list for unit testing without subprocess.
+
+    Returns:
+        Exit code (0 for success, non-zero for errors) via sys.exit()
+    """
     import argparse
 
     parser = argparse.ArgumentParser(
@@ -642,7 +650,7 @@ def main():
     project_parser.add_argument('project_key', help='Project key')
 
     # Parse and execute
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     result = None
 

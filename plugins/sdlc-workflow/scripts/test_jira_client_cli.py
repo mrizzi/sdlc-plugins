@@ -7,30 +7,57 @@ Verifies that the CLI correctly handles:
 - Non-zero exit codes on errors
 """
 
-import subprocess
+import importlib.util
+import io
 import sys
 import os
 
 
+# Load jira-client.py module dynamically (same pattern as test_jira_client.py)
+script_path = os.path.join(os.path.dirname(__file__), 'jira-client.py')
+spec = importlib.util.spec_from_file_location("jira_client", script_path)
+jira_client = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(jira_client)
+
+
 def run_cli_command(args):
-    """Run jira-client.py with given arguments and return (exit_code, stdout, stderr)."""
-    script_path = os.path.join(os.path.dirname(__file__), 'jira-client.py')
-    cmd = [sys.executable, script_path] + args
+    """Run jira-client main() directly with given arguments.
 
-    # Run without credentials to avoid actual API calls
-    env = os.environ.copy()
-    env.pop('JIRA_SERVER_URL', None)
-    env.pop('JIRA_EMAIL', None)
-    env.pop('JIRA_API_TOKEN', None)
+    Args:
+        args: List of command-line arguments to pass to main()
 
-    result = subprocess.run(
-        cmd,
-        capture_output=True,
-        text=True,
-        env=env
-    )
+    Returns:
+        Tuple of (exit_code, stdout, stderr)
+    """
+    # Clear environment to avoid actual API calls
+    old_env = {}
+    for key in ['JIRA_SERVER_URL', 'JIRA_EMAIL', 'JIRA_API_TOKEN']:
+        old_env[key] = os.environ.pop(key, None)
 
-    return result.returncode, result.stdout, result.stderr
+    # Capture stdout/stderr
+    stdout_capture = io.StringIO()
+    stderr_capture = io.StringIO()
+
+    exit_code = 0
+    try:
+        old_stdout = sys.stdout
+        old_stderr = sys.stderr
+        sys.stdout = stdout_capture
+        sys.stderr = stderr_capture
+
+        jira_client.main(args)  # Call directly with argv
+    except SystemExit as e:
+        exit_code = e.code if e.code is not None else 0
+    finally:
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+
+        # Restore environment
+        for key, value in old_env.items():
+            if value is not None:
+                os.environ[key] = value
+
+    return exit_code, stdout_capture.getvalue(), stderr_capture.getvalue()
 
 
 def test_invalid_json_missing_quotes():
