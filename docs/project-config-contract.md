@@ -236,6 +236,16 @@ The Performance Analysis Configuration file contains:
 - **Network:** Fast 3G throttling
 - **Iterations:** 5
 
+**Baseline Capture Mode** (optional, set during baseline execution):
+- `cold-start` (default): Direct URL navigation
+- `e2e`: Use e2e test automation
+- `both`: Run both modes
+
+**E2E Configuration** (if mode = e2e or both):
+- Repository Path: Absolute path to e2e test repository
+- Command: E2E test execution command
+- Environment Variables: Optional env vars for e2e execution
+
 ---
 
 ## Target Directories

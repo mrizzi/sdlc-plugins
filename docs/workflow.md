@@ -298,24 +298,35 @@ Captures performance baseline metrics for the user-selected workflow by verifyin
 /sdlc-workflow:performance-baseline /path/to/target/repo
 ```
 
+**Interactive Prompts:**
+- Capture mode selection: `cold-start` | `e2e` | `both`
+- If e2e mode: e2e repository path, command, optional env vars
+
 **Workflow:**
 1. Determine target repository (argument or current directory)
 2. Verify Performance Analysis Configuration exists and contains selected workflow
-3. Prompt user to confirm test data availability (yes/no)
+3. **Select baseline capture mode** (cold-start, e2e, or both)
+   - cold-start: Direct URL navigation with cold cache
+   - e2e: Use existing e2e test automation scripts
+   - both: Run e2e first, then cold-start
+4. Prompt user to confirm test data availability (yes/no)
    - If no: display message and exit gracefully
    - If yes: proceed to baseline capture
-4. Check if baseline already exists (baseline-report.md in configured location)
+5. Check if baseline already exists (baseline-report.md in configured location)
    - If exists: prompt user to replace or cancel
-5. Copy capture-baseline.template.mjs from plugin cache to target directory
-6. Execute script via `node capture-baseline.mjs --config ../path/to/performance-config.md`
-7. Parse JSON output and generate baseline-report.md from template
-8. Filter scenarios to include only those in selected workflow
-9. Save report to configured location (`.claude/performance/baselines/baseline-report.md`)
-10. Output summary with key metrics (LCP, FCP, TTI, Total Load Time) and threshold warnings
+6. Copy capture-baseline.template.mjs from plugin cache to target directory
+7. Execute script with mode-specific parameters
+8. Parse JSON output and generate baseline-report.md from template
+9. Filter scenarios to include only those in selected workflow
+10. Save report to configured location (`.claude/performance/baselines/baseline-report.md`)
+11. Output summary with key metrics (LCP, FCP, TTI, Total Load Time) and threshold warnings
 
 **Output:**
 - `baseline-report.md` created in configured baseline directory
-- Baseline includes: timestamp, workflow name, per-scenario metrics, resource timing breakdown, waterfall visualization
+- **Mode-specific content:**
+  - cold-start: Per-scenario metrics with cold cache
+  - e2e: Workflow navigation metrics with warm cache
+  - both: Combined report with both metric sets
 - Summary output with aggregate metrics and warnings for exceeded thresholds
 
 **Guardrails:**

@@ -25,8 +25,19 @@ Verify the target directory exists and contains a frontend application (check fo
 
 Check if `.claude/performance-config.md` already exists in the target repository.
 
-- **If exists:** Read the file and inform the user:
-  > "Performance Analysis Configuration already exists. Would you like to update it or skip setup?"
+- **If exists:** Read the file and check configuration version:
+  
+  **Version Detection:**
+  ```bash
+  # Check for metadata frontmatter
+  if file starts with "---\nmetadata:":
+    config_version = 2 (extract from metadata.config_schema_version)
+  else:
+    config_version = 1 (legacy, no metadata)
+  ```
+  
+  Inform the user:
+  > "Performance Analysis Configuration already exists (version {config_version}). Would you like to update it or skip setup?"
   >
   > Options:
   > 1. Update - Re-discover workflows and regenerate configuration
@@ -36,7 +47,140 @@ Check if `.claude/performance-config.md` already exists in the target repository
 
   If user chooses "2. Skip", stop execution and inform them the existing config will be used.
 
-- **If not exists:** Proceed to Step 3.
+- **If not exists:** Proceed to Step 2.5.
+
+## Step 2.5 – Check for E2E Tests (Optional)
+
+Before discovering workflows from routes, check if the user has e2e tests that already define workflows.
+
+**Prompt user:**
+
+> "Do you have end-to-end (e2e) test automation? (yes/no)"
+>
+> E2E tests encode complete user workflows and provide more accurate workflow discovery than route inference.
+
+**If user responds "no":**
+- Skip e2e discovery
+- Proceed to Step 3 (route-based workflow discovery)
+
+**If user responds "yes":**
+- Proceed to Step 2.5.1
+
+### Step 2.5.1 – Get E2E Repository Path
+
+**Prompt for e2e repository path:**
+
+> "Please provide the absolute path to your e2e test repository:"
+>
+> Examples:
+> - Same repo: `./e2e` or `./tests`
+> - Separate repo: `/path/to/e2e-tests`
+
+**Validate path:**
+- Check path exists and is a directory
+- Look for test files: `**/*.spec.ts`, `**/*.spec.js`, `**/*.test.ts`, `**/*.test.js`
+- If no test files found, warn user and fallback to route discovery
+
+**Store e2e repository path** for use in later steps.
+
+### Step 2.5.2 – Discover Workflows from E2E Tests
+
+Parse e2e test files to extract workflows.
+
+**Find test files:**
+```bash
+find {e2e-path} -name "*.spec.ts" -o -name "*.test.ts" -o -name "*.spec.js" -o -name "*.test.js"
+```
+
+**For each test file:**
+
+Read the file and extract workflow information:
+
+1. **Extract test name** (workflow name):
+   - Playwright: `test('Workflow Name', ...)` or `test.describe('Workflow Name', ...)`
+   - Cypress: `describe('Workflow Name', ...)` or `it('Workflow Name', ...)`
+   - Use test name or describe block name as workflow name
+
+2. **Extract page navigations** (key screens):
+   - Playwright: Find all `page.goto('url')` calls
+   - Cypress: Find all `cy.visit('url')` calls
+   - Extract URL from each navigation call
+   - Normalize URLs (remove query params, extract path only)
+   - Deduplicate URLs
+
+3. **Extract test complexity**:
+   - Count page navigations
+   - Count interactions: `page.click()`, `page.fill()`, `cy.click()`, `cy.type()`
+   - Count assertions: `expect()`, `cy.should()`
+   - File size (lines of code)
+
+4. **Categorize complexity**:
+   - Simple: 1-2 navigations, < 50 lines
+   - Moderate: 3-4 navigations, 50-100 lines
+   - Complex: 5+ navigations, > 100 lines
+
+**Result:** List of e2e-discovered workflows with:
+- Workflow name
+- Entry point (first navigation URL)
+- Key screens (all navigation URLs in order)
+- E2E test file path
+- Complexity estimate
+
+### Step 2.5.3 – Discover ALL Workflows from Routes
+
+Run Step 3 (Discover Routes) and Step 4 (Infer Workflows) to discover ALL possible workflows from the application's router configuration.
+
+**This step is REQUIRED** even if e2e tests were found, because:
+- E2E tests may not cover all workflows
+- We need route-based discovery for gap analysis
+
+### Step 2.5.4 – Gap Analysis
+
+Compare e2e-discovered workflows against route-discovered workflows.
+
+**For each route-discovered workflow:**
+
+Check if it matches any e2e-discovered workflow by comparing key screens:
+
+```
+Match criteria:
+- Entry point URLs match (exact or normalized)
+- At least 50% of key screens overlap
+```
+
+**Categorize workflows:**
+
+1. **E2E-covered workflows** (✅):
+   - Route workflow has a matching e2e test
+   - Store e2e test path for this workflow
+
+2. **Routes-only workflows** (❌):
+   - Route workflow has no matching e2e test
+   - No e2e test path to store
+
+**Calculate coverage:**
+```
+E2E Coverage = (e2e-covered workflows / total workflows) * 100%
+```
+
+**Example:**
+```
+E2E-covered workflows:
+  ✅ SBOM Management (e2e test: e2e/tests/sbom-workflow.spec.ts)
+  ✅ Package Investigation (e2e test: e2e/tests/package-workflow.spec.ts)
+
+Routes-only workflows (not e2e tested):
+  ❌ Advisory Management
+  ❌ Vulnerability Search
+  ❌ License Management
+
+E2E Coverage: 2 out of 5 workflows (40%)
+```
+
+**If no e2e tests provided:**
+- Skip Step 2.5 entirely
+- Proceed directly to Step 3 (route discovery)
+- All workflows will have e2e_coverage = false
 
 ## Step 3 – Discover Routes from Router Configuration
 
@@ -149,9 +293,28 @@ If no workflows found, create a minimal config with empty scenarios and ask user
 
 ## Step 5 – Present Workflows and Prompt User Selection
 
-Display discovered workflows in a formatted table.
+Display discovered workflows in a formatted table with e2e coverage information (if Step 2.5 was executed).
 
-**Example output:**
+**If e2e tests were discovered (Step 2.5 executed):**
+
+Display workflows with e2e coverage status:
+
+```
+## Discovered Workflows
+
+E2E Test Coverage: {e2e-covered-count} out of {total-workflows} workflows ({coverage-percentage}%)
+
+| # | Workflow Name | Entry Point | Key Screens | Complexity | E2E Coverage |
+|---|---|---|---|---|---|
+| 1 | SBOM Management | /sboms | /sboms, /sboms/:id, /sboms/upload | Moderate (28 components, 31 API calls) | ✅ Yes (sbom-workflow.spec.ts) |
+| 2 | Package Investigation | /packages | /packages, /packages/:id | Moderate (12 components, 21 API calls) | ✅ Yes (package-workflow.spec.ts) |
+| 3 | Advisory Management | /advisories | /advisories, /advisories/:id | Moderate (12 components, 11 API calls) | ❌ No e2e test |
+| 4 | Vulnerability Search | /vulnerabilities | /vulnerabilities, /vulnerabilities/:id | Simple (13 components, 14 API calls) | ❌ No e2e test |
+```
+
+**If NO e2e tests (Step 2.5 skipped):**
+
+Display workflows without e2e coverage column:
 
 ```
 ## Discovered Workflows
@@ -163,9 +326,19 @@ Display discovered workflows in a formatted table.
 | 3 | User Profile | /profile | /profile, /profile/settings | Simple (8 components, 1 API call) |
 ```
 
-**Note:** The actual workflows discovered will depend on your application's routes. The table above shows the format for an e-commerce application; your application may have different domains (finance, healthcare, content management, etc.).
+**Note:** The actual workflows discovered will depend on your application's routes. The table above shows the format; your application may have different domains.
 
-**Guidance to user:**
+**Guidance to user (with e2e coverage info):**
+
+> "These workflows represent distinct user journeys through your application. Select one workflow to optimize for performance."
+>
+> "**E2E Coverage:** {coverage-percentage}%"
+> - Workflows with ✅ e2e tests: Use **e2e mode** or **both mode** for realistic user flow measurement
+> - Workflows with ❌ no e2e tests: Use **cold-start mode** for direct URL navigation
+>
+> "**Recommendation:** Start with a Moderate complexity workflow that is business-critical. Simple workflows may not reveal performance bottlenecks, while Complex workflows can be overwhelming to analyze."
+
+**Guidance to user (without e2e tests):**
 
 > "These workflows represent distinct user journeys through your application. Select one workflow to optimize for performance."
 >
@@ -181,6 +354,10 @@ Display discovered workflows in a formatted table.
 
 **Capture selection:**
 - Store the selected workflow's details (name, entry point, key screens, complexity)
+- **If e2e coverage exists:** Store e2e test path and coverage status:
+  - `e2e_test_path`: path to e2e test file (if workflow has e2e coverage)
+  - `e2e_coverage`: true/false
+- **If no e2e coverage:** Set both to null/false
 
 ## Step 6 – Auto-Populate Scenarios from Selected Workflow
 
@@ -291,9 +468,33 @@ If backend repository candidates found, ask the user:
    - Serena instance name (or "none")
    - API base path
 
+### Step 7.5.5 – Validate Backend Availability (New)
+
+After collecting backend configuration (or if user skips), validate and set the `backend_available` flag:
+
+```bash
+# If backend was configured:
+if backend_path exists and is a directory:
+  backend_available = true
+  last_validated = current timestamp
+else:
+  backend_available = false
+  last_validated = current timestamp
+  warn user: "Backend path does not exist: {backend_path}"
+
+# If user chose "No" or no backend repos found:
+backend_available = false
+last_validated = "-"
+```
+
+**Store for config generation:**
+- `backend_available`: true/false
+- `last_validated`: timestamp or "-"
+
 **If user selects "No" or no backend repos found:**
 - Skip backend configuration
 - Set `backend_configured = false`
+- Set `backend_available = false`
 - Continue with frontend-only analysis
 
 ## Step 8 – Collect Configuration Values
@@ -318,19 +519,56 @@ Offer choice:
 
 If yes, skip prompts and use defaults. If no, prompt for each value.
 
+## Step 8.5 – Initialize Metadata Section (New)
+
+Prepare the metadata section for the configuration file:
+
+```markdown
+metadata:
+  version: 1.0
+  created: {current-timestamp}
+  last_updated: {current-timestamp}
+  config_schema_version: 2
+  workflow_selected: true
+  baseline_captured: false
+  baseline_mode: null
+  baseline_timestamp: null
+  baseline_commit_sha: null
+  backend_available: {true/false from Step 7.5.5}
+  e2e_test_path: {path from Step 5 or null}
+  e2e_coverage: {true/false from Step 5}
+```
+
+**Values:**
+- `version`: Always "1.0"
+- `created`: Current timestamp in ISO 8601 format (e.g., "2026-04-17T10:30:00Z")
+- `last_updated`: Same as created
+- `config_schema_version`: Always 2 (this is the new schema with metadata)
+- `workflow_selected`: Always true (workflow was selected in Step 5)
+- `baseline_captured`: Always false (baseline not yet run)
+- `baseline_mode`: Always null (will be set during first baseline capture)
+- `baseline_timestamp`: Always null (will be set during first baseline capture)
+- `baseline_commit_sha`: Always null (will be set during first baseline capture)
+- `backend_available`: Use value from Step 7.5.5
+- `e2e_test_path`: Path to e2e test file if selected workflow has e2e coverage (from Step 5), otherwise null
+- `e2e_coverage`: true if selected workflow has e2e coverage (from Step 5), otherwise false
+
 ## Step 9 – Generate Configuration File
 
 Read the template from `plugins/sdlc-workflow/skills/performance/performance-config.template.md` in the plugin cache.
 
 **Generate configuration with:**
 
-1. **Performance Scenarios section** — populated with scenarios from Step 6
-2. **Baseline Capture Settings section** — populated with values from Step 8
-3. **Target Directories section** — standard directories
-4. **Optimization Targets section** — populated with targets from Step 8
-5. **Module Registry section** — populated with modules from Step 7
-6. **Backend Repository Configuration section** — populated with backend values from Step 7.5 (if configured), otherwise use placeholder text "Not Configured"
-7. **Selected Workflow section** — workflow details from Step 5
+1. **Metadata frontmatter** — inject metadata from Step 8.5 (replaces {{timestamp}} placeholders and {{backend_available}})
+2. **Performance Scenarios section** — populated with scenarios from Step 6
+3. **Baseline Capture Settings section** — populated with values from Step 8
+4. **Target Directories section** — standard directories
+5. **Optimization Targets section** — populated with targets from Step 8 (3-column format: Baseline/Current/Target)
+6. **Module Registry section** — populated with modules from Step 7
+7. **Backend Repository Configuration section** — populated with backend values from Step 7.5.5:
+   - If backend configured: fill in repository name, path, framework, Serena instance, API base path, backend_available (true/false), last_validated (timestamp)
+   - If not configured: use "Not configured" placeholders, set backend_available = false, last_validated = "-"
+8. **Selected Workflow section** — workflow details from Step 5
 
 **Workflow section format:**
 
@@ -391,9 +629,83 @@ Report to the user:
 >    /sdlc-workflow:performance-baseline
 >    ```
 
+## Command Variants (New)
+
+This skill supports optional arguments for advanced workflows:
+
+### --refresh-backend
+
+**Usage:** `/sdlc-workflow:performance-setup --refresh-backend [target-repository-path]`
+
+**Purpose:** Update backend configuration in an existing performance-config.md without re-running full workflow discovery.
+
+**Steps:**
+1. Read existing `.claude/performance-config.md`
+2. Re-discover backend repositories from CLAUDE.md (Step 7.5.1-7.5.2)
+3. Re-prompt user for backend configuration
+4. Validate backend path exists (Step 7.5.5)
+5. Update Backend Repository Configuration section in config file:
+   - Backend Repository, Backend Path, Backend Framework, Serena Instance, API Base Path
+   - Backend Available: true/false (validated)
+   - Last Validated: {current-timestamp}
+6. Update metadata:
+   - `backend_available`: true/false
+   - `last_updated`: {current-timestamp}
+7. Write updated config
+8. Log success:
+   ```
+   ✓ Backend configuration refreshed
+   
+   Backend Available: {true/false}
+   Framework: {framework}
+   Last Validated: {timestamp}
+   ```
+
+### --migrate
+
+**Usage:** `/sdlc-workflow:performance-setup --migrate [target-repository-path]`
+
+**Purpose:** Manually trigger v1 → v2 configuration migration.
+
+**Steps:**
+1. Read existing `.claude/performance-config.md`
+2. Detect version (check for metadata frontmatter)
+3. If already v2, inform user and skip
+4. If v1, perform migration:
+   - Extract baseline mode from `.claude/performance/baselines/baseline-report.md` (if exists)
+   - Validate backend path exists (if Backend Configuration section exists)
+   - Create metadata section with:
+     ```
+     created: {file-mtime}
+     config_schema_version: 2
+     workflow_selected: true (if Selected Workflow section exists)
+     baseline_captured: true (if baseline report exists)
+     baseline_mode: {extracted-from-report or null}
+     baseline_timestamp: {extracted-from-report or null}
+     baseline_commit_sha: {current-HEAD}
+     backend_available: {validated or false}
+     ```
+   - Restructure Optimization Targets table (add Baseline/Current columns)
+   - Update Backend Configuration section (add Backend Available, Last Validated fields)
+   - Backup original to `.claude/performance-config.md.v1.backup`
+5. Write migrated config
+6. Log migration:
+   ```
+   ℹ️ Configuration migrated from v1 → v2
+   
+   Changes:
+   - Added metadata section
+   - Restructured Optimization Targets (Baseline/Current columns)
+   - Enhanced Backend Configuration (availability tracking)
+   - Extracted baseline mode from report: {mode or 'not yet captured'}
+   
+   Original backed up to:
+   .claude/performance-config.md.v1.backup
+   ```
+
 ## Important Rules
 
-- Never modify source code — only create the `.claude/performance-config.md` file
+- Never modify source code — only create/update the `.claude/performance-config.md` file
 - Always use actual discovered routes and modules — do not invent placeholder examples
 - Scenarios and modules are **automatically derived** from the selected workflow — do not ask user to select scenarios separately
 - If route discovery finds no results, create minimal config and inform user to edit manually
@@ -401,3 +713,5 @@ Report to the user:
 - Validate that discovered routes reference real components/files before including them
 - Ensure all URL paths in scenarios are relative (no `http://` or `https://` — they should work with localhost)
 - Present workflows in order of estimated business value/traffic (if determinable from route names)
+- When migrating v1 configs, always backup the original before making changes
+- Metadata timestamps should use ISO 8601 format (e.g., "2026-04-17T10:30:00Z")

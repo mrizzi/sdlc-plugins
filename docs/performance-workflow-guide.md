@@ -40,7 +40,7 @@ setup (with workflow selection) → baseline → analyze → plan → implement 
 | Step | Skill | Purpose | Output |
 |---|---|---|---|
 | 1 | `performance-setup` | Initialize configuration & select workflow | `.claude/performance-config.md` with selected workflow |
-| 2 | `performance-baseline` | Capture current metrics | `baseline-report.md` with Core Web Vitals |
+| 2 | `performance-baseline` | **Select mode** (cold/e2e/both) & capture metrics | `baseline-report.md` with Core Web Vitals |
 | 3 | `performance-analyze-module` | **Inspect source code** to detect anti-patterns | `workflow-analysis-report.md` with findings |
 | 4 | `performance-plan-optimization` | **Read analysis report** and create Jira tasks | Jira Epic + Tasks, `optimization-plan.md` |
 | 5 | `performance-implement-optimization` | Execute optimization with validation | PR with before/after metrics |
@@ -69,6 +69,28 @@ graph TD
     L -->|Yes| E
     L -->|No| M[Done]
 ```
+
+---
+
+## Baseline Capture Modes
+
+The baseline skill supports three measurement modes:
+
+**cold-start (Recommended for initial baseline):**
+- Direct navigation to each URL
+- Measures worst-case performance (first visit, cold cache)
+- Use case: Establish performance floor, measure direct-link scenarios
+
+**e2e (Realistic workflow measurement):**
+- Uses your existing e2e test automation scripts
+- Measures realistic navigation flow (list → click → detail)
+- Captures warm cache benefits and API call timing
+- **No special instrumentation required:** Metrics captured from browser DevTools during e2e execution
+
+**both (Comprehensive):**
+- Runs e2e workflow first, then cold-start direct navigation
+- Provides both realistic and worst-case metrics
+- Best for comparing optimization impact across both scenarios
 
 ---
 

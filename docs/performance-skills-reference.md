@@ -52,13 +52,23 @@ Quick reference for all performance optimization skills.
 | Target repository path (optional) | `baseline-report.md` |
 | User confirmation: test data available? | Metrics: LCP, FCP, TTI, Total Load Time |
 
-**Prerequisites:** Application running on localhost, Playwright installed
+**Prerequisites:**
+- Application running locally (for cold-start or both modes)
+- Playwright installed: `npm install -D @playwright/test` (for cold-start or both)
+- **NEW:** E2E test suite (any framework - Playwright, Cypress, Selenium) for e2e or both modes
+  - Performance metrics captured from browser DevTools during test execution
+  - No special instrumentation required in tests
 
 **What it does:**
-1. Verifies test data availability
-2. Runs Playwright automation (5 iterations by default)
-3. Captures Core Web Vitals + resource timing
-4. Generates report with p95 metrics
+1. Verifies Performance Analysis Configuration exists with selected workflow
+2. **Prompts for capture mode** (cold-start, e2e, or both)
+3. Confirms test data availability
+4. Checks for existing baseline (prompts to replace or cancel)
+5. Executes baseline capture:
+   - **cold-start:** Playwright automation with direct URL navigation
+   - **e2e:** Runs user's e2e test suite with performance hooks
+   - **both:** Executes e2e first, then cold-start
+6. Generates baseline report with mode-specific metrics
 
 **Key metrics captured:**
 - LCP (Largest Contentful Paint)

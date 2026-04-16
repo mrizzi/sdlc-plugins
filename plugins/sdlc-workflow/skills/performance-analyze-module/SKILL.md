@@ -25,52 +25,62 @@ Verify the target directory exists and contains a frontend application (check fo
 
 ## Step 2 – Verify Performance Configuration and Selected Workflow
 
-Check if `.claude/performance-config.md` exists in the target repository.
+**Apply:** [Common Pattern: Config Reading](../performance/common-patterns.md#pattern-1-config-reading)
 
-- **If not exists:** Inform the user:
-  > "Performance Analysis Configuration not found. Please run `/sdlc-workflow:performance-setup` first to initialize the configuration, then re-run this skill."
-  
-  Stop execution.
-
-- **If exists:** Read the configuration file.
+**Specific actions for this skill:**
+- Verify config exists, stop if missing
+- Read configuration for workflow and backend settings
 
 ### Step 2.1 – Check for Selected Workflow
 
-Search for a `## Selected Workflow` section in the configuration file.
+**Apply:** [Common Pattern: Workflow Validation](../performance/common-patterns.md#pattern-7-workflow-validation)
 
-- **If not found:** Inform the user:
-  > "No workflow selected for optimization. Please run `/sdlc-workflow:performance-setup` first to initialize configuration and select a workflow, then re-run this skill."
-  
-  Stop execution.
+**Specific actions for this skill:**
+- Extract workflow name, entry point, key screens for scope analysis
+- Store for module discovery and anti-pattern detection
 
-- **If found:** Extract the workflow details:
-  - Workflow Name
-  - Entry Point URL
-  - Key Screens (list of route paths)
-  - Complexity estimate
+### Step 2.2 – Read Backend Availability from Metadata (Updated)
 
-Store these details for use in later steps.
+**Apply:** [Common Pattern: Metadata Extraction](../performance/common-patterns.md#pattern-2-metadata-extraction)
 
-### Step 2.2 – Check for Backend Repository Configuration
+**Specific field to extract:**
+- `metadata.backend_available` → backend_available (cached status, no re-validation)
 
-Search for `## Backend Repository Configuration` section in performance-config.md.
+**If `backend_available = true`:**
 
-- **If found and configured (not "Not Configured"):** 
-  - Extract backend repo name
-  - Extract backend path
-  - Extract backend framework
-  - Extract Serena instance name
-  - Extract API base path
-  - Verify backend path exists: `test -d {{backend-path}}`
-  - If path doesn't exist, warn user but continue with frontend-only analysis
-  - Set `backend_available = true`
+Extract backend configuration from `## Backend Repository Configuration` section:
+- Backend repo name
+- Backend path
+- Backend framework
+- Serena instance name
+- API base path
 
-- **If "Not Configured" or section not found:** 
-  - Set `backend_available = false`
-  - Backend analysis steps (Step 6.10) will be skipped
-  - Frontend-only analysis will be performed
+**If `backend_available = false`:**
 
-Store backend configuration for use in Step 6.10 and enhanced Step 6.1.
+Display informative message to user:
+
+> ℹ️ **Frontend-only analysis mode**
+>
+> Backend repository is not configured. Analysis will focus on:
+> ✓ Frontend bundle composition and code-splitting
+> ✓ Frontend API call patterns (limited to request inspection)
+> ✓ Frontend render optimization opportunities
+> ✓ Resource loading patterns
+>
+> ⚠️ **The following analysis will be SKIPPED:**
+> ✗ Backend response schema extraction
+> ✗ Cross-repository over-fetching detection
+> ✗ Database N+1 query pattern detection
+> ✗ Backend caching opportunities
+>
+> **To enable full-stack analysis**, run:
+> ```
+> /sdlc-workflow:performance-setup --refresh-backend
+> ```
+
+Store backend configuration and `backend_available` flag for use in Step 6.10.
+
+**Note:** Backend availability is cached in config metadata and validated during setup. This avoids redundant path checks and provides clear feedback about analysis limitations.
 
 ## Step 3 – Verify Baseline Report Exists
 
@@ -88,31 +98,20 @@ Check if the file exists at `{baseline-directory}/baseline-report.md`.
   Stop execution.
 
 - **If baseline exists:** Proceed to Step 4.
+  
+  **Note:** Baseline can be captured in cold-start, e2e, or both modes. Analysis uses metrics from whichever mode was selected.
 
 ## Step 4 – Read Baseline Data
 
-Read the baseline report at `{baseline-directory}/baseline-report.md`.
+**Apply:** [Common Pattern: Baseline Report Reading](../performance/common-patterns.md#pattern-6-baseline-report-reading)
 
-Extract the following data for use in anti-pattern detection:
+**Specific data to extract:**
+- **Per-scenario metrics**: LCP, FCP, TTI, Total Load Time (p50, p95, p99)
+- **Resource timing breakdown**: URLs, load duration, transfer size per resource
+- **Aggregate metrics**: Overall performance across all scenarios
+- **Capture mode**: For understanding measurement context
 
-**Per-scenario metrics:**
-- Scenario name and URL
-- LCP (Largest Contentful Paint) — mean, p50, p95, p99
-- FCP (First Contentful Paint) — mean, p50, p95, p99
-- TTI (Time to Interactive) — mean, p50, p95, p99
-- Total Load Time — mean, p50, p95, p99
-- Resource counts (scripts, stylesheets, images, fetch calls)
-
-**Resource timing breakdown:**
-- Resource URLs (scripts, stylesheets, images, fetch)
-- Load duration per resource
-- Transfer size per resource
-- Scenario where resource was loaded
-
-**Aggregate metrics:**
-- Overall LCP, FCP, TTI, Total Load Time across all scenarios
-
-Store this data for use in Steps 5 and 6.
+Store this data for anti-pattern detection in Steps 5 and 6.
 
 ## Step 5 – Analyze Bundle Composition
 
@@ -401,7 +400,10 @@ For each anti-pattern, search the codebase for indicators and report findings wi
 
 **CRITICAL:** This step is MANDATORY for comprehensive over-fetching detection when backend is configured.
 
-**Skip this entire step if `backend_available = false`.**
+**Check cached backend availability from Step 2.2:**
+
+- **If `backend_available = false`:** Skip this entire step (frontend-only mode, as indicated in Step 2.2 message)
+- **If `backend_available = true`:** Proceed with backend analysis using configuration from Step 2.2
 
 For EACH API endpoint identified in Step 6.1 (Over-Fetching Detection):
 

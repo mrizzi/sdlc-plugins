@@ -155,6 +155,15 @@ The `performance-baseline` skill uses Playwright to:
 4. Capture resource timing (scripts, stylesheets, images)
 5. Generate a baseline report with metrics and waterfall visualization
 
+**Baseline Capture Modes:**
+
+The performance-baseline skill supports multiple capture modes:
+- **cold-start** (default): Uses Playwright for direct URL navigation
+- **e2e**: Delegates to existing e2e test framework (Playwright, Cypress, etc.)
+- **both**: Runs e2e first, then Playwright cold-start
+
+When e2e mode is selected, the skill executes the user's configured e2e command rather than running Playwright directly.
+
 ### Requirements
 
 - **Application running:** The target application must be running on localhost before capturing baseline

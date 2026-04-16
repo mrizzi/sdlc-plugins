@@ -1,5 +1,21 @@
 # Performance Analysis Configuration
 
+---
+metadata:
+  version: 1.0
+  created: {{timestamp}}
+  last_updated: {{timestamp}}
+  config_schema_version: 2
+  workflow_selected: true
+  baseline_captured: false
+  baseline_mode: null
+  baseline_timestamp: null
+  baseline_commit_sha: null
+  backend_available: false
+  e2e_test_path: null
+  e2e_coverage: false
+---
+
 This configuration defines performance scenarios, baseline capture settings, and optimization targets for the sdlc-workflow performance optimization workflow.
 
 ## Performance Scenarios
@@ -30,6 +46,27 @@ List the key user workflows and pages to measure. Each scenario should represent
 | Metrics to Collect | LCP, FCP, TTI, Total Load Time, Resource Timing | Core Web Vitals and resource-level metrics |
 | Browser | Chromium (headless) | Playwright browser for automation |
 
+## Baseline Capture Mode
+
+Determines how performance metrics are captured.
+
+**Status:** Not yet configured (will be set during first baseline capture)
+
+| Mode | Description | Use Case |
+|---|---|---|
+| **cold-start** | Direct URL navigation with cold cache | Worst-case performance (first visit, direct links, bookmarks) |
+| **e2e** | Use e2e test automation scripts | Realistic user workflow with warm cache (click navigation) |
+| **both** | Run e2e first, then cold-start | Comprehensive measurement (both realistic and worst-case) |
+
+**Configured Mode:** Not yet selected (will be set during `/sdlc-workflow:performance-baseline` execution and stored in config metadata)
+
+**E2E Configuration** (if mode = e2e or both):
+- Repository Path: (Path to e2e test repository)
+- Command: (Command to run e2e tests, e.g., `npm run e2e`)
+- Environment Variables: (Optional env vars)
+
+**Important:** Once baseline is captured with a mode, all subsequent baseline captures (during implement, verify) MUST use the same mode for valid comparisons. The selected mode is stored in config metadata and enforced by downstream skills.
+
 ## Target Directories
 
 | Directory | Purpose |
@@ -43,14 +80,22 @@ List the key user workflows and pages to measure. Each scenario should represent
 
 Core Web Vitals thresholds to achieve after optimization.
 
-| Metric | Current (Baseline) | Target | Unit |
-|---|---|---|---|
-| LCP (Largest Contentful Paint) | TBD | 2.5 | seconds |
-| FCP (First Contentful Paint) | TBD | 1.8 | seconds |
-| TTI (Time to Interactive) | TBD | 3.5 | seconds |
-| Total Load Time | TBD | 4.0 | seconds |
+**Status:** Baseline values not yet captured
 
-**Note:** Current (Baseline) values will be filled in after running `performance-baseline` skill. Target values follow Google's Core Web Vitals "Good" thresholds but can be adjusted based on application requirements.
+| Metric | Baseline (p95) | Current (p95) | Target | Unit | Last Updated |
+|---|---|---|---|---|---|
+| LCP (Largest Contentful Paint) | TBD | TBD | 2.5 | seconds | - |
+| FCP (First Contentful Paint) | TBD | 1.8 | seconds | - |
+| TTI (Time to Interactive) | TBD | TBD | 3.5 | seconds | - |
+| Total Load Time | TBD | TBD | 4.0 | seconds | - |
+
+**Columns explained:**
+- **Baseline (p95):** Initial value from first baseline capture (never changes)
+- **Current (p95):** Latest measured value (updated after each optimization)
+- **Target:** Goal to achieve (can be adjusted based on requirements)
+- **Last Updated:** Timestamp of last metric update
+
+**Note:** Baseline values will be auto-filled after first `/sdlc-workflow:performance-baseline` run. Current values will be updated by `/sdlc-workflow:performance-implement-optimization` after each optimization. Target values follow Google's Core Web Vitals "Good" thresholds.
 
 ## Module Registry
 
@@ -69,7 +114,9 @@ Frontend modules/pages to analyze individually. Each entry represents a distinct
 - Heavy UI libraries (e.g., chart/visualization components)
 - Third-party integrations with separate chunks
 
-## Backend Repository Configuration (Optional)
+## Backend Repository Configuration
+
+**Status:** Not configured
 
 If your application has a separate backend repository, configure it here to enable backend source code analysis and over-fetching detection.
 
@@ -80,8 +127,14 @@ If your application has a separate backend repository, configure it here to enab
 | Backend Framework | {{framework}} | e.g., actix-web, axum, spring-boot, express, fastapi |
 | Serena Instance | {{serena-instance}} | Instance name from Code Intelligence section (or "none") |
 | API Base Path | {{/api/v2}} | Base path for API routes |
+| Backend Available | false | Cached validation status (auto-updated) |
+| Last Validated | - | Timestamp of last validation check |
 
-**Note:** If no backend repository is configured, analysis will focus on frontend-only optimizations.
+**Analysis Mode:**
+- `backend_available = false` → Frontend-only analysis (API field usage analysis limited)
+- `backend_available = true` → Full-stack analysis (cross-reference backend schemas with frontend usage)
+
+**Note:** Backend configuration can be updated by re-running `/sdlc-workflow:performance-setup --refresh-backend` or edited manually. If no backend repository is configured, analysis will focus on frontend-only optimizations.
 
 ## Selected Workflow
 

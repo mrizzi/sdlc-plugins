@@ -2,6 +2,7 @@
 generated_by: {{skill-name}}
 timestamp: {{iso-8601-timestamp}}
 repository: {{repository-name}}
+capture_mode: {{capture-mode}}
 ---
 
 # Performance Baseline Report
@@ -12,6 +13,19 @@ repository: {{repository-name}}
 - **Iterations:** {{iterations}}
 - **Warmup Runs:** {{warmup-runs}}
 - **Scenarios Measured:** {{scenario-count}}
+
+## Capture Mode
+
+**Mode:** {{capture-mode}}
+
+{{mode-description}}
+
+**Mode descriptions:**
+- **cold-start:** Direct URL navigation with cold cache. Measures worst-case/first-visit performance.
+- **e2e:** E2E test automation with warm cache. Measures realistic user workflow navigation.
+- **both:** Combined measurement (e2e + cold-start) for comprehensive analysis.
+
+---
 
 ## Aggregate Metrics
 

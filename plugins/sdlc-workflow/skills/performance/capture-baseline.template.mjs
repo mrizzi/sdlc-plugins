@@ -38,49 +38,16 @@
  */
 
 import { chromium } from '@playwright/test';
-import { readFile } from 'fs/promises';
+import { readFile, realpath } from 'fs/promises';
 import { URL } from 'url';
 import { resolve, relative, isAbsolute } from 'path';
+import { spawn } from 'child_process';
 
-// Parse command line arguments
-const args = process.argv.slice(2);
-const configIndex = args.indexOf('--config');
-if (configIndex === -1 || !args[configIndex + 1]) {
-  console.error('Usage: node capture-baseline.mjs --config <path-to-performance-config.md> [--port <port-number>]');
-  console.error('');
-  console.error('Prerequisites:');
-  console.error('  - Node.js >= 16');
-  console.error('  - @playwright/test installed (npm install -D @playwright/test)');
-  console.error('  - Playwright browsers installed (npx playwright install chromium)');
-  console.error('  - Application running locally on configured port');
-  process.exit(1);
-}
-
-// Validate config path (prevent path traversal)
-const configPathInput = args[configIndex + 1];
-const configPath = resolve(configPathInput);
-const relPath = relative(process.cwd(), configPath);
-
-if (relPath.startsWith('..') || isAbsolute(relPath)) {
-  console.error('Security Error: Config path must be within the current directory');
-  console.error(`  Provided: ${configPathInput}`);
-  console.error(`  Resolved: ${configPath}`);
-  console.error(`  Relative: ${relPath}`);
-  process.exit(1);
-}
-
-// Optional port override with validation
-const portIndex = args.indexOf('--port');
-let portOverride = null;
-if (portIndex !== -1) {
-  const portValue = args[portIndex + 1];
-  const portNum = parseInt(portValue, 10);
-  if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
-    console.error(`Invalid port: ${portValue}. Must be between 1 and 65535.`);
-    process.exit(1);
-  }
-  portOverride = portNum;
-}
+// Module-level variables (initialized in validateAndRun)
+let configPath;
+let portOverride;
+let captureMode;
+let e2eCommand;
 
 /**
  * Parse performance configuration from markdown file
@@ -170,6 +137,12 @@ function validateLocalhostUrl(urlPath, defaultPort) {
   try {
     const parsed = new URL(fullUrl);
     const hostname = parsed.hostname.toLowerCase();
+
+    // FIX: Validate pathname characters even for full URLs
+    const pathPattern = /^[a-zA-Z0-9\/_\-.:?&=%]+$/;
+    if (parsed.pathname && !pathPattern.test(parsed.pathname)) {
+      throw new Error(`Invalid characters in URL pathname: ${parsed.pathname}. Only alphanumeric, /, _, -, ., :, ?, &, =, % allowed.`);
+    }
 
     // Comprehensive localhost validation
     // Allow: 'localhost', 127.0.0.0/8 CIDR, ::1
@@ -279,6 +252,159 @@ async function collectMetrics(page) {
 }
 
 /**
+ * Execute e2e tests with performance measurement
+ * Safely executes e2e command without shell injection
+ * Captures browser DevTools metrics during e2e workflow execution
+ */
+async function captureE2EMetrics(e2eCommand, scenarios) {
+  console.error('Executing e2e tests with performance capture...');
+
+  const e2eMetrics = {
+    workflowStartTime: Date.now(),
+    scenarios: Object.create(null), // FIX: Prevent prototype pollution
+    navigationEvents: [],
+    apiCalls: [],
+    cacheStats: { hits: 0, misses: 0 }
+  };
+
+  // Launch browser for e2e monitoring
+  const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  // Set up performance monitoring hooks
+  const performanceData = [];
+
+  page.on('requestfinished', async (request) => {
+    const timing = await request.timing();
+    const response = await request.response();
+    const fromCache = response ? response.fromCache() : false;
+
+    performanceData.push({
+      url: stripQueryString(request.url()), // FIX: Strip query strings to prevent token leakage
+      method: request.method(),
+      resourceType: request.resourceType(),
+      duration: timing.responseEnd,
+      size: response ? (await response.body()).length : 0,
+      cached: fromCache,
+      timestamp: Date.now()
+    });
+
+    if (fromCache) {
+      e2eMetrics.cacheStats.hits++;
+    } else {
+      e2eMetrics.cacheStats.misses++;
+    }
+  });
+
+  // Monitor navigation events
+  page.on('load', async () => {
+    const metrics = await page.evaluate(() => {
+      const navigation = performance.getEntriesByType('navigation')[0];
+      return {
+        url: window.location.href,
+        navigationTime: navigation ? navigation.loadEventEnd - navigation.fetchStart : null,
+        domInteractive: navigation ? navigation.domInteractive : null,
+        timestamp: Date.now()
+      };
+    });
+
+    // FIX: Strip query strings from navigation URLs to prevent token leakage
+    e2eMetrics.navigationEvents.push({
+      ...metrics,
+      url: stripQueryString(metrics.url)
+    });
+  });
+
+  // Execute e2e command WITHOUT shell (prevents injection)
+  // NOTE: Full process.env is inherited by the subprocess. Be aware that any
+  // secrets or credentials in the parent environment (AWS keys, API tokens, etc.)
+  // are accessible to the e2e command. Only run trusted e2e commands.
+  try {
+    // Parse command into argv array (simple whitespace split)
+    // This prevents shell injection by avoiding shell=true
+    const commandParts = e2eCommand.trim().split(/\s+/);
+    const commandBin = commandParts[0];
+    const commandArgs = commandParts.slice(1);
+
+    const childProcess = spawn(commandBin, commandArgs, {
+      env: {
+        ...process.env, // Intentional: e2e tests may need environment variables
+        PWDEBUG: '0',
+        PLAYWRIGHT_BROWSERS_PATH: '0'
+      },
+      shell: false // CRITICAL: Do NOT use shell
+    });
+
+    let stdout = '';
+    let stderr = '';
+
+    childProcess.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+
+    childProcess.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+
+    await new Promise((resolve, reject) => {
+      childProcess.on('close', (code) => {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(new Error(`E2E command exited with code ${code}`));
+        }
+      });
+
+      childProcess.on('error', (err) => {
+        reject(new Error(`Failed to execute e2e command: ${err.message}`));
+      });
+    });
+
+    console.error('E2E tests completed');
+    // FIX: Do not echo stdout (may contain sensitive information from e2e tests)
+
+  } catch (error) {
+    console.error('E2E execution error:', error.message);
+    throw error;
+  } finally {
+    await browser.close();
+  }
+
+  // Aggregate e2e metrics
+  e2eMetrics.workflowEndTime = Date.now();
+  e2eMetrics.totalWorkflowTime = e2eMetrics.workflowEndTime - e2eMetrics.workflowStartTime;
+
+  // Group performance data by scenario (match URLs to configured scenarios)
+  for (const scenario of scenarios) {
+    // Sanitize scenario name to prevent prototype pollution
+    const safeName = String(scenario.name).replace(/[^a-zA-Z0-9_\- ]/g, '_');
+
+    if (safeName !== scenario.name) {
+      console.error(`  Warning: Scenario name sanitized: "${scenario.name}" -> "${safeName}"`);
+    }
+
+    const scenarioUrl = scenario.path.startsWith('http')
+      ? scenario.path
+      : `http://localhost:${portOverride}${scenario.path}`;
+
+    const scenarioRequests = performanceData.filter(p => p.url.includes(scenarioUrl));
+    const scenarioNavigation = e2eMetrics.navigationEvents.find(n => n.url.includes(scenarioUrl));
+
+    e2eMetrics.scenarios[safeName] = { // FIX: Use safeName
+      navigationTime: scenarioNavigation ? scenarioNavigation.navigationTime : null,
+      domInteractive: scenarioNavigation ? scenarioNavigation.domInteractive : null,
+      requests: scenarioRequests.length,
+      apiCalls: scenarioRequests.filter(r => r.resourceType === 'fetch' || r.resourceType === 'xhr'),
+      cachedResources: scenarioRequests.filter(r => r.cached).length,
+      networkResources: scenarioRequests.filter(r => !r.cached).length
+    };
+  }
+
+  return e2eMetrics;
+}
+
+/**
  * Run performance measurement for a single scenario
  */
 async function measureScenario(browser, scenario, iterations, warmupRuns, defaultPort) {
@@ -384,46 +510,58 @@ async function main() {
       process.exit(1);
     }
 
-    // Launch browser
-    console.error('Launching Chromium browser (headless)...');
-    browser = await chromium.launch({ headless: true });
+    let results = Object.create(null);
+    let e2eResults = null;
 
-    // Prevent prototype pollution by using Object.create(null)
-    const results = Object.create(null);
-
-    for (const scenario of config.scenarios) {
-      console.error(`Measuring: ${scenario.name}...`);
-
-      // Sanitize scenario name to prevent prototype pollution
-      const safeName = String(scenario.name).replace(/[^a-zA-Z0-9_\- ]/g, '_');
-
-      if (safeName !== scenario.name) {
-        console.error(`  Warning: Scenario name sanitized: "${scenario.name}" -> "${safeName}"`);
-      }
-
-      results[safeName] = await measureScenario(browser, scenario, config.iterations, config.warmupRuns, portOverride);
+    // E2E mode execution
+    if (captureMode === 'e2e' || captureMode === 'both') {
+      console.error('Running e2e performance capture...');
+      e2eResults = await captureE2EMetrics(e2eCommand, config.scenarios);
     }
 
-    // Output JSON results to stdout
+    // Cold-start mode execution
+    if (captureMode === 'cold-start' || captureMode === 'both') {
+      console.error('Launching Chromium browser (headless)...');
+      browser = await chromium.launch({ headless: true });
+
+      for (const scenario of config.scenarios) {
+        console.error(`Measuring: ${scenario.name}...`);
+
+        // Sanitize scenario name to prevent prototype pollution
+        const safeName = String(scenario.name).replace(/[^a-zA-Z0-9_\- ]/g, '_');
+
+        if (safeName !== scenario.name) {
+          console.error(`  Warning: Scenario name sanitized: "${scenario.name}" -> "${safeName}"`);
+        }
+
+        results[safeName] = await measureScenario(browser, scenario, config.iterations, config.warmupRuns, portOverride);
+      }
+    }
+
+    // Output JSON results
     console.log(JSON.stringify({
       timestamp: new Date().toISOString(),
+      mode: captureMode,
       config: {
         iterations: config.iterations,
         warmupRuns: config.warmupRuns,
         port: portOverride
+        // FIX: e2eCommand removed (security risk - may contain inline credentials)
       },
-      scenarios: results
+      e2e: e2eResults,
+      coldStart: captureMode !== 'e2e' ? results : null
     }, null, 2));
 
   } catch (error) {
     console.error(`Fatal error: ${error.message}`);
     console.error('');
     console.error('Prerequisites checklist:');
-    console.error('  1. Is your application running locally?');
+    console.error('  1. Is your application running locally? (for cold-start or both modes)');
     console.error('  2. Is @playwright/test installed? (npm install -D @playwright/test)');
     console.error('  3. Are Playwright browsers installed? (npx playwright install chromium)');
     console.error('  4. Do URLs in your config include port numbers or did you use --port?');
     console.error('  5. Is the config file within the current directory?');
+    console.error('  6. Is e2e command correct? (for e2e or both modes)');
     process.exit(1);
   } finally {
     if (browser) {
@@ -432,4 +570,114 @@ async function main() {
   }
 }
 
-main();
+/**
+ * Validate arguments and configuration path, then run main
+ * FIX: Includes symlink resolution to prevent path traversal bypass
+ */
+async function validateAndRun() {
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+  const configIndex = args.indexOf('--config');
+  if (configIndex === -1 || !args[configIndex + 1]) {
+    console.error('Usage: node capture-baseline.mjs --config <path> [--port <port>] [--mode <cold-start|e2e|both>] [--e2e-command <command>]');
+    console.error('');
+    console.error('Examples:');
+    console.error('  Cold-start mode (default):');
+    console.error('    node capture-baseline.mjs --config .claude/performance-config.md --port 3000');
+    console.error('');
+    console.error('  E2E mode:');
+    console.error('    node capture-baseline.mjs --config .claude/performance-config.md --mode e2e --e2e-command "npm run e2e"');
+    console.error('');
+    console.error('  Both modes:');
+    console.error('    node capture-baseline.mjs --config .claude/performance-config.md --port 3000 --mode both --e2e-command "npx playwright test"');
+    console.error('');
+    console.error('Prerequisites:');
+    console.error('  - Node.js >= 16');
+    console.error('  - @playwright/test installed (npm install -D @playwright/test)');
+    console.error('  - Playwright browsers installed (npx playwright install chromium)');
+    console.error('  - Application running locally on configured port (for cold-start or both modes)');
+    console.error('  - E2E test suite available (for e2e or both modes)');
+    process.exit(1);
+  }
+
+  // Validate config path (prevent path traversal)
+  const configPathInput = args[configIndex + 1];
+  const configPathResolved = resolve(configPathInput);
+  const relPath = relative(process.cwd(), configPathResolved);
+
+  if (relPath.startsWith('..') || isAbsolute(relPath)) {
+    console.error('Security Error: Config path must be within the current directory');
+    console.error(`  Provided: ${configPathInput}`);
+    console.error(`  Resolved: ${configPathResolved}`);
+    console.error(`  Relative: ${relPath}`);
+    process.exit(1);
+  }
+
+  // FIX: Resolve symlinks and re-validate
+  try {
+    const realConfigPath = await realpath(configPathResolved);
+    const realRelPath = relative(process.cwd(), realConfigPath);
+
+    if (realRelPath.startsWith('..') || isAbsolute(realRelPath)) {
+      console.error('Security Error: Config path symlink points outside current directory');
+      console.error(`  Provided: ${configPathInput}`);
+      console.error(`  Symlink target: ${realConfigPath}`);
+      console.error(`  Relative: ${realRelPath}`);
+      process.exit(1);
+    }
+
+    // Use the real path (symlink resolved)
+    configPath = realConfigPath;
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      console.error(`Error resolving config path: ${error.message}`);
+      process.exit(1);
+    }
+    // If file doesn't exist, parseConfig will handle it
+    configPath = configPathResolved;
+  }
+
+  // Optional port override with validation
+  const portIndex = args.indexOf('--port');
+  portOverride = null;
+  if (portIndex !== -1) {
+    const portValue = args[portIndex + 1];
+    const portNum = parseInt(portValue, 10);
+    if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
+      console.error(`Invalid port: ${portValue}. Must be between 1 and 65535.`);
+      process.exit(1);
+    }
+    portOverride = portNum;
+  }
+
+  // Mode parameter with validation
+  const modeIndex = args.indexOf('--mode');
+  captureMode = 'cold-start'; // default
+  if (modeIndex !== -1) {
+    const modeValue = args[modeIndex + 1];
+    if (!['cold-start', 'e2e', 'both'].includes(modeValue)) {
+      console.error(`Invalid mode: ${modeValue}. Must be one of: cold-start, e2e, both`);
+      process.exit(1);
+    }
+    captureMode = modeValue;
+  }
+
+  // E2E command (required if mode is e2e or both)
+  const e2eCommandIndex = args.indexOf('--e2e-command');
+  e2eCommand = null;
+  if (e2eCommandIndex !== -1) {
+    e2eCommand = args[e2eCommandIndex + 1];
+  }
+
+  if ((captureMode === 'e2e' || captureMode === 'both') && !e2eCommand) {
+    console.error('Error: --e2e-command is required when mode is e2e or both');
+    console.error('');
+    console.error('Example: --e2e-command "npm run e2e"');
+    process.exit(1);
+  }
+
+  // Call main after validation
+  await main();
+}
+
+validateAndRun();

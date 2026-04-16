@@ -25,33 +25,24 @@ Verify the target directory exists and contains a frontend application (check fo
 
 ## Step 2 – Verify Performance Configuration Exists
 
-Check if `.claude/performance-config.md` exists in the target repository.
+**Apply:** [Common Pattern: Config Reading](../performance/common-patterns.md#pattern-1-config-reading)
 
-- **If not exists:** Inform the user:
-  > "Performance Analysis Configuration not found. Please run `/sdlc-workflow:performance-setup` first to initialize the configuration, then re-run this skill."
-  
-  Stop execution.
-
-- **If exists:** Read the configuration file and extract:
-  - Selected workflow name
-  - Target directories (plans directory location)
+**Specific actions for this skill:**
+- Verify config exists, stop if missing
+- Extract: Selected workflow name
+- Extract: Target directories (plans directory location)
 
 ## Step 3 – Verify Analysis Report Exists
 
-Determine the analysis report location from the configuration file:
+**Apply:** [Common Pattern: Directory Extraction](../performance/common-patterns.md#pattern-4-directory-extraction)
 
-Look for the **Target Directories** section and extract the analysis directory path (e.g., `.claude/performance/analysis/`).
+**Specific directory to extract:**
+- `analysis_dir` → Analysis directory path (e.g., `.claude/performance/analysis/`)
 
-Construct the analysis report filename: `workflow-analysis-report.md`
-
-Check if the file exists at `{analysis-directory}/workflow-analysis-report.md`.
-
-- **If analysis report does not exist:** Inform the user:
-  > "Analysis report not found. Please run `/sdlc-workflow:performance-analyze-module` first to generate the analysis report, then re-run this skill."
-  
-  Stop execution.
-
-- **If analysis report exists:** Proceed to Step 4.
+**Specific actions for this skill:**
+- Construct analysis report path: `{analysis_dir}/workflow-analysis-report.md`
+- Check if analysis report exists, stop if missing
+- Inform user to run analyze-module first if report missing
 
 ## Step 4 – Read and Parse Analysis Report
 

@@ -311,18 +311,24 @@ Re-run the performance baseline capture for all scenarios.
 
 Read the **Repository** section from the Jira task description (parsed in Step 1) to identify the target repository.
 
-Check if `.claude/performance-config.md` exists in the target repository:
+**Apply:** [Common Pattern: Config Reading](../performance/common-patterns.md#pattern-1-config-reading)
 
-```bash
-test -f {target-repo-path}/.claude/performance-config.md && echo "exists" || echo "missing"
-```
+**Specific actions for this skill:**
+- Check if config exists in target repository
+- If missing, inform user and skip to Step 7 (use implementation results instead)
 
-If missing, inform the user:
-> "Performance configuration not found in target repository. Cannot re-run baseline capture. Using implementation results from PR."
+### Step 6.2 – Execute Baseline Capture with Mode Consistency (Updated)
 
-Skip to Step 7.
+**Apply:** [Common Pattern: Metadata Extraction](../performance/common-patterns.md#pattern-2-metadata-extraction) and [Common Pattern: Mode Consistency Enforcement](../performance/common-patterns.md#pattern-3-mode-consistency-enforcement)
 
-### Step 6.2 – Execute Baseline Capture
+**Specific field to extract:**
+- `metadata.baseline_mode` → stored_mode (enforce same mode for verification)
+
+**Specific actions for this skill:**
+- Inform user of stored mode and consistency requirement
+- Offer: use stored mode | select different mode | cancel
+- If user selects different mode, warn about invalid comparison and note in verification report
+- Use selected mode for baseline re-capture
 
 Copy the capture script from plugin cache to a temporary location:
 
@@ -331,10 +337,17 @@ cp plugins/sdlc-workflow/skills/performance/capture-baseline.template.mjs /tmp/c
 chmod +x /tmp/capture-baseline-verify.mjs
 ```
 
-Run the capture script:
+Run the capture script with mode-specific parameters:
 
 ```bash
-node /tmp/capture-baseline-verify.mjs --config {target-repo-path}/.claude/performance-config.md
+# If cold-start mode:
+node /tmp/capture-baseline-verify.mjs --config {target-repo-path}/.claude/performance-config.md --port {port} --mode cold-start
+
+# If e2e mode:
+node /tmp/capture-baseline-verify.mjs --config {target-repo-path}/.claude/performance-config.md --mode e2e --e2e-command "{e2e-command}"
+
+# If both mode:
+node /tmp/capture-baseline-verify.mjs --config {target-repo-path}/.claude/performance-config.md --port {port} --mode both --e2e-command "{e2e-command}"
 ```
 
 Parse the JSON output to extract current metrics (LCP, FCP, TTI, Total Load Time, bundle size).

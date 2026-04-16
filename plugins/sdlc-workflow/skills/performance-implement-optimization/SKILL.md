@@ -211,14 +211,88 @@ Inform the user to perform manual regression verification:
 
 **This is the key extension to implement-task.**
 
+### Step 9.0.5 – Check Baseline Freshness (New)
+
+Before capturing current performance metrics, validate that the original baseline is not stale:
+
+**Read baseline commit SHA from config metadata:**
+
+```bash
+# Read performance-config.md
+if config has metadata.baseline_commit_sha:
+  baseline_commit_sha = metadata.baseline_commit_sha
+else:
+  # v1 config or baseline not yet captured
+  skip freshness check, proceed to Step 9.1
+```
+
+**Compare baseline commit with current branch:**
+
+```bash
+# Get current branch's base commit (where it diverged from main)
+current_base_commit=$(git merge-base HEAD main)
+
+# Count commits since baseline
+commit_count=$(git rev-list --count ${baseline_commit_sha}..HEAD)
+
+# Get list of workflow files changed since baseline
+changed_files=$(git diff --name-only ${baseline_commit_sha}..HEAD | grep -E "(src/|client/|pages/)")
+```
+
+**If commits since baseline affect workflow files:**
+
+Inform the user:
+
+> ⚠️ **Baseline may be stale**
+>
+> The original baseline was captured at commit: `{baseline_commit_sha}`
+>
+> Since then, **{commit_count}** commits have been made, including changes to workflow files:
+> - `{changed_file_1}`
+> - `{changed_file_2}`
+> - ... (up to 10 files)
+>
+> Stale baselines can produce misleading comparisons if the workflow structure changed.
+>
+> **Options:**
+> 1. **Continue** with existing baseline (valid if changes don't affect measured workflow)
+> 2. **Re-baseline** before optimization (recommended if workflow changed significantly)
+> 3. **Cancel** and investigate changes
+>
+> Choose (1/2/3):
+
+**If user selects option 1:** Continue to Step 9.1
+
+**If user selects option 2:** 
+- Inform user: "Please run `/sdlc-workflow:performance-baseline` first to refresh the baseline, then re-run this task."
+- Stop execution
+
+**If user selects option 3:** Stop execution
+
+**If no workflow files changed or commit count < 5:**
+- Skip warning, proceed to Step 9.1
+
 ### Step 9.1 – Capture Current Performance Metrics
 
 Re-run the performance baseline capture for scenarios affected by this optimization.
 
 **Determine affected scenarios:**
 - Read `.claude/performance-config.md` from the target repository
-- Extract the "Selected Workflow" section
+- **Apply:** [Common Pattern: Workflow Validation](../performance/common-patterns.md#pattern-7-workflow-validation)
 - Filter scenarios to those in the selected workflow
+
+**Read baseline capture mode from config metadata (Updated):**
+
+**Apply:** [Common Pattern: Metadata Extraction](../performance/common-patterns.md#pattern-2-metadata-extraction) and [Common Pattern: Mode Consistency Enforcement](../performance/common-patterns.md#pattern-3-mode-consistency-enforcement)
+
+**Specific field to extract:**
+- `metadata.baseline_mode` → baseline_mode (use same mode as original baseline)
+
+**Use stored mode automatically** (no user prompt):
+
+> ℹ️ Using baseline capture mode: **{baseline_mode}** (from original baseline)
+
+**Note:** Mode consistency is enforced to ensure valid performance comparisons. The mode was set during the original baseline capture and is read from config metadata.
 
 **Execute baseline capture:**
 
@@ -228,12 +302,21 @@ Re-run the performance baseline capture for scenarios affected by this optimizat
    chmod +x /tmp/capture-baseline-current.mjs
    ```
 
-2. Run the capture script:
+2. Run the capture script with mode-specific parameters:
    ```bash
-   node /tmp/capture-baseline-current.mjs --config {path-to-performance-config.md}
+   # If cold-start mode:
+   node /tmp/capture-baseline-current.mjs --config {path-to-performance-config.md} --port {port} --mode cold-start
+   
+   # If e2e mode:
+   node /tmp/capture-baseline-current.mjs --config {path-to-performance-config.md} --mode e2e --e2e-command "{e2e-command}"
+   
+   # If both mode:
+   node /tmp/capture-baseline-current.mjs --config {path-to-performance-config.md} --port {port} --mode both --e2e-command "{e2e-command}"
    ```
 
 3. Parse the JSON output to extract current metrics (LCP, FCP, TTI, Total Load Time, bundle size)
+
+**Compare metrics:** Before (original baseline) vs After (new baseline) using same mode for accurate comparison.
 
 ### Step 9.2 – Compare Against Baseline and Targets
 
@@ -286,6 +369,59 @@ If a metric regressed, inform the user:
 > Please review the implementation and identify the cause of the regression before proceeding.
 
 Stop execution.
+
+### Step 9.3.5 – Update Configuration with Current Metrics (New)
+
+After capturing current performance metrics and validating no regressions, update the performance-config.md with the latest values:
+
+**Step 9.3.5.1 – Read Current Configuration**
+
+Read `.claude/performance-config.md` from the target repository.
+
+**Step 9.3.5.2 – Update Optimization Targets Table**
+
+Update the **Current (p95)** column in the Optimization Targets section:
+
+| Metric | Baseline (p95) | Current (p95) | Target | Unit | Last Updated |
+|---|---|---|---|---|---|
+| LCP | {unchanged} | **{current-lcp-p95 from Step 9.3}** | {unchanged} | seconds | **{timestamp}** |
+| FCP | {unchanged} | **{current-fcp-p95}** | {unchanged} | seconds | **{timestamp}** |
+| TTI | {unchanged} | **{current-tti-p95}** | {unchanged} | seconds | **{timestamp}** |
+| Total Load Time | {unchanged} | **{current-total-p95}** | {unchanged} | seconds | **{timestamp}** |
+
+- Leave **Baseline (p95)** column unchanged (baseline is immutable)
+- Update **Current (p95)** column with p95 metrics from Step 9.1 capture
+- Keep **Target** column unchanged
+- Set **Last Updated** = current timestamp
+
+**Step 9.3.5.3 – Update Metadata**
+
+Update the metadata section:
+
+```yaml
+metadata:
+  # ... existing fields ...
+  last_updated: {current-timestamp}
+```
+
+**Step 9.3.5.4 – Write Updated Configuration**
+
+Write the updated configuration back to `.claude/performance-config.md`.
+
+**Step 9.3.5.5 – Log Configuration Update**
+
+Log to user:
+
+```
+✓ Configuration auto-updated with current metrics:
+  - LCP (p95): {baseline} → {current} ({improvement-percentage}%)
+  - FCP (p95): {baseline} → {current} ({improvement-percentage}%)
+  - TTI (p95): {baseline} → {current} ({improvement-percentage}%)
+  - Total Load Time (p95): {baseline} → {current} ({improvement-percentage}%)
+  - Last updated: {timestamp}
+```
+
+**Note:** This step keeps the configuration in sync with optimization progress, enabling tracking of incremental improvements across multiple optimization tasks.
 
 ## Step 10 – Commit Changes
 
