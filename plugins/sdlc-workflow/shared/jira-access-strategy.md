@@ -99,6 +99,107 @@ cd <plugin-root> && \
 
 For full API reference, see `shared/jira-rest-fallback.md`.
 
+---
+
+## Performance Optimization JIRA Workflow
+
+Performance optimization skills use a specialized JIRA workflow involving Epics and Tasks to group optimization work.
+
+### Issue Hierarchy
+
+```
+Epic (Performance Optimization: {workflow-name})
+  ├── Task (Bundle Size Reduction: ...)
+  ├── Task (API Optimization: ...)
+  ├── Task (Render Optimization: ...)
+  └── Task (Resource Optimization: ...)
+```
+
+### Epic Usage
+
+**Created by**: `performance-plan-optimization`
+
+**Purpose**: Group all optimization tasks for a single workflow
+
+**Issue Type**: Epic (standard Jira Epic issue type)
+
+**Labels**:
+- `ai-generated-jira` (standard label for all AI-generated issues)
+- `performance-optimization` (identifies this as performance work)
+- `{workflow-name}` (the workflow being optimized, e.g., `home`, `sbom-list`)
+
+**Link Type**: **Incorporates** (Epic incorporates Tasks)
+
+### Task Usage
+
+**Created by**: `performance-plan-optimization`
+
+**Purpose**: Individual optimization work item (e.g., "Reduce bundle size by lazy loading", "Eliminate N+1 queries in SBOM list")
+
+**Issue Type**: Task (standard Jira Task issue type)
+
+**Labels**:
+- `ai-generated-jira` (standard label)
+- `performance-optimization` (identifies as performance work)
+- `{workflow-name}` (the workflow being optimized)
+- `{category}` (optimization category: `bundle-size`, `api-optimization`, `render-optimization`, `resource-optimization`, `long-task-mitigation`)
+- Layer labels: `frontend`, `backend`, or `integration` (based on where the optimization is applied)
+
+**Link Type**: **Blocks** (for task dependencies — e.g., Task 2 depends on Task 1 completing first)
+
+### Task Description Template Extensions
+
+Performance optimization tasks extend the standard task description template with three additional sections:
+
+1. **Baseline Metrics** — Current performance metrics before optimization (LCP, FCP, TTI, bundle size)
+2. **Target Metrics** — Expected metrics after optimization
+3. **Performance Test Requirements** — How to verify the optimization worked (e.g., "Re-run baseline capture, verify LCP < 2500ms")
+
+These sections are read by `performance-implement-optimization` and `performance-verify-optimization` to validate target achievement.
+
+### Label Conventions
+
+**Standard labels** (applied to all performance issues):
+- `ai-generated-jira`
+- `performance-optimization`
+
+**Workflow labels** (the workflow being optimized):
+- Workflow name in lowercase (e.g., `home`, `sbom-list`, `advisory-detail`)
+
+**Category labels** (optimization type):
+- `bundle-size` — Code splitting, lazy loading, dead code elimination
+- `api-optimization` — Reduce over-fetching, eliminate N+1 queries, parallel fetching
+- `render-optimization` — Component memoization, virtual scrolling, layout thrashing fixes
+- `resource-optimization` — Async/defer scripts, parallel loading, image compression
+- `long-task-mitigation` — Web workers, async patterns, code splitting for large modules
+
+**Layer labels** (where optimization is applied):
+- `frontend` — Client-side optimizations (React components, lazy loading, bundle splitting)
+- `backend` — Server-side optimizations (API response trimming, query optimization)
+- `integration` — Cross-layer optimizations (parallel API calls, resource hints)
+
+### Link to Feature Issues
+
+Performance optimization Epics/Tasks can be linked to Feature issues using the **Relates** link type to show that performance work is related to a specific feature development effort. This is optional and depends on whether the optimization is feature-driven or general improvement.
+
+### Example Workflow
+
+1. User runs `performance-plan-optimization` for "Home Dashboard" workflow
+2. Skill creates:
+   - **Epic**: "Performance Optimization: Home Dashboard"
+     - Labels: `ai-generated-jira`, `performance-optimization`, `home`
+   - **Task 1**: "Bundle Size Reduction: Lazy load charts library"
+     - Labels: `ai-generated-jira`, `performance-optimization`, `home`, `bundle-size`, `frontend`
+     - Link: Epic **incorporates** Task 1
+   - **Task 2**: "API Optimization: Reduce over-fetching in dashboard stats"
+     - Labels: `ai-generated-jira`, `performance-optimization`, `home`, `api-optimization`, `backend`
+     - Link: Epic **incorporates** Task 2
+     - Link: Task 1 **blocks** Task 2 (dependency)
+3. User runs `performance-implement-optimization TC-XXXX` for Task 1
+4. User runs `performance-verify-optimization TC-XXXX` to verify Task 1
+
+---
+
 ## Implementation Pattern for Skills
 
 ### Standard JIRA Operation Flow

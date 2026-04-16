@@ -191,6 +191,102 @@ sections are absent — they adapt gracefully.
 
 ---
 
+## Optional Section: Performance Analysis Configuration
+
+Performance optimization skills use a separate configuration file in the
+**target repository** (not in the sdlc-plugins project). This file is
+created by the `performance-setup` skill and lives at
+`.claude/performance-config.md` in the target repository.
+
+### Location
+
+**Target repository root**: `.claude/performance-config.md`
+
+**Created by**: `/sdlc-workflow:performance-setup`
+
+### Schema
+
+The Performance Analysis Configuration file contains:
+
+1. **Selected Workflow** — The user-selected workflow to optimize (added by `performance-workflow-discovery`)
+2. **Workflow Scenarios** — List of scenarios (routes) in the selected workflow
+3. **Baseline Settings** — Configuration for performance baseline capture (browser settings, timeouts, iteration count)
+4. **Target Directories** — Where to save baselines, analysis reports, optimization plans, verification reports
+5. **Optimization Targets** — Target metrics for LCP, FCP, TTI, Total Load Time
+6. **Module Registry** — Lazy-loaded routes and code-split chunks discovered from the codebase
+
+### Example Configuration
+
+```markdown
+# Performance Analysis Configuration
+
+## Selected Workflow
+
+**Workflow Name:** Home Dashboard  
+**Scenarios:**
+- Home page load (`http://localhost:3000/home`)
+- SBOM list (`http://localhost:3000/sboms`)
+
+---
+
+## Baseline Settings
+
+- **Browser:** Chromium (headless)
+- **Viewport:** 1920x1080
+- **Network:** Fast 3G throttling
+- **Iterations:** 5
+
+---
+
+## Target Directories
+
+- **Baselines:** `.claude/performance/baselines/`
+- **Analysis:** `.claude/performance/analysis/`
+- **Plans:** `.claude/performance/plans/`
+- **Verification:** `.claude/performance/verification/`
+
+---
+
+## Optimization Targets
+
+| Metric | Target (p95) |
+|---|---|
+| LCP | < 2500 ms |
+| FCP | < 1800 ms |
+| TTI | < 3500 ms |
+| Total Load Time | < 4000 ms |
+
+---
+
+## Module Registry
+
+**Lazy-loaded routes:**
+- `/home` → `src/components/Home.tsx`
+- `/sboms` → `src/components/SBOMList.tsx`
+
+**Code-split chunks:**
+- `vendors~home`
+- `vendors~sboms`
+```
+
+### How Skills Use It
+
+Performance skills read `.claude/performance-config.md` from the target
+repository to:
+
+- **performance-workflow-discovery**: Save user-selected workflow
+- **performance-baseline**: Read scenarios, baseline settings, and target directories
+- **performance-analyze-module**: Read selected workflow and baseline data
+- **performance-plan-optimization**: Read analysis reports and target metrics
+- **performance-implement-optimization**: Read baseline metrics and targets
+- **performance-verify-optimization**: Read targets for validation
+
+**Note**: This configuration is **per-repository**, not per-project. Each
+repository that undergoes performance optimization has its own
+`.claude/performance-config.md` file.
+
+---
+
 ## Template
 
 The canonical template for the `# Project Configuration` section is
