@@ -1,5 +1,7 @@
 # Repository Structure: trustify-ui
 
+> **Eval fixture — synthetic data.** This is a representative repository structure for eval testing, not an exact mirror of any specific repository.
+
 A React/TypeScript frontend for the Trusted Profile Analyzer platform. Uses PatternFly
 as the component library, React Router for navigation, and React Query for data fetching.
 

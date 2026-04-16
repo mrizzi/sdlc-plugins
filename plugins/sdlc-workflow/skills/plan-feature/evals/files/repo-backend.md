@@ -1,5 +1,7 @@
 # Repository Structure: trustify-backend
 
+> **Eval fixture — synthetic data.** This is a representative repository structure for eval testing, not an exact mirror of any specific repository.
+
 A Rust backend service for the Trusted Profile Analyzer platform. Manages SBOMs,
 vulnerability advisories, and risk assessments via a REST API backed by PostgreSQL.
 
