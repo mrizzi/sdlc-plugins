@@ -34,18 +34,17 @@ Quick reference for using the performance optimization workflow in sdlc-workflow
 ## Workflow Steps
 
 ```
-setup → workflow-discovery → baseline → analyze → plan → implement → verify
+setup (with workflow selection) → baseline → analyze → plan → implement → verify
 ```
 
 | Step | Skill | Purpose | Output |
 |---|---|---|---|
-| 1 | `performance-setup` | Initialize configuration | `.claude/performance-config.md` |
-| 2 | `performance-workflow-discovery` | Select workflow to optimize | Updated config with selected workflow |
-| 3 | `performance-baseline` | Capture current metrics | `baseline-report.md` with Core Web Vitals |
-| 4 | `performance-analyze-module` | **Inspect source code** to detect anti-patterns | `workflow-analysis-report.md` with findings |
-| 5 | `performance-plan-optimization` | **Read analysis report** and create Jira tasks | Jira Epic + Tasks, `optimization-plan.md` |
-| 6 | `performance-implement-optimization` | Execute optimization with validation | PR with before/after metrics |
-| 7 | `performance-verify-optimization` | Verify PR and detect regressions | Verification report (PASS/WARN/FAIL) |
+| 1 | `performance-setup` | Initialize configuration & select workflow | `.claude/performance-config.md` with selected workflow |
+| 2 | `performance-baseline` | Capture current metrics | `baseline-report.md` with Core Web Vitals |
+| 3 | `performance-analyze-module` | **Inspect source code** to detect anti-patterns | `workflow-analysis-report.md` with findings |
+| 4 | `performance-plan-optimization` | **Read analysis report** and create Jira tasks | Jira Epic + Tasks, `optimization-plan.md` |
+| 5 | `performance-implement-optimization` | Execute optimization with validation | PR with before/after metrics |
+| 6 | `performance-verify-optimization` | Verify PR and detect regressions | Verification report (PASS/WARN/FAIL) |
 
 **Key distinction:** Step 4 analyzes code, Step 5 reads the report.
 
@@ -55,21 +54,20 @@ setup → workflow-discovery → baseline → analyze → plan → implement →
 
 ```mermaid
 graph TD
-    A[performance-setup] --> B[performance-workflow-discovery]
-    B --> C[performance-baseline]
-    C --> D[performance-analyze-module<br/>Source code inspection]
-    D --> E[performance-plan-optimization<br/>Read report, create tasks]
-    E --> F[performance-implement-optimization]
-    F --> G{Targets<br/>met?}
-    G -->|Regression| H[Stop - investigate]
-    G -->|Improvement| I[Create PR]
-    I --> J[performance-verify-optimization]
-    J --> K{Overall?}
-    K -->|PASS| L[Merge]
-    K -->|WARN/FAIL| F
-    L --> M{More<br/>tasks?}
-    M -->|Yes| F
-    M -->|No| N[Done]
+    A[performance-setup<br/>Select workflow] --> B[performance-baseline]
+    B --> C[performance-analyze-module<br/>Source code inspection]
+    C --> D[performance-plan-optimization<br/>Read report, create tasks]
+    D --> E[performance-implement-optimization]
+    E --> F{Targets<br/>met?}
+    F -->|Regression| G[Stop - investigate]
+    F -->|Improvement| H[Create PR]
+    H --> I[performance-verify-optimization]
+    I --> J{Overall?}
+    J -->|PASS| K[Merge]
+    J -->|WARN/FAIL| E
+    K --> L{More<br/>tasks?}
+    L -->|Yes| E
+    L -->|No| M[Done]
 ```
 
 ---
@@ -77,35 +75,32 @@ graph TD
 ## Quick Example
 
 ```bash
-# 1. Setup (one-time)
+# 1. Setup and select workflow (one-time)
 /sdlc-workflow:performance-setup
+# User selects workflow: "Product Catalog Browse"
 
-# 2. Select workflow
-/sdlc-workflow:performance-workflow-discovery
-# User selects: "SBOM List"
-
-# 3. Capture baseline
+# 2. Capture baseline
 npm start  # Start app first
 /sdlc-workflow:performance-baseline
 # Output: LCP 3200ms (target 2500ms) ⚠️
 
-# 4. Analyze source code
+# 3. Analyze source code
 /sdlc-workflow:performance-analyze-module
 # Output: 3 anti-patterns detected, 900ms improvement estimated
 
-# 5. Create Jira tasks
+# 4. Create Jira tasks
 /sdlc-workflow:performance-plan-optimization
 # Output: Epic TC-5001, Tasks TC-5002, TC-5003, TC-5004
 
-# 6. Implement optimization
+# 5. Implement optimization
 /sdlc-workflow:performance-implement-optimization TC-5002
 # Output: PR created, LCP improved 3200ms → 2900ms
 
-# 7. Verify PR
+# 6. Verify PR
 /sdlc-workflow:performance-verify-optimization TC-5002
 # Output: PASS (Partial Success - continue with remaining tasks)
 
-# 8. Repeat steps 6-7 for TC-5003, TC-5004 until targets met
+# 7. Repeat steps 5-6 for TC-5003, TC-5004 until targets met
 ```
 
 ---

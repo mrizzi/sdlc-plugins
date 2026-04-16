@@ -6,7 +6,7 @@ This configuration defines performance scenarios, baseline capture settings, and
 
 List the key user workflows and pages to measure. Each scenario should represent a distinct user journey.
 
-**Discovery guidance:** Use router configuration files (e.g., `routes.tsx`, `router/index.ts`, `App.tsx`) to identify primary routes. Focus on high-traffic pages and critical user flows.
+**Note:** Scenarios are auto-populated from the selected workflow's key screens.
 
 | Scenario Name | URL Path | Description |
 |---|---|---|
@@ -68,3 +68,34 @@ Frontend modules/pages to analyze individually. Each entry represents a distinct
 - Feature modules with distinct bundles
 - Heavy UI libraries (e.g., chart/visualization components)
 - Third-party integrations with separate chunks
+
+## Backend Repository Configuration (Optional)
+
+If your application has a separate backend repository, configure it here to enable backend source code analysis and over-fetching detection.
+
+| Setting | Value | Description |
+|---|---|---|
+| Backend Repository | {{backend-repo-name}} | Name from Repository Registry |
+| Backend Path | {{/absolute/path/to/backend}} | Absolute path to backend repository |
+| Backend Framework | {{framework}} | e.g., actix-web, axum, spring-boot, express, fastapi |
+| Serena Instance | {{serena-instance}} | Instance name from Code Intelligence section (or "none") |
+| API Base Path | {{/api/v2}} | Base path for API routes |
+
+**Note:** If no backend repository is configured, analysis will focus on frontend-only optimizations.
+
+## Selected Workflow
+
+The following workflow has been selected for performance optimization:
+
+| Property | Value |
+|---|---|
+| Workflow Name | {{workflow-name}} |
+| Entry Point | {{entry-point-url}} |
+| Key Screens | {{key-screens-comma-separated}} |
+| Complexity | {{complexity-estimate}} |
+| Selected On | {{current-date}} |
+
+**Next Steps:**
+1. Ensure your application is running locally with test data loaded for this workflow
+2. Run `/sdlc-workflow:performance-baseline` to capture baseline metrics
+3. Run `/sdlc-workflow:performance-analyze-module` to analyze performance bottlenecks

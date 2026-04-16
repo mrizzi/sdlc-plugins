@@ -1,13 +1,13 @@
 ---
 name: performance-setup
 description: |
-  Initialize Performance Analysis Configuration in a target repository by discovering routes and modules from the codebase.
+  Initialize Performance Analysis Configuration by discovering workflows from the codebase, selecting a target workflow, and auto-populating scenarios and modules.
 argument-hint: "[target-repository-path]"
 ---
 
 # performance-setup skill
 
-You are an AI performance setup assistant. You analyze a frontend application's codebase to discover user flows and module structure, then generate a Performance Analysis Configuration file that enables performance optimization workflows.
+You are an AI performance setup assistant. You analyze a frontend application's codebase to discover user workflows (user journeys), prompt the user to select a workflow to optimize, then auto-populate performance scenarios and modules based on that workflow.
 
 ## Guardrails
 
@@ -29,7 +29,7 @@ Check if `.claude/performance-config.md` already exists in the target repository
   > "Performance Analysis Configuration already exists. Would you like to update it or skip setup?"
   >
   > Options:
-  > 1. Update - Re-discover routes/modules and merge with existing config
+  > 1. Update - Re-discover workflows and regenerate configuration
   > 2. Skip - Keep existing configuration unchanged
   >
   > Choose (1/2):
@@ -38,7 +38,7 @@ Check if `.claude/performance-config.md` already exists in the target repository
 
 - **If not exists:** Proceed to Step 3.
 
-## Step 3 – Discover Routes and User Flows
+## Step 3 – Discover Routes from Router Configuration
 
 Analyze the frontend codebase to discover routes using Serena (if available) or Read/Grep/Glob.
 
@@ -73,56 +73,230 @@ For each router configuration file found:
   <Route\s+path=['"]([^'"]+)['"]
   ```
 
-Extract:
+Extract for each route:
 - Route path (e.g., `/`, `/products/:id`, `/dashboard`)
 - Component name or file reference
 - Whether the route is lazy-loaded
 
-### Step 3.3 – Categorize Routes
+## Step 4 – Infer Workflows from Routes
 
-Group discovered routes by type:
-- **Static pages** (no dynamic segments like `:id`)
-- **List views** (paths suggesting collections, e.g., `/products`, `/users`)
-- **Detail views** (paths with dynamic segments, e.g., `/products/:id`)
-- **Search/filter pages** (paths with query parameters or filter components)
-- **Landing/home** (root path `/`)
+Group discovered routes into functional workflows (user journeys). A workflow is a sequence of related pages that form a cohesive user task.
 
-Present the categorized routes to the user and ask them to select which routes to include as performance scenarios (suggest 4-8 key routes).
+### Step 4.1 – Read Navigation Structure
 
-## Step 4 – Discover Module Registry
+Examine the application's navigation to understand primary workflows:
 
-Identify code-split modules or lazy-loaded routes that can be analyzed individually.
+Use Grep to find navigation/sidebar components:
+```
+pattern: nav|menu|sidebar|NavItem
+path: src/
+```
 
-### Step 4.1 – Find Lazy-Loaded Routes
+If found, read the navigation component to identify top-level navigation items. These often represent primary workflows.
 
-Search for dynamic import patterns:
+### Step 4.2 – Group Routes by Workflow
+
+Apply these grouping strategies to infer workflows:
+
+**1. Path prefix grouping** — routes sharing a common prefix likely form a workflow:
+- `/sbom/*` routes → "SBOM Management" workflow
+- `/advisory/*` routes → "Advisory Management" workflow  
+- `/package/*` routes → "Package Investigation" workflow
+
+**2. List-to-detail patterns** — list view + detail view form a browse workflow:
+- `/advisories` + `/advisories/:id` → "Advisory Browse and Detail" workflow
+- `/packages` + `/packages/:id` → "Package Browse and Detail" workflow
+
+**3. Feature module grouping** — routes in the same feature directory:
+- Examine `src/pages/` or `src/features/` directory structure
+- Group routes by their page directory (e.g., all routes using components from `src/pages/sbom-*` form an SBOM workflow)
+
+**4. Upload/action workflows** — upload + scan + view patterns:
+- `/sboms/upload`, `/sboms/scan`, `/sboms/:id` → "SBOM Upload and Analysis" workflow
+
+### Step 4.3 – Estimate Workflow Complexity
+
+For each inferred workflow:
+
+**Calculate complexity based on:**
+- Number of routes in workflow:
+  - 1-2 routes = Simple
+  - 3-4 routes = Moderate  
+  - 5+ routes = Complex
+- Number of components in workflow pages:
+  - Count `.tsx`/`.ts` files in page directories for this workflow
+- Presence of API calls:
+  - Search for `useQuery`, `useMutation`, `fetch`, `axios` in workflow components
+  - Estimate API call count
+
+**Extract for each workflow:**
+- Workflow name (descriptive, e.g., "SBOM Browse and Detail")
+- Entry point URL (first route in the workflow)
+- Key screens (list of route paths that form the workflow)
+- Complexity (Simple/Moderate/Complex with breakdown)
+
+**If no workflows discovered:**
+
+Inform the user:
+> "No workflows could be auto-discovered from the codebase. This may happen if:"
+> - The application uses a non-standard routing structure
+> - Routes are dynamically generated
+> - The router configuration uses complex patterns
+>
+> "You can manually create a configuration by editing `.claude/performance-config.md` after this skill completes."
+
+If no workflows found, create a minimal config with empty scenarios and ask user to fill manually. Then stop execution.
+
+## Step 5 – Present Workflows and Prompt User Selection
+
+Display discovered workflows in a formatted table.
+
+**Example output:**
+
+```
+## Discovered Workflows
+
+| # | Workflow Name | Entry Point | Key Screens | Complexity |
+|---|---|---|---|---|
+| 1 | Product Catalog Browse | /products | /products, /products/:productId | Moderate (15 components, 2 API calls) |
+| 2 | Order Management | /orders | /orders, /orders/:orderId | Moderate (12 components, 3 API calls) |
+| 3 | User Profile | /profile | /profile, /profile/settings | Simple (8 components, 1 API call) |
+```
+
+**Note:** The actual workflows discovered will depend on your application's routes. The table above shows the format for an e-commerce application; your application may have different domains (finance, healthcare, content management, etc.).
+
+**Guidance to user:**
+
+> "These workflows represent distinct user journeys through your application. Select one workflow to optimize for performance."
+>
+> "**Recommendation:** Start with a Moderate complexity workflow that is business-critical. Simple workflows may not reveal performance bottlenecks, while Complex workflows can be overwhelming to analyze."
+
+**Prompt:**
+
+> "Enter the number of the workflow you want to optimize (1-N):"
+
+**Validation:**
+- Verify user input is a valid number within range
+- If invalid, re-prompt: "Invalid selection. Please enter a number between 1 and N."
+
+**Capture selection:**
+- Store the selected workflow's details (name, entry point, key screens, complexity)
+
+## Step 6 – Auto-Populate Scenarios from Selected Workflow
+
+Based on the selected workflow's key screens, automatically generate performance scenarios.
+
+For each route in the workflow's key screens:
+
+**Extract scenario details:**
+- Scenario name: Derive from route path (e.g., `/sboms` → `sbom-list`, `/sboms/:sbomId` → `sbom-details`)
+- URL path: Use the route path
+- Description: Generate from route purpose (e.g., "SBOM list view with filtering and pagination")
+
+**Scenario name derivation rule:**
+```
+path.split('/').filter(Boolean).map(s => s.startsWith(':') ? s.slice(1) : s).join('-')
+```
+
+**Handle dynamic route segments:**
+- For routes with `:id` or other parameters, note in the scenario that a sample ID will be needed during baseline capture
+
+**Result:** A table of scenarios that exactly matches the selected workflow's key screens.
+
+## Step 7 – Discover Modules for Selected Workflow
+
+Identify code-split modules or lazy-loaded routes for the selected workflow's pages.
+
+### Step 7.1 – Find Lazy-Loaded Components
+
+For each route in the selected workflow:
+
+Search for the component referenced by the route in the router configuration.
+
+Check if it's lazy-loaded:
 ```
 React.lazy\(.*import\(['"]([^'"]+)['"]\)
 import\(['"]([^'"]+)['"]\).*\.then\(
 loadable\(.*import\(['"]([^'"]+)['"]\)
 ```
 
-Use Grep or Serena's `search_for_pattern` to find these patterns across the codebase.
+### Step 7.2 – Extract Module Entry Points
 
-### Step 4.2 – Find Build Configuration
+For each lazy-loaded component in the workflow:
 
-Look for build tool configuration that defines code splitting:
-- Webpack: `webpack.config.js` — check `optimization.splitChunks` and entry points
-- Vite: `vite.config.ts` — check `build.rollupOptions.input` and manual chunks
-- Next.js: Automatically splits by page (use pages/ directory structure)
+**Determine module entry point:**
+- Look for `index.ts` or `index.tsx` in the component's directory
+- If not found, use the lazy-loaded file path as the entry point
 
-Extract module entry points and chunk names.
+**Derive module name:**
+- Use the page directory name (e.g., `src/app/pages/product-list` → module name: `product-list`)
 
-### Step 4.3 – Present Module Candidates
+**Generate module description:**
+- Describe the module's purpose based on the route and component name
 
-Present discovered modules to the user grouped by type:
-- **Route-level splits** (lazy-loaded pages)
-- **Feature modules** (distinct bundles from build config)
-- **Vendor chunks** (third-party library bundles)
+**Result:** A table of modules corresponding to the selected workflow's pages.
 
-Ask the user to select which modules to include in the registry (suggest focusing on route-level and feature modules, not vendor chunks).
+## Step 7.5 – Discover Backend Repository (Optional)
 
-## Step 5 – Collect Configuration Values
+Check if a backend repository is configured in the Project Configuration.
+
+### Step 7.5.1 – Check for Repository Registry
+
+Read CLAUDE.md in the target repository and look for the `## Repository Registry` section.
+
+If found, extract repositories where the "Role" column contains "backend" or "api" or "server" (case-insensitive).
+
+If no Repository Registry found or no backend repositories found, skip to Step 8.
+
+### Step 7.5.2 – Prompt User for Backend Configuration
+
+If backend repository candidates found, ask the user:
+
+> "I found the following backend repository candidates:
+>
+> 1. {{repo-1-name}} — {{role}} (Serena: {{instance or 'none'}})
+> 2. {{repo-2-name}} — {{role}} (Serena: {{instance or 'none'}})
+>
+> Would you like to enable backend source code analysis for comprehensive over-fetching detection and backend anti-pattern detection?
+>
+> Options:
+> 1. Yes - Configure backend repository
+> 2. No - Frontend-only analysis"
+
+**If user selects "Yes":**
+
+1. **Select repository** (if multiple candidates):
+   - Prompt: "Enter the number of the backend repository to use (1-N):"
+   - Validate selection
+
+2. **Ask for backend framework type:**
+   - Prompt: "What backend framework does this repository use?"
+   - Provide examples: actix-web, axum, spring-boot, express, fastapi, django, rails, asp.net
+   - Validate input (any text accepted, but suggest common frameworks)
+
+3. **Ask for API base path:**
+   - Prompt: "What is the API base path? (default: /api/v2)"
+   - If empty, use `/api/v2` as default
+   - Validate path starts with `/`
+
+4. **Verify Serena instance availability:**
+   - Check if the backend repo has a Serena instance configured
+   - If yes: Note that full analysis will use Serena for accurate handler location and schema extraction
+   - If no: Note that analysis will fall back to Grep-based search (less accurate but functional)
+
+5. **Store backend configuration values:**
+   - Backend repository name
+   - Backend absolute path (from Repository Registry)
+   - Backend framework
+   - Serena instance name (or "none")
+   - API base path
+
+**If user selects "No" or no backend repos found:**
+- Skip backend configuration
+- Set `backend_configured = false`
+- Continue with frontend-only analysis
+
+## Step 8 – Collect Configuration Values
 
 Prompt the user for:
 
@@ -139,17 +313,40 @@ Prompt the user for:
 
 Explain that Current (Baseline) values will be filled in automatically after running the `performance-baseline` skill.
 
-## Step 6 – Generate Configuration File
+Offer choice:
+> "Use recommended defaults? (yes/no)"
+
+If yes, skip prompts and use defaults. If no, prompt for each value.
+
+## Step 9 – Generate Configuration File
 
 Read the template from `plugins/sdlc-workflow/skills/performance/performance-config.template.md` in the plugin cache.
 
-Replace placeholders with discovered and collected values:
-- `{{scenario-*}}` placeholders → selected routes with descriptive names
-- `{{module-*}}` placeholders → selected modules with entry points
-- Target metric values → user-provided or defaults
-- Baseline capture settings → user-provided or defaults
+**Generate configuration with:**
 
-Remove unused placeholder rows (if user selected fewer scenarios/modules than template slots).
+1. **Performance Scenarios section** — populated with scenarios from Step 6
+2. **Baseline Capture Settings section** — populated with values from Step 8
+3. **Target Directories section** — standard directories
+4. **Optimization Targets section** — populated with targets from Step 8
+5. **Module Registry section** — populated with modules from Step 7
+6. **Backend Repository Configuration section** — populated with backend values from Step 7.5 (if configured), otherwise use placeholder text "Not Configured"
+7. **Selected Workflow section** — workflow details from Step 5
+
+**Workflow section format:**
+
+```markdown
+## Selected Workflow
+
+The following workflow has been selected for performance optimization:
+
+| Property | Value |
+|---|---|
+| Workflow Name | {selected workflow name} |
+| Entry Point | {entry point URL} |
+| Key Screens | {comma-separated list of key screens} |
+| Complexity | {complexity estimate} |
+| Selected On | {current date in YYYY-MM-DD format} |
+```
 
 Create target directories if they don't exist:
 ```bash
@@ -161,29 +358,35 @@ mkdir -p .claude/performance/verification
 
 Write the generated configuration to `.claude/performance-config.md` in the target repository.
 
-## Step 7 – Validate Configuration
+## Step 10 – Validate Configuration
 
 After writing the config file:
 
 1. Verify all URL paths are localhost-compatible (no external domains)
 2. Verify all module entry points reference actual files (check file exists)
 3. Verify target directories were created successfully
+4. Verify scenario URLs match the selected workflow's key screens
 
 If any validation fails, inform the user and offer to fix the issue.
 
-## Step 8 – Output Summary
+## Step 11 – Output Summary
 
 Report to the user:
-- ✅ Performance Analysis Configuration created at `.claude/performance-config.md`
-- Number of scenarios configured
-- Number of modules registered
-- Target directories created
 
-Suggest next steps:
-> "Performance setup complete! Next steps:"
+> ✅ **Performance Analysis Configuration created!**
 >
-> "1. Start your application locally (e.g., `npm run dev`)"
-> "2. Run the baseline capture:"
+> **Selected Workflow:** {workflow name}
+> **Complexity:** {complexity}
+> **Scenarios configured:** {count} (auto-populated from workflow)
+> **Modules registered:** {count} (auto-populated from workflow pages)
+>
+> **Configuration saved to:** `.claude/performance-config.md`
+>
+> **Next Steps:**
+>
+> 1. **Load test data** — Ensure your application has test data for this workflow to enable consistent measurements
+> 2. **Start your application** — Run your dev server (e.g., `npm run dev`)
+> 3. **Capture baseline:**
 >    ```
 >    /sdlc-workflow:performance-baseline
 >    ```
@@ -192,7 +395,9 @@ Suggest next steps:
 
 - Never modify source code — only create the `.claude/performance-config.md` file
 - Always use actual discovered routes and modules — do not invent placeholder examples
-- If route discovery finds no results, ask the user to provide route paths manually
-- If module discovery finds no results, skip the module registry section (it's optional)
+- Scenarios and modules are **automatically derived** from the selected workflow — do not ask user to select scenarios separately
+- If route discovery finds no results, create minimal config and inform user to edit manually
+- If module discovery finds no results, scenarios are still valid (modules section can be empty)
 - Validate that discovered routes reference real components/files before including them
 - Ensure all URL paths in scenarios are relative (no `http://` or `https://` — they should work with localhost)
+- Present workflows in order of estimated business value/traffic (if determinable from route names)

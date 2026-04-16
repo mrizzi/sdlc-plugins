@@ -86,31 +86,44 @@ Group the optimization recommendations into logical tasks based on optimization 
 
 ### Task Grouping Strategy
 
-**Category 1: Bundle Size Reduction**
-- Code splitting optimizations
-- Tree shaking improvements
-- Lazy loading implementations
-- Dead code elimination
+Optimizations are categorized by **LAYER** and **TYPE** to support full-stack performance optimization.
 
-**Category 2: API Optimization**
-- Reduce over-fetching (API response trimming)
-- Eliminate N+1 queries (batch API calls)
-- Parallel fetching (replace sequential with parallel)
+**LAYER 1: Frontend Optimizations**
 
-**Category 3: Render Optimization**
-- Component memoization (React.memo, useMemo, useCallback)
-- Virtual scrolling for large lists
-- Avoid layout thrashing (batch DOM operations)
+- **Category 1A: Bundle Size Reduction**
+  - Code splitting optimizations
+  - Tree shaking improvements
+  - Lazy loading implementations
+  - Dead code elimination
 
-**Category 4: Resource Optimization**
-- Eliminate render-blocking resources (async/defer scripts, async CSS)
-- Parallel resource loading
-- Image compression and lazy loading
+- **Category 1B: Render Optimization**
+  - Component memoization (React.memo, useMemo, useCallback)
+  - Virtual scrolling for large lists
+  - Avoid layout thrashing (batch DOM operations)
+  - Long task mitigation (Web workers, async patterns)
 
-**Category 5: Long Task Mitigation**
-- Code splitting for large modules
-- Web workers for CPU-intensive tasks
-- Async patterns for blocking operations
+- **Category 1C: Resource Optimization**
+  - Eliminate render-blocking resources (async/defer scripts, async CSS)
+  - Parallel resource loading
+  - Image compression and lazy loading
+
+**LAYER 2: Backend Optimizations** (only when backend repository is configured)
+
+- **Category 2A: Query Optimization**
+  - Eliminate database N+1 queries (batch queries, eager loading)
+  - Add pagination to unbounded endpoints
+  - Optimize inefficient queries (specific column selection, add indexes)
+
+- **Category 2B: Response Optimization**
+  - Reduce over-fetching (create specialized DTOs, GraphQL)
+  - Add caching for expensive operations (Redis, in-memory)
+
+**LAYER 3: Integration Optimizations** (cross-cutting frontend/backend)
+
+- **Category 3A: API Communication**
+  - Batch multiple API calls into single requests
+  - Parallel fetching (replace sequential with parallel)
+  - Implement caching strategy (client-side cache with revalidation)
 
 ### Task Structure
 
@@ -453,8 +466,20 @@ jira.create_issue(
   summary=<task-summary>,
   description=<task-description>,
   issue_type="Task",
-  labels=["ai-generated-jira", "performance-optimization", <workflow-name>, <category>]
+  labels=["ai-generated-jira", "performance-optimization", <workflow-name>, <layer>, <category>]
 )
+```
+
+**Label structure:**
+- `<layer>`: "frontend" | "backend" | "integration"
+- `<category>`: Derived from task grouping:
+  - Frontend: "bundle-size", "render-optimization", "resource-optimization"
+  - Backend: "query-optimization", "response-optimization"
+  - Integration: "api-communication"
+
+**Example:** For a backend database N+1 optimization task:
+```
+labels=["ai-generated-jira", "performance-optimization", "product-catalog", "backend", "query-optimization"]
 ```
 
 **If MCP fails:**

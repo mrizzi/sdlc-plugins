@@ -5,6 +5,53 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-04-16
+
+### Added
+
+- **Backend Source Code Analysis** - Comprehensive backend anti-pattern detection
+  - Database N+1 query detection (Rust, Java, Python, Node frameworks)
+  - Missing pagination detection for unbounded collection endpoints
+  - Missing caching detection for expensive operations
+  - Inefficient query detection (SELECT *, unnecessary columns)
+  - Cross-repository over-fetching analysis (backend response schema vs frontend field usage)
+  - Support for actix-web, axum, Spring Boot, Express, FastAPI, Django, Rails, ASP.NET
+  - Graceful fallback when Serena unavailable (Grep-based handler location)
+
+- **Three-Layer Optimization Model** - Performance tasks categorized by architectural layer
+  - Layer 1: Frontend (bundle size, render optimization, resource optimization)
+  - Layer 2: Backend (query optimization, response optimization)
+  - Layer 3: Integration (API communication patterns)
+  - Jira task labels include layer and category for better filtering
+
+- **Backend Configuration** - Optional backend repository configuration in performance-config.md
+  - Automatic discovery from CLAUDE.md Repository Registry
+  - Framework detection and Serena instance verification
+  - API base path configuration
+
+### Changed
+
+- **Workflow-First Architecture** - Unified performance-setup eliminates redundant route discovery
+  - Merged performance-workflow-discovery into performance-setup (workflow discovery happens once)
+  - Scenarios auto-populated from selected workflow's key screens
+  - Modules auto-registered for workflow pages
+  - User selects ONE workflow instead of individual scenarios
+  - Simpler mental model: setup → baseline → analyze → optimize
+
+- **Enhanced Over-Fetching Detection** - Cross-references backend response schema with frontend usage
+  - Field-level waste calculation with backend schema awareness
+  - N+1 pattern multiplier (waste × call count)
+  - Updated severity thresholds (Critical/High/Medium/Low)
+
+### Removed
+
+- **performance-workflow-discovery skill** - Functionality merged into performance-setup
+
+### Fixed
+
+- Route discovery now happens only once (previously duplicated in setup and discovery skills)
+- Configuration mismatch between scenarios and selected workflow eliminated
+
 ## [0.6.1] - 2026-04-14
 
 ### Fixed

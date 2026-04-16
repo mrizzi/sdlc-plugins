@@ -8,13 +8,12 @@ Quick reference for all performance optimization skills.
 
 | # | Skill | Purpose | Key Action |
 |---|---|---|---|
-| 1 | performance-setup | Initialize configuration | Creates `.claude/performance-config.md` |
-| 2 | performance-workflow-discovery | Select workflow to optimize | User selects from discovered workflows |
-| 3 | performance-baseline | Capture metrics | Playwright automation → `baseline-report.md` |
-| 4 | performance-analyze-module | Detect anti-patterns | **Inspects source code** → `workflow-analysis-report.md` |
-| 5 | performance-plan-optimization | Create Jira tasks | **Reads analysis report** → Jira Epic/Tasks |
-| 6 | performance-implement-optimization | Execute optimization | Implements + validates → PR |
-| 7 | performance-verify-optimization | Verify PR | Review feedback + validation → report |
+| 1 | performance-setup | Initialize configuration & select workflow | Creates `.claude/performance-config.md` with selected workflow |
+| 2 | performance-baseline | Capture metrics | Playwright automation → `baseline-report.md` |
+| 3 | performance-analyze-module | Detect anti-patterns | **Inspects source code** → `workflow-analysis-report.md` |
+| 4 | performance-plan-optimization | Create Jira tasks | **Reads analysis report** → Jira Epic/Tasks |
+| 5 | performance-implement-optimization | Execute optimization | Implements + validates → PR |
+| 6 | performance-verify-optimization | Verify PR | Review feedback + validation → report |
 
 ---
 
@@ -22,39 +21,23 @@ Quick reference for all performance optimization skills.
 
 **Invocation:** `/sdlc-workflow:performance-setup [path]`
 
-**One-time setup to initialize performance configuration.**
+**One-time setup to initialize performance configuration and select workflow.**
 
 | Input | Output |
 |---|---|
-| Target repository path (optional) | `.claude/performance-config.md` |
-| User responses (baseline settings, targets) | Target directories created |
+| Target repository path (optional) | `.claude/performance-config.md` with selected workflow |
+| User responses (workflow selection, baseline settings, targets) | Target directories created |
 
 **What it does:**
-1. Discovers routes and modules from codebase
-2. Collects configuration (browser settings, targets)
-3. Creates `.claude/performance-config.md`
-4. Creates directories: `baselines/`, `analysis/`, `plans/`, `verification/`
+1. Discovers routes from codebase
+2. Infers workflows by grouping related routes
+3. Prompts user to select ONE workflow
+4. Auto-populates scenarios from workflow's key screens
+5. Collects configuration (browser settings, targets)
+6. Creates `.claude/performance-config.md`
+7. Creates directories: `baselines/`, `analysis/`, `plans/`, `verification/`
 
 **Default targets:** LCP 2500ms, FCP 1800ms, TTI 3500ms, Total Load 4000ms
-
----
-
-## performance-workflow-discovery
-
-**Invocation:** `/sdlc-workflow:performance-workflow-discovery [path]`
-
-**Discover workflows and prompt user to select one.**
-
-| Input | Output |
-|---|---|
-| Target repository path (optional) | Updated config with "Selected Workflow" |
-| User selection (workflow number) | Workflow scenarios identified |
-
-**What it does:**
-1. Reads router configuration
-2. Discovers workflows (user journeys)
-3. Presents table with workflow options
-4. Saves user selection to config
 
 ---
 
@@ -234,10 +217,10 @@ Quick reference for all performance optimization skills.
 ## Skill Dependencies
 
 ```
-setup → workflow-discovery → baseline → analyze-module → plan-optimization → implement-optimization → verify-optimization
-  ↓          ↓                  ↓            ↓                    ↓                       ↓                        ↓
-config    selected         baseline    analysis          Jira Epic/Tasks            PR with           Verification
-created   workflow          report       report                                     metrics            report
+setup (with workflow selection) → baseline → analyze-module → plan-optimization → implement-optimization → verify-optimization
+              ↓                        ↓            ↓                    ↓                       ↓                        ↓
+      config + selected           baseline    analysis          Jira Epic/Tasks            PR with           Verification
+         workflow                  report       report                                     metrics            report
 ```
 
 ---

@@ -247,7 +247,7 @@ The performance optimization workflow is a specialized workflow for discovering,
 
 **Skill:** `/sdlc-workflow:performance-setup`
 
-Initializes Performance Analysis Configuration in the target repository by discovering routes and modules from the codebase.
+Initializes Performance Analysis Configuration by discovering workflows from the codebase, selecting a target workflow, and auto-populating scenarios and modules based on that workflow.
 
 **Invocation:**
 
@@ -259,62 +259,29 @@ Initializes Performance Analysis Configuration in the target repository by disco
 **Workflow:**
 1. Determine target repository (argument or current directory)
 2. Detect existing configuration (update or skip if exists)
-3. Discover routes and user flows from router configuration
-4. Discover module registry (lazy-loaded routes, code-split chunks)
-5. Collect configuration values (baseline settings, optimization targets)
-6. Generate `.claude/performance-config.md` configuration file
-7. Create target directories (`.claude/performance/baselines/`, `/analysis/`, `/plans/`, `/verification/`)
-8. Validate configuration and output summary
+3. Discover routes from router configuration
+4. Infer workflows by grouping related routes (path prefixes, list→detail patterns, navigation structure)
+5. Present workflows and prompt user to select ONE workflow
+6. Auto-populate scenarios from workflow's key screens
+7. Discover modules for selected workflow pages
+8. Optionally discover backend repository (if configured in CLAUDE.md Repository Registry)
+9. Collect configuration values (baseline settings, optimization targets)
+10. Generate `.claude/performance-config.md` with workflow metadata, scenarios, modules, and optional backend config
+11. Validate configuration and output summary
 
 **Output:**
-- `.claude/performance-config.md` created in target repository
-- Target directories created
-- Configuration validated
+- `.claude/performance-config.md` created in target repository with:
+  - Performance Scenarios (auto-derived from selected workflow)
+  - Module Registry (lazy-loaded pages from workflow)
+  - Backend Repository Configuration (optional)
+  - Selected Workflow metadata
+- Target directories created (`.claude/performance/baselines/`, `/analysis/`, `/plans/`, `/verification/`)
 
 **Guardrails:**
 - Idempotent — running multiple times offers to update or skip
 - Does NOT modify source code — only creates configuration file
-- All discovered routes/modules must reference actual files
-
----
-
-### Workflow Discovery
-
-**Skill:** `/sdlc-workflow:performance-workflow-discovery`
-
-Analyzes frontend source code to identify functional workflows (user journeys), presents discovered workflows to the user, and prompts the user to select which workflow to optimize.
-
-**Invocation:**
-
-```
-/sdlc-workflow:performance-workflow-discovery
-/sdlc-workflow:performance-workflow-discovery /path/to/target/repo
-```
-
-**Workflow:**
-1. Determine target repository (argument or current directory)
-2. Verify Performance Analysis Configuration exists (created by performance-setup)
-3. Discover workflows from codebase:
-   - Find router configuration files
-   - Extract routes and infer workflows by grouping (path prefixes, feature modules, navigation structure)
-   - Examine feature module directories
-   - Check for user flow documentation
-   - Synthesize discovered workflows with complexity estimates
-4. Present discovered workflows in formatted table
-5. Prompt user to select workflow by number
-6. Save selection to `.claude/performance-config.md` (adds "Selected Workflow" section)
-7. Output summary with next steps
-
-**Output:**
-- Discovered workflows presented in formatted table
-- User-selected workflow saved to performance configuration
-- Guidance for next steps (load test data, start app, run baseline)
-
-**Guardrails:**
-- Requires Performance Analysis Configuration to exist (prompts user to run performance-setup if missing)
-- Does NOT modify source code — only updates configuration file
-- Discovers workflows from actual source code — no placeholder examples
-- If no workflows discovered, stops and informs user
+- Scenarios and modules automatically derived from selected workflow (no separate selection)
+- Backend analysis is fully optional (no breaking changes for frontend-only projects)
 
 ---
 
@@ -352,7 +319,7 @@ Captures performance baseline metrics for the user-selected workflow by verifyin
 - Summary output with aggregate metrics and warnings for exceeded thresholds
 
 **Guardrails:**
-- Requires Performance Analysis Configuration with selected workflow (prompts user to run performance-setup and performance-workflow-discovery if missing)
+- Requires Performance Analysis Configuration with selected workflow (prompts user to run performance-setup if missing)
 - Verifies test data availability before capturing baseline
 - Does NOT modify source code — only creates performance measurement artifacts
 - Handles errors gracefully: application not running, Playwright not installed, invalid URLs, missing performance marks

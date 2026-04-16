@@ -39,7 +39,7 @@ Check if `.claude/performance-config.md` exists in the target repository.
 Search for a `## Selected Workflow` section in the configuration file.
 
 - **If not found:** Inform the user:
-  > "No workflow selected for optimization. Please run `/sdlc-workflow:performance-workflow-discovery` first to select a workflow, then re-run this skill."
+  > "No workflow selected for optimization. Please run `/sdlc-workflow:performance-setup` first to initialize configuration and select a workflow, then re-run this skill."
   
   Stop execution.
 
@@ -50,6 +50,27 @@ Search for a `## Selected Workflow` section in the configuration file.
   - Complexity estimate
 
 Store these details for use in later steps.
+
+### Step 2.2 – Check for Backend Repository Configuration
+
+Search for `## Backend Repository Configuration` section in performance-config.md.
+
+- **If found and configured (not "Not Configured"):** 
+  - Extract backend repo name
+  - Extract backend path
+  - Extract backend framework
+  - Extract Serena instance name
+  - Extract API base path
+  - Verify backend path exists: `test -d {{backend-path}}`
+  - If path doesn't exist, warn user but continue with frontend-only analysis
+  - Set `backend_available = true`
+
+- **If "Not Configured" or section not found:** 
+  - Set `backend_available = false`
+  - Backend analysis steps (Step 6.10) will be skipped
+  - Frontend-only analysis will be performed
+
+Store backend configuration for use in Step 6.10 and enhanced Step 6.1.
 
 ## Step 3 – Verify Baseline Report Exists
 
@@ -376,6 +397,294 @@ For each anti-pattern, search the codebase for indicators and report findings wi
 - Estimated initial bundle size reduction: `sum_of_eagerly_loaded_component_sizes`
 - Estimated FCP improvement: `size_reduction / average_bandwidth`
 
+### Step 6.10 – Backend Source Code Analysis (if backend_available)
+
+**CRITICAL:** This step is MANDATORY for comprehensive over-fetching detection when backend is configured.
+
+**Skip this entire step if `backend_available = false`.**
+
+For EACH API endpoint identified in Step 6.1 (Over-Fetching Detection):
+
+#### Step 6.10.1 – Locate Backend Handler
+
+Find the backend handler function that serves this endpoint.
+
+**If Serena available for backend:**
+- Use `mcp__{{backend-serena}}__find_symbol` to search for route patterns
+- Search patterns by framework:
+  - **Rust (actix-web/axum):** `#[get("/api/v2/products")]`, `#[post("/api/v2/orders")]`
+  - **Java (Spring Boot):** `@GetMapping("/api/v2/products")`, `@PostMapping("/api/v2/orders")`
+  - **Python (FastAPI/Django):** `@app.get("/api/v2/products")`, `@router.post("/api/v2/orders")`
+  - **Node (Express):** `app.get('/api/v2/products')`, `router.post('/api/v2/orders')`
+- Extract handler function name and file location
+
+**If Serena NOT available:**
+- Fallback to Grep search across backend source:
+  ```bash
+  grep -r "GET.*\"/api/v2/products\"" {{backend-path}}/src/
+  grep -r "@GetMapping.*products" {{backend-path}}/src/
+  ```
+- Parse results to identify handler file and approximate location
+
+**If handler not found:**
+- Document limitation: "Handler for endpoint {{url}} not found. Backend analysis skipped for this endpoint."
+- Continue with next endpoint
+
+#### Step 6.10.2 – Extract Backend Response Schema
+
+Read the handler implementation to extract the complete response schema.
+
+**If Serena available:**
+- Use `mcp__{{backend-serena}}__find_symbol` with `include_body=true` to read handler function
+- Identify response type from function signature:
+  - **Rust:** `async fn handler() -> Json<ProductResponse>`
+  - **Java:** `public ResponseEntity<ProductResponse> handler()`
+  - **Python:** `def handler() -> ProductResponse:`
+  - **Node:** Response object or TypeScript return type
+- Use `mcp__{{backend-serena}}__find_symbol` to read the response struct/class definition
+- Extract ALL fields recursively (including nested objects, arrays)
+
+**If Serena NOT available:**
+- Use Read tool to read handler file
+- Parse response type manually from function signature
+- Search for response type definition in backend codebase
+- Extract fields (best-effort parsing)
+
+**Document complete response schema:**
+```
+Endpoint: GET /api/v2/products/:id
+Response Type: ProductResponse
+Fields:
+  - id: string
+  - name: string
+  - description: string
+  - price: number
+  - inventory: object
+    - quantity: number
+    - warehouse_location: string
+  - created_at: timestamp
+  - updated_at: timestamp
+  - internal_notes: string (UNUSED by frontend)
+```
+
+#### Step 6.10.3 – Detect Backend Database N+1 Queries
+
+**Definition:** Handler executes queries in a loop instead of batch fetching.
+
+**Detection approach:**
+
+1. **Read handler implementation** (using Serena or Read tool)
+   
+2. **Search for query patterns inside loops:**
+   - **Rust (sqlx):** 
+     ```rust
+     for item in items {
+         query!("SELECT * FROM table WHERE id = ?", item.id)
+             .fetch_one(&pool).await
+     }
+     ```
+   - **Java (JPA/Hibernate):**
+     ```java
+     for (Item item : items) {
+         repository.findById(item.getId())
+     }
+     ```
+   - **Python (SQLAlchemy/Django ORM):**
+     ```python
+     for item in items:
+         session.query(Model).filter(Model.id == item.id).first()
+     ```
+   - **Node (TypeORM/Prisma):**
+     ```javascript
+     for (const item of items) {
+         await db.model.findUnique({ where: { id: item.id } })
+     }
+     ```
+
+3. **Count loop iterations:**
+   - Estimate from baseline data (e.g., if endpoint returns list of 10 items, loop runs 10 times)
+   - Or use static analysis to count array length if determinable
+
+4. **Verify sequential execution:**
+   - Check if queries are awaited inside loop (synchronous execution)
+   - vs. parallelized (Promise.all, async batch queries)
+
+**Severity classification:**
+- **High:** > 10 queries in loop, sequential execution
+- **Medium:** 5-10 queries in loop, sequential execution
+- **Low:** < 5 queries in loop, or parallelized execution
+
+**Quantified impact:**
+- Estimated latency impact: `(n_queries - 1) * avg_db_query_latency`
+- Assume `avg_db_query_latency = 10ms` for calculation
+- Example: 10 queries → `(10-1) * 10ms = 90ms` added latency
+
+#### Step 6.10.4 – Detect Missing Pagination
+
+**Definition:** Endpoint returns unbounded result sets without pagination.
+
+**Detection approach:**
+
+1. **Identify collection endpoints:**
+   - Response type is a collection: `Vec<T>`, `List<T>`, `Array<T>`
+   - Example: `GET /api/v2/products` returns `Vec<Product>`
+
+2. **Check handler parameters for pagination:**
+   - Look for params: `page`, `limit`, `offset`, `per_page`, `page_size`
+   - **Rust:** `Query<PaginationParams>`, `page: web::Query<i32>`
+   - **Java:** `@RequestParam("page") int page`
+   - **Python:** `page: int = Query(default=1)`
+   - **Node:** `req.query.page`, `@Query('page') page: number`
+
+3. **Check query for pagination methods:**
+   - **Rust (sqlx):** `.limit()`, `.offset()`
+   - **Java (JPA):** `setMaxResults()`, `setFirstResult()`
+   - **Python (SQLAlchemy):** `.limit()`, `.offset()`
+   - **Node:** `.take()`, `.skip()`
+
+**Severity classification:**
+- **High:** No pagination, returns > 100 items (from baseline data or database count)
+- **Medium:** No pagination, returns 50-100 items
+- **Low:** No pagination, returns < 50 items
+
+**Quantified impact:**
+- Estimated payload reduction: `(total_items - items_per_page) * avg_item_size`
+- Assume `items_per_page = 20` and estimate `avg_item_size` from baseline
+- Example: 100 items, 5KB each → `(100-20) * 5KB = 400KB` saved
+
+#### Step 6.10.5 – Detect Missing Caching
+
+**Definition:** Handler executes expensive operations on every request without caching.
+
+**Detection approach:**
+
+1. **Identify expensive operations:**
+   - Database queries for static/slow-changing data (e.g., product categories, user roles)
+   - External API calls (HTTP requests to third-party services)
+   - Complex computations (aggregations, analytics)
+
+2. **Check for cache usage:**
+   - **Rust:** `Cache`, `moka`, `redis-rs`
+   - **Java:** `@Cacheable`, `Redis`, `Caffeine`
+   - **Python:** `@lru_cache`, `Redis`, `@cache`
+   - **Node:** `node-cache`, `Redis`, `memory-cache`
+   - Search for cache get/set patterns in handler code
+
+3. **Determine data change frequency:**
+   - Static data (never changes): HIGH priority for caching
+   - Slow-changing (updates hourly/daily): MEDIUM priority
+   - Fast-changing (real-time): LOW priority (caching may not help)
+
+**Severity classification:**
+- **High:** Expensive operation (> 100ms) on high-traffic endpoint, no cache, static/slow-changing data
+- **Medium:** Operation 20-100ms on medium-traffic endpoint, no cache
+- **Low:** Operation < 20ms, or low-traffic endpoint, or fast-changing data
+
+**Quantified impact:**
+- Estimated latency reduction: `operation_time * cache_hit_rate`
+- Assume `cache_hit_rate = 0.8` (80% of requests served from cache)
+- Example: 200ms query → `200ms * 0.8 = 160ms` saved per cached request
+
+#### Step 6.10.6 – Detect Inefficient Queries
+
+**Definition:** Queries that fetch unnecessary data (SELECT *, missing indexes).
+
+**Detection approach:**
+
+1. **Extract SQL queries from handler:**
+   - Look for query builders or raw SQL strings
+   - **Rust (sqlx):** `query!("SELECT ...")`, `query_as!(...)`
+   - **Java (JPA):** `@Query("SELECT ...")`, `createQuery(...)`
+   - **Python (SQLAlchemy):** `session.query(Model).filter(...)`
+   - **Node (TypeORM):** `createQueryBuilder().select(...)`
+
+2. **Check for SELECT *:**
+   - Flag queries using `SELECT *` or ORM equivalents that fetch all columns
+   - Example: `query!("SELECT * FROM products WHERE id = ?")`
+
+3. **Identify which fields are actually used:**
+   - Cross-reference queried fields with response schema (from Step 6.10.2)
+   - If query returns 20 columns but response only uses 5, flag as inefficient
+
+4. **Check for missing indexes (if schema available):**
+   - Look for WHERE clauses on non-indexed columns
+   - Look for JOINs without foreign key indexes
+   - This requires access to database schema (migrations, SQL files)
+
+**Severity classification:**
+- **High:** `SELECT *` on table with > 10 columns, > 1000 rows (from baseline or DB stats)
+- **Medium:** Unnecessary JOINs, or fetching > 50% unused columns
+- **Low:** Minor inefficiencies, or < 25% unused columns
+
+**Quantified impact:**
+- "Potential 30-50% query time reduction" (qualitative estimate)
+- Payload reduction: `unused_columns * avg_column_size`
+
+### Step 6.11 – Cross-Reference Over-Fetching (ENHANCED with Backend Schema)
+
+**CRITICAL:** Perform for ALL endpoints identified in Step 6.1, especially those with N+1 patterns.
+
+**This step is ENHANCED when backend is available.** If backend_available = false, use original Step 6.1 detection (frontend-only field usage analysis).
+
+For each endpoint:
+
+**Step A – Extract Backend Response Fields** (if backend_available)
+- Use response schema from Step 6.10.2
+- List ALL fields including nested objects
+- Document field types and estimated sizes
+
+**Step B – Analyze Frontend Field Usage**
+- Use Grep to search for property accesses across ALL frontend code:
+  ```bash
+  grep -r "response\.field_name" {{frontend-path}}/src/
+  grep -r "data\.field_name" {{frontend-path}}/src/
+  grep -r "\.field_name" {{frontend-path}}/src/  # Broad search
+  ```
+- Check code locations:
+  - Component render functions
+  - useEffect hooks
+  - useMemo/useCallback
+  - Event handlers
+  - State updates
+- Mark each field as USED or UNUSED
+
+**Step C – Calculate Over-Fetching Waste**
+1. **Field-level waste:**
+   - Total backend fields vs. used frontend fields
+   - Waste %: `(unused_fields / total_fields) * 100`
+
+2. **If N+1 pattern detected (from Step 6.1 or 6.10.3):**
+   - Multiply waste by call count
+   - Example: If endpoint called 10 times with 80% over-fetching → 10x the impact
+
+3. **Payload-level waste:**
+   - Get uncompressed response size from baseline data
+   - Calculate waste bytes: `(unused_fields / total_fields) * total_response_size`
+   - If N+1: multiply by call count
+
+**Step D – Updated Severity Classification**
+- **Critical:** N+1 pattern (10+ calls) with > 50% over-fetching
+- **High:** Single call with > 50% unused fields, OR N+1 (5-10 calls) with > 30% unused
+- **Medium:** 25-50% unused fields
+- **Low:** < 25% unused fields
+
+**Step E – Quantified Impact**
+- Payload reduction: `(unused_fields / total_fields) * response_size * call_count`
+- Latency improvement: `payload_reduction / average_bandwidth`
+- Assume `average_bandwidth = 1 MB/s` for 4G mobile
+
+**Example Output:**
+```
+Endpoint: GET /api/v2/products/:id
+Backend Response: 12 fields (ProductResponse)
+Frontend Usage: 4 fields used (id, name, price, image_url)
+Unused Fields: 8 (description, inventory.*, created_at, updated_at, internal_notes, ...)
+Over-Fetching: 67% (8/12 fields unused)
+Call Pattern: Single call (no N+1)
+Payload Waste: 3.5 KB unused per call
+Recommendation: Create ProductSummaryResponse with only used fields, or use GraphQL
+```
+
 ## Step 7 – Generate Workflow Analysis Report
 
 Create a comprehensive analysis report at `{analysis-directory}/workflow-analysis-report.md`.
@@ -466,7 +775,104 @@ The report must include the following sections:
 
 ---
 
+## Backend Source Code Analysis
+
+**Note:** This section is included only if backend repository is configured (`backend_available = true`). Otherwise, omit this section entirely.
+
+**Backend Repository:** {backend-repo-name} ({backend-framework})  
+**Analysis Coverage:** {endpoints-analyzed} endpoints analyzed  
+**Serena Status:** {serena-instance-name or "Grep fallback"}
+
+### Backend Anti-Patterns Detected
+
+#### Database N+1 Queries
+
+**Severity:** {High / Medium / Low}  
+**Instances Found:** {count}  
+**Estimated Latency Impact:** {(n_queries - 1) * 10ms}
+
+**Detected Instances:**
+
+1. **{handler-file-path}:{line-number}**
+   ```{language}
+   {code-snippet-showing-loop-with-queries}
+   ```
+   **Issue:** {count} queries executed sequentially in loop  
+   **Recommended Fix:** Use batch query (e.g., `SELECT * FROM table WHERE id IN (...)`) or ORM eager loading
+
+{... repeat for each N+1 instance ...}
+
+#### Missing Pagination
+
+**Severity:** {High / Medium / Low}  
+**Instances Found:** {count}  
+**Estimated Payload Waste:** {(total_items - 20) * avg_item_size}
+
+**Detected Instances:**
+
+1. **Endpoint:** GET {endpoint-path}
+   **Handler:** {handler-file-path}  
+   **Issue:** Returns {item-count} items without pagination  
+   **Recommended Fix:** Add `page` and `limit` query parameters, implement `.limit()` and `.offset()` in query
+
+{... repeat for each pagination issue ...}
+
+#### Missing Caching
+
+**Severity:** {High / Medium / Low}  
+**Instances Found:** {count}  
+**Estimated Latency Reduction:** {operation_time * 0.8}
+
+**Detected Instances:**
+
+1. **Endpoint:** GET {endpoint-path}
+   **Handler:** {handler-file-path}  
+   **Issue:** {expensive-operation-description} on every request (no cache detected)  
+   **Data Change Frequency:** {static / slow-changing / fast-changing}  
+   **Recommended Fix:** Implement cache layer (Redis, in-memory) with appropriate TTL
+
+{... repeat for each caching issue ...}
+
+#### Inefficient Queries
+
+**Severity:** {High / Medium / Low}  
+**Instances Found:** {count}  
+**Estimated Impact:** 30-50% query time reduction
+
+**Detected Instances:**
+
+1. **Query:** {query-snippet}
+   **Handler:** {handler-file-path}:{line-number}  
+   **Issue:** SELECT * fetches {column-count} columns but only {used-count} used in response  
+   **Recommended Fix:** Specify exact columns: `SELECT id, name, price FROM products WHERE ...`
+
+{... repeat for each inefficient query ...}
+
+### Cross-Repository Over-Fetching Analysis
+
+**Note:** This analysis cross-references backend response schemas with frontend field usage.
+
+#### Per-Endpoint Analysis
+
+##### Endpoint: GET {endpoint-path}
+
+**Backend Handler:** {handler-file-path}  
+**Response Type:** {ResponseStructName}  
+**Total Fields:** {total-field-count}  
+**Used by Frontend:** {used-field-count}  
+**Unused Fields:** {unused-field-list}  
+**Over-Fetching Percentage:** {waste-percentage}%  
+**Call Pattern:** {Single call / N+1 (count calls)}  
+**Payload Waste:** {waste-bytes} KB per request × {call-count if N+1} calls = {total-waste} KB  
+**Recommendation:** {Create specialized DTO / Use GraphQL / Field projection}
+
+{... repeat for each endpoint ...}
+
+---
+
 ## Recommended Optimizations
+
+**Note:** Optimizations are categorized by layer (Frontend / Backend / Integration) when backend analysis is available.
 
 Optimizations are prioritized by estimated impact (time or size savings).
 

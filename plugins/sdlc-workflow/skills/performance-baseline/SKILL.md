@@ -37,7 +37,7 @@ Check if `.claude/performance-config.md` exists in the target repository.
 Search for a `## Selected Workflow` section in the configuration file.
 
 - **If not found:** Inform the user:
-  > "No workflow selected for optimization. Please run `/sdlc-workflow:performance-workflow-discovery` first to select a workflow, then re-run this skill."
+  > "No workflow selected for optimization. Please run `/sdlc-workflow:performance-setup` first to initialize configuration and select a workflow, then re-run this skill."
   
   Stop execution.
 

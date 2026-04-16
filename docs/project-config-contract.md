@@ -208,7 +208,7 @@ created by the `performance-setup` skill and lives at
 
 The Performance Analysis Configuration file contains:
 
-1. **Selected Workflow** — The user-selected workflow to optimize (added by `performance-workflow-discovery`)
+1. **Selected Workflow** — The user-selected workflow to optimize (added by `performance-setup`)
 2. **Workflow Scenarios** — List of scenarios (routes) in the selected workflow
 3. **Baseline Settings** — Configuration for performance baseline capture (browser settings, timeouts, iteration count)
 4. **Target Directories** — Where to save baselines, analysis reports, optimization plans, verification reports
@@ -274,7 +274,7 @@ The Performance Analysis Configuration file contains:
 Performance skills read `.claude/performance-config.md` from the target
 repository to:
 
-- **performance-workflow-discovery**: Save user-selected workflow
+- **performance-setup**: Discover workflows and save user-selected workflow
 - **performance-baseline**: Read scenarios, baseline settings, and target directories
 - **performance-analyze-module**: Read selected workflow and baseline data
 - **performance-plan-optimization**: Read analysis reports and target metrics
