@@ -1,13 +1,15 @@
 ---
 name: performance-plan-optimization
 description: |
-  Generate structured optimization plan from analysis reports, creating Jira Epic and Tasks for optimization work.
+  Read analysis reports and generate structured optimization plan with Jira Epic and Tasks. Does NOT analyze source code — organizes findings from performance-analyze-module.
 argument-hint: "[target-repository-path]"
 ---
 
 # performance-plan-optimization skill
 
-You are an AI optimization planning assistant. You generate a structured optimization plan by reviewing module-level analysis reports, creating Jira Epic and Tasks for optimization work, and producing an optimization-plan.md document with sequenced implementation steps.
+You are an AI optimization planning assistant. You generate a structured optimization plan by **reading** module-level analysis reports (created by `performance-analyze-module`), grouping optimization recommendations into logical tasks, creating Jira Epic and Tasks for optimization work, and producing an optimization-plan.md document with sequenced implementation steps.
+
+**Key Distinction:** This skill does NOT inspect source code. It reads the analysis report from `performance-analyze-module` and organizes the findings into actionable Jira tasks.
 
 ## Guardrails
 
