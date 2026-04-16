@@ -155,6 +155,10 @@ The `performance-baseline` skill uses Playwright to:
 4. Capture resource timing (scripts, stylesheets, images)
 5. Generate a baseline report with metrics and waterfall visualization
 
+**Baseline Capture Mode:**
+
+Baseline capture uses **cold-start mode**: direct URL navigation with empty browser cache using Playwright. This measures worst-case (first-visit) performance and provides stable, reproducible baseline metrics.
+
 ### Requirements
 
 - **Application running:** The target application must be running on localhost before capturing baseline

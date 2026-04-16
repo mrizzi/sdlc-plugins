@@ -1,34 +1,32 @@
 ---
 name: performance-verify-optimization
 description: |
-  Verify a performance optimization PR by reading review feedback, validating acceptance criteria, optionally re-running performance baseline, and creating sub-tasks for change requests.
+  Verify a performance optimization PR by reading the optimization result report, validating acceptance criteria, optionally re-running performance baseline, updating report status, and creating sub-tasks for change requests.
 argument-hint: "[jira-issue-id]"
 ---
 
 # performance-verify-optimization skill
 
-You are an AI performance verification assistant. You verify a performance optimization pull request against its Jira task's acceptance criteria, read PR review feedback to create tracked sub-tasks, optionally re-run performance baseline as a redundant check, and validate target achievement. You run objective checks and post findings to both GitHub and Jira, but you do **NOT** modify code and do **NOT** auto-merge.
+You are an AI performance verification assistant. You verify a performance optimization pull request against its Jira task's acceptance criteria, read PR review feedback to create tracked sub-tasks, re-run the performance baseline to detect environmental drift, and validate target achievement. You run objective checks and post findings to both GitHub and Jira, but you do **NOT** modify code and do **NOT** auto-merge.
 
 ## Relationship to verify-pr
 
 This skill extends the `/sdlc-workflow:verify-pr` workflow with performance-specific verification steps. The core PR verification flow (review feedback, scope containment, acceptance criteria) follows verify-pr exactly. The extensions are:
 
 1. **Performance-specific task parsing** — reads Baseline Metrics, Target Metrics, Performance Test Requirements from Jira task
-2. **Optional baseline re-run** — optionally re-runs performance baseline as redundant validation (not primary regression check)
-3. **Target validation** — verifies target metrics achieved (cross-checks against implement-optimization results)
-4. **Performance results in report** — includes before/after metrics and target achievement status
+2. **Environmental drift detection** — re-runs performance baseline to validate that the optimization holds in the current environment, not just at implementation time (catches test data changes, dependency updates, and machine variation between developer and CI)
+3. **Target validation** — verifies target metrics achieved (cross-checks against implement-optimization results and drift re-run)
+4. **Performance results in report** — includes before/after metrics, drift analysis, and target achievement status
 
 ## Guardrails
 
-- This skill does **NOT** modify code (follows verify-pr Constraint 1.11)
-- This skill does **NOT** auto-merge (follows verify-pr Constraint 1.13)
+- This skill does **NOT** modify code (read-only verification)
+- This skill does **NOT** auto-merge (manual review required)
 - This skill requires a Jira task created by performance-plan-optimization with performance-specific sections
-- Regression detection is **NOT** the primary responsibility of this skill — that happens in performance-implement-optimization
-- Baseline re-run is **optional** — used as redundant check, not primary validation
+- Regression detection is handled in **both** performance-implement-optimization (at code time) and this skill (at review time via drift detection)
+- Baseline re-run serves a distinct purpose from implement-optimization's capture: it detects environmental drift between developer machine and current state
 
 ## Step 0 – Validate Project Configuration
-
-(Same as verify-pr Step 0)
 
 Read the project's CLAUDE.md and verify that the following sections exist under `# Project Configuration`:
 - Repository Registry
@@ -38,8 +36,6 @@ Read the project's CLAUDE.md and verify that the following sections exist under 
 If missing, inform the user and stop execution.
 
 ## Step 0.5 – JIRA Access Initialization
-
-(Same as verify-pr Step 0.5)
 
 Before attempting any JIRA operations, determine the access method.
 
@@ -60,12 +56,12 @@ Before attempting any JIRA operations, determine the access method.
    ```
 
 **REST API equivalents for this skill's operations:**
-- `jira.get_issue(id)` → `python3 scripts/jira-client.py get_issue <id> --fields "*all"`
-- `jira.create_issue(...)` → `python3 scripts/jira-client.py create_issue --project <key> --summary "<summary>" --description-md "<desc>" --issue-type Task --labels <labels>`
-- `jira.create_issue_link(...)` → `python3 scripts/jira-client.py create_link --inward <issue1> --outward <issue2> --link-type <type>`
-- `jira.add_comment(id, text)` → `python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
+- `jira.get_issue(id)` → `cd <plugin-root> && python3 scripts/jira-client.py get_issue <id> --fields "*all"`
+- `jira.create_issue(...)` → `cd <plugin-root> && python3 scripts/jira-client.py create_issue --project <key> --summary "<summary>" --description-md "<desc>" --issue-type Task --labels <labels>`
+- `jira.create_issue_link(...)` → `cd <plugin-root> && python3 scripts/jira-client.py create_link --inward <issue1> --outward <issue2> --link-type <type>`
+- `jira.add_comment(id, text)` → `cd <plugin-root> && python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
 
-**Exception for Bash tool:** When using REST API fallback, this skill may use `bash -c "python3 scripts/jira-client.py <command>"` for JIRA operations only.
+**Exception for Bash tool:** When using REST API fallback, this skill may use `bash -c "cd <plugin-root> && python3 scripts/jira-client.py <command>"` for JIRA operations only.
 
 ## Comment Footnote
 
@@ -145,8 +141,6 @@ If any required section is missing or the description doesn't follow the templat
 
 ## Step 2 – Identify PR
 
-(Same as verify-pr Step 2)
-
 Look up the **Git Pull Request custom field** ID from the project's **Jira Configuration** section in CLAUDE.md.
 
 If the custom field is configured, read its value from the Jira issue. If the field is empty or not configured, ask the user to provide the PR URL.
@@ -154,8 +148,6 @@ If the custom field is configured, read its value from the Jira issue. If the fi
 Extract the PR number and repository from the URL for use in subsequent `gh` commands.
 
 ## Step 3 – Checkout PR Branch
-
-(Same as verify-pr Step 3)
 
 Ensure the PR branch is checked out locally so that subsequent steps inspect the correct code.
 
@@ -178,8 +170,6 @@ Ensure the PR branch is checked out locally so that subsequent steps inspect the
 
 ## Step 4 – Review Feedback Resolution
 
-(Same as verify-pr Step 4, with all sub-steps)
-
 Read PR review feedback and create tracked Jira sub-tasks for any required code changes.
 
 ### Step 4a – Fetch and Enumerate All Comment Threads
@@ -194,8 +184,8 @@ gh api repos/<owner/repo>/pulls/<pr-number>/comments
 Group comments into threads using the `in_reply_to_id` field.
 
 **Mandatory thread enumeration**: Enumerate every top-level comment thread on every invocation. Partition threads into:
-1. **Unclassified threads** — no reply contains `"[sdlc-workflow/performance-verify-optimization] Classified as"`
-2. **Already-classified threads** — skip these
+1. **Unclassified threads** — no reply contains classification from either `"[sdlc-workflow/performance-verify-optimization] Classified as"` or `"[sdlc-workflow/verify-pr] Classified as"`
+2. **Already-classified threads** — skip these (classified by either skill)
 
 If no reviews or comments exist, record Review Feedback as N/A and skip to Step 5.
 
@@ -234,7 +224,7 @@ jira.create_issue with:
 - **Parent:** the current task's Jira issue ID
 - **Summary:** concise description of the required fix
 - **Labels:** `["ai-generated-jira", "review-feedback"]`
-- **Description:** structured task description following the template defined in `shared/task-description-template.md`
+- **Description:** structured task description following the template defined in `plugins/sdlc-workflow/shared/task-description-template.md`
 
 Include these extension sections:
 - **Review Context** — original review comment text and PR file/line reference
@@ -278,28 +268,70 @@ Record the Review Feedback check result:
 
 ## Step 5 – Read Implementation Results
 
-Read the PR description and comments to extract performance results from the `performance-implement-optimization` skill run.
+Read performance results from the optimization result report created by `performance-implement-optimization`.
 
-Look for a GitHub PR comment or PR description section containing performance test results. This should include:
+**Step 5.1 – Find Optimization Result Report**
+
+Look for the report file in `.claude/performance/optimization-results/`:
+
+```bash
+# Find latest report for this task
+report_file=$(ls -t .claude/performance/optimization-results/${jira_key}-*.md 2>/dev/null | head -n 1)
+```
+
+**Step 5.2 – Read Report (Primary Method)**
+
+If report file found:
+
+1. Read the report file
+2. Extract from metadata frontmatter:
+   - `jira_key` (verify matches current task)
+   - `timestamp` (when metrics were captured)
+   - `branch` (PR branch)
+   - `commit_sha` (commit measured)
+   - `baseline_commit_sha` (baseline reference)
+   - `capture_mode` (mode used for measurement)
+   - `status` (should be "pending_verification")
+3. Extract from Performance Impact table:
+   - Baseline metrics (p95) for each Core Web Vital
+   - After Optimization metrics (p95)
+   - Delta calculations
+   - Target metrics
+   - Status per metric (Met/Partial/Regression)
+
+Store the extracted metrics for comparison in Step 7.
+
+**Step 5.3 – Fallback: Read from PR Description**
+
+If report file NOT found (backward compatibility for tasks created before optimization-results):
+
+Read the PR description and comments to extract performance results. Look for:
 - Before/after comparison table
 - Target achievement status
 - Performance impact summary
 
-If results are not found in PR description or comments, record as "Implementation results not found in PR" and proceed to optional baseline re-run in Step 6.
+**If results found in neither location:**
 
-Store the extracted metrics for comparison in Step 7.
+Record as "Implementation results not found" and proceed to optional baseline re-run in Step 6.
 
-## Step 6 – Optional Baseline Re-run
+## Step 6 – Environmental Drift Detection (Baseline Re-run)
 
-**This step is optional.** Prompt the user:
+**Purpose:** Detect whether the optimization holds in the current environment. The implementation
+phase captured metrics on the developer's machine at a specific point in time. This re-run catches
+drift caused by: test data changes, dependency updates, environment differences between dev and CI,
+or elapsed time since implementation.
 
-> **Optional redundant validation**
+Prompt the user:
+
+> **Environmental drift check**
 >
-> The implementation phase already captured performance metrics. Do you want to re-run the baseline capture as a redundant check?
+> A baseline re-run validates that the optimization still holds in the current environment.
+> This catches drift caused by dependency updates, test data changes, or environment differences
+> since implementation.
 >
 > Options:
-> 1. Yes - Re-run baseline for all scenarios
-> 2. No - Skip and use implementation results from PR
+> 1. Yes - Re-run baseline now (recommended — validates optimization is stable)
+> 2. No - Skip and rely solely on implementation-phase results (faster, less confidence)
 >
 > Choose (1/2):
 
@@ -311,33 +343,63 @@ Re-run the performance baseline capture for all scenarios.
 
 Read the **Repository** section from the Jira task description (parsed in Step 1) to identify the target repository.
 
-Check if `.claude/performance-config.md` exists in the target repository:
+**Apply:** [Common Pattern: Config Reading](../performance/common-patterns.md#pattern-1-config-reading)
+
+**Specific actions for this skill:**
+- Check if config exists in target repository
+- If missing, inform user and skip to Step 7 (use implementation results instead)
+
+### Step 6.2 – Execute Baseline Capture with Mode Consistency (Updated)
+
+**Apply:** [Common Pattern: Metadata Extraction](../performance/common-patterns.md#pattern-2-metadata-extraction) and [Common Pattern: Mode Consistency Enforcement](../performance/common-patterns.md#pattern-3-mode-consistency-enforcement)
+
+**Specific field to extract:**
+- `metadata.baseline_mode` → stored_mode (enforce same mode for verification)
+
+**Specific actions for this skill:**
+- Inform user of stored mode and consistency requirement
+- Offer: use stored mode | select different mode | cancel
+- If user selects different mode, warn about invalid comparison and note in verification report
+- Use selected mode for baseline re-capture
+
+Locate the plugin cache and copy the capture script:
 
 ```bash
-test -f {target-repo-path}/.claude/performance-config.md && echo "exists" || echo "missing"
-```
+# Resolve plugin cache path (same as performance-baseline Step 8.1)
+plugin_cache="${HOME}/.claude/plugins/cache/sdlc-plugins-local/sdlc-workflow"
+plugin_version=$(ls "$plugin_cache" | sort -V | tail -n 1)
+template_path="${plugin_cache}/${plugin_version}/skills/performance/capture-baseline.template.mjs"
 
-If missing, inform the user:
-> "Performance configuration not found in target repository. Cannot re-run baseline capture. Using implementation results from PR."
+if [ ! -f "$template_path" ]; then
+  echo "❌ Capture script template not found at: $template_path"
+  echo "Plugin may be corrupted or not installed. Please reinstall the sdlc-workflow plugin."
+  exit 1
+fi
 
-Skip to Step 7.
-
-### Step 6.2 – Execute Baseline Capture
-
-Copy the capture script from plugin cache to a temporary location:
-
-```bash
-cp plugins/sdlc-workflow/skills/performance/capture-baseline.template.mjs /tmp/capture-baseline-verify.mjs
+cp "$template_path" /tmp/capture-baseline-verify.mjs
 chmod +x /tmp/capture-baseline-verify.mjs
 ```
 
-Run the capture script:
+Extract the application port from configuration:
 
 ```bash
-node /tmp/capture-baseline-verify.mjs --config {target-repo-path}/.claude/performance-config.md
+# Read port stored by performance-baseline in Development Environment section
+port=$(grep "| Port |" {target-repo-path}/.claude/performance-config.md | awk -F'|' '{print $3}' | xargs)
+
+if [ -z "$port" ] || [ "$port" = "TBD" ]; then
+  echo "❌ Application port not configured in performance-config.md."
+  echo "Please run /sdlc-workflow:performance-baseline first so the port is discovered and stored."
+  exit 1
+fi
 ```
 
-Parse the JSON output to extract current metrics (LCP, FCP, TTI, Total Load Time, bundle size).
+Run the capture script with mode-specific parameters:
+
+```bash
+node /tmp/capture-baseline-verify.mjs --config {target-repo-path}/.claude/performance-config.md --port "$port" --mode cold-start
+```
+
+Parse the JSON output to extract current metrics (LCP, FCP, DOM Interactive, Total Load Time, bundle size).
 
 ### Step 6.3 – Compare with Implementation Results
 
@@ -379,7 +441,7 @@ Use the performance metrics from either:
 
 Compare the **current** metrics against the **target** metrics from the Jira task (parsed in Step 1).
 
-For each target metric (LCP, FCP, TTI, bundle size):
+For each target metric (LCP, FCP, DOM Interactive, bundle size):
 - **Baseline:** Starting value before optimization (from task)
 - **Current:** Measured value after optimization (from implementation phase or re-run)
 - **Target:** Goal value from task
@@ -402,9 +464,44 @@ Record the Target Validation result:
 - **WARN** — Partial Success (> 20% improvement but targets not fully met)
 - **FAIL** — Insufficient Improvement or Regression
 
-## Step 8 – Scope Containment
+### Step 7.3 – Update "Latest Verified" in Configuration (if PASS or WARN)
 
-(Same as verify-pr Step 6)
+When Target Validation is PASS or WARN (i.e., measurable improvement confirmed), update the
+`Latest Verified (p95)` column in `performance-config.md` to reflect the most recent verified
+metrics. This keeps the config current without requiring a manual baseline re-run on main.
+
+**Only update when:** Target Validation result is PASS or WARN.
+**Skip when:** Target Validation result is FAIL (no verified improvement to record).
+
+**Source of metrics (in priority order):**
+1. Drift detection re-run (Step 6) — most current and environment-verified
+2. Implementation results extracted in Step 5 — captured at implementation time
+
+**Procedure:**
+
+1. Read `performance-config.md` from the target repository.
+2. Locate the `## Optimization Targets` table.
+3. Update the `Latest Verified (p95)` column cells with current p95 values:
+   - LCP: `{latest-lcp-p95}` ms → convert to seconds: `{value / 1000}` s
+   - FCP: `{latest-fcp-p95}` ms → convert to seconds: `{value / 1000}` s
+   - DOM Interactive: `{latest-dom-p95}` ms → convert to seconds: `{value / 1000}` s
+   - Total Load Time: `{latest-total-p95}` ms → convert to seconds: `{value / 1000}` s
+4. Update the `Last Updated` column for each metric row with the current ISO timestamp.
+5. Update `metadata.last_updated` with the current timestamp.
+
+**Apply:** [Common Pattern: Config Write Protection](../performance/common-patterns.md#pattern-10-config-write-protection)
+
+Read the full file, apply the table cell updates in memory, write the complete updated file back.
+Do NOT use sed/regex substitution — read the full file, update the cells in-memory, write back.
+
+**Log to user:**
+```
+✓ Latest Verified metrics updated in performance-config.md
+  LCP: {latest-lcp} ms  |  FCP: {latest-fcp} ms
+  DOM Interactive: {latest-dom} ms  |  Total Load Time: {latest-total} ms
+```
+
+## Step 8 – Scope Containment
 
 List all files changed in the PR:
 
@@ -418,8 +515,6 @@ Record PASS (all files match), WARN (out-of-scope files), or FAIL (required file
 
 ## Step 9 – Diff Size Check
 
-(Same as verify-pr Step 7)
-
 Get diff statistics:
 
 ```
@@ -429,8 +524,6 @@ gh api repos/<owner/repo>/pulls/<pr-number> --jq '.additions, .deletions, .chang
 Flag WARN if diff size appears disproportionately large relative to expected scope.
 
 ## Step 10 – Commit Traceability
-
-(Same as verify-pr Step 8)
 
 Retrieve commit list:
 
@@ -447,8 +540,6 @@ Record PASS if all criteria met, WARN if some met, FAIL if none met.
 
 ## Step 11 – Sensitive Pattern Scan
 
-(Same as verify-pr Step 9)
-
 Search the PR diff for patterns that should not be committed:
 
 ```
@@ -458,8 +549,6 @@ gh pr diff <pr-number> -R <owner/repo> | grep -iE '(password\s*=|secret|API_KEY|
 Record PASS if no matches found, FAIL if any match detected.
 
 ## Step 12 – CI Status
-
-(Same as verify-pr Step 10, with all sub-steps)
 
 Check CI status:
 
@@ -472,16 +561,69 @@ If checks are pending, record CI Status as WARN and skip to Step 13.
 If checks failed, proceed to sub-steps:
 
 ### Step 12a – Fetch Failure Logs
+
+For each failed CI check, fetch the failure logs:
+
+```
+gh run view <run-id> --log-failed -R <owner/repo>
+```
+
+Extract the `run-id` from the failed check's URL or use:
+
+```
+gh run list --branch <pr-branch> --status failure --limit 5 -R <owner/repo>
+```
+
+Capture the relevant error output for analysis in Step 12b.
+
 ### Step 12b – Analyze Failures
+
+For each failed CI check, analyze the failure log to determine:
+- **What failed** — the specific test, build step, or lint rule that failed
+- **Why it failed** — the root error message or assertion failure
+- **What fix is needed** — the concrete code change required to resolve the failure
+
+Use the Serena instance for the task's repository (from the **Repository Registry**
+in CLAUDE.md) or fall back to Read/Grep/Glob to inspect the relevant source files
+and understand the failure context.
+
 ### Step 12c – Idempotency Check
+
+Before creating sub-tasks, check for existing CI-failure sub-tasks linked to the
+parent task. For each linked sub-task with labels `["ai-generated-jira", "ci-failure"]`,
+check whether its description references the same CI check name or failure. If a
+matching sub-task already exists, skip creation for that failure.
+
 ### Step 12d – Create Sub-tasks
+
+For each CI failure that requires a fix (and has no existing sub-task per Step 12c),
+create a Jira sub-task:
+
+jira.create_issue with:
+- **Parent:** the current task's Jira issue ID
+- **Summary:** concise description of the CI fix needed (e.g., "Fix failing lint check: unused import in handler.rs")
+- **Labels:** `["ai-generated-jira", "ci-failure"]`
+- **Description:** structured task description following the template defined in
+  [`plugins/sdlc-workflow/shared/task-description-template.md`](plugins/sdlc-workflow/shared/task-description-template.md).
+  Include the applicable base sections plus these extension sections:
+
+  - **Review Context** — the CI check name, failure log excerpt, and error summary
+  - **Target PR** — the PR URL from Step 2 (so implement-task adds commits to the existing branch)
+
+After creating each sub-task, create a "Blocks" issue link from the sub-task to the parent task:
+
+jira.create_issue_link(type="Blocks", inwardIssue=<sub-task-id>, outwardIssue=<parent-task-id>)
+
 ### Step 12e – Record Result
 
-Record CI Status: PASS / WARN / FAIL
+Record the CI Status check result:
+- **PASS** — all CI checks pass
+- **WARN** — some checks are pending, none failed; or CI failures exist but sub-task creation failed
+- **FAIL** — CI checks failed; sub-tasks were created to address failures
+
+Also record the list of CI-failure sub-tasks created in this step.
 
 ## Step 13 – Acceptance Criteria Verification
-
-(Same as verify-pr Step 11)
 
 For each criterion in the **Acceptance Criteria** section, verify it is satisfied by inspecting the code on the PR branch.
 
@@ -495,8 +637,6 @@ Use the appropriate Serena instance from **Repository Registry**, with tools:
 Record PASS/FAIL for each individual criterion.
 
 ## Step 14 – Test Quality
-
-(Same as verify-pr Step 12)
 
 Scan test files in the PR for:
 1. Repetitive test functions that could be parameterized (Meszaros heuristic)
@@ -549,7 +689,7 @@ Compile all findings from Steps 4–14 into a structured verification report:
 ```
 
 Overall result rules:
-- **PASS** — all checks are PASS or N/A, including Target Achievement PASS
+- **PASS** — all checks are PASS, N/A, or SKIPPED (for optional Baseline Re-run), including Target Achievement PASS
 - **WARN** — at least one WARN but no FAIL (includes Target Achievement WARN for Partial Success)
 - **FAIL** — at least one FAIL (includes Target Achievement FAIL for Regression or Insufficient Improvement)
 
@@ -641,17 +781,92 @@ If Partial Success:
 > - Consider adjusting targets if they were too aggressive
 > - Merge current PR if improvement is significant enough
 
+## Step 18 – Update Optimization Result Report Status
+
+If an optimization result report was found in Step 5.1, update its status based on verification outcome:
+
+**Step 18.1 – Determine Status**
+
+Map Overall Result to report status:
+
+- **PASS:** status = "verified"
+- **WARN (with partial success):** status = "verified_with_warnings"
+- **FAIL:** status = "pending_verification" (requires re-implementation)
+
+**Step 18.2 – Update Report Metadata**
+
+Read the report file found in Step 5.1 and update the metadata frontmatter:
+
+```yaml
+---
+metadata:
+  # ... existing fields unchanged ...
+  status: {new-status}
+  verification_timestamp: {current-iso-timestamp}
+  verification_result: {PASS|WARN|FAIL}
+---
+```
+
+**Step 18.3 – Append Verification Section**
+
+Append a new section to the report file:
+
+```markdown
+
+---
+
+## Verification Results
+
+**Verified:** {timestamp}  
+**Overall Result:** {PASS / WARN / FAIL}
+
+### Acceptance Criteria
+
+{acceptance-criteria-summary-from-Step-13}
+
+### Review Feedback
+
+{review-feedback-summary-from-Step-4}
+
+### CI Status
+
+{ci-status-summary-from-Step-12}
+
+### Target Achievement
+
+{target-achievement-summary-from-Step-7}
+
+### Recommendations
+
+{recommendations-if-partial-or-fail}
+```
+
+**Step 18.4 – Log Report Update**
+
+Log to user:
+
+```
+✓ Optimization result report updated:
+  - File: {report_file}
+  - Status: {status}
+  - Verification: {PASS|WARN|FAIL}
+```
+
+**If report NOT found in Step 5.1:**
+
+Skip this step (backward compatibility for tasks created before optimization-results feature).
+
 ## Important Rules
 
-- This skill does **NOT** modify code (follows verify-pr Constraint 1.11)
-- This skill does **NOT** auto-merge (follows verify-pr Constraint 1.13)
+- This skill does **NOT** modify code (read-only verification)
+- This skill does **NOT** auto-merge (manual review required)
 - Verification criteria come from the Jira task description
 - Regression detection is **NOT** the primary responsibility — that happens in performance-implement-optimization
 - Baseline re-run is **optional** — used as redundant validation, not primary check
 - Use Serena instance from **Repository Registry** for code inspection, fall back to Read/Grep/Glob
 - Use `gh` CLI for all GitHub interactions
 - Include the Comment Footnote on all Jira comments
-- Sub-tasks created from review feedback or CI failures use labels `["ai-generated-jira", "review-feedback"]` and "Blocks" issue links
+- Sub-tasks created from review feedback use labels `["ai-generated-jira", "review-feedback"]`, while CI failure sub-tasks use `["ai-generated-jira", "ci-failure"]`, both with "Blocks" issue links
 - Keep verification scoped to what the task describes
 - Target Achievement result **DOES** affect Overall result (unlike Test Quality)
 - If baseline re-run shows significant drift (> 10%), flag for investigation but do not block verification

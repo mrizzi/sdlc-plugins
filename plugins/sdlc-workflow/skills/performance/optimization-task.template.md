@@ -19,7 +19,7 @@ Current performance metrics before optimization (from baseline-report.md):
 |---|---|---|
 | LCP (Largest Contentful Paint) | {{baseline-lcp}} | ms |
 | FCP (First Contentful Paint) | {{baseline-fcp}} | ms |
-| TTI (Time to Interactive) | {{baseline-tti}} | ms |
+| DOM Interactive (Time to Interactive) | {{baseline-domInteractive}} | ms |
 | Total Load Time | {{baseline-total}} | ms |
 | Bundle Size | {{baseline-bundle-size}} | KB |
 
@@ -31,7 +31,7 @@ Performance targets to achieve with this optimization:
 |---|---|---|---|
 | LCP (Largest Contentful Paint) | {{target-lcp}} | {{lcp-improvement}}% | ms |
 | FCP (First Contentful Paint) | {{target-fcp}} | {{fcp-improvement}}% | ms |
-| TTI (Time to Interactive) | {{target-tti}} | {{tti-improvement}}% | ms |
+| DOM Interactive (Time to Interactive) | {{target-domInteractive}} | {{domInteractive-improvement}}% | ms |
 | Total Load Time | {{target-total}} | {{total-improvement}}% | ms |
 | Bundle Size | {{target-bundle-size}} | {{bundle-improvement}}% | KB |
 
@@ -67,7 +67,7 @@ Reference actual file paths and symbol names found during repository analysis.>
 
 - [ ] Re-run baseline capture for ALL scenarios (not just affected ones)
 - [ ] Verify target scenario meets target metrics
-- [ ] Verify non-target scenarios have no regressions (< 5% degradation in LCP, FCP, TTI, Total Load Time)
+- [ ] Verify non-target scenarios have no regressions (< 5% degradation in LCP, FCP, DOM Interactive, Total Load Time)
 - [ ] Generate before/after comparison report
 - [ ] If regression detected in non-target scenarios, prompt user for approval before committing
 
@@ -93,5 +93,5 @@ Follows all base template rules (from `shared/task-description-template.md`), pl
 - Target metrics should follow Google's Core Web Vitals "Good" thresholds unless application-specific requirements dictate otherwise:
   - LCP: ≤ 2.5s
   - FCP: ≤ 1.8s
-  - TTI: ≤ 3.5s
+  - DOM Interactive: ≤ 3.5s
 - Improvement percentages help communicate expected impact clearly

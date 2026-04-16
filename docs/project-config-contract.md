@@ -195,25 +195,29 @@ sections are absent — they adapt gracefully.
 
 Performance optimization skills use a separate configuration file in the
 **target repository** (not in the sdlc-plugins project). This file is
-created by the `performance-setup` skill and lives at
+created by the `performance-setup` skill (minimal scaffold) and populated by
+the `performance-baseline` skill (workflow selection). It lives at
 `.claude/performance-config.md` in the target repository.
 
 ### Location
 
 **Target repository root**: `.claude/performance-config.md`
 
-**Created by**: `/sdlc-workflow:performance-setup`
+**Created by**: `/sdlc-workflow:performance-setup` (minimal scaffold)  
+**Populated by**: `/sdlc-workflow:performance-baseline` (workflow selection)
 
 ### Schema
 
 The Performance Analysis Configuration file contains:
 
-1. **Selected Workflow** — The user-selected workflow to optimize (added by `performance-workflow-discovery`)
-2. **Workflow Scenarios** — List of scenarios (routes) in the selected workflow
-3. **Baseline Settings** — Configuration for performance baseline capture (browser settings, timeouts, iteration count)
-4. **Target Directories** — Where to save baselines, analysis reports, optimization plans, verification reports
-5. **Optimization Targets** — Target metrics for LCP, FCP, TTI, Total Load Time
-6. **Module Registry** — Lazy-loaded routes and code-split chunks discovered from the codebase
+1. **Metadata** — Config version, workflow selection status, baseline capture status
+2. **Selected Workflow** — The user-selected workflow to optimize (added by `performance-baseline`)
+3. **Workflow Scenarios** — List of scenarios (routes) in the selected workflow (added by `performance-baseline`)
+4. **Module Registry** — Lazy-loaded routes and code-split chunks (added by `performance-baseline`)
+5. **Backend Repository Configuration** — Backend repo configuration (added by `performance-setup`)
+6. **Baseline Settings** — Configuration for performance baseline capture (added by `performance-setup`)
+7. **Target Directories** — Where to save baselines, analysis reports, optimization plans (created by `performance-setup`)
+8. **Optimization Targets** — Target metrics for LCP, FCP, DOM Interactive, Total Load Time (added by `performance-setup`)
 
 ### Example Configuration
 
@@ -236,6 +240,9 @@ The Performance Analysis Configuration file contains:
 - **Network:** Fast 3G throttling
 - **Iterations:** 5
 
+**Baseline Capture Mode** (set during baseline execution):
+- `cold-start` (only supported mode): Direct URL navigation with empty browser cache
+
 ---
 
 ## Target Directories
@@ -253,7 +260,7 @@ The Performance Analysis Configuration file contains:
 |---|---|
 | LCP | < 2500 ms |
 | FCP | < 1800 ms |
-| TTI | < 3500 ms |
+| DOM Interactive | < 3500 ms |
 | Total Load Time | < 4000 ms |
 
 ---
@@ -274,8 +281,8 @@ The Performance Analysis Configuration file contains:
 Performance skills read `.claude/performance-config.md` from the target
 repository to:
 
-- **performance-workflow-discovery**: Save user-selected workflow
-- **performance-baseline**: Read scenarios, baseline settings, and target directories
+- **performance-setup**: Creates minimal config with backend, settings, targets; does NOT discover workflows
+- **performance-baseline**: Discovers workflows (if not yet selected), saves user-selected workflow, scenarios, modules; captures baseline metrics
 - **performance-analyze-module**: Read selected workflow and baseline data
 - **performance-plan-optimization**: Read analysis reports and target metrics
 - **performance-implement-optimization**: Read baseline metrics and targets

@@ -80,7 +80,7 @@
      - Target metrics for this repository:
        * LCP (p95): < 2500 ms
        * FCP (p95): < 1800 ms
-       * TTI (p95): < 3500 ms
+       * DOM Interactive (p95): < 3500 ms
        * Bundle size: < 500 KB (main bundle)
      - Anti-pattern severity thresholds:
        * High: Impacts LCP by > 500ms or bundle size by > 100KB

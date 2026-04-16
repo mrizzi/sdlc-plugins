@@ -8,13 +8,12 @@ Quick reference for all performance optimization skills.
 
 | # | Skill | Purpose | Key Action |
 |---|---|---|---|
-| 1 | performance-setup | Initialize configuration | Creates `.claude/performance-config.md` |
-| 2 | performance-workflow-discovery | Select workflow to optimize | User selects from discovered workflows |
-| 3 | performance-baseline | Capture metrics | Playwright automation → `baseline-report.md` |
-| 4 | performance-analyze-module | Detect anti-patterns | **Inspects source code** → `workflow-analysis-report.md` |
-| 5 | performance-plan-optimization | Create Jira tasks | **Reads analysis report** → Jira Epic/Tasks |
-| 6 | performance-implement-optimization | Execute optimization | Implements + validates → PR |
-| 7 | performance-verify-optimization | Verify PR | Review feedback + validation → report |
+| 1 | performance-setup | Initialize infrastructure (dirs, settings, backend) | Creates minimal `.claude/performance-config.md` (no workflow) |
+| 2 | performance-baseline | **Discover workflows**, select workflow, capture metrics | Workflow selection + Playwright automation → `baseline-report.md` + config update |
+| 3 | performance-analyze-module | Detect anti-patterns | **Inspects source code** → `workflow-analysis-report.md` |
+| 4 | performance-plan-optimization | Create Jira tasks | **Reads analysis report** → Jira Epic/Tasks |
+| 5 | performance-implement-optimization | Execute optimization | Implements + validates → PR |
+| 6 | performance-verify-optimization | Verify PR | Review feedback + validation → report |
 
 ---
 
@@ -22,39 +21,31 @@ Quick reference for all performance optimization skills.
 
 **Invocation:** `/sdlc-workflow:performance-setup [path]`
 
-**One-time setup to initialize performance configuration.**
+**One-time infrastructure setup. Does NOT select workflow (that happens in baseline).**
 
 | Input | Output |
 |---|---|
-| Target repository path (optional) | `.claude/performance-config.md` |
-| User responses (baseline settings, targets) | Target directories created |
+| Target repository path (optional) | Minimal `.claude/performance-config.md` (no workflow selected) |
+| User responses (backend config, baseline settings, targets) | Target directories created |
 
 **What it does:**
-1. Discovers routes and modules from codebase
-2. Collects configuration (browser settings, targets)
-3. Creates `.claude/performance-config.md`
+1. Determines target frontend repository
+2. **Discovers and configures backend repository** (upfront)
+3. Detects existing configuration (offers update or skip)
 4. Creates directories: `baselines/`, `analysis/`, `plans/`, `verification/`
+5. Collects baseline capture settings (iterations, warmup runs)
+6. Collects optimization targets
+7. Generates minimal config with:
+   - Backend configured
+   - Settings configured
+   - Empty Performance Scenarios (populated by baseline)
+   - Empty Module Registry (populated by baseline)
+   - Empty Selected Workflow (populated by baseline)
+   - `workflow_selected: false`
 
 **Default targets:** LCP 2500ms, FCP 1800ms, TTI 3500ms, Total Load 4000ms
 
----
-
-## performance-workflow-discovery
-
-**Invocation:** `/sdlc-workflow:performance-workflow-discovery [path]`
-
-**Discover workflows and prompt user to select one.**
-
-| Input | Output |
-|---|---|
-| Target repository path (optional) | Updated config with "Selected Workflow" |
-| User selection (workflow number) | Workflow scenarios identified |
-
-**What it does:**
-1. Reads router configuration
-2. Discovers workflows (user journeys)
-3. Presents table with workflow options
-4. Saves user selection to config
+**Next step:** Run `/sdlc-workflow:performance-baseline` to discover workflows and capture metrics
 
 ---
 
@@ -62,20 +53,34 @@ Quick reference for all performance optimization skills.
 
 **Invocation:** `/sdlc-workflow:performance-baseline [path]`
 
-**Capture performance metrics using Playwright.**
+**Discover workflows, select target workflow, and capture performance metrics.**
 
 | Input | Output |
 |---|---|
-| Target repository path (optional) | `baseline-report.md` |
-| User confirmation: test data available? | Metrics: LCP, FCP, TTI, Total Load Time |
+| Target repository path (optional) | `baseline-report.md` + config updated with selected workflow |
+| User responses: workflow selection, mode selection, test data confirmation | Metrics: LCP, FCP, TTI, Total Load Time |
 
-**Prerequisites:** Application running on localhost, Playwright installed
+**Prerequisites:**
+- Application running locally
+- Playwright installed: `npm install -D @playwright/test && npx playwright install`
 
 **What it does:**
-1. Verifies test data availability
-2. Runs Playwright automation (5 iterations by default)
-3. Captures Core Web Vitals + resource timing
-4. Generates report with p95 metrics
+
+**IF workflow not yet selected (first run):**
+1. **Discovers routes from router configuration**
+2. **Infers workflows by grouping related routes**
+3. **Prompts user to select ONE workflow**
+4. **Auto-populates scenarios from workflow's key screens**
+5. **Discovers modules (lazy-loaded components)**
+6. **Updates config** with selected workflow, scenarios, modules
+7. Sets `workflow_selected: true`
+
+**Always (whether workflow just selected or already selected):**
+8. Verifies test data availability
+9. Checks for existing baseline (prompts to replace or cancel)
+10. Executes baseline capture using **cold-start mode** (Playwright automation with direct URL navigation, cold cache)
+11. Generates baseline report with p95 metrics
+12. Updates config with baseline metadata
 
 **Key metrics captured:**
 - LCP (Largest Contentful Paint)
@@ -234,10 +239,10 @@ Quick reference for all performance optimization skills.
 ## Skill Dependencies
 
 ```
-setup → workflow-discovery → baseline → analyze-module → plan-optimization → implement-optimization → verify-optimization
-  ↓          ↓                  ↓            ↓                    ↓                       ↓                        ↓
-config    selected         baseline    analysis          Jira Epic/Tasks            PR with           Verification
-created   workflow          report       report                                     metrics            report
+setup (infrastructure) → baseline (workflow discovery) → analyze-module → plan-optimization → implement-optimization → verify-optimization
+         ↓                           ↓                          ↓                  ↓                       ↓                        ↓
+  minimal config          config updated with workflow     analysis        Jira Epic/Tasks            PR with           Verification
+  (no workflow)           + baseline report                 report                                    metrics            report
 ```
 
 ---

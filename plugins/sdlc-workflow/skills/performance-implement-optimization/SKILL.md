@@ -1,7 +1,7 @@
 ---
 name: performance-implement-optimization
 description: |
-  Execute performance optimization task by implementing code changes, running performance tests, and comparing results against targets.
+  Execute performance optimization task by implementing code changes, running performance tests, comparing results against targets, and generating an isolated optimization result report.
 argument-hint: "[jira-issue-id]"
 ---
 
@@ -44,7 +44,7 @@ Use Jira REST API to fetch the task:
 
 ```bash
 JIRA_SERVER_URL="{url}" JIRA_EMAIL="{email}" JIRA_API_TOKEN="{token}" \
-  python3 plugins/sdlc-workflow/scripts/jira-client.py get_issue {task-id} --fields "*all"
+  cd <plugin-root> && python3 scripts/jira-client.py get_issue {task-id} --fields "*all"
 ```
 
 Parse the structured description expecting these sections:
@@ -211,35 +211,148 @@ Inform the user to perform manual regression verification:
 
 **This is the key extension to implement-task.**
 
+### Step 9.0.5 – Check Baseline Freshness (New)
+
+Before capturing current performance metrics, validate that the original baseline is not stale:
+
+**Read baseline commit SHA from config metadata:**
+
+```bash
+# Read performance-config.md
+if config has metadata.baseline_commit_sha:
+  baseline_commit_sha = metadata.baseline_commit_sha
+  
+  if baseline_commit_sha == "unknown":
+    log info:
+    > ℹ️ **Baseline was captured without git tracking**
+    >
+    > Baseline commit SHA: unknown
+    > Skipping freshness check (baseline was captured in a non-git directory)
+    
+    skip to Step 9.1
+else:
+  # v1 config or baseline not yet captured
+  skip freshness check, proceed to Step 9.1
+```
+
+**Compare baseline commit with current branch:**
+
+```bash
+# Get current branch's base commit (where it diverged from main)
+current_base_commit=$(git merge-base HEAD main)
+
+# Count commits since baseline
+commit_count=$(git rev-list --count ${baseline_commit_sha}..HEAD)
+
+# Get list of workflow files changed since baseline
+changed_files=$(git diff --name-only ${baseline_commit_sha}..HEAD | grep -E "(src/|client/|pages/)")
+```
+
+**If commits since baseline affect workflow files:**
+
+Inform the user:
+
+> ⚠️ **Baseline may be stale**
+>
+> The original baseline was captured at commit: `{baseline_commit_sha}`
+>
+> Since then, **{commit_count}** commits have been made, including changes to workflow files:
+> - `{changed_file_1}`
+> - `{changed_file_2}`
+> - ... (up to 10 files)
+>
+> Stale baselines can produce misleading comparisons if the workflow structure changed.
+>
+> **Options:**
+> 1. **Continue** with existing baseline (valid if changes don't affect measured workflow)
+> 2. **Re-baseline** before optimization (recommended if workflow changed significantly)
+> 3. **Cancel** and investigate changes
+>
+> Choose (1/2/3):
+
+**If user selects option 1:** Continue to Step 9.1
+
+**If user selects option 2:** 
+- Inform user: "Please run `/sdlc-workflow:performance-baseline` first to refresh the baseline, then re-run this task."
+- Stop execution
+
+**If user selects option 3:** Stop execution
+
+**If no workflow files changed or commit count < 5:**
+- Skip warning, proceed to Step 9.1
+
 ### Step 9.1 – Capture Current Performance Metrics
 
 Re-run the performance baseline capture for scenarios affected by this optimization.
 
 **Determine affected scenarios:**
 - Read `.claude/performance-config.md` from the target repository
-- Extract the "Selected Workflow" section
+- **Apply:** [Common Pattern: Workflow Validation](../performance/common-patterns.md#pattern-7-workflow-validation)
 - Filter scenarios to those in the selected workflow
+
+**Read baseline capture mode from config metadata (Updated):**
+
+**Apply:** [Common Pattern: Metadata Extraction](../performance/common-patterns.md#pattern-2-metadata-extraction) and [Common Pattern: Mode Consistency Enforcement](../performance/common-patterns.md#pattern-3-mode-consistency-enforcement)
+
+**Specific field to extract:**
+- `metadata.baseline_mode` → baseline_mode (use same mode as original baseline)
+
+**Use stored mode automatically** (no user prompt):
+
+> ℹ️ Using baseline capture mode: **{baseline_mode}** (from original baseline)
+
+**Note:** Mode consistency is enforced to ensure valid performance comparisons. The mode was set during the original baseline capture and is read from config metadata.
 
 **Execute baseline capture:**
 
-1. Copy the capture script from plugin cache to a temporary location:
+1. Locate the plugin cache and copy the capture script to the baseline directory:
    ```bash
-   cp plugins/sdlc-workflow/skills/performance/capture-baseline.template.mjs /tmp/capture-baseline-current.mjs
-   chmod +x /tmp/capture-baseline-current.mjs
+   # Resolve plugin cache path (same as performance-baseline Step 8.1)
+   plugin_cache="${HOME}/.claude/plugins/cache/sdlc-plugins-local/sdlc-workflow"
+   plugin_version=$(ls "$plugin_cache" | sort -V | tail -n 1)
+   template_path="${plugin_cache}/${plugin_version}/skills/performance/capture-baseline.template.mjs"
+   
+   if [ ! -f "$template_path" ]; then
+     echo "❌ Capture script template not found at: $template_path"
+     echo "Plugin may be corrupted or not installed. Please reinstall the sdlc-workflow plugin."
+     exit 1
+   fi
+   
+   cp "$template_path" "{baseline-directory}/capture-baseline-current.mjs"
+   chmod +x "{baseline-directory}/capture-baseline-current.mjs"
+   ```
+   
+   **Note:** Uses `{baseline-directory}` instead of `/tmp` for consistency with baseline skill and to preserve the script used for each optimization run (audit trail).
+
+2. Extract the application port from configuration:
+   ```bash
+   # Read port stored by performance-baseline (Step 7.4) in Development Environment section
+   port=$(grep "| Port |" .claude/performance-config.md | awk -F'|' '{print $3}' | xargs)
+   
+   if [ -z "$port" ] || [ "$port" = "TBD" ]; then
+     echo "❌ Application port not configured."
+     echo "Please run /sdlc-workflow:performance-baseline first so the port is discovered and stored."
+     exit 1
+   fi
    ```
 
-2. Run the capture script:
+3. Run the capture script:
    ```bash
-   node /tmp/capture-baseline-current.mjs --config {path-to-performance-config.md}
+   node "{baseline-directory}/capture-baseline-current.mjs" \
+     --config "{path-to-performance-config.md}" \
+     --port "$port" \
+     --mode cold-start
    ```
 
-3. Parse the JSON output to extract current metrics (LCP, FCP, TTI, Total Load Time, bundle size)
+4. Parse the JSON output to extract current metrics (LCP, FCP, DOM Interactive, Total Load Time, bundle size)
+
+**Compare metrics:** Before (original baseline) vs After (new baseline) using same mode for accurate comparison.
 
 ### Step 9.2 – Compare Against Baseline and Targets
 
 Read the Baseline Metrics and Target Metrics from the Jira task description (parsed in Step 2).
 
-For each metric (LCP, FCP, TTI, bundle size):
+For each metric (LCP, FCP, DOM Interactive, bundle size):
 - **Baseline:** Starting value before optimization
 - **Current:** Measured value after optimization
 - **Target:** Goal value from task
@@ -257,7 +370,7 @@ Create a comparison table showing the results:
 |---|---|---|---|---|---|
 | LCP (p95) | {baseline-lcp} ms | {current-lcp} ms | {target-lcp} ms | {improvement-lcp} ms ({percentage}%) | {progress}% |
 | FCP (p95) | {baseline-fcp} ms | {current-fcp} ms | {target-fcp} ms | {improvement-fcp} ms ({percentage}%) | {progress}% |
-| TTI (p95) | {baseline-tti} ms | {current-tti} ms | {target-tti} ms | {improvement-tti} ms ({percentage}%) | {progress}% |
+| DOM Interactive (p95) | {baseline-domInteractive} ms | {current-domInteractive} ms | {target-domInteractive} ms | {improvement-domInteractive} ms ({percentage}%) | {progress}% |
 | Bundle Size | {baseline-size} KB | {current-size} KB | {target-size} KB | {improvement-size} KB ({percentage}%) | {progress}% |
 
 **Status:**
@@ -270,22 +383,207 @@ Create a comparison table showing the results:
 
 Check if all target metrics were achieved:
 
-- **All targets met:** Proceed to Step 10 (commit and PR)
-- **Some targets not met but improvement achieved:** Proceed to Step 10, but flag in Jira comment
-- **Any metric regressed:** Stop and inform user. Do not proceed with commit/PR.
+- **All targets met:** Proceed to Step 9.5 (create result report)
+- **Some targets not met but improvement achieved:** Proceed to Step 9.5, but flag in Jira comment
+- **Any metric regressed:** Execute the recovery procedure below before stopping.
 
-If a metric regressed, inform the user:
+#### Regression Recovery Procedure
 
-> ❌ **Performance regression detected!**
+If any metric is worse than the baseline value, perform these steps in order:
+
+**Step 9.4.1 – Save regression context**
+
+Write a regression report to preserve diagnostic information:
+
+```bash
+timestamp=$(date -u +"%Y-%m-%dT%H-%M-%S")
+regression_file=".claude/performance/optimization-results/${jira_key}-regression-${timestamp}.md"
+mkdir -p .claude/performance/optimization-results
+```
+
+Write the file with:
+```markdown
+# Regression Report: {jira-key}
+
+**Detected:** {iso-timestamp}
+**Branch:** {git-branch}
+
+## Regressed Metrics
+
+| Metric | Baseline | After Change | Delta |
+|---|---|---|---|
+| {metric-name} | {baseline-value} | {current-value} | {delta} |
+
+## Implementation Context
+
+Files modified during this task (from `git status`):
+{git status output}
+
+## Recovery Instructions
+
+1. Review the code changes that caused the regression
+2. Fix the regression and re-run `/sdlc-workflow:performance-implement-optimization {jira-key}`
+3. Or discard changes: `git stash drop` (after reviewing with `git stash show -p`)
+
+Regression report saved for audit trail.
+```
+
+**Step 9.4.2 – Stash working directory changes**
+
+```bash
+git stash push -m "perf-regression-stash: {jira-key} at {timestamp}"
+```
+
+**Only stash uncommitted working tree changes** — do NOT run `git reset`. At this point in the
+workflow (Step 9, before Step 10 commits), no commit has been made yet. The stash preserves all
+modified files so the developer can inspect them with `git stash show -p` or recover them with
+`git stash pop`.
+
+**Step 9.4.3 – Inform user**
+
+> ❌ **Performance regression detected — changes stashed**
 >
 > The optimization caused a regression in {metric-name}:
 > - Baseline: {baseline-value}
 > - Current: {current-value}
-> - Change: {change} (regression)
+> - Change: {delta} (regression)
 >
-> Please review the implementation and identify the cause of the regression before proceeding.
+> **Your code changes have been stashed** (not lost):
+> - View changes: `git stash show -p`
+> - Restore to investigate: `git stash pop`
+> - Discard entirely: `git stash drop`
+>
+> **Regression report saved to:** `.claude/performance/optimization-results/{jira_key}-regression-{timestamp}.md`
+>
+> Fix the regression and re-run `/sdlc-workflow:performance-implement-optimization {jira-key}` to try again.
 
 Stop execution.
+
+### Step 9.5 – Create Optimization Result Report
+
+After capturing current performance metrics and validating no regressions, create an optimization result report for audit trail and verification:
+
+**Step 9.5.1 – Generate Report Filename**
+
+Create timestamped report filename:
+
+```bash
+timestamp=$(date -u +"%Y-%m-%dT%H-%M-%S")
+report_file=".claude/performance/optimization-results/${jira_key}-${timestamp}.md"
+```
+
+Ensure directory exists:
+
+```bash
+mkdir -p .claude/performance/optimization-results
+```
+
+**Step 9.5.2 – Prepare Report Data**
+
+Extract required data for the report:
+
+- **Jira key:** From task (e.g., TC-5002)
+- **Workflow name:** From config metadata
+- **Timestamp:** ISO 8601 format
+- **Branch:** Current git branch (`git branch --show-current`)
+- **Commit SHA:** Current commit (`git rev-parse HEAD`)
+- **Baseline commit SHA:** From config metadata.baseline_commit_sha
+- **Capture mode:** From config metadata.baseline_mode
+- **Task summary:** From Jira task
+- **Baseline metrics:** From config Optimization Targets table (Baseline column)
+- **Current metrics:** From Step 9.1 capture results (p95 values)
+- **Target metrics:** From config Optimization Targets table (Target column)
+- **Delta calculations:** baseline - current for each metric
+- **Status per metric:** "Met ✓" if current ≤ target, "Partial" if improved but > target, "Regression ✗" if worse
+- **Scenarios measured:** List from config Performance Scenarios
+- **Files changed:** From git status/diff
+- **Validation checks:** List from Step 9.4 (no regressions, baseline freshness)
+
+**Step 9.5.3 – Generate Report from Template**
+
+Use the optimization-result template:
+
+```markdown
+---
+metadata:
+  jira_key: {jira-key}
+  workflow: {workflow-name}
+  timestamp: {iso-timestamp}
+  branch: {git-branch}
+  commit_sha: {commit-sha}
+  baseline_commit_sha: {baseline-commit-sha}
+  capture_mode: {capture-mode}
+  status: pending_verification
+---
+
+# Optimization Result: {jira-key}
+
+**Task:** {task-summary}  
+**Workflow:** {workflow-name}  
+**Executed:** {formatted-timestamp}  
+**Branch:** {git-branch}
+
+## Performance Impact
+
+| Metric | Baseline (p95) | After Optimization (p95) | Delta | Target | Status |
+|---|---|---|---|---|---|
+| LCP | {baseline-lcp}ms | {current-lcp}ms | {delta-lcp} | {target-lcp}ms | {status-lcp} |
+| FCP | {baseline-fcp}ms | {current-fcp}ms | {delta-fcp} | {target-fcp}ms | {status-fcp} |
+| DOM Interactive | {baseline-dom}ms | {current-dom}ms | {delta-dom} | {target-dom}ms | {status-dom} |
+| Total Load Time | {baseline-total}ms | {current-total}ms | {delta-total} | {target-total}ms | {status-total} |
+
+**Performance Summary:**
+- {summary-line: e.g., "LCP improved by 300ms (9.4%), 62% to target"}
+
+## Test Scenarios Measured
+
+{scenarios-list: one bullet per scenario with p95 result}
+
+## Code Changes
+
+- Commit: {commit-sha}
+- PR: (will be added after PR creation)
+- Files modified: {files-changed}
+
+## Validation
+
+{validation-checks: bullet list of checks performed}
+
+## Next Steps
+
+- Verify PR passes acceptance criteria with `/sdlc-workflow:performance-verify-optimization {jira-key}`
+- After PR merge to main, re-run `/sdlc-workflow:performance-baseline` to update configuration with fresh metrics
+- Continue with remaining optimization tasks if targets not fully met
+```
+
+**Step 9.5.4 – Write Report File**
+
+Write the report to the generated filename:
+
+```bash
+cat > "${report_file}" <<'EOF'
+{report-content}
+EOF
+```
+
+**Step 9.5.5 – Log Report Creation**
+
+Log to user:
+
+```
+✓ Optimization result report created:
+  - File: {report_file}
+  - Status: pending_verification
+  - Performance impact:
+    • LCP (p95): {baseline} → {current} ({delta})
+    • FCP (p95): {baseline} → {current} ({delta})
+    • DOM Interactive (p95): {baseline} → {current} ({delta})
+    • Total Load Time (p95): {baseline} → {current} ({delta})
+
+ℹ️  Configuration will be updated after PR merge: re-run /sdlc-workflow:performance-baseline on main branch
+```
+
+**Note:** This approach eliminates race conditions by writing to isolated per-task report files instead of shared config. The configuration's "Latest Verified" column is updated by re-running baseline on main after each PR merge, ensuring it always reflects the actual current state.
 
 ## Step 10 – Commit Changes
 
@@ -305,7 +603,7 @@ Performance impact:
 
 Jira-Issue-Id: {jira-issue-id}
 
-Assisted-by: Claude Sonnet 4.5 <noreply@anthropic.com>
+Assisted-by: Claude <noreply@anthropic.com>
 EOF
 )"
 ```
@@ -393,17 +691,28 @@ Update the Jira task custom field with the PR link:
 
 ```bash
 JIRA_SERVER_URL="{url}" JIRA_EMAIL="{email}" JIRA_API_TOKEN="{token}" \
-  python3 plugins/sdlc-workflow/scripts/jira-client.py update_issue {task-id} \
+  cd <plugin-root> && python3 scripts/jira-client.py update_issue {task-id} \
     --fields-json '{"customfield_10875": "{pr-url}"}'
 ```
 
-Transition the task to "In Review":
+Discover available transitions and transition the task to "In Review":
 
 ```bash
+# Get available transitions for the task
 JIRA_SERVER_URL="{url}" JIRA_EMAIL="{email}" JIRA_API_TOKEN="{token}" \
-  python3 plugins/sdlc-workflow/scripts/jira-client.py transition_issue {task-id} \
-    --transition-id 51
+  cd <plugin-root> && python3 scripts/jira-client.py get_transitions {task-id}
+
+# Parse output to find "In Review" transition ID
+# Example output: [{"id": "51", "name": "In Review"}, {"id": "31", "name": "Done"}]
+# Extract the ID where name matches "In Review"
+
+# Transition using discovered ID
+JIRA_SERVER_URL="{url}" JIRA_EMAIL="{email}" JIRA_API_TOKEN="{token}" \
+  cd <plugin-root> && python3 scripts/jira-client.py transition_issue {task-id} \
+    --transition-id {discovered-in-review-id}
 ```
+
+**Note:** Transition IDs vary by Jira project workflow configuration. Always discover transitions dynamically rather than hardcoding IDs.
 
 ## Step 13 – Output Summary
 

@@ -10,7 +10,7 @@ Quick reference for performance metrics, thresholds, and severity classification
 |---|---|---|---|---|---|
 | **LCP** (Largest Contentful Paint) | Time until largest content visible | ≤ 2.5s | 2.5 - 4.0s | > 4.0s | 2500 ms |
 | **FCP** (First Contentful Paint) | Time until any content visible | ≤ 1.8s | 1.8 - 3.0s | > 3.0s | 1800 ms |
-| **TTI** (Time to Interactive) | Time until page fully interactive | ≤ 3.8s | 3.8 - 7.3s | > 7.3s | 3500 ms |
+| **DOM Interactive** (Time to Interactive) | Time until page fully interactive | ≤ 3.8s | 3.8 - 7.3s | > 7.3s | 3500 ms |
 | **Total Load Time** | Time until all resources loaded | ≤ 4.0s | 4.0 - 7.0s | > 7.0s | 4000 ms |
 
 **Thresholds:** p75 for Web Vitals standard, p95 for internal targets (default in skills)
@@ -19,7 +19,7 @@ Quick reference for performance metrics, thresholds, and severity classification
 
 ## Industry Benchmarks by Application Type
 
-| Application Type | LCP Target | FCP Target | TTI Target |
+| Application Type | LCP Target | FCP Target | DOM Interactive Target |
 |---|---|---|---|
 | Simple dashboard | 2000 ms | 1200 ms | 2500 ms |
 | Data-heavy admin | 2500 ms | 1800 ms | 3500 ms |
@@ -112,7 +112,7 @@ Quick reference for performance metrics, thresholds, and severity classification
 
 **Threshold:** Tasks > 50ms block user interaction
 
-**Impact formula:** `TTI delay = sum(task durations > 50ms)`
+**Impact formula:** `DOM Interactive delay = sum(task durations > 50ms)`
 
 ---
 
@@ -193,7 +193,7 @@ After optimization:
 | Waterfall loading | `Sequential time - max(parallel) = ms saved` |
 | Render-blocking | `Resource load time = ms saved` |
 | Unused code | `KB removed × 3ms/KB = parse time saved` |
-| Long tasks | `sum(task > 50ms) = TTI delay reduced` |
+| Long tasks | `sum(task > 50ms) = DOM Interactive delay reduced` |
 | Layout thrashing | `reflow count × 10ms = ms saved` |
 | Lazy loading | `Component KB × 3ms/KB = LCP improvement` |
 
