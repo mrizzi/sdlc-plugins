@@ -57,6 +57,8 @@ Not applicable — this is a documentation repository with no runtime code.
   4. Edit a `SKILL.md`, then `/reload-plugins` to verify changes are picked up
 - **CI validation**: Uses `claude plugin validate` on all plugin directories under `plugins/`
 - **No automated tests**: Skills are validated through CI and manual testing; no unit test framework
+- **Adversarial fixture annotation**: Eval or test fixture files that contain intentionally adversarial, malicious-looking, or unusual content (e.g., injection vectors, malformed input, security-sensitive patterns) must include a leading comment block explaining that the content is deliberate test material. Use the file's native comment syntax (e.g., `<!-- ... -->` for Markdown/HTML, `// ...` for JSON with comments, `# ...` for YAML). The comment should state the purpose (e.g., "This fixture contains intentional injection patterns for eval testing") so reviewers and automated scanners do not flag the content as a real security concern.
+- **Synthetic data labeling**: Fixture files that represent synthetic or mock entities (e.g., fake repository structures, mock Jira issues, fabricated API responses) must include a header comment noting they are representative test data, not real resources. This prevents confusion about whether the data refers to actual systems, repositories, or issues. Use a brief note such as "Synthetic test data — names, URLs, and identifiers are fictional."
 
 ## Commit Messages
 
