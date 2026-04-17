@@ -6,5 +6,5 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*-workspace/
+evals/*-workspace/
 
