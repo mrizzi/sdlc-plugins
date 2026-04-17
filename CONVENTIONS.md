@@ -57,9 +57,9 @@ Not applicable — this is a documentation repository with no runtime code.
   4. Edit a `SKILL.md`, then `/reload-plugins` to verify changes are picked up
 - **CI validation**: Uses `claude plugin validate` on all plugin directories under `plugins/`
 - **No automated tests**: Skills are validated through CI and manual testing; no unit test framework
-- **Fixture documentation**: Eval and test fixture files must include a leading comment header in the file's native comment syntax (e.g., `<!-- ... -->` for Markdown/HTML, `// ...` for JSON with comments, `# ...` for YAML) explaining that the content is deliberate test material. Two categories require annotation:
-  - **Adversarial fixtures** — files containing intentionally adversarial, malicious-looking, or unusual content (e.g., injection vectors, malformed input, security-sensitive patterns). The comment should state the purpose (e.g., "This fixture contains intentional injection patterns for eval testing") so reviewers and automated scanners do not flag the content as a real security concern.
-  - **Synthetic data fixtures** — files representing synthetic or mock entities (e.g., fake repository structures, mock Jira issues, fabricated API responses). The comment should note the data is representative, not real (e.g., "Synthetic test data — names, URLs, and identifiers are fictional"), to prevent confusion about whether the data refers to actual systems or issues.
+- **Fixture documentation**: Eval and test fixture files must include a leading comment header in the file's native comment syntax (e.g., `<!-- ... -->` for Markdown/HTML, `// ...` for JSON with comments, `# ...` for YAML) explaining that the content is deliberate test material. Use the canonical prefixes below so tooling (linters, scanners, grep filters) can reliably identify annotated fixtures. Two categories require annotation:
+  - **Adversarial fixtures** — files containing intentionally adversarial, malicious-looking, or unusual content (e.g., injection vectors, malformed input, security-sensitive patterns). Use the prefix `ADVERSARIAL TEST FIXTURE — <purpose>` (e.g., `<!-- ADVERSARIAL TEST FIXTURE — contains intentional injection patterns for eval testing -->`).
+  - **Synthetic data fixtures** — files representing synthetic or mock entities (e.g., fake repository structures, mock Jira issues, fabricated API responses). Use the prefix `SYNTHETIC TEST DATA — <purpose>` (e.g., `<!-- SYNTHETIC TEST DATA — names, URLs, and identifiers are fictional -->`).
 
 ## Commit Messages
 
