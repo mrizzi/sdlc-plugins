@@ -510,6 +510,27 @@ jira.create_issue with:
   skill, prompt, or convention that prevents the gap from recurring. Do **not**
   include the root-cause analysis narrative in the description.
 
+#### Convention gap task structuring
+
+When a convention gap task involves documenting **annotation or labeling requirements**
+(e.g., file annotations, comment markers, metadata tags), apply these structuring
+guidelines in the task description:
+
+1. **Consolidate related requirements into a unified convention.** If multiple annotation
+   types serve a common purpose (e.g., marking test fixtures, flagging generated files,
+   tagging migration phases), describe them as sub-examples under a single convention
+   rather than as independent items. This prevents implementers from rendering each
+   requirement as a separate bullet in CONVENTIONS.md when they belong together
+   conceptually.
+
+2. **Prescribe canonical searchable markers.** When the convention involves annotating
+   files with comments, headers, or labels, the task description must instruct the
+   implementer to define canonical prefixes or phrases that tooling and reviewers can
+   use to reliably identify annotated files. For example: specify exact comment prefixes
+   (e.g., `Fixture:`, `Generated-by:`), required phrasing patterns, or structured
+   header formats — so that `grep` or CI scripts can locate annotated files without
+   false positives.
+
 Link the root-cause task to the parent task:
 
 jira.create_issue_link(type="Relates", inwardIssue=<root-cause-task-id>, outwardIssue=<parent-task-id>)
