@@ -87,7 +87,19 @@ cd <plugin-root> && \
     --comment-md "Comment text in markdown"
 
 # Transition issue
-cd <plugin-root> && python3 scripts/jira-client.py transition_issue TC-123 --transition-id 31
+# Step 1: Get available transitions for the issue
+cd <plugin-root> && python3 scripts/jira-client.py get_transitions TC-123
+# Output: [{"id": "31", "name": "In Progress"}, {"id": "41", "name": "In Review"}, ...]
+
+# Step 2: Find the transition ID for your desired status by name
+# Example: Extract ID for "In Review"
+TRANSITION_ID=$(cd <plugin-root> && python3 scripts/jira-client.py get_transitions TC-123 | \
+  python3 -c "import json,sys; transitions=json.load(sys.stdin); \
+  print(next((t['id'] for t in transitions if t['name']=='In Review'), None))")
+
+# Step 3: Apply the transition
+cd <plugin-root> && python3 scripts/jira-client.py transition_issue TC-123 \
+  --transition-id "$TRANSITION_ID"
 
 # Create issue link
 cd <plugin-root> && \
@@ -146,15 +158,36 @@ When REST API is used, credentials are stored in CLAUDE.md:
 
 - Project key: TC
 - Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432
-- Feature issue type ID: 10142
-- Git Pull Request custom field: customfield_10875
-- GitHub Issue custom field: customfield_10747
+- Feature issue type ID: 10142  # Discovered via /setup skill → get_project_metadata
+- Git Pull Request custom field: customfield_10875  # Optional - discovered via get_project_metadata
+- GitHub Issue custom field: customfield_10747  # Optional - discovered via get_project_metadata
+
+<!-- Note: Transition IDs are NOT stored in CLAUDE.md. They vary by workflow
+     and must be discovered at runtime via get_transitions. -->
 
 ### REST API Credentials (MCP Fallback)
 - Server URL: https://your-domain.atlassian.net
 - Email: user@example.com
 - API Token: $JIRA_API_TOKEN  # or actual token if full storage chosen
 ```
+
+### Configuration Categories
+
+Values in Jira Configuration fall into two categories:
+
+**1. Project-level configuration** (stored in CLAUDE.md, discovered once via `/setup`):
+- Project key - identifies your Jira project (e.g., `TC`, `PROJ`)
+- Cloud ID - your Jira instance identifier
+- Feature issue type ID - discovered via `get_project_metadata` during setup
+- Custom field IDs (optional) - discovered via `get_project_metadata`
+
+**2. Runtime discovery** (queried dynamically as needed):
+- Transition IDs - vary by issue type and workflow, discovered via `get_transitions`
+- User account IDs - discovered via `get_user_info` when assigning issues
+- Available statuses for an issue - queried via `get_transitions` before each transition
+
+Skills never hardcode transition IDs or assume specific workflow configurations.
+They always query available transitions and match by status name (e.g., "In Review").
 
 ## Error Handling
 

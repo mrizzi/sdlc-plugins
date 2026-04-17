@@ -8,11 +8,11 @@
 
 ## Jira Configuration
 
-- Project key: {{project-key}}
-- Cloud ID: {{cloud-id}}
-- Feature issue type ID: {{feature-issue-type-id}}
-- Git Pull Request custom field: {{custom-field-id}}
-- GitHub Issue custom field: {{custom-field-id}}
+- Project key: {{project-key}}  # Your Jira project key (e.g., TC, PROJ)
+- Cloud ID: {{cloud-id}}  # Jira cloud instance ID (from get_user_info)
+- Feature issue type ID: {{feature-issue-type-id}}  # Discovered via get_project_metadata
+- Git Pull Request custom field: {{custom-field-id}}  # Optional - from get_project_metadata
+- GitHub Issue custom field: {{custom-field-id}}  # Optional - from get_project_metadata
 
 ## Code Intelligence
 

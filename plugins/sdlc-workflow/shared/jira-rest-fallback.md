@@ -289,7 +289,7 @@ cd <plugin-root> && \
     --project TC \
     --summary "New feature request" \
     --description-md "This is the **description** in markdown." \
-    --issue-type "10142" \
+    --issue-type "<issue-type-id>" \  # See "Discovering Issue Types" below
     --labels ai-generated-jira,feature
 ```
 
@@ -316,13 +316,36 @@ cd <plugin-root> && \
 ```
 
 **Transition Issue:**
-```bash
-# First, get available transitions
-cd <plugin-root> && python3 scripts/jira-client.py get_transitions TC-123
 
-# Then transition using the ID
-cd <plugin-root> && python3 scripts/jira-client.py transition_issue TC-123 --transition-id 31
+Transitions are workflow-specific and must be discovered at runtime.
+
+```bash
+# Step 1: Get available transitions for the issue
+cd <plugin-root> && python3 scripts/jira-client.py get_transitions TC-123
 ```
+
+Example output:
+```json
+[
+  {"id": "31", "name": "In Progress"},
+  {"id": "41", "name": "In Review"},
+  {"id": "51", "name": "Done"}
+]
+```
+
+```bash
+# Step 2: Parse output to find desired transition by name
+# Extract the ID where name matches "In Review"
+TRANSITION_ID=$(cd <plugin-root> && python3 scripts/jira-client.py get_transitions TC-123 | \
+  python3 -c "import json,sys; transitions=json.load(sys.stdin); \
+  print(next((t['id'] for t in transitions if t['name']=='In Review'), None))")
+
+# Step 3: Apply the transition using discovered ID
+cd <plugin-root> && python3 scripts/jira-client.py transition_issue TC-123 \
+  --transition-id "$TRANSITION_ID"
+```
+
+**Note**: Transition IDs vary by project workflow configuration. Always discover them dynamically rather than hardcoding.
 
 **Search with JQL:**
 ```bash
@@ -351,6 +374,54 @@ cd <plugin-root> && python3 scripts/jira-client.py get_user_info
 ```bash
 cd <plugin-root> && python3 scripts/jira-client.py get_project_metadata TC
 ```
+
+### Discovering Issue Types
+
+Issue type IDs are project-specific and should be discovered, not hardcoded.
+
+**For one-time configuration** (when setting up CLAUDE.md):
+
+Run the `/setup` skill, which uses `get_project_metadata` to discover available issue types and prompts you to select the Feature type. The ID is then stored in CLAUDE.md.
+
+**For ad-hoc discovery**:
+
+```bash
+cd <plugin-root> && python3 scripts/jira-client.py get_project_metadata <project-key>
+```
+
+Example output (excerpt):
+```json
+{
+  "key": "TC",
+  "name": "Trustify Konveyor",
+  "issueTypes": [
+    {"id": "10142", "name": "Feature"},
+    {"id": "10143", "name": "Task"},
+    {"id": "10144", "name": "Story"}
+  ]
+}
+```
+
+Extract the ID for your desired issue type from the `issueTypes` array.
+
+### Discovering Custom Fields
+
+Custom field IDs (e.g., for Git Pull Request URLs or GitHub Issue links) are also project-specific.
+
+**To discover custom fields**:
+
+```bash
+# Get full issue details including all custom fields
+cd <plugin-root> && python3 scripts/jira-client.py get_issue <issue-key> --fields "*all"
+```
+
+Look for fields named `customfield_*` in the response. Match them to their display names by checking the field values or consulting your Jira admin.
+
+Common custom fields used by sdlc-workflow:
+- **Git Pull Request** - stores PR URLs (requires ADF format: inlineCard)
+- **GitHub Issue** - stores GitHub issue URLs (plain string or ADF)
+
+Once discovered, add them to your project's CLAUDE.md under `## Jira Configuration`.
 
 ## Error Handling
 
