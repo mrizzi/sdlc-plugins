@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "Each task file contains all required template sections: Repository, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "All 5 task files contain Repository, Description, Files to Modify and/or Files to Create, Implementation Notes, Acceptance Criteria, and Test Requirements sections. Task 1 has both Files to Modify and Files to Create. Tasks 2-5 all contain the required sections with additional sections like Reuse Candidates, Dependencies, and Verification Commands."
+    },
+    {
+      "text": "Task count is between 3 and 10 inclusive — a standard feature produces a reasonable number of implementation tasks",
+      "passed": true,
+      "evidence": "5 task files produced: task-1-advisory-severity-summary-model.md, task-2-advisory-severity-aggregation-service.md, task-3-advisory-summary-endpoint.md, task-4-cache-invalidation-advisory-ingestion.md, task-5-advisory-summary-integration-tests.md"
+    },
+    {
+      "text": "All tasks reference repository 'trustify-backend' — the feature targets a single repo",
+      "passed": true,
+      "evidence": "All 5 task files have '## Repository\\ntrustify-backend' as their first section content."
+    },
+    {
+      "text": "Task dependencies form a DAG — no circular dependencies",
+      "passed": true,
+      "evidence": "Dependency chain: Task 1 (none) -> Task 2 (depends on Task 1) -> Task 3 (depends on Task 2) -> Task 4 (depends on Task 3), Task 5 (depends on Tasks 3 and 4). This is a valid DAG with no cycles."
+    },
+    {
+      "text": "Every task's Files to Modify and Files to Create reference paths that are plausible within the repo-backend.md repository structure",
+      "passed": true,
+      "evidence": "All paths reference directories present in repo-backend.md: modules/fundamental/src/advisory/model/ (exists), modules/fundamental/src/advisory/service/advisory.rs (exists), modules/fundamental/src/sbom/endpoints/ (exists), modules/ingestor/src/graph/advisory/mod.rs (exists), tests/api/ (exists), server/src/main.rs (exists). New files are created within existing directory structures."
+    },
+    {
+      "text": "Impact map lists concrete, specific changes (not vague or abstract descriptions)",
+      "passed": true,
+      "evidence": "Impact map lists 6 specific changes including: 'Add AdvisorySeveritySummary model struct to represent aggregated severity counts', 'Add severity aggregation query method to AdvisoryService that counts unique advisories per severity for a given SBOM', 'Add GET /api/v2/sbom/{id}/advisory-summary endpoint with 5-minute cache and optional threshold query param', 'Add cache invalidation hook in advisory ingestion pipeline', 'Add integration tests', 'Update REST API documentation'."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

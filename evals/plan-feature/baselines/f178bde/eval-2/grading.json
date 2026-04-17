@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description (e.g., undefined performance targets, unspecified filter fields, undefined relevance criteria)",
+      "passed": true,
+      "evidence": "Impact map flags 8 critical ambiguities: (1) 'No performance baseline or targets' — no quantitative benchmarks, (2) '\"More relevant results\" is undefined' — no definition of relevance, (3) '\"Add filters\" has no filter specification', (4) 'Search scope is unspecified', (5) 'Technology approach is unspecified', (6) 'No frontend repository configured', (7) 'No Figma designs', (8) '\"Don't break existing functionality\" lacks a regression baseline'. Additionally has 7 'Open Questions for Stakeholder'."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "Impact map ambiguity #6 states: 'No frontend repository configured. The feature mentions \"Better UI\" (non-MVP) but the Repository Registry contains only sdlc-plugins (this plugin repo). No frontend repository is configured. All UI-related requirements cannot be planned.' Assumption A4 states: 'The \"Better UI\" requirement is out of scope for this backend repository and will need a separate feature targeting a frontend repo once designs exist.'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements — required sections are present",
+      "passed": true,
+      "evidence": "All 4 task files (task-1-search-indexes, task-2-search-ranking, task-3-search-filters, task-4-search-integration-tests) contain the required sections: Repository, Description, Files to Modify (and Files to Create where applicable), Implementation Notes, Reuse Candidates, Acceptance Criteria, and Test Requirements."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, making it clear these are assumptions pending clarification (not invented specifics presented as requirements)",
+      "passed": true,
+      "evidence": "Impact map has a dedicated 'Assumptions Made for Planning' section with 5 explicit assumptions (A1-A5). Each task has an 'Ambiguity note' paragraph. For example, task-1 states: 'Without profiling data or latency targets (\"should be faster\" is the only requirement), this task assumes PostgreSQL GIN indexes on text-searchable columns are the appropriate optimization.' Task-2 says: '\"More relevant\" is not defined in the feature. This task assumes relevance means better full-text match scoring using PostgreSQL's built-in ranking functions. It does NOT implement: fuzzy matching, typo tolerance, synonym support, ML-based ranking, or recency/severity weighting.' Task-3 explicitly lists what cannot be determined: 'Which fields should be filterable?'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "run_summary": {
+    "pr-branch": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0
+      },
+      "time_seconds": {
+        "mean": 191.62,
+        "stddev": 47.5
+      },
+      "tokens": {
+        "mean": 41571,
+        "stddev": 4316
+      }
+    },
+    "base-branch": {
+      "pass_rate": {
+        "mean": 0.95,
+        "stddev": 0.0866
+      },
+      "time_seconds": {
+        "mean": 182.77,
+        "stddev": 51.43
+      },
+      "tokens": {
+        "mean": 38260,
+        "stddev": 2809
+      }
+    },
+    "delta": {
+      "pass_rate": 0.05,
+      "time_seconds": 8.85,
+      "tokens": 3310
+    }
+  }
+}
