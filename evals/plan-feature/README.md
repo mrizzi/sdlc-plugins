@@ -2,7 +2,9 @@
 
 Structured evaluations for the `plan-feature` skill, using Anthropic's
 [skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
-as the eval engine.
+as the eval engine. This document uses plan-feature as a concrete example,
+but the eval pattern applies to any skill — see
+[Adapting for other skills](#adapting-for-other-skills).
 
 For architectural decisions and known limitations, see the
 [design spec](../../docs/specs/2026-04-16-skill-eval-framework-design.md).
@@ -79,7 +81,7 @@ stored in `/tmp/` and is not committed to git.
 | `evals[].id` | number | Unique identifier for the test case |
 | `evals[].prompt` | string | The prompt sent to the skill agent |
 | `evals[].expected_output` | string | Natural language description of expected behavior |
-| `evals[].files` | string[] | Paths to fixture files (relative to `evals/plan-feature/`) |
+| `evals[].files` | string[] | Paths to fixture files (relative to the directory containing `evals.json`) |
 | `evals[].assertions` | string[] | Assertions graded by the LLM judge after each run |
 
 ### Current test cases
@@ -95,8 +97,12 @@ stored in `/tmp/` and is not committed to git.
 
 Fixture files in `files/` simulate what MCP tools would return during a real
 skill invocation. The eval prompt instructs the agent to read these files
-instead of calling Jira or Figma MCP, and to write task outputs to files
-instead of creating Jira issues.
+instead of calling external tools, and to write outputs to files instead of
+making live API calls.
+
+The fixture types below are specific to plan-feature — other skills would
+have different mock data (e.g., mock PR diffs for verify-pr, mock task
+descriptions for implement-task).
 
 ### Feature fixtures (`feature-*.md`)
 
@@ -122,6 +128,15 @@ Per `CONVENTIONS.md`, fixture files must include annotation headers:
 
 - **Adversarial fixtures**: `<!-- ADVERSARIAL TEST FIXTURE — <purpose> -->`
 - **Synthetic data fixtures**: `<!-- SYNTHETIC TEST DATA — <purpose> -->`
+
+## Prerequisites
+
+- **Anthropic's skill-creator** must be installed as a Claude Code plugin
+  (see [installation](https://github.com/anthropics/skills/tree/main/skills/skill-creator))
+- **The skill under test** must be accessible via its `/skill-name`
+  slash-command in the Claude Code session
+- **`evals.json`** with at least one test case (see schema above)
+- **Fixture files** in `files/` referenced by `evals.json`
 
 ## Running evals
 
@@ -339,3 +354,29 @@ After a successful iteration, commit the baseline results to
 `baselines/<commit-hash>/` where `<commit-hash>` is the short hash of the
 skill commit that produced the results. This preserves the grading history
 for future comparison.
+
+## Adapting for other skills
+
+To add evals for a different skill, create the following at the repo root:
+
+```
+evals/<skill-name>/
+├── evals.json             # Test case definitions (see schema above)
+└── files/                 # Fixture files simulating external tool responses
+    └── ...
+```
+
+The `baselines/` directory is created after the first successful run.
+
+In the commands from [Running evals](#running-evals), substitute:
+
+| Placeholder | Example (plan-feature) | Replace with |
+|-------------|----------------------|--------------|
+| `/plan-feature` | `/plan-feature` | `/<your-skill-name>` |
+| `@evals/plan-feature/evals.json` | `@evals/plan-feature/evals.json` | `@evals/<your-skill-name>/evals.json` |
+| `plan-feature-eval` (workspace prefix) | `plan-feature-eval` | `<your-skill-name>-eval` |
+| `Run all 4 eval cases` | `Run all 4 eval cases` | `Run all N eval cases` (match your evals.json) |
+
+Write fixture files appropriate to your skill's input sources — each skill
+mocks different external tools. Start without assertions: run once, inspect
+the outputs, then add assertions based on what you observe.
