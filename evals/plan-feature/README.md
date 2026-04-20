@@ -125,27 +125,36 @@ Per `CONVENTIONS.md`, fixture files must include annotation headers:
 
 ## Running evals
 
-Evals are run using the `skill-creator` skill's eval workflow:
+The eval pipeline has three stages:
+
+1. **Execute** — for each test case in `evals.json`, run the skill with the
+   given prompt and fixture files. The skill writes task descriptions and an
+   impact map to an output directory.
+2. **Grade** — an LLM judge evaluates each run's outputs against the
+   assertions in `evals.json`, producing `grading.json` with pass/fail
+   verdicts and evidence.
+3. **Aggregate** — `aggregate_benchmark.py` reads all `grading.json` files
+   and produces `benchmark.json` with summary statistics.
+
+### Interactive: skill-creator
+
+For iterative skill improvement with human-in-the-loop review, start a
+Claude Code session in the repo root and run:
 
 ```
-/skill-creator
+/skill-creator I have an existing skill /plan-feature with evals already
+defined at @evals/plan-feature/evals.json. Run all 4 eval cases and grade
+them against the assertions. For the workspace, run:
+mktemp -d /tmp/plan-feature-eval-$(git rev-parse --short HEAD)-XXXXXX
 ```
 
-When prompted, point skill-creator to the plan-feature skill at
-`plugins/sdlc-workflow/skills/plan-feature/` and the eval configuration at
-`evals/plan-feature/evals.json`.
+`/plan-feature` references the skill under test by its slash-command name.
+The `@` prefix on the evals.json path attaches the file to the prompt so
+skill-creator can read it directly.
 
-skill-creator will:
-
-1. Read `evals.json` and the fixture files.
-2. Spawn isolated subagents for each test case, comparing two configurations:
-   - **base-branch** — uses `SKILL.md` from the `main` branch
-     (via `git show main:plugins/sdlc-workflow/skills/plan-feature/SKILL.md`)
-   - **pr-branch** — uses the current working `SKILL.md`
-3. Each subagent receives the skill instructions, the test prompt, mock
-   fixture files, and writes outputs to a workspace directory.
-4. Grade each run against the assertions in `evals.json`.
-5. Produce `grading.json`, `timing.json`, and `benchmark.json`.
+The `mktemp` command generates a unique workspace path per invocation
+(e.g., `/tmp/plan-feature-eval-a45017c-xK9mPL`), avoiding collisions
+when multiple sessions run concurrently.
 
 ### Baseline strategy
 
