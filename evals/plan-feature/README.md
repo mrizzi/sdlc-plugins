@@ -1,8 +1,8 @@
 # plan-feature Eval Framework
 
-Structured evaluations for the `plan-feature` skill, using
-[skill-creator](https://agentskills.io/skill-creation/evaluating-skills) as
-the eval engine.
+Structured evaluations for the `plan-feature` skill, using Anthropic's
+[skill-creator](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+as the eval engine.
 
 For architectural decisions and known limitations, see the
 [design spec](../../docs/specs/2026-04-16-skill-eval-framework-design.md).
