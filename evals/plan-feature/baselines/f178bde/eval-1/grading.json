@@ -29,12 +29,32 @@
       "text": "Impact map lists concrete, specific changes (not vague or abstract descriptions)",
       "passed": true,
       "evidence": "Impact map lists 6 specific changes including: 'Add AdvisorySeveritySummary model struct to represent aggregated severity counts', 'Add severity aggregation query method to AdvisoryService that counts unique advisories per severity for a given SBOM', 'Add GET /api/v2/sbom/{id}/advisory-summary endpoint with 5-minute cache and optional threshold query param', 'Add cache invalidation hook in advisory ingestion pipeline', 'Add integration tests', 'Update REST API documentation'."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 task files have '## Repository\\ntrustify-backend' as a standalone section with a single repo name. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 task files contain '## Description' (with explanatory text), '## Acceptance Criteria' (with checkbox items), and '## Test Requirements' (with checkbox items)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All file paths reference directories present in repo-backend.md: modules/fundamental/src/advisory/model/ (exists), modules/fundamental/src/advisory/service/advisory.rs (exists), modules/fundamental/src/sbom/endpoints/ (exists), modules/ingestor/src/graph/advisory/mod.rs (exists), tests/api/ (exists), server/src/main.rs (exists). New files are created within existing directory structures."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "All 5 tasks reference specific file paths and patterns: Task 1 references modules/fundamental/src/advisory/model/summary.rs (AdvisorySummary pattern); Task 2 references entity/src/sbom_advisory.rs and common/src/db/query.rs; Task 3 references modules/fundamental/src/sbom/endpoints/get.rs handler pattern; Task 4 references modules/ingestor/src/graph/advisory/mod.rs; Task 5 references tests/api/sbom.rs assertion patterns."
     }
   ],
   "summary": {
-    "passed": 6,
+    "passed": 10,
     "failed": 0,
-    "total": 6,
+    "total": 10,
     "pass_rate": 1.0
   }
 }

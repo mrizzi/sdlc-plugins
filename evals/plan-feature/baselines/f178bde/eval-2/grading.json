@@ -19,12 +19,32 @@
       "text": "Tasks document assumptions where they fill in missing details, making it clear these are assumptions pending clarification (not invented specifics presented as requirements)",
       "passed": true,
       "evidence": "Impact map has a dedicated 'Assumptions Made for Planning' section with 5 explicit assumptions (A1-A5). Each task has an 'Ambiguity note' paragraph. For example, task-1 states: 'Without profiling data or latency targets (\"should be faster\" is the only requirement), this task assumes PostgreSQL GIN indexes on text-searchable columns are the appropriate optimization.' Task-2 says: '\"More relevant\" is not defined in the feature. This task assumes relevance means better full-text match scoring using PostgreSQL's built-in ranking functions. It does NOT implement: fuzzy matching, typo tolerance, synonym support, ML-based ranking, or recency/severity weighting.' Task-3 explicitly lists what cannot be determined: 'Which fields should be filterable?'"
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 4 task files have '## Repository\\ntrustify-backend' as a standalone section with a single repo name."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 4 task files contain '## Description', '## Acceptance Criteria' (with checkbox items), and '## Test Requirements' (with checkbox items) with substantive content."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All file paths reference directories present in repo-backend.md: modules/search/src/service/mod.rs (exists), modules/search/src/endpoints/mod.rs (exists), migration/src/ (exists, following m0001_initial pattern), tests/api/search.rs (exists). New files are created within existing directory structures."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "All 4 tasks reference specific file paths and patterns: Task 1 references migration/src/m0001_initial/mod.rs and entity/src/sbom.rs; Task 2 references modules/search/src/service/mod.rs and common/src/db/query.rs with specific functions; Task 3 references common/src/db/query.rs and modules/fundamental/src/sbom/endpoints/list.rs; Task 4 references tests/api/search.rs and tests/api/sbom.rs assertion patterns."
     }
   ],
   "summary": {
-    "passed": 4,
+    "passed": 8,
     "failed": 0,
-    "total": 4,
+    "total": 8,
     "pass_rate": 1.0
   }
 }
