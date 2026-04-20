@@ -24,12 +24,32 @@
       "text": "Frontend tasks reference file paths from repo-frontend.md (src/pages/, src/hooks/, src/components/); backend tasks reference paths from repo-backend.md (modules/, entity/, tests/)",
       "passed": true,
       "evidence": "Frontend tasks reference: src/api/models.ts, src/api/rest.ts, src/hooks/useSbomComparison.ts, src/pages/SbomComparePage/SbomComparePage.tsx, src/pages/SbomComparePage/components/DiffSection.tsx, src/pages/SbomComparePage/components/CompareToolbar.tsx, src/routes.tsx, src/App.tsx, src/components/SeverityBadge.tsx, src/hooks/useSboms.ts, src/pages/SbomListPage/SbomListPage.tsx. Backend tasks reference: modules/fundamental/src/sbom/service/sbom.rs, modules/fundamental/src/sbom/model/comparison.rs, modules/fundamental/src/sbom/endpoints/compare.rs, entity/src/sbom_package.rs, entity/src/sbom_advisory.rs, entity/src/package_license.rs."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 task files have a '## Repository' section with a single repo name. Tasks 1-2 list 'trustify-backend', tasks 3-5 list 'trustify-ui'. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 task files contain '## Description', '## Acceptance Criteria' (with checkbox items), and '## Test Requirements' (with checkbox items) with substantive content."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": true,
+      "evidence": "Backend tasks reference paths from repo-backend.md: modules/fundamental/src/sbom/model/ (exists), modules/fundamental/src/sbom/service/sbom.rs (exists), modules/fundamental/src/sbom/endpoints/ (exists). Frontend tasks reference paths from repo-frontend.md: src/api/models.ts (exists), src/api/rest.ts (exists), src/hooks/ (exists), src/pages/SbomListPage/ (exists), src/routes.tsx (exists), src/App.tsx (exists). New files are created within existing directory structures."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "All 5 tasks reference specific file paths and patterns: Task 1 references modules/fundamental/src/sbom/model/summary.rs and entity/src/sbom_package.rs; Task 2 references modules/fundamental/src/sbom/endpoints/get.rs handler pattern; Task 3 references src/api/client.ts Axios instance and src/hooks/useSboms.ts React Query pattern; Task 4 references src/components/SeverityBadge.tsx and specific PatternFly components; Task 5 references src/pages/SbomListPage/SbomListPage.tsx existing patterns."
     }
   ],
   "summary": {
-    "passed": 5,
+    "passed": 9,
     "failed": 0,
-    "total": 5,
+    "total": 9,
     "pass_rate": 1.0
   }
 }

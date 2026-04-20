@@ -12,7 +12,11 @@
         "All tasks reference repository 'trustify-backend'",
         "Task dependencies form a DAG with no circular dependencies",
         "Every task's Files to Modify and Files to Create reference paths plausible within the repo-backend.md structure",
-        "Impact map lists concrete, specific changes (not vague or abstract descriptions)"
+        "Impact map lists concrete, specific changes (not vague or abstract descriptions)",
+        "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+        "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+        "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+        "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance"
       ]
     },
     {
@@ -24,7 +28,11 @@
         "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
         "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
         "Tasks still follow the task-description-template.md format despite ambiguous requirements",
-        "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification"
+        "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+        "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+        "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+        "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+        "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance"
       ]
     },
     {
@@ -37,7 +45,11 @@
         "Backend tasks have lower task numbers than the frontend tasks that depend on them",
         "Frontend tasks reference Figma design context mentioning specific PatternFly components and visual specifications",
         "At least one frontend task explicitly depends on a backend task in its Dependencies section",
-        "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md"
+        "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+        "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+        "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+        "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+        "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance"
       ]
     },
     {
