@@ -156,6 +156,27 @@ The `mktemp` command generates a unique workspace path per invocation
 (e.g., `/tmp/plan-feature-eval-a45017c-xK9mPL`), avoiding collisions
 when multiple sessions run concurrently.
 
+### Non-interactive: `claude -p`
+
+For CI or scripted runs without human review:
+
+```bash
+claude -p "/skill-creator I have an existing skill /plan-feature with evals \
+  already defined at @evals/plan-feature/evals.json. Run all 4 eval cases \
+  and grade them against the assertions. Skip the eval viewer. For the \
+  workspace, run: \
+  mktemp -d /tmp/plan-feature-eval-\$(git rev-parse --short HEAD)-XXXXXX" \
+  --dangerously-skip-permissions
+```
+
+This runs the full pipeline (execute, grade, aggregate) in a single
+command. Results land in the generated workspace directory (e.g.,
+`/tmp/plan-feature-eval-bd5c260-yooaFv/iteration-1/`).
+
+"Skip the eval viewer" suppresses skill-creator's built-in browser-based
+review tool (`eval-viewer/generate_review.py`), which is designed for
+interactive human feedback and has no use in CI or scripted runs.
+
 ### Baseline strategy
 
 Baselines are git-based. The `main` branch serves as the reference — no
