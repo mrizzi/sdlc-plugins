@@ -71,6 +71,13 @@ The contract requires three sections in your CLAUDE.md:
 See [docs/project-config-contract.md](docs/project-config-contract.md) for
 the full specification and a complete example.
 
+## Evaluations
+
+The plan-feature skill has a structured eval framework for measuring output
+quality and catching regressions. See
+[evals/plan-feature/README.md](evals/plan-feature/README.md) for usage
+instructions, test case documentation, and the iteration workflow.
+
 ## Documentation
 
 - [Methodology](docs/methodology.md) — Core principles and SDLC phases
