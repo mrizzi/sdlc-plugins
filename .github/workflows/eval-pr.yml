@@ -93,6 +93,9 @@ jobs:
 
       - name: Run PR evals
         if: steps.discover.outputs.skills != ''
+        env:
+          CLAUDE_CODE_USE_VERTEX: "1"
+          CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
         run: |
           IFS=',' read -ra SKILLS <<< "${{ steps.discover.outputs.skills }}"
 
