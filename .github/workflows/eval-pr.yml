@@ -121,7 +121,7 @@ jobs:
           base-branch run, I have stored baselines already. Skip the eval viewer.
           For the workspace, use: ${workspace}
           PROMPT
-            )" --dangerously-skip-permissions 2>&1 || {
+            )" --dangerously-skip-permissions --verbose 2>&1 || {
               echo "::warning::PR eval run failed for ${skill} (exit $?)"
               echo "::endgroup::"
               continue
