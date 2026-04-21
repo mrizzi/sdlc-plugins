@@ -35,7 +35,9 @@ jobs:
         run: curl -fsSL https://claude.ai/install.sh | bash
 
       - name: Install skill-creator plugin
-        run: claude plugin install skill-creator@claude-plugins-official
+        run: |
+          claude plugin marketplace add anthropics/claude-plugins-official
+          claude plugin install skill-creator@claude-plugins-official
 
       - name: Discover changed skills
         id: discover
