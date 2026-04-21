@@ -34,6 +34,9 @@ jobs:
       - name: Install Claude Code
         run: curl -fsSL https://claude.ai/install.sh | bash
 
+      - name: Install skill-creator plugin
+        run: claude plugin install skill-creator@claude-plugins-official
+
       - name: Discover changed skills
         id: discover
         env:
