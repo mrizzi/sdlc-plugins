@@ -96,6 +96,9 @@ jobs:
         env:
           CLAUDE_CODE_USE_VERTEX: "1"
           CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
+          ANTHROPIC_DEFAULT_SONNET_MODEL: "claude-sonnet-4-6"
+          ANTHROPIC_DEFAULT_OPUS_MODEL: "claude-opus-4-6"
+          ANTHROPIC_MODEL: "claude-opus-4-6"
         run: |
           IFS=',' read -ra SKILLS <<< "${{ steps.discover.outputs.skills }}"
 
