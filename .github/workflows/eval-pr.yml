@@ -34,11 +34,6 @@ jobs:
       - name: Install Claude Code
         run: curl -fsSL https://claude.ai/install.sh | bash
 
-      - name: Install skill-creator plugin
-        run: |
-          claude plugin marketplace add anthropics/claude-plugins-official
-          claude plugin install skill-creator@claude-plugins-official
-
       - name: Discover changed skills
         id: discover
         env:
@@ -67,35 +62,6 @@ jobs:
           echo "skills=${skills}" >> "$GITHUB_OUTPUT"
           echo "Discovered changed skills with evals: ${skills:-none}"
 
-      - name: Resolve baselines
-        if: steps.discover.outputs.skills != ''
-        id: baselines
-        run: |
-          IFS=',' read -ra SKILLS <<< "${{ steps.discover.outputs.skills }}"
-
-          resolved=""
-          missing=""
-          for skill in "${SKILLS[@]}"; do
-            latest_link="evals/${skill}/baselines/latest"
-            if [ -L "${latest_link}" ]; then
-              target=$(readlink "${latest_link}")
-              baseline_dir="evals/${skill}/baselines/${target}"
-              if [ -f "${baseline_dir}/benchmark.json" ]; then
-                resolved="${resolved:+${resolved},}${skill}"
-                echo "Baseline resolved for ${skill}: ${target}"
-              else
-                missing="${missing:+${missing},}${skill}"
-                echo "::warning::Baseline symlink exists for ${skill} but benchmark.json missing at ${baseline_dir}"
-              fi
-            else
-              missing="${missing:+${missing},}${skill}"
-              echo "::warning::No baseline symlink for ${skill}. Run eval-baseline first."
-            fi
-          done
-
-          echo "resolved=${resolved}" >> "$GITHUB_OUTPUT"
-          echo "missing=${missing}" >> "$GITHUB_OUTPUT"
-
       - name: Run PR evals
         if: steps.discover.outputs.skills != ''
         env:
@@ -109,131 +75,43 @@ jobs:
 
           for skill in "${SKILLS[@]}"; do
             eval_count=$(jq '.evals | length' "evals/${skill}/evals.json")
-            workspace=$(mktemp -d "/tmp/${skill}-eval-pr-XXXXXX")
+            workspace="/tmp/${skill}-eval-pr"
+            mkdir -p "${workspace}"
 
-            echo "::group::Running PR evals for ${skill} (${eval_count} cases)"
+            echo "=== Running PR evals for ${skill} (${eval_count} cases) ==="
             echo "Workspace: ${workspace}"
 
             claude -p "$(cat <<PROMPT
-          I have an existing skill /${skill} with evals already defined
-          at @evals/${skill}/evals.json. Run all ${eval_count} eval cases and grade them
-          against the assertions. Only run the current branch version — skip the
-          base-branch run, I have stored baselines already. Skip the eval viewer.
-          For the workspace, use: ${workspace}
+          Run the run-evals skill for skill /${skill}.
+          Evals path: evals/${skill}/evals.json
+          Workspace: ${workspace}
           PROMPT
             )" --dangerously-skip-permissions --verbose 2>&1 || {
               echo "::warning::PR eval run failed for ${skill} (exit $?)"
-              echo "::endgroup::"
               continue
             }
 
             echo "--- Workspace contents ---"
             find "${workspace}" -type f 2>/dev/null | head -80 || true
-
-            # Collect PR results for the comment step
-            pr_results="/tmp/${skill}-pr-results"
-            mkdir -p "${pr_results}"
-
-            src_dir="${workspace}"
-            for candidate in "${workspace}"/iteration-*/; do
-              if [ -d "${candidate}" ]; then
-                src_dir="${candidate}"
-                break
-              fi
-            done
-
-            for eval_dir in "${src_dir}"/eval-*/; do
-              [ -d "${eval_dir}" ] || continue
-              eval_name=$(basename "${eval_dir}")
-              for sub in "${eval_dir}" "${eval_dir}"/branch/ "${eval_dir}"/pr-branch/; do
-                [ -f "${sub}/grading.json" ] && cp "${sub}/grading.json" "${pr_results}/${eval_name}-grading.json" && break
-              done
-            done
-
-            for loc in "${src_dir}/benchmark.json" "${workspace}/benchmark.json"; do
-              if [ -f "${loc}" ]; then
-                cp "${loc}" "${pr_results}/benchmark.json"
-                break
-              fi
-            done
-
-            echo "::endgroup::"
           done
 
       - name: Post eval results comment
         if: steps.discover.outputs.skills != ''
         env:
           SKILLS_CSV: ${{ steps.discover.outputs.skills }}
-          RESOLVED_CSV: ${{ steps.baselines.outputs.resolved }}
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
             const skills = process.env.SKILLS_CSV.split(',').filter(Boolean);
-            const resolved = (process.env.RESOLVED_CSV || '').split(',').filter(Boolean);
 
-            let body = '## Eval Results\n\n';
-
+            let body = '';
             for (const skill of skills) {
-              body += `### ${skill}\n\n`;
-
-              const prDir = `/tmp/${skill}-pr-results`;
-              if (!fs.existsSync(prDir)) {
-                body += '> No results produced. See workflow logs.\n\n';
-                continue;
-              }
-
-              // Render per-eval grading results
-              const gradingFiles = fs.readdirSync(prDir)
-                .filter(f => f.endsWith('-grading.json'))
-                .sort();
-
-              if (gradingFiles.length > 0) {
-                body += '| Eval | Passed | Failed | Pass Rate |\n';
-                body += '|------|--------|--------|----------|\n';
-
-                for (const gf of gradingFiles) {
-                  const evalName = gf.replace('-grading.json', '');
-                  const grading = JSON.parse(fs.readFileSync(`${prDir}/${gf}`, 'utf8'));
-                  const passed = grading.summary?.passed ?? 0;
-                  const failed = grading.summary?.failed ?? 0;
-                  const total = grading.summary?.total ?? 0;
-                  const rate = grading.summary?.pass_rate ?? 0;
-                  body += `| ${evalName} | ${passed}/${total} | ${failed} | ${(rate * 100).toFixed(0)}% |\n`;
-                }
-                body += '\n';
-              }
-
-              // Render benchmark.json if produced
-              const prBenchmarkPath = `${prDir}/benchmark.json`;
-              if (fs.existsSync(prBenchmarkPath)) {
-                const benchmark = JSON.parse(fs.readFileSync(prBenchmarkPath, 'utf8'));
-                const prSummary = benchmark.run_summary?.['pr-branch'] ?? {};
-                if (prSummary.pass_rate) {
-                  body += `**PR pass rate:** ${(prSummary.pass_rate.mean * 100).toFixed(0)}%`;
-                  if (prSummary.tokens) body += ` · **Tokens:** ${Math.round(prSummary.tokens.mean).toLocaleString()}`;
-                  if (prSummary.time_seconds) body += ` · **Duration:** ${prSummary.time_seconds.mean.toFixed(0)}s`;
-                  body += '\n\n';
-                }
-              }
-
-              // Render baseline comparison if available
-              if (resolved.includes(skill)) {
-                try {
-                  const target = fs.readlinkSync(`evals/${skill}/baselines/latest`);
-                  const baselinePath = `evals/${skill}/baselines/${target}/benchmark.json`;
-                  if (fs.existsSync(baselinePath)) {
-                    const baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
-                    const baseSummary = baseline.run_summary?.['pr-branch']
-                      ?? baseline.run_summary?.['base-branch'] ?? {};
-                    if (baseSummary.pass_rate) {
-                      body += `**Baseline** (\`${target}\`): ${(baseSummary.pass_rate.mean * 100).toFixed(0)}%`;
-                      if (baseSummary.tokens) body += ` · ${Math.round(baseSummary.tokens.mean).toLocaleString()} tokens`;
-                      if (baseSummary.time_seconds) body += ` · ${baseSummary.time_seconds.mean.toFixed(0)}s`;
-                      body += '\n\n';
-                    }
-                  }
-                } catch (e) { /* no baseline */ }
+              const summaryPath = `/tmp/${skill}-eval-pr/summary.md`;
+              if (fs.existsSync(summaryPath)) {
+                body += fs.readFileSync(summaryPath, 'utf8');
+              } else {
+                body += `### ${skill}\n\n> No results produced. See workflow logs.\n\n`;
               }
             }
 
