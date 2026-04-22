@@ -5,6 +5,33 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-04-22
+
+### Added
+
+- `run-evals` skill for running skill evals with deterministic output layout and CI-compatible results
+- `eval-pr` GitHub Actions workflow for PR-triggered eval comparisons against baselines
+- `eval-baseline` GitHub Actions workflow for push-to-main baseline generation
+- Plan-feature eval fixtures with cross-skill handoff contract validation assertions
+- Feedback.json tracking in eval baselines for human review
+
+### Changed
+
+- Added convention gap task structuring guidance to verify-pr Step 5b
+- Moved eval fixtures outside plugin distribution path
+
+### Fixed
+
+- Replaced dangerously-skip-permissions with dontAsk mode in eval workflows
+- Various eval CI fixes (Vertex AI auth, plugin installation, verbose output, prompt qualification)
+
+### Documentation
+
+- Added skill evaluation framework design spec
+- Added eval usage guide for plan-feature
+- Added eval skills CI workflow design spec
+- Added eval fixture annotation conventions
+
 ## [0.6.1] - 2026-04-14
 
 ### Fixed

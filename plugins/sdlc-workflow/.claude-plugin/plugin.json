@@ -1,7 +1,7 @@
 {
   "name": "sdlc-workflow",
   "description": "AI-assisted SDLC workflow skills for planning features and implementing tasks with full Jira traceability.",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "author": {
     "name": "Marco Rizzi"
   }
