@@ -1,6 +1,6 @@
 ---
 name: run-evals
-description: Run skill evals and produce structured grading results. Use when the user wants to run evals for a skill, grade assertions, and produce benchmark.json. Triggers on "run evals", "eval plan-feature", "grade evals", or similar.
+description: Run skill evals with deterministic output layout and CI-compatible results. Grades assertions, aggregates benchmark.json, and renders summary.md via Python scripts. NOT skill-creator — this skill produces fixed output paths for automated pipelines. Triggers on "run evals", "eval <skill-name>", "benchmark", or "grade evals".
 ---
 
 # Run Evals
@@ -49,7 +49,7 @@ Read the evals file and extract:
 For each eval in `evals[]`, spawn a subagent with this prompt:
 
 ```
-You are executing an eval for the /<skill-name> skill.
+You are executing an eval for the /sdlc-workflow:<skill-name> skill.
 
 Task: <eval.prompt>
 
@@ -63,13 +63,17 @@ Input files (read these before starting):
 Write all outputs to: <workspace>/eval-<eval.id>/outputs/
 
 Important:
-- Invoke the /<skill-name> skill via the Skill tool to process this task
+- Invoke the /sdlc-workflow:<skill-name> skill via the Skill tool to process this task
 - Write every output file to the outputs/ directory
 - Do not interact with external services (Jira, Figma, etc.) — write to files instead
 ```
 
-When the subagent completes, capture `total_tokens` and `duration_ms` from
-the task completion notification. Write immediately to
+**Parallelism:** Spawn all eval subagents in a single turn so they run
+concurrently. Do not wait for one eval to complete before starting the
+next — the eval cases are independent.
+
+When each subagent completes, capture `total_tokens` and `duration_ms`
+from the task completion notification immediately. Write to
 `<workspace>/eval-<eval.id>/timing.json`:
 
 ```json
@@ -81,7 +85,11 @@ the task completion notification. Write immediately to
 
 ### Step 3 — Grade each eval case
 
-After each eval completes, spawn a grader subagent with this prompt:
+As each eval completes, spawn a grader subagent. Grading can overlap
+with execution — grade each eval as it finishes rather than waiting for
+all to complete.
+
+Grader prompt:
 
 ```
 Grade the outputs of an eval run against these assertions.
@@ -93,11 +101,22 @@ Assertions:
 
 Outputs directory: <workspace>/eval-<eval.id>/outputs/
 
-For each assertion:
-1. Search the output files for evidence
-2. PASS if clear evidence supports the assertion
-3. FAIL if no evidence, or evidence contradicts
-4. Cite specific evidence for every verdict
+## Grading rules
+
+1. Read every file in the outputs directory. Open and read file
+   contents — do not judge based on filenames alone.
+2. Burden of proof is on PASS. Default to FAIL. Only mark PASS when
+   you find specific, concrete evidence in the output files that
+   satisfies the assertion.
+3. No partial credit. Each assertion is binary: PASS or FAIL.
+   "Mostly correct" or "partially addressed" is FAIL.
+4. Cite specific evidence. The evidence field must quote or reference
+   exact content from output files — file paths, line excerpts, counts.
+   Never write vague evidence like "the output generally addresses this."
+5. Check structure AND content. Verify both that expected sections/files
+   exist AND that their content satisfies the assertion.
+6. Contradictory evidence means FAIL. If some outputs support the
+   assertion but others contradict it, the assertion fails.
 
 Write results to: <workspace>/eval-<eval.id>/grading.json
 
@@ -107,7 +126,7 @@ Use this exact JSON structure:
     {
       "text": "<assertion text>",
       "passed": true/false,
-      "evidence": "<specific evidence>"
+      "evidence": "<specific evidence from output files>"
     }
   ],
   "summary": {
@@ -121,27 +140,15 @@ Use this exact JSON structure:
 
 ### Step 4 — Aggregate into benchmark.json
 
-After all evals are graded, read every `eval-N/grading.json` and
-`eval-N/timing.json` and produce `<workspace>/benchmark.json`:
+After all evals are graded, run the aggregation script:
 
-```json
-{
-  "run_summary": {
-    "pass_rate": {
-      "mean": <mean across evals>,
-      "stddev": <stddev across evals>
-    },
-    "time_seconds": {
-      "mean": <mean duration_ms / 1000>,
-      "stddev": <stddev>
-    },
-    "tokens": {
-      "mean": <mean total_tokens>,
-      "stddev": <stddev>
-    }
-  }
-}
+```bash
+python3 <skill-dir>/scripts/aggregate_benchmark.py --results <workspace>
 ```
+
+The script reads all `eval-N/grading.json` and `eval-N/timing.json`
+files, computes mean and stddev for pass rate, duration, and token usage,
+and writes `<workspace>/benchmark.json`.
 
 ### Step 5 — Create feedback.json placeholder
 
@@ -159,7 +166,7 @@ Write `<workspace>/feedback.json` with empty strings for each eval:
 
 Determine the baseline path: `evals/<skill-name>/baselines/latest/`.
 
-Run the render script from the skill's scripts/ directory:
+Run the render script:
 
 ```bash
 python3 <skill-dir>/scripts/render_summary.py \
@@ -185,3 +192,5 @@ user.
 - Do not launch an eval viewer or browser.
 - Do not run baseline comparisons — only run the current skill version.
   Baseline comparison is handled by the render script in Step 6.
+- `<skill-dir>` is the directory containing this SKILL.md — resolve it from
+  the absolute path shown in the skill invocation header.
