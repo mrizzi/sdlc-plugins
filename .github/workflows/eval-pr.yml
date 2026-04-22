@@ -82,7 +82,7 @@ jobs:
             echo "Workspace: ${workspace}"
 
             claude -p "$(cat <<PROMPT
-          Run the run-evals skill for skill /${skill}.
+          Use the sdlc-workflow:run-evals skill for skill /${skill}.
           Evals path: evals/${skill}/evals.json
           Workspace: ${workspace}
           PROMPT
