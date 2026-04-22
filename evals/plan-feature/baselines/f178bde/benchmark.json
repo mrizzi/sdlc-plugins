@@ -5,12 +5,12 @@
       "stddev": 0.0
     },
     "time_seconds": {
-      "mean": 191.62,
-      "stddev": 47.5
+      "mean": 187.25,
+      "stddev": 49.5
     },
     "tokens": {
-      "mean": 41571,
-      "stddev": 4316
+      "mean": 40303,
+      "stddev": 2996.45
     }
   }
 }
