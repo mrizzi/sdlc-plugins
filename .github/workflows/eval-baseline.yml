@@ -1,0 +1,110 @@
+# Runs all skill evals on push to main and commits baseline results.
+#
+# See docs/specs/2026-04-21-eval-skills-ci-workflow-design.md for full design.
+
+name: Eval Baseline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'plugins/sdlc-workflow/skills/**/*.md'
+      - 'evals/**/evals.json'
+
+jobs:
+  eval-baseline:
+    name: Create Eval Baselines
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Install Claude Code
+        run: curl -fsSL https://claude.ai/install.sh | bash
+
+      - name: Discover all eval suites
+        id: discover
+        run: |
+          skills=""
+          for f in evals/*/evals.json; do
+            [ -f "$f" ] || continue
+            skill=$(basename "$(dirname "$f")")
+            skills="${skills:+${skills},}${skill}"
+          done
+          commit_hash=$(git rev-parse --short HEAD)
+          echo "skills=${skills}" >> "$GITHUB_OUTPUT"
+          echo "commit_hash=${commit_hash}" >> "$GITHUB_OUTPUT"
+          echo "Discovered eval suites: ${skills:-none}"
+          echo "Commit hash: ${commit_hash}"
+
+      - name: Run evals and create baselines
+        if: steps.discover.outputs.skills != ''
+        env:
+          CLAUDE_CODE_USE_VERTEX: "1"
+          CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
+          ANTHROPIC_DEFAULT_SONNET_MODEL: "claude-sonnet-4-6"
+          ANTHROPIC_DEFAULT_OPUS_MODEL: "claude-opus-4-6"
+          ANTHROPIC_MODEL: "claude-opus-4-6"
+        run: |
+          COMMIT_HASH="${{ steps.discover.outputs.commit_hash }}"
+          IFS=',' read -ra SKILLS <<< "${{ steps.discover.outputs.skills }}"
+
+          for skill in "${SKILLS[@]}"; do
+            workspace="/tmp/${skill}-eval-baseline"
+            baseline_dir="evals/${skill}/baselines/${COMMIT_HASH}"
+
+            echo "=== Running evals for ${skill} ==="
+            echo "Workspace: ${workspace}"
+            echo "Baseline: ${baseline_dir}"
+
+            claude -p "$(cat <<PROMPT
+          Use the sdlc-workflow:run-evals skill for skill /${skill}.
+          Evals path: evals/${skill}/evals.json
+          Workspace: ${workspace}
+          PROMPT
+            )" --permission-mode dontAsk \
+              --allowedTools Read Write Bash Skill Agent Glob \
+              --verbose 2>&1 || {
+              echo "::warning::Eval run failed for ${skill} (exit $?)"
+              continue
+            }
+
+            echo "--- Workspace contents ---"
+            find "${workspace}" -type f 2>/dev/null | head -80 || true
+
+            # Copy results to baseline directory
+            mkdir -p "${baseline_dir}"
+            for eval_dir in "${workspace}"/eval-*/; do
+              [ -d "${eval_dir}" ] || continue
+              cp -r "${eval_dir}" "${baseline_dir}/"
+            done
+            for f in benchmark.json feedback.json summary.md; do
+              [ -f "${workspace}/${f}" ] && cp "${workspace}/${f}" "${baseline_dir}/"
+            done
+
+            # Update latest symlink
+            ln -sfn "${COMMIT_HASH}" "evals/${skill}/baselines/latest"
+
+            echo "--- Baseline contents ---"
+            find "${baseline_dir}" -type f 2>/dev/null || true
+          done
+
+      - name: Commit baselines
+        if: steps.discover.outputs.skills != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add evals/*/baselines/
+          if git diff --cached --quiet; then
+            echo "No baseline changes to commit"
+          else
+            git commit -m "chore(evals): create baselines for ${{ steps.discover.outputs.commit_hash }}"
+            git push
+          fi
