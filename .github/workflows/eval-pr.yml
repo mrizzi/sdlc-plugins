@@ -86,7 +86,9 @@ jobs:
           Evals path: evals/${skill}/evals.json
           Workspace: ${workspace}
           PROMPT
-            )" --dangerously-skip-permissions --verbose 2>&1 || {
+            )" --permission-mode dontAsk \
+              --allowedTools Read Write Bash Skill Agent Glob \
+              --verbose 2>&1 || {
               echo "::warning::PR eval run failed for ${skill} (exit $?)"
               continue
             }
