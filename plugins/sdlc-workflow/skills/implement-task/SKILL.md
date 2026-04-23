@@ -142,7 +142,10 @@ Steps 5, 10, and 11.
 When Target PR is present, the task is a review feedback fix — the implementation adds
 commits to the existing PR branch instead of creating a new branch and PR.
 
-If any required section is missing or the description doesn't follow the template, stop and ask the user for clarification.
+If any required section is missing or the description doesn't follow the template, list the
+gaps, ask the user for clarification, and **stop execution immediately** — do not proceed
+with any subsequent steps (branching, implementation planning, code changes) until the user
+provides the missing information.
 
 ### GitHub Issue extraction
 
@@ -951,7 +954,7 @@ jira.transition_issue → In Review
 
 - Do not guess — use the Serena instance specified in the project's **Repository Registry** (CLAUDE.md) for the target repo, with tools like `get_symbols_overview`, `find_symbol`, `find_referencing_symbols` to inspect code before modifying it. Check the **Code Intelligence** section for per-instance limitations. Fall back to Read/Grep/Glob for repos without a Serena instance.
 - Follow the Implementation Notes closely — they reference real code patterns.
-- If the structured description is incomplete, ask the user rather than improvising.
+- If the structured description is incomplete, ask the user for clarification and **stop execution**. Do not draft an implementation plan, create branches, or proceed with any subsequent steps until the user provides the missing information.
 - Keep changes scoped to what the task describes — no unrelated refactoring.
 - Every commit must reference the Jira issue ID.
 - If the same test fails 3 times with the same error, stop and ask the user for guidance — do not retry the same approach.
