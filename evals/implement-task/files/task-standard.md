@@ -37,7 +37,7 @@ breakdowns without client-side counting.
 - The `AdvisoryService` in `modules/fundamental/src/advisory/service/advisory.rs` has `fetch` and `list` methods — add a `severity_summary` method following the same pattern (takes `&self, sbom_id: Id, tx: &Transactional<'_>`) 
 - Use the `sbom_advisory` join table in `entity/src/sbom_advisory.rs` to find advisories linked to the SBOM
 - The `AdvisorySummary` struct in `modules/fundamental/src/advisory/model/summary.rs` has a `severity` field — use this to count by severity level
-- Register the new route in `modules/fundamental/src/advisory/endpoints/mod.rs` following the pattern of existing `.service(web::resource(...))` registrations
+- Register the new route in `modules/fundamental/src/advisory/endpoints/mod.rs` following the pattern of existing `Router::new().route("/path", get(handler))` registrations
 - Error handling: return `AppError` with `.context()` wrapping, matching the pattern in `common/src/error.rs`
 - Response type: return the struct directly (Axum's `Json` extractor handles serialization)
 
