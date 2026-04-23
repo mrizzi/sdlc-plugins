@@ -22,6 +22,7 @@ breakdowns without client-side counting.
 ## Files to Modify
 - `modules/fundamental/src/advisory/service/advisory.rs` — add `severity_summary` method to AdvisoryService
 - `modules/fundamental/src/advisory/endpoints/mod.rs` — register the new route
+- `modules/fundamental/src/advisory/model/mod.rs` — add `pub mod severity_summary;` to register the new model module
 - `server/src/main.rs` — no changes needed (routes auto-mount via module registration)
 
 ## Files to Create
