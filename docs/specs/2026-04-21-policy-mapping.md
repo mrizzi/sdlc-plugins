@@ -26,39 +26,54 @@ Each touchpoint gets one of five policy types:
 
 This section explains how the policies in this document will be applied, so reviewers can evaluate each policy with the intended mechanism in mind.
 
-### Principle: skills don't decide autonomy
+### How fullsend applies policies today
 
-Following fullsend's architecture (ADR 0018 — scripted pipelines, ADR 0002 — label state machine), skills are deterministic specifications — they describe what an agent does at each step, not whether a human should be involved. The decision to prompt a human or let the agent proceed is made by the **orchestration layer** outside the skill, not by conditional branches inside it.
+Fullsend's agents run non-interactively (`claude --print --dangerously-skip-permissions --agent <agent.md>`). They never ask humans — they produce structured JSON output, and a deterministic harness decides what to do with it. Policy is enforced through three layers:
 
-This means the policies in this document are **not embedded into SKILL.md files as if/else branches**. Instead:
+1. **Agent definitions** encode what the agent should do. The agent doesn't choose between interactive and autonomous — it runs one way. Policies like "follow CONVENTIONS.md" or "reject if secrets found" are written directly into the agent's instructions.
+2. **Pre-scripts** supply context before the agent runs (reset labels, set up environment, provide credentials). They eliminate the need for the agent to ask for information.
+3. **Post-scripts** validate and gate the agent's output before mutations take effect (push code, apply labels, post comments). They enforce hard stops — e.g., blocking pushes that touch protected paths.
 
-1. **Skills stay unchanged.** Each SKILL.md continues to describe its steps as it does today — including the human interaction points. The skills don't gain a "mode" flag.
-2. **The orchestration layer consults this document.** When a pipeline invokes a skill autonomously, the pipeline is responsible for handling each touchpoint according to the policy defined here. At a touchpoint where the skill says "ask the user," the pipeline either supplies the answer prescribed by the policy (for Default and Auto-proceed types) or blocks execution and escalates (for Reject/Escalate types).
-3. **Escalation is platform-native.** The `requires-manual-review` label on a Jira issue is the escalation signal. The pipeline sets it; a human clears it. This aligns with fullsend's label state machine where labels govern workflow transitions, not agent-internal logic.
+The agent proposes; the harness disposes. There is no runtime policy engine that intercepts agent decisions — the policy is baked into how the agent is defined and what the harness allows.
+
+### What this means for sdlc-plugins
+
+sdlc-plugins' skills are fundamentally different from fullsend's agents. The skills are interactive Claude Code slash commands with ~66 human touchpoints — places where the skill stops and asks the user. Fullsend's agents have zero touchpoints by design; all input is pre-supplied via context.
+
+To make sdlc-plugins skills autonomous, the policies in this document would be applied through the same three-layer model:
+
+| Layer | What it does | Example from this document |
+|---|---|---|
+| **Agent definition** | Rewrite interactive touchpoints as deterministic instructions. Where the skill currently says "ask the user," the autonomous agent definition says what to do. | Touchpoint #31: instead of "ask user which convention to follow," the agent definition says "follow CONVENTIONS.md; it is the project authority." |
+| **Pre-script** | Supply context the agent needs so it doesn't have to ask. Set up environment, provide credentials, prepare inputs. | XC-1/XC-2: pre-script configures REST API credentials from the policy store, so the agent never encounters the MCP fallback prompt. |
+| **Post-script** | Validate the agent's output and gate mutations. Enforce hard stops that the agent cannot bypass. | Touchpoint #35: post-script scans the diff for secrets and blocks the commit regardless of what the agent decided. |
+
+This means the skills **do change** for autonomous use — but not by adding conditional branches. Instead, a separate autonomous agent definition is created for each skill, encoding the policies from this document as direct instructions. The interactive SKILL.md files stay unchanged for human use. The harness decides which definition to load based on the invocation context.
 
 ### Relationship to fullsend concepts
 
 | This document | fullsend equivalent |
 |---|---|
-| Human-driven touchpoints (define-feature) | Tier 2/3 intent — requires human authorization |
-| Default policies | Standing rules (Tier 0) — pre-authorized, no intent needed |
-| Auto-proceed policies | Tier 1 tactical — issue is sufficient intent, proceed if validation passes |
-| Reject/Escalate policies | `requires-manual-review` label — split verdict or safety concern |
-| Escalation mechanism | Label state machine transition to blocked state |
+| Human-driven touchpoints (define-feature) | Tier 2/3 intent — requires human authorization; no autonomous agent definition needed |
+| Default policies | Encoded in the autonomous agent definition as direct instructions |
+| Auto-proceed policies | Encoded in the agent definition + validated by post-script |
+| Reject/Escalate policies | Hard stops in the post-script; `requires-manual-review` label via post-script |
+| Escalation mechanism | Post-script applies label and blocks further pipeline stages |
+| Cross-cutting policies (XC-1, XC-2) | Pre-script supplies credentials and context before agent runs |
 
 ### What reviewers should evaluate
 
 For each policy, reviewers should ask:
 
-1. **Is the autonomous action safe?** Could it produce an irreversible bad outcome (data loss, security exposure, broken production)? If yes, the policy should escalate rather than auto-proceed.
+1. **Is the autonomous action safe?** Could it produce an irreversible bad outcome (data loss, security exposure, broken production)? If yes, the policy should be enforced by the post-script (hard stop), not just the agent definition (which an LLM could deviate from).
 2. **Is the autonomous action correct?** Does the deterministic default match what an experienced engineer would decide in >90% of cases? Edge cases should escalate, not guess.
-3. **Is the policy enforceable by an orchestration layer?** Could a scripted pipeline unambiguously apply this policy at the touchpoint without LLM judgment, or does it require interpretation that only the skill's agent could provide? Policies that require interpretation should be decomposed into deterministic checks.
+3. **Which layer should enforce it?** Agent definition (soft — the LLM follows instructions), pre-script (context setup — deterministic), or post-script (hard gate — deterministic and non-bypassable)? Safety-critical policies (#35 secrets, #32 API mismatches) must be post-script enforced. Procedural defaults (#8 scaffold CONVENTIONS.md) can be agent-definition only.
 
 ### What this document is NOT
 
-- **Not a skill modification.** The policies are consumed by the orchestration layer, not compiled into skill instructions. Skills remain the same for interactive use.
-- **Not a policy engine.** This document defines the policies; deliverable #12 (90-day phase — Policy Engine Integration) builds the mechanism that reads and enforces them at runtime.
-- **Not changing interactive mode.** When a human runs `/implement-task`, the skill behaves exactly as it does today. These policies only apply when an automated pipeline invokes the skill.
+- **Not a runtime policy engine.** The policies are compiled into autonomous agent definitions and harness scripts at authoring time, not evaluated at runtime by a policy service.
+- **Not changing interactive skills.** The SKILL.md files stay unchanged. The autonomous agent definitions are separate artifacts that encode these policies as direct instructions.
+- **Not yet implemented.** The autonomous agent definitions and harness scripts do not exist yet. This document defines the policies; the implementation creates the corresponding agent definitions, pre-scripts, and post-scripts — following fullsend's three-layer model.
 
 ---
 
