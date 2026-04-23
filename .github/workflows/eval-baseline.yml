@@ -113,7 +113,10 @@ jobs:
               exit 0
             fi
             echo "Push failed (attempt ${attempt}/3), rebasing on latest main..."
-            git pull --rebase origin main
+            if ! git pull --rebase origin main; then
+              echo "::error::Rebase failed on attempt ${attempt} — manual intervention required"
+              exit 1
+            fi
           done
           echo "::error::Push failed after 3 attempts"
           exit 1
