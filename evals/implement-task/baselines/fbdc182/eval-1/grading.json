@@ -1,0 +1,46 @@
+{
+  "eval_id": 1,
+  "pass_rate": 1.0,
+  "assertions": [
+    {
+      "assertion": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "pass": true,
+      "evidence": "plan.md Pre-Implementation Inspection section lists all 4 target files: advisory/endpoints/get.rs (line 17), advisory/service/advisory.rs (line 19), advisory/model/summary.rs (line 20), common/src/error.rs (line 24). Also lists 7 additional files for sibling analysis."
+    },
+    {
+      "assertion": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "pass": true,
+      "evidence": "Plan lists exactly: MODIFY advisory/model/mod.rs, advisory/service/advisory.rs, advisory/endpoints/mod.rs; CREATE advisory/model/severity_summary.rs, advisory/endpoints/severity_summary.rs, tests/api/advisory_summary.rs. All match task scope. 'Files NOT Modified' section explicitly excludes server/src/main.rs."
+    },
+    {
+      "assertion": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "pass": true,
+      "evidence": "Plan sections 4, 5, 6 list: modules/fundamental/src/advisory/model/severity_summary.rs, modules/fundamental/src/advisory/endpoints/severity_summary.rs, tests/api/advisory_summary.rs."
+    },
+    {
+      "assertion": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "pass": true,
+      "evidence": "Plan sections 1, 2, 3 list: advisory/model/mod.rs, advisory/service/advisory.rs, advisory/endpoints/mod.rs."
+    },
+    {
+      "assertion": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "pass": true,
+      "evidence": "Commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' with 'Implements TC-9201' in footer. Follows type(scope): description format per Conventional Commits spec."
+    },
+    {
+      "assertion": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "pass": true,
+      "evidence": "plan.md commit command includes --trailer=\"Assisted-by: Claude Code\" (line 111)."
+    },
+    {
+      "assertion": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1)",
+      "pass": true,
+      "evidence": "plan.md line 4: '**Branch**: `TC-9201`'."
+    },
+    {
+      "assertion": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "pass": true,
+      "evidence": "conventions.md has dedicated sections: 'Error Handling' documents Result<T, AppError> with .context() wrapping; 'Module Structure' documents model/ + service/ + endpoints/ three-layer layout. Also documents 8 additional convention categories."
+    }
+  ]
+}

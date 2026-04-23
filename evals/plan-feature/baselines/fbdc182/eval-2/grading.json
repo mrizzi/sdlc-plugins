@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "impact-map.md contains a dedicated 'Ambiguities Flagged' section with exactly 4 named ambiguities: Ambiguity 1 ('What does faster mean?'), Ambiguity 2 ('What does more relevant results mean?'), Ambiguity 3 ('What does Add filters mean?'), and Ambiguity 4 ('Which search entities are in scope?'). Each is a distinct, concrete ambiguity derived from the feature description."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "impact-map.md contains an 'Out of Scope' section that explicitly names 'Better UI (non-MVP)' and states: 'No design mockups or Figma links are provided', 'No frontend repository is included in scope or referenced in the repository structure', and 'UI changes require a defined design contract before any meaningful task decomposition.' It concludes: 'This item is excluded from all tasks.'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All four task files (task-1 through task-4) open with '## Repository', contain '## Description', '## Files to Modify' or '## Files to Create', '## Implementation Notes', '## Acceptance Criteria', and '## Test Requirements' sections, matching the template structure. For example task-1 has Repository, Description, Files to Modify, Files to Create, Implementation Notes, Reuse Candidates, Acceptance Criteria, Test Requirements, and Verification Commands — all valid template sections."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Every task file contains an '**Assumptions pending clarification**:' block inside the Description section. Task-1: 'Target columns are name and description on each entity.' Task-2: 'The existing SearchService...performs text matching...If it delegates to per-entity services...this task may need to extend those services as well.' Task-3: 'Filterable fields are severity...and license...No other filter fields are assumed.' Task-4: 'The existing test harness in tests/api/search.rs already sets up a test PostgreSQL database.' All are explicitly labeled 'Assumptions pending clarification'."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All four task files begin with '## Repository' followed by 'trustify-backend' as the sole repository name. Task-1 line 1-2: '## Repository / trustify-backend'. Task-2 line 1-2: '## Repository / trustify-backend'. Task-3 line 1-2: '## Repository / trustify-backend'. Task-4 line 1-2: '## Repository / trustify-backend'. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All four task files contain all three required sections. Task-1: '## Description' (line 4), '## Acceptance Criteria' (line 47), '## Test Requirements' (line 53). Task-2: '## Description' (line 4), '## Acceptance Criteria' (line 41), '## Test Requirements' (line 48). Task-3: '## Description' (line 4), '## Acceptance Criteria' (line 50), '## Test Requirements' (line 58). Task-4: '## Description' (line 4), '## Acceptance Criteria' (line 42), '## Test Requirements' (line 49). All sections have substantive content."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All referenced file paths exist in repo-backend.md's directory tree. Task-1 Files to Modify: 'migration/src/lib.rs' (present in manifest). Task-1 Files to Create: 'migration/src/m0002_search_fts_indexes/mod.rs' (new migration, follows pattern of existing 'migration/src/m0001_initial/mod.rs' in manifest). Task-2 Files to Modify: 'modules/search/src/service/mod.rs' (present in manifest at line 91). Task-3 Files to Modify: 'modules/search/src/endpoints/mod.rs' (present in manifest at line 93) and 'modules/search/src/service/mod.rs' (present). Task-4 Files to Modify: 'tests/api/search.rs' (present in manifest at line 113). No paths were invented outside the manifest structure."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task-1 Implementation Notes cite 'migration/src/m0001_initial/mod.rs', 'MigrationTrait', 'up()' and 'down()' methods, 'manager.get_connection()', and includes concrete SQL. Task-2 cites 'modules/search/src/service/mod.rs', 'Statement::from_sql_and_values', 'common/src/error.rs', 'common/src/model/paginated.rs', 'PaginatedResults<T>', concrete SQL patterns. Task-3 cites 'modules/search/src/endpoints/mod.rs', Axum's 'Query<T>' extractor, 'entity/src/advisory.rs', 'entity/src/package_license.rs', 'common/src/db/query.rs', 'modules/fundamental/src/advisory/endpoints/list.rs'. Task-4 cites 'tests/api/sbom.rs', 'tests/api/advisory.rs', 'assert_eq!(resp.status(), StatusCode::OK)', 'std::time::Instant', 'PaginatedResults<T>'. All are specific paths and symbols from the repository manifest."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}
