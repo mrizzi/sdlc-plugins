@@ -10,7 +10,7 @@
         "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
         "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
         "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
-        "The plan includes modifying the 2 files listed in Files to Modify: advisory/service/mod.rs and advisory/endpoints/mod.rs",
+        "The plan includes modifying the 2 files listed in Files to Modify: advisory/service/advisory.rs and advisory/endpoints/mod.rs",
         "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
         "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
         "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1)",
