@@ -5,6 +5,28 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-04-23
+
+### Added
+
+- Eval suite for `implement-task` skill
+- Eval suite for `verify-pr` skill
+
+### Changed
+
+- Added cross-section reference consistency check to implement-task Step 9
+- Strengthened implement-task §1.6 to explicitly stop on incomplete input
+
+### Fixed
+
+- Eval fixture corrections: Axum framework syntax alignment, service file path, model wiring file
+- CI: guard git pull --rebase against set -e abort
+- CI: add pull-rebase retry loop to eval-baseline push
+
+### Documentation
+
+- Added framework syntax alignment convention for eval fixtures
+
 ## [0.7.0] - 2026-04-22
 
 ### Added
