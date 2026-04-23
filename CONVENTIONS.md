@@ -60,6 +60,13 @@ Not applicable — this is a documentation repository with no runtime code.
 - **Fixture documentation**: Eval and test fixture files must include a leading comment header in the file's native comment syntax (e.g., `<!-- ... -->` for Markdown/HTML, `// ...` for JSON with comments, `# ...` for YAML) explaining that the content is deliberate test material. Use the canonical prefixes below so tooling (linters, scanners, grep filters) can reliably identify annotated fixtures. Two categories require annotation:
   - **Adversarial fixtures** — files containing intentionally adversarial, malicious-looking, or unusual content (e.g., injection vectors, malformed input, security-sensitive patterns). Use the prefix `ADVERSARIAL TEST FIXTURE — <purpose>` (e.g., `<!-- ADVERSARIAL TEST FIXTURE — contains intentional injection patterns for eval testing -->`).
   - **Synthetic data fixtures** — files representing synthetic or mock entities (e.g., fake repository structures, mock Jira issues, fabricated API responses). Use the prefix `SYNTHETIC TEST DATA — <purpose>` (e.g., `<!-- SYNTHETIC TEST DATA — names, URLs, and identifiers are fictional -->`).
+- **Framework syntax alignment in eval fixtures**: When eval fixture task descriptions reference framework-specific API patterns (route registration, middleware, extractors, response types), the syntax must match the framework declared in the companion repository manifest fixture. This prevents confusing the skill being evaluated with mismatched framework idioms.
+  - **Rule**: Cross-check every framework-specific code reference in a task fixture against the `Key Conventions` section of the corresponding `repo-*.md` manifest. If the manifest declares a framework, all code patterns in the task fixture must use that framework's syntax.
+  - **Example** — repo manifest declares `Framework: Axum for HTTP`:
+    - **Correct**: `Router::new().route("/path", get(handler))` (Axum route registration)
+    - **Incorrect**: `.service(web::resource("/path").route(web::get().to(handler)))` (Actix-Web route registration)
+    - **Correct**: `Json` extractor for response serialization (Axum)
+    - **Incorrect**: `HttpResponse::Ok().json(...)` (Actix-Web response pattern)
 
 ## Commit Messages
 
