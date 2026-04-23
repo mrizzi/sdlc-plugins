@@ -104,7 +104,16 @@ jobs:
           git add evals/*/baselines/
           if git diff --cached --quiet; then
             echo "No baseline changes to commit"
-          else
-            git commit -m "chore(evals): create baselines for ${{ steps.discover.outputs.commit_hash }}"
-            git push
+            exit 0
           fi
+          git commit -m "chore(evals): create baselines for ${{ steps.discover.outputs.commit_hash }}"
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "Push succeeded on attempt ${attempt}"
+              exit 0
+            fi
+            echo "Push failed (attempt ${attempt}/3), rebasing on latest main..."
+            git pull --rebase origin main
+          done
+          echo "::error::Push failed after 3 attempts"
+          exit 1
