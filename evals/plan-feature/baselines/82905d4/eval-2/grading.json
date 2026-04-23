@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md contains an 'Ambiguities and Open Questions' section listing 5 explicit ambiguities: (1) 'No performance baseline or target for faster search', (2) 'No definition of more relevant results', (3) 'Add filters is completely unspecified', (4) 'Should be fast enough is not a measurable NFR', (5) 'Don't break existing functionality lacks scope'. All 5 exceed the minimum of 3."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "impact-map.md has an 'Excluded from Scope' section with 'Better UI (Non-MVP)' subsection stating: 'cannot be planned in this scope for two reasons: 1. No design mockups or specifications exist... 2. No frontend repository is available — the only target repository is trustify-backend, which is a Rust REST API backend.' It concludes: 'This requirement is deferred entirely until design mockups are provided and a frontend repository is identified.'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 5 task files follow the template structure from task-description-template.md. Each contains: ## Repository, ## Description, ## Files to Modify (and/or ## Files to Create), ## Implementation Notes, ## Acceptance Criteria, ## Test Requirements, ## Dependencies. Optional sections (## API Changes, ## Reuse Candidates, ## Verification Commands) are included where applicable and omitted where not, consistent with the template's 'Omit sections that don't apply' rule."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Tasks 1-4 each contain an explicit 'Assumption pending clarification' paragraph in their Description section. Task 1: 'We assume that the core searchable entities need GIN indexes on tsvector columns.' Task 2: 'We assume relevance is determined by PostgreSQL ts_rank scoring.' Task 3: 'We assume the following filters based on the data model: entity type, advisory severity, and date range... We assume filters combine with AND logic.' Task 4: 'We assume a short cache TTL (e.g., 60 seconds) is appropriate.' Task 5 (integration tests) does not fill in missing details — it tests the features defined by tasks 1-4 — and therefore has no gap to fill with assumptions."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 task files begin with '## Repository\\ntrustify-backend' — a single repository name on its own line. No task lists multiple repositories. Verified in: task-1-search-indexes-migration.md (line 1-2), task-2-search-relevance-ranking.md (line 1-2), task-3-search-filters.md (line 1-2), task-4-search-caching.md (line 1-2), task-5-search-integration-tests.md (line 1-2)."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 task files contain all three required section headings: Task 1: '## Description' (line 4), '## Acceptance Criteria' (line 22), '## Test Requirements' (line 28). Task 2: '## Description' (line 4), '## Acceptance Criteria' (line 29), '## Test Requirements' (line 37). Task 3: '## Description' (line 4), '## Acceptance Criteria' (line 33), '## Test Requirements' (line 42). Task 4: '## Description' (line 4), '## Acceptance Criteria' (line 20), '## Test Requirements' (line 27). Task 5: '## Description' (line 4), '## Acceptance Criteria' (line 24), '## Test Requirements' (line 30). All have '## Test Requirements' as a distinct section heading, not just '## Verification Commands'."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All 'Files to Modify' paths exist in repo-backend.md: migration/src/lib.rs (line 18), modules/search/src/service/mod.rs (line 91), modules/search/src/endpoints/mod.rs (line 93), common/src/db/query.rs (line 27), server/src/main.rs (line 107), tests/api/search.rs (line 113). 'Files to Create' paths follow established patterns: migration/src/m0002_search_indexes/mod.rs follows the m0001_initial/mod.rs pattern (line 19-20), modules/search/src/model/mod.rs follows the model/ directory pattern in other modules (e.g., modules/fundamental/src/sbom/model/, line 41). No invented or fabricated paths found."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references: migration/src/m0001_initial/mod.rs, entity/src/sbom.rs, entity/src/advisory.rs, entity/src/package.rs; mentions SeaORM MigrationTrait, up()/down() methods, GIN indexes. Task 2 references: modules/search/src/service/mod.rs, common/src/db/query.rs, modules/fundamental/src/advisory/model/summary.rs, common/src/model/paginated.rs, common/src/error.rs; mentions SearchService, ts_rank, PaginatedResults<T>, Result<T, AppError>, .context(). Task 3 references: modules/search/src/endpoints/mod.rs, entity/src/advisory.rs, modules/fundamental/src/sbom/, modules/fundamental/src/advisory/, common/src/model/paginated.rs; mentions Axum Query<SearchFilter>, SeaORM .filter(), Condition::all(). Task 4 references: modules/search/src/endpoints/mod.rs, server/src/main.rs; mentions tower-http, SetResponseHeader, Cache-Control patterns. Task 5 references: tests/api/search.rs, tests/api/sbom.rs, tests/api/advisory.rs, common/src/model/paginated.rs; mentions assert_eq!(resp.status(), StatusCode::OK) pattern."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

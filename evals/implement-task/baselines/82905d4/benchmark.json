@@ -1,0 +1,13 @@
+{
+  "run_summary": {
+    "pass_rate": { "mean": 1.0, "stddev": 0.0 },
+    "time_seconds": { "mean": 115.65, "stddev": 59.14 },
+    "tokens": { "mean": 25989, "stddev": 8570 }
+  },
+  "per_eval": [
+    { "id": 1, "pass_rate": 1.0, "assertions_passed": 8, "assertions_total": 8, "duration_seconds": 213.4, "tokens": 22303 },
+    { "id": 2, "pass_rate": 1.0, "assertions_passed": 5, "assertions_total": 5, "duration_seconds": 54.5, "tokens": 27600 },
+    { "id": 3, "pass_rate": 1.0, "assertions_passed": 6, "assertions_total": 6, "duration_seconds": 100.8, "tokens": 38761 },
+    { "id": 4, "pass_rate": 1.0, "assertions_passed": 6, "assertions_total": 6, "duration_seconds": 93.9, "tokens": 15290 }
+  ]
+}
