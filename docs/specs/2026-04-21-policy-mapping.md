@@ -26,16 +26,25 @@ Each touchpoint gets one of five policy types:
 
 This section explains how the policies in this document will be applied, so reviewers can evaluate each policy with the intended mechanism in mind.
 
-### Mechanism: conditional behavior in SKILL.md
+### Principle: skills don't decide autonomy
 
-Each policy will be embedded directly into the corresponding skill's SKILL.md as a conditional branch at the touchpoint where the human interaction currently occurs. The skills will gain an **execution mode** — `interactive` (current behavior, human-in-the-loop) or `autonomous` (policy-driven, no human prompts). The mode is determined by the caller: a human running `/implement-task` operates in interactive mode; an automated pipeline triggering the same skill operates in autonomous mode.
+Following fullsend's architecture (ADR 0018 — scripted pipelines, ADR 0002 — label state machine), skills are deterministic specifications — they describe what an agent does at each step, not whether a human should be involved. The decision to prompt a human or let the agent proceed is made by the **orchestration layer** outside the skill, not by conditional branches inside it.
 
-At each touchpoint, the skill instructions will read:
+This means the policies in this document are **not embedded into SKILL.md files as if/else branches**. Instead:
 
-> **Interactive mode:** \<current behavior — ask the user\>
-> **Autonomous mode:** \<policy from this document\>
+1. **Skills stay unchanged.** Each SKILL.md continues to describe its steps as it does today — including the human interaction points. The skills don't gain a "mode" flag.
+2. **The orchestration layer consults this document.** When a pipeline invokes a skill autonomously, the pipeline is responsible for handling each touchpoint according to the policy defined here. At a touchpoint where the skill says "ask the user," the pipeline either supplies the answer prescribed by the policy (for Default and Auto-proceed types) or blocks execution and escalates (for Reject/Escalate types).
+3. **Escalation is platform-native.** The `requires-manual-review` label on a Jira issue is the escalation signal. The pipeline sets it; a human clears it. This aligns with fullsend's label state machine where labels govern workflow transitions, not agent-internal logic.
 
-This is a mechanical transformation — the policies below are the autonomous-mode instructions that get inserted alongside the existing interactive-mode instructions. No new infrastructure is needed; the skills are natural language specifications, and the conditional is just another paragraph.
+### Relationship to fullsend concepts
+
+| This document | fullsend equivalent |
+|---|---|
+| Human-driven touchpoints (define-feature) | Tier 2/3 intent — requires human authorization |
+| Default policies | Standing rules (Tier 0) — pre-authorized, no intent needed |
+| Auto-proceed policies | Tier 1 tactical — issue is sufficient intent, proceed if validation passes |
+| Reject/Escalate policies | `requires-manual-review` label — split verdict or safety concern |
+| Escalation mechanism | Label state machine transition to blocked state |
 
 ### What reviewers should evaluate
 
@@ -43,13 +52,13 @@ For each policy, reviewers should ask:
 
 1. **Is the autonomous action safe?** Could it produce an irreversible bad outcome (data loss, security exposure, broken production)? If yes, the policy should escalate rather than auto-proceed.
 2. **Is the autonomous action correct?** Does the deterministic default match what an experienced engineer would decide in >90% of cases? Edge cases should escalate, not guess.
-3. **Is the boundary between interactive and autonomous clear?** Could an implementer read the policy and unambiguously translate it into a skill instruction, or is it vague enough to invite interpretation?
+3. **Is the policy enforceable by an orchestration layer?** Could a scripted pipeline unambiguously apply this policy at the touchpoint without LLM judgment, or does it require interpretation that only the skill's agent could provide? Policies that require interpretation should be decomposed into deterministic checks.
 
 ### What this document is NOT
 
-- **Not a policy engine.** There is no runtime that evaluates policies. The policies are compiled into skill instructions at authoring time.
-- **Not a permissions system.** The execution mode is not configurable per-repo or per-team yet. That is deliverable #12 (90-day phase — Policy Engine Integration), which builds on this document.
-- **Not changing interactive mode.** Every policy preserves the current human-driven behavior as the interactive-mode path. Nothing changes for users running skills manually.
+- **Not a skill modification.** The policies are consumed by the orchestration layer, not compiled into skill instructions. Skills remain the same for interactive use.
+- **Not a policy engine.** This document defines the policies; deliverable #12 (90-day phase — Policy Engine Integration) builds the mechanism that reads and enforces them at runtime.
+- **Not changing interactive mode.** When a human runs `/implement-task`, the skill behaves exactly as it does today. These policies only apply when an automated pipeline invokes the skill.
 
 ---
 
