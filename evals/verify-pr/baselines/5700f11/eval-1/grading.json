@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "report.md lines 20-24 show all 5 acceptance criteria as PASS: (1) single license filter, (2) comma-separated filter, (3) 400 Bad Request for invalid license, (4) pagination integration, (5) unchanged response shape. Each criterion also has a dedicated file (criterion-1.md through criterion-5.md) with detailed reasoning, all marked PASS."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "report.md line 7: 'Scope Containment | PASS | All 3 changed files match the task specification: 2 modified files (list.rs, service/mod.rs) and 1 created file (tests/api/package.rs) are exactly as listed in Files to Modify and Files to Create'. Lines 29-31 enumerate the 3 files with their task mapping. Line 33: 'No out-of-scope files. No unimplemented files.'"
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "report.md line 5: 'Review Feedback | N/A | No reviews or comments exist on the PR'. Line 6: 'Root-Cause Investigation | N/A | No sub-tasks were created in Step 4 or Step 10; nothing to investigate'. No sub-task creation is mentioned anywhere in the outputs."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All 6 output files are verification/report markdown files (report.md, criterion-1.md through criterion-5.md). None of the outputs indicate any code files were created, modified, or written to. The report content is purely observational — it describes reading diffs, checking criteria, and analyzing test coverage. No code modifications are mentioned or performed."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'All checks pass. The PR correctly implements the license filter feature as specified in TC-9101, with proper input validation, pagination integration, and comprehensive test coverage. No issues requiring attention.' followed by the AI-generated attribution. No merge action is taken or recommended — the report presents findings without auto-merging."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "report.md line 10: 'Sensitive Patterns | PASS | No passwords, secrets, API keys, private keys, or .env references found in the diff'."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

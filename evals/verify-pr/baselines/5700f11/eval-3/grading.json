@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states '## Classification: Code Change Request' and '## Action\\nSub-task created. See subtask-30001.md for the full sub-task description.' The file subtask-30001.md exists with the full sub-task content."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md states '## Classification: Code Change Request' and '## Action\\nSub-task created. See subtask-30002.md for the full sub-task description.' The file subtask-30002.md exists with the full sub-task content."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states '## Classification: Nit' and '## Action\\nNo sub-task created.' No subtask-30003.md file exists in the outputs directory."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md states '## Classification: Question' and '## Action\\nNo sub-task created.' No subtask-30004.md file exists in the outputs directory."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains sections: '## Repository' (trustify-backend), '## Description', '## Files to Modify', '## Implementation Notes', '## Acceptance Criteria'. subtask-30002.md contains sections: '## Repository' (trustify-backend), '## Description', '## Files to Modify', '## Implementation Notes', '## Acceptance Criteria'. Both files have all five required sections."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains '## Target PR\\nhttps://github.com/trustify/trustify-backend/pull/744'. subtask-30002.md contains '## Target PR\\nhttps://github.com/trustify/trustify-backend/pull/744'."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains '## Review Context' with the original comment quoted: 'The `soft_delete` method should run all three UPDATE statements inside a single database transaction...' subtask-30002.md contains '## Review Context' with the original comment quoted: 'The migration should also add an index on `deleted_at` for the sbom table...'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only classification files (review-30001.md through review-30004.md), sub-task descriptions (subtask-30001.md, subtask-30002.md), and report.md. No code files (e.g., .rs, .py, .js) are present. The report itself describes read-only verification activities (classification, scope checking, acceptance criteria checking) with no mention of code modifications."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001, 30002, 30003, 30004) have corresponding classification files (review-30001.md through review-30004.md). The report.md references all four comments with their classifications: '1. Comment 30001 -- Classified as code change request', '2. Comment 30002 -- Classified as code change request', '3. Comment 30003 -- Classified as nit', '4. Comment 30004 -- Classified as question'. The report states 'The PR has one review from reviewer-a with state CHANGES_REQUESTED containing 4 comment threads'."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md contains no mention of merging, auto-merging, or any merge action. The overall status is 'WARN' with findings about review feedback and scope containment. The report is purely a verification report with no merge operations."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

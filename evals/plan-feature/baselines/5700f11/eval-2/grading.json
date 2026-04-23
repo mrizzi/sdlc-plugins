@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact map (impact-map.md) contains an 'Ambiguities and Open Questions' section listing 5 distinct ambiguities: (1) '\"Faster\" has no measurable target' -- no latency targets or percentile goals provided, (2) '\"More relevant results\" is undefined' -- no definition of relevance, (3) '\"Add filters\" -- which filters, on which fields?' -- no specification of filterable fields or logic, (4) 'Non-functional requirements are unmeasurable' -- 'fast enough' and 'don't break existing functionality' are not testable, (5) 'Scope of \"search\" is unclear' -- ambiguity about whether it refers to unified search or entity-specific endpoints. All 5 are clearly flagged with explanations and labeled assumptions."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "The impact map (impact-map.md) has an explicit 'Out of Scope' section titled '\"Better UI\" (Non-MVP)' stating two reasons for exclusion: '1. No frontend repository: The trustify-backend repository is a Rust backend service. UI changes would require a separate frontend repository which is not part of this planning scope.' and '2. No design specifications: \"Make it look nicer\" provides no actionable design direction. UI work requires mockups, design tokens, or at minimum a description of what \"nicer\" means. This requirement cannot be planned without design input.' It concludes: 'This item should be tracked as a separate feature once design mockups are available and a frontend repository is identified.'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 4 task files follow the template format from task-description-template.md. Each contains the required sections: ## Repository (single repo name), ## Description, ## Files to Modify, ## Implementation Notes, ## Acceptance Criteria (checkbox format), ## Test Requirements (checkbox format). Optional sections are used appropriately: Files to Create (tasks 1, 3), API Changes (tasks 2, 3), Reuse Candidates (tasks 1-4), Verification Commands (task 1), Dependencies (tasks 2-4). Sections not applicable are omitted per template rules (e.g., task 4 has no Files to Create or API Changes)."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Tasks that fill in missing details explicitly label assumptions with 'ASSUMPTION -- pending clarification': Task 1 has 1 assumption about which columns to index. Task 2 has 2 assumptions about relevance definition (ts_rank) and performance SLA (p95 < 500ms). Task 3 has 2 assumptions about which filters to implement and AND-only logic. The impact map also labels 5 assumptions under each ambiguity. All use the consistent label format 'ASSUMPTION -- pending clarification' followed by the assumed detail and a note that it needs validation."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 4 task descriptions begin with '## Repository' followed by a single repository name 'trustify-backend': task-1-search-migration.md line 1-2, task-2-search-relevance.md line 1-2, task-3-search-filters.md line 1-2, task-4-search-tests.md line 1-2. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 4 tasks contain all three required sections: task-1-search-migration.md has ## Description (line 4), ## Acceptance Criteria (line 25, 6 criteria), ## Test Requirements (line 33, 3 requirements). task-2-search-relevance.md has ## Description (line 4), ## Acceptance Criteria (line 32, 6 criteria), ## Test Requirements (line 39, 4 requirements). task-3-search-filters.md has ## Description (line 4), ## Acceptance Criteria (line 35, 10 criteria), ## Test Requirements (line 47, 7 requirements). task-4-search-tests.md has ## Description (line 4), ## Acceptance Criteria (line 24, 5 criteria), ## Test Requirements (line 31, 13 requirements)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All Files to Modify paths exist in the repo-backend.md manifest: Task 1 modifies migration/src/lib.rs (manifest line 18). Task 2 modifies modules/search/src/service/mod.rs (manifest line 91), modules/search/src/endpoints/mod.rs (manifest line 93), modules/search/Cargo.toml (manifest line 94). Task 3 modifies modules/search/src/endpoints/mod.rs (manifest line 93), modules/search/src/service/mod.rs (manifest line 91). Task 4 modifies tests/api/search.rs (manifest line 113). Files to Create entries are new files in existing directories: Task 1 creates migration/src/m0002_search_indexes/mod.rs (under migration/src/ which exists, following the m0001_initial pattern). Task 3 creates modules/search/src/model/mod.rs (under modules/search/src/ which exists, following the model/ pattern from other modules like modules/fundamental/src/sbom/model/mod.rs at manifest line 41)."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference: migration/src/m0001_initial/mod.rs (migration pattern), migration/src/lib.rs (registration), entity/src/sbom.rs, entity/src/advisory.rs, entity/src/package.rs (table schemas). Task 2 references: modules/search/src/service/mod.rs (SearchService), common/src/db/query.rs (query builder helpers), common/src/model/paginated.rs (PaginatedResults<T>), common/src/error.rs (AppError enum), to_tsquery() and ts_rank() functions, Result<T, AppError> pattern with .context() wrapping. Task 3 references: common/src/db/query.rs (shared query builder), modules/fundamental/src/sbom/endpoints/list.rs (list endpoint pattern), AdvisorySummary in modules/fundamental/src/advisory/model/summary.rs, common/src/error.rs (AppError for 400 errors). Task 4 references: tests/api/search.rs, tests/api/sbom.rs, tests/api/advisory.rs (test patterns), tests/Cargo.toml, assert_eq!(resp.status(), StatusCode::OK) pattern, StatusCode::BAD_REQUEST for negative tests."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

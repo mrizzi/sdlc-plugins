@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "Tasks target both 'trustify-backend' and 'trustify-ui' repositories with at least one task per repo",
+      "passed": true,
+      "evidence": "Tasks 1-3 each have '## Repository\\ntrustify-backend' and tasks 4-6 each have '## Repository\\ntrustify-ui'. Three tasks per repo, both repos represented."
+    },
+    {
+      "text": "Backend tasks have lower task numbers than the frontend tasks that depend on them",
+      "passed": true,
+      "evidence": "Backend tasks are numbered 1, 2, 3. Frontend tasks are numbered 4, 5, 6. Task 4 (frontend) depends on Task 2 (backend). Task 5 depends on Task 4. Task 6 depends on Task 5. Task 2 depends on Task 1. Task 3 depends on Task 2. All backend tasks that frontend tasks depend on have lower numbers."
+    },
+    {
+      "text": "Frontend tasks reference Figma design context mentioning specific PatternFly components and visual specifications",
+      "passed": true,
+      "evidence": "Task 5 extensively references Figma: 'Figma header toolbar', 'Figma Compare button', 'Figma Export dropdown', 'Figma diff sections', 'Figma empty state', 'Figma loading state', 'Figma severity display'. It mentions specific PatternFly components: Select (single, typeahead variant), Button, Dropdown, ExpandableSection, Badge, EmptyState, CodeBranchIcon, Skeleton, Table (composable). It includes visual specs like badge colors (green, red, blue, yellow), Critical row highlighting, and disabled states. Task 4 mentions 'Figma design context' in its Implementation Notes for the SbomComparison interface shape."
+    },
+    {
+      "text": "At least one frontend task explicitly depends on a backend task in its Dependencies section",
+      "passed": true,
+      "evidence": "Task 4 (frontend) has a Dependencies section stating: 'Depends on: Task 2 — Backend comparison endpoint (the API must exist for the frontend to call it)'. Task 2 is a backend task."
+    },
+    {
+      "text": "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+      "passed": true,
+      "evidence": "Backend tasks reference paths from repo-backend.md: Task 1 references modules/fundamental/src/sbom/model/mod.rs, modules/fundamental/src/sbom/service/mod.rs, modules/fundamental/src/sbom/model/summary.rs, entity/src/sbom_package.rs, common/src/error.rs, etc. Task 2 references modules/fundamental/src/sbom/endpoints/mod.rs, modules/fundamental/src/sbom/endpoints/get.rs, common/src/db/query.rs. Task 3 references tests/api/sbom.rs, modules/ingestor/src/service/mod.rs. Frontend tasks reference paths from repo-frontend.md: Task 4 references src/api/models.ts, src/api/rest.ts, src/api/client.ts, src/hooks/useSbomById.ts. Task 5 references src/routes.tsx, src/hooks/useSboms.ts, src/components/SeverityBadge.tsx, src/components/EmptyStateCard.tsx, src/pages/SbomDetailPage/components/PackageTable.tsx. Task 6 references tests/mocks/handlers.ts, tests/mocks/fixtures/sboms.json, tests/e2e/sbom-list.spec.ts. All referenced existing paths match their respective repo manifests."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 6 tasks have a '## Repository' section containing exactly one repository name: Tasks 1-3 contain only 'trustify-backend', Tasks 4-6 contain only 'trustify-ui'. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 6 tasks contain '## Description', '## Acceptance Criteria', and '## Test Requirements' sections. Verified in: task-1 (lines 4, 37, 49), task-2 (lines 4, 31, 39), task-3 (lines 4, 32, 40), task-4 (lines 4, 29, 37), task-5 (lines 4, 43, 55), task-6 (lines 4, 37, 44)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": true,
+      "evidence": "Files to Modify paths all exist in the manifests: Task 1 modifies modules/fundamental/src/sbom/model/mod.rs and service/mod.rs (both in repo-backend.md tree). Task 2 modifies modules/fundamental/src/sbom/endpoints/mod.rs (in repo-backend.md). Task 3 modifies tests/api/sbom.rs (in repo-backend.md). Task 4 modifies src/api/models.ts and src/api/rest.ts (in repo-frontend.md). Task 5 modifies src/routes.tsx (in repo-frontend.md). Task 6 modifies tests/mocks/handlers.ts (in repo-frontend.md). Files to Create are new files placed under existing directories from the manifests (e.g., modules/fundamental/src/sbom/model/comparison.rs under the existing model/ directory, src/hooks/useSbomComparison.ts under the existing hooks/ directory). No invented paths outside the repo structures."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1: references modules/fundamental/src/sbom/model/summary.rs, entity/src/sbom_package.rs, common/src/error.rs, mentions Serialize/Deserialize/utoipa::ToSchema patterns. Task 2: references modules/fundamental/src/sbom/endpoints/get.rs, common/src/db/query.rs, mentions Axum Query extractor and Result<Json<T>, AppError> pattern. Task 3: references tests/api/sbom.rs, modules/ingestor/src/service/mod.rs, mentions IngestorService and StatusCode::OK assertion pattern. Task 4: references src/api/client.ts, src/hooks/useSbomById.ts, mentions fetchSboms() pattern, useQuery with query key and enabled option. Task 5: references src/hooks/useSboms.ts, src/components/SeverityBadge.tsx, src/components/EmptyStateCard.tsx, src/pages/SbomDetailPage/components/PackageTable.tsx, mentions useSearchParams, CodeBranchIcon. Task 6: references tests/mocks/fixtures/sboms.json, tests/e2e/sbom-list.spec.ts, src/pages/SbomListPage/SbomListPage.test.tsx, mentions MSW handler patterns and React Testing Library render helpers."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

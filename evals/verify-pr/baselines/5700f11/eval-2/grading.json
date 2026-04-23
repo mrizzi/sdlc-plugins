@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "report.md Acceptance Criteria Breakdown table marks criteria 1 (FAIL: 'Filtering logic is inverted'), 3 (FAIL: 'Invalid values are silently accepted via .unwrap_or(0)'), 4 (FAIL: 'filtering conditions are inverted'), and 5 (FAIL: 'No threshold_applied field was added') as FAIL. Each identifies specific gaps between the diff and task requirements. 4 of 6 criteria are marked FAIL."
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "criterion-3.md states: 'When an invalid value like \"invalid\" is passed, .position() returns None, and .unwrap_or(0) silently falls back to index 0 (which corresponds to \"critical\"). This means an invalid threshold value is treated identically to threshold=critical -- no error is returned to the client.' report.md also states: 'Invalid threshold values are silently accepted via .unwrap_or(0) instead of returning a 400 Bad Request.'"
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "criterion-5.md states: 'No threshold_applied field is present in the response struct or in the constructed response object. This criterion is not satisfied.' report.md item 3 states: 'Missing feature: No threshold_applied field (Criterion 5). The response does not include the required boolean field indicating whether filtering is active.'"
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md Test Quality row states: 'No test file was created; tests/api/advisory_summary.rs is entirely absent from the diff despite being listed under Files to Create and having 6 explicit Test Requirements.' report.md item 4 states: 'Missing tests: No test file created. The task requires creating tests/api/advisory_summary.rs with 6 integration tests covering threshold filtering, backward compatibility, invalid input, and 404 behavior. The entire file is absent from the PR diff.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only verification report files (report.md, criterion-1.md through criterion-6.md). All files are analysis and reporting documents. No code files were created or modified. The report analyzes the PR diff and identifies issues without making any changes to source code."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'Overall: FAIL' and a 'Summary of issues requiring attention' section listing 6 items for review. There is no mention of merging, approving, or any automated action taken on the PR. The report is structured as a verification checklist for human consumption."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md line 27: '### Overall: FAIL'. The Acceptance Criteria row shows 'FAIL | 2 of 6 criteria met'. Test Quality row shows 'FAIL'. Scope Containment shows 'FAIL'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}
