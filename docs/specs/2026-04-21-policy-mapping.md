@@ -26,6 +26,15 @@ Each touchpoint gets one of five policy types:
 
 This section explains how the policies in this document will be applied, so reviewers can evaluate each policy with the intended mechanism in mind.
 
+### fullsend references
+
+The three-layer model and enforcement concepts in this document are derived from fullsend's architecture:
+
+- [ADR 0002 — Initial fullsend design](https://github.com/fullsend-ai/fullsend/blob/main/docs/ADRs/0002-initial-fullsend-design.md) — label state machine, coordinator merge algorithm, shim dispatch
+- [ADR 0018 — Scripted pipeline for multi-agent orchestration](https://github.com/fullsend-ai/fullsend/blob/main/docs/ADRs/0018-scripted-pipeline-for-multi-agent-orchestration.md) — deterministic pipelines over LLM coordinators
+- [ADR 0020 — Composable single-responsibility agents](https://github.com/fullsend-ai/fullsend/blob/main/docs/ADRs/0020-composable-single-responsibility-agents-with-individual-sandboxes.md) — per-step agents with individual sandboxes
+- [ADR 0022 — Harness-level output schema enforcement](https://github.com/fullsend-ai/fullsend/blob/main/docs/ADRs/0022-harness-level-output-schema-enforcement.md) — validation loop with `max_iterations`, retry on schema failure
+
 ### How fullsend applies policies today
 
 Fullsend's agents run non-interactively (`claude --print --dangerously-skip-permissions --agent <agent.md>`). They never ask humans — they produce structured JSON output, and a deterministic harness decides what to do with it. Policy is enforced through three layers:
