@@ -22,6 +22,37 @@ Each touchpoint gets one of five policy types:
 
 ---
 
+## Application Strategy
+
+This section explains how the policies in this document will be applied, so reviewers can evaluate each policy with the intended mechanism in mind.
+
+### Mechanism: conditional behavior in SKILL.md
+
+Each policy will be embedded directly into the corresponding skill's SKILL.md as a conditional branch at the touchpoint where the human interaction currently occurs. The skills will gain an **execution mode** — `interactive` (current behavior, human-in-the-loop) or `autonomous` (policy-driven, no human prompts). The mode is determined by the caller: a human running `/implement-task` operates in interactive mode; an automated pipeline triggering the same skill operates in autonomous mode.
+
+At each touchpoint, the skill instructions will read:
+
+> **Interactive mode:** \<current behavior — ask the user\>
+> **Autonomous mode:** \<policy from this document\>
+
+This is a mechanical transformation — the policies below are the autonomous-mode instructions that get inserted alongside the existing interactive-mode instructions. No new infrastructure is needed; the skills are natural language specifications, and the conditional is just another paragraph.
+
+### What reviewers should evaluate
+
+For each policy, reviewers should ask:
+
+1. **Is the autonomous action safe?** Could it produce an irreversible bad outcome (data loss, security exposure, broken production)? If yes, the policy should escalate rather than auto-proceed.
+2. **Is the autonomous action correct?** Does the deterministic default match what an experienced engineer would decide in >90% of cases? Edge cases should escalate, not guess.
+3. **Is the boundary between interactive and autonomous clear?** Could an implementer read the policy and unambiguously translate it into a skill instruction, or is it vague enough to invite interpretation?
+
+### What this document is NOT
+
+- **Not a policy engine.** There is no runtime that evaluates policies. The policies are compiled into skill instructions at authoring time.
+- **Not a permissions system.** The execution mode is not configurable per-repo or per-team yet. That is deliverable #12 (90-day phase — Policy Engine Integration), which builds on this document.
+- **Not changing interactive mode.** Every policy preserves the current human-driven behavior as the interactive-mode path. Nothing changes for users running skills manually.
+
+---
+
 ## Cross-Cutting Policies
 
 These policies apply identically in every skill where the touchpoint appears.
