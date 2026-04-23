@@ -634,6 +634,45 @@ blocks, example output), verify internal consistency:
    the narrative (or the narrative describes something not reflected in the data
    structure), fix the inconsistency before proceeding.
 
+### Cross-section reference consistency
+
+When the task description or any structured document created during implementation
+contains multiple sections that reference file paths for the same logical entity
+(struct, service, module, component), verify that the paths are consistent across
+all sections.
+
+This catches errors where, for example, **Files to Modify** lists `service/mod.rs`
+for a symbol but **Implementation Notes** references `service/advisory.rs` for the
+same entity — a class of inconsistency that propagates into the implementation if
+not caught.
+
+1. **Collect file-path references per entity**: scan the task description's **Files to
+   Modify**, **Files to Create**, and **Implementation Notes** sections. For each
+   named entity (struct, service, module, component, type) that appears alongside a
+   file path, record the `(entity, file path, section)` triple.
+2. **Detect duplicates**: group the collected triples by entity name. If an entity
+   appears in more than one section, compare its file paths.
+3. **Flag mismatches**: if the same entity is associated with different file paths
+   across sections, list the inconsistency: the entity name, the conflicting paths,
+   and which sections contain each path.
+4. **Resolve before proceeding**: verify which path is correct by inspecting the
+   actual codebase (using Grep, Read, or Serena). Fix any inconsistent references
+   in the task inputs before implementing, or ask the user for guidance if both
+   paths are plausible.
+5. **Apply to generated documents**: if the implementation itself creates structured
+   documents with file-path references across sections (e.g., eval fixtures, task
+   descriptions, documentation), apply the same cross-section validation to those
+   output files before committing.
+
+> **Example output:**
+>
+> **Cross-section reference consistency results:**
+> - Entity `AdvisoryService` — **MISMATCH**:
+>   - Files to Modify: `modules/fundamental/src/advisory/service/mod.rs`
+>   - Implementation Notes: `modules/fundamental/src/advisory/service/advisory.rs`
+>   - Resolution: actual file is `service/mod.rs` — Implementation Notes path is incorrect
+> - Entity `SbomParser` — paths consistent across sections ✓
+
 ### Duplication check
 
 Search for functions, methods, or logic in the repository that overlap with the code you wrote.
