@@ -114,8 +114,9 @@ jobs:
             fi
             echo "Push failed (attempt ${attempt}/3), rebasing on latest main..."
             if ! git pull --rebase -X theirs origin main; then
-              # Resolve any remaining 'latest' symlink conflicts (ours is always newer after rebase)
-              for conflict in $(git diff --name-only --diff-filter=U 2>/dev/null); do
+              # In rebase, --theirs = the commit being replayed (our local baseline commit).
+              # Resolve 'latest' symlink conflicts in favor of our commit since it's newer.
+              while IFS= read -r conflict; do
                 case "$conflict" in
                   evals/*/baselines/latest)
                     git checkout --theirs "$conflict"
@@ -127,7 +128,7 @@ jobs:
                     exit 1
                     ;;
                 esac
-              done
+              done < <(git diff --name-only --diff-filter=U 2>/dev/null)
               if ! git rebase --continue --no-edit 2>/dev/null; then
                 echo "::error::Rebase --continue failed on attempt ${attempt}"
                 git rebase --abort 2>/dev/null || true
