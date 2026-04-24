@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md contains an 'Ambiguities Identified' section listing 5 ambiguities: (1) 'Search should be faster' - no specific latency targets given, (2) 'Results should be more relevant' - no ranking criteria specified, (3) 'Add filters' - no filter types specified, (4) 'Should be fast enough' - no NFR targets, (5) 'Don't break existing functionality' - no specific contract defined. All 5 map directly to vague language in the feature-ambiguous.md description, exceeding the required 3."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": false,
+      "evidence": "Searched all 6 output files for mentions of 'Better UI', 'non-MVP', 'mockup', 'frontend', 'design', 'scope', and 'exclud'. No output file mentions the 'Better UI' requirement at all. The impact map's ambiguities section does not address it, no task description discusses its exclusion, and there is no acknowledgment that it cannot be planned without design mockups or a frontend repository."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 5 task files follow the task-description-template.md format: each contains ## Repository, ## Description, ## Files to Modify (and/or ## Files to Create), ## Implementation Notes, ## Acceptance Criteria, and ## Test Requirements sections. Optional sections like ## API Changes (task 3), ## Verification Commands (tasks 1, 5), ## Reuse Candidates (all tasks), and ## Dependencies (tasks 2-5) are included where applicable. Section ordering and formatting match the template specification."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": false,
+      "evidence": "The impact map documents interpretations under 'Ambiguities Identified' using 'Interpreted as:' framing (e.g., 'No specific latency targets given. Interpreted as: add database indexing...'). However, neither the impact map nor any of the 5 task descriptions uses the word 'assumption' or labels items as 'pending clarification'. The impact map intro says 'these would be clarified with the product owner before proceeding' but this is a general statement, not a per-item label. Individual task descriptions embed the interpreted decisions without marking them as assumptions."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 tasks contain a '## Repository' section with exactly 'trustify-backend' as the single repository name: task-1 (line 3-4), task-2 (line 3-4), task-3 (line 3-4), task-4 (line 3-4), task-5 (line 3-4). No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 task files contain '## Description', '## Acceptance Criteria', and '## Test Requirements' sections with substantive content. Task 1: 5 acceptance criteria, 3 test requirements. Task 2: 5 acceptance criteria, 4 test requirements. Task 3: 6 acceptance criteria, 6 test requirements. Task 4: 5 acceptance criteria, 3 test requirements. Task 5: 6 acceptance criteria, 9 test requirements."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All Files to Modify paths exist in repo-backend.md manifest: migration/src/lib.rs (task 1, manifest line 18), modules/search/src/service/mod.rs (tasks 2 and 3, manifest line 91), common/src/db/query.rs (tasks 2 and 3, manifest line 27), modules/search/src/endpoints/mod.rs (tasks 3 and 4, manifest line 93), tests/api/search.rs (task 5, manifest line 113). The one Files to Create path - migration/src/m0002_fulltext_search/mod.rs (task 1) - has its parent directory migration/src/ in the manifest and follows the existing m0001_initial/ naming pattern, so it is a valid new file in an existing directory."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1: references migration/src/m0001_initial/mod.rs, SeaORM migration traits (MigrationTrait, SchemaManager). Task 2: references modules/search/src/service/mod.rs, common/src/db/query.rs, common/src/model/paginated.rs, PaginatedResults<T>, plainto_tsquery/websearch_to_tsquery. Task 3: references modules/search/src/endpoints/mod.rs, common/src/db/query.rs, modules/fundamental/src/advisory/model/summary.rs (AdvisorySummary severity field), common/src/error.rs (AppError), modules/fundamental/src/sbom/endpoints/list.rs as pattern example. Task 4: references server/src/main.rs, tower-http caching middleware, modules/search/src/endpoints/mod.rs. Task 5: references tests/api/search.rs, tests/api/sbom.rs, tests/api/advisory.rs, assert_eq!(resp.status(), StatusCode::OK) pattern."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 2,
+    "total": 8,
+    "pass_rate": 0.75
+  }
+}

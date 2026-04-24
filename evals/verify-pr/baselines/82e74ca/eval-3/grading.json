@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states '## Classification: Code Change Request' and '## Action: Sub-task created to wrap the three UPDATE operations in soft_delete inside a database transaction.' subtask-1.md exists with the corresponding sub-task content. report.md row for comment 30001 shows 'Code change request | Sub-task created (transaction wrapping)'."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": false,
+      "evidence": "review-30002.md classifies comment 30002 as 'Suggestion' and explicitly states 'Cannot upgrade to code change request — insufficient evidence of project convention.' The action section says 'No sub-task created. The suggestion is reported for visibility in the verification report.' report.md row for comment 30002 shows 'Suggestion | No sub-task (index optimization — no convention evidence found)'. No sub-task was created for this comment."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states '## Classification: Nit' and '## Action: No sub-task created. Minor style feedback that does not affect correctness.' report.md row for comment 30003 shows 'Nit | No sub-task (minor error message clarity)'."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md states '## Classification: Question' and '## Action: No sub-task created. This is a clarification question.' report.md row for comment 30004 shows 'Question | No sub-task (clarification question; gap captured by scope containment)'."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-1.md contains all required sections: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 7), '## Implementation Notes' (line 10), '## Acceptance Criteria' (line 17). subtask-2.md contains: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 9), '## Implementation Notes' (line 13), '## Acceptance Criteria' (line 19). Both sub-tasks have all five required sections."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": false,
+      "evidence": "subtask-1.md has '## Target PR' section with URL 'https://github.com/trustify/trustify-backend/pull/744' (line 28-29). However, subtask-2.md (root-cause task for sdlc-plugins) does NOT contain a '## Target PR' section at all. The assertion requires 'each sub-task description' to include this section, and subtask-2.md lacks it."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": false,
+      "evidence": "subtask-1.md has '## Review Context' section (line 31) with the original review comment text from comment 30001. However, subtask-2.md does NOT contain a '## Review Context' section. The assertion requires 'each sub-task description' to include this section, and subtask-2.md lacks it."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report.md, review classification files (review-30001.md through review-30004.md), and sub-task description files (subtask-1.md, subtask-2.md). All output files are markdown documentation/report files. No code files (.rs, .py, .js, etc.) were created or modified. The outputs consist exclusively of verification reports, comment classifications, and sub-task descriptions."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments are individually classified in separate files: review-30001.md (code change request), review-30002.md (suggestion), review-30003.md (nit), review-30004.md (question). The report.md 'Review Feedback Summary' table lists all four comments (30001, 30002, 30003, 30004) with their classifications and actions, confirming all were processed before the final report was generated."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report.md contains no mention of merging the PR. The overall result is 'FAIL' with issues requiring attention. The report concludes with issue descriptions and sub-task summaries. There is no merge action, auto-merge trigger, or merge recommendation in the report."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14 contains: '| Test Change Classification | ADDITIVE | New test file `tests/api/sbom_delete.rs` with 5 test functions; no modified or deleted test files |'"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 3,
+    "total": 11,
+    "pass_rate": 0.7272727272727273
+  }
+}

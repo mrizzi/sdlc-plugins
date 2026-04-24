@@ -1,0 +1,90 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "preview.md line 1: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "preview.md line 11: '## Background and Strategic Fit'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Goals'",
+      "passed": true,
+      "evidence": "preview.md line 21: '## Goals'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 38: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 50: '## Non-Functional Requirements'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Use Cases' or '## Use Cases (User Experience & Workflow)'",
+      "passed": true,
+      "evidence": "preview.md line 60: '## Use Cases (User Experience & Workflow)'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "preview.md line 93: '## Customer Considerations'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "preview.md line 102: '## Customer Information/Supportability'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "preview.md line 111: '## Documentation Considerations'"
+    },
+    {
+      "text": "outputs/jira-create.md references project key 'TC'",
+      "passed": true,
+      "evidence": "jira-create.md line 3: '- **Project key**: TC'"
+    },
+    {
+      "text": "outputs/jira-create.md references issue type ID '10142'",
+      "passed": true,
+      "evidence": "jira-create.md line 5: '- **Issue type ID**: 10142'"
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 6: '- **Labels**: [\"ai-generated-jira\"]'"
+    },
+    {
+      "text": "outputs/jira-create.md includes an assignee (self-assignment was chosen)",
+      "passed": true,
+      "evidence": "jira-create.md line 7: '- **Assignee**: self (current user)'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "jira-comment.md line 18: '_Created with [sdlc-workflow/define-feature](https://github.com/mrizzi/sdlc-plugins) v0.7.1_'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'https://github.com/mrizzi/sdlc-plugins'",
+      "passed": true,
+      "evidence": "jira-comment.md line 18: '_Created with [sdlc-workflow/define-feature](https://github.com/mrizzi/sdlc-plugins) v0.7.1_'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains a version string (e.g., 'v0.' or version from plugin.json)",
+      "passed": true,
+      "evidence": "jira-comment.md line 18: 'v0.7.1' in '_Created with [sdlc-workflow/define-feature](https://github.com/mrizzi/sdlc-plugins) v0.7.1_'"
+    }
+  ],
+  "summary": {
+    "passed": 16,
+    "failed": 0,
+    "total": 16,
+    "pass_rate": 1.0
+  }
+}
