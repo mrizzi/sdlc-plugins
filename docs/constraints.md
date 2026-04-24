@@ -27,6 +27,10 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.15 | `implement-task` MUST check out the existing PR branch (instead of creating a new one) when a Target PR section is present in the task description. | `implement-task/SKILL.md` — Step 5 (Target PR flow) |
 | 1.16 | `verify-pr` MUST flag repetitive test functions that could be parameterized as a WARN finding, applying the Meszaros heuristic as the decision boundary. | `verify-pr/SKILL.md` — Step 12 |
 | 1.17 | `verify-pr` MUST flag test functions missing doc comments as a WARN finding. | `verify-pr/SKILL.md` — Step 12 |
+| 1.18 | `verify-pr` test change classification sub-agent MUST operate in complete isolation — it MUST NOT receive or access the Jira task description, review comments, PR metadata, or outputs from other verify-pr steps. | `verify-pr/SKILL.md` — Step 12 (sub-step 9) |
+| 1.19 | `verify-pr` MUST classify REDUCTIVE and MIXED test changes as WARN (advisory). Test Change Classification MUST NOT elevate the overall result to FAIL. | `verify-pr/SKILL.md` — Step 12 (sub-step 13), Step 14 |
+| 1.20 | `verify-pr` MUST classify new test files (not on base branch) as additive without sub-agent analysis. | `verify-pr/SKILL.md` — Step 12 (sub-step 8) |
+| 1.21 | `verify-pr` test change classification semantic assessment MUST override structural signals when they disagree. | `verify-pr/SKILL.md` — Step 12 (sub-step 11) |
 
 ---
 
@@ -93,6 +97,6 @@ Each constraint above references its source. The full source files are:
 
 - `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Task Description Template (§4.1–4.10), Step 5 Convention-aware task enrichment (§4.11)
 - `plugins/sdlc-workflow/skills/implement-task/SKILL.md` — Important Rules (§1.4–1.6, §5.1–5.3), Step 1 (§1.6), Step 4/6/9 (§5.4), Step 5 (§1.15, §3.1), Step 7 (§5.9–5.13), Step 9 (§2.1–2.3, §5.6–5.8), Step 10 (§3.2)
-- `plugins/sdlc-workflow/skills/verify-pr/SKILL.md` — Step 4 (§1.10, §1.12), Important Rules (§1.11, §1.13), Step 5b (§1.14), Step 12 (§1.16, §1.17)
+- `plugins/sdlc-workflow/skills/verify-pr/SKILL.md` — Step 4 (§1.10, §1.12), Important Rules (§1.11, §1.13), Step 5b (§1.14), Step 12 (§1.16, §1.17, §1.18, §1.19, §1.20, §1.21)
 - `plugins/sdlc-workflow/skills/define-feature/SKILL.md` — Guardrails (§1.7–1.8), Important Rules (§1.9)
 - `docs/methodology.md` — Core Principles (§2.1, §3.2, §5.5)
