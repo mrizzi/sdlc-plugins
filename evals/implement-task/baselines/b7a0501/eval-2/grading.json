@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 24: '**Implementation Notes** | **MISSING** | No Implementation Notes section is provided.' Lines 46-51 provide detailed analysis under '2. Missing: Implementation Notes' explaining key unknowns including search strategy, reusable code, service layer, searchable fields, and pattern references. Line 88 asks the user for implementation notes clarification."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Line 25: 'Acceptance Criteria | Present but **VAGUE**'. Lines 55-61 under '3. Vague: Acceptance Criteria' specifically call out: '\"Search results are relevant\" -- what defines relevance? Is there ranking? Is partial matching required? Is fuzzy matching expected?' and '\"Performance is acceptable\" -- what is the performance threshold? Is there a maximum response time (e.g., < 200ms for 95th percentile)?'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Line 26: 'Test Requirements | Present but **VAGUE**'. Lines 65-70 under '4. Vague: Test Requirements' state: 'The test requirements consist of a single item: \"Test that search works correctly.\" This is insufficient:' followed by specific gaps including no test scenarios, no error cases, no performance tests, and no test file location."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 72: '## Decision: STOP -- Clarification Required'. Line 73: 'The structured description for TC-9202 is **incomplete**. Per the skill's rules, I am stopping execution and will not draft an implementation plan, create branches, or proceed with any subsequent steps.' Lines 78-100 contain clarifying questions addressed to the user. No implementation plan, branch creation, or code generation is present in the output."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks 4 numbered clarifying questions (lines 80-98). Specifically: (1) Question 2 at line 89 asks 'Which package fields should be searchable?' (which fields to search). (2) Question 3 at line 93 asks 'What matching behavior is expected? (exact, prefix, substring, fuzzy)' which addresses relevance/ranking. (3) Question 3 at line 94 asks 'What is the concrete performance target? (e.g., \"responds within 500ms for up to 10,000 packages\")' which addresses performance threshold."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

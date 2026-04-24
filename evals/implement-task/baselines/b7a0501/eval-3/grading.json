@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md lines 37-39: 'Call apply_filter from common/src/db/query.rs (Reuse Candidate #1), passing the raw license string value and the package_license column that stores the SPDX identifier. apply_filter handles: Splitting comma-separated values... Generating the appropriate SQL IN clause for multi-value filtering'. Line 45: 'common/src/db/query.rs::apply_filter (Reuse Candidate #1) -- reused directly, no wrapper or new utility needed.' Line 111: 'common/src/db/query.rs -- not modified, only consumed.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 16: 'Following the same pattern used by the advisory list endpoint's severity field in modules/fundamental/src/advisory/endpoints/list.rs, add an Option<String> field named license'. Line 24: 'Structurally mirror the Query struct pattern from modules/fundamental/src/advisory/endpoints/list.rs (Reuse Candidate #2).' Line 47: 'The overall pattern of conditionally joining and filtering follows the advisory severity filter pattern (Reuse Candidate #2).'"
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md lines 35-36: 'add a JOIN to the package_license table using the package_license SeaORM entity from entity/src/package_license.rs (Reuse Candidate #3). Use SeaORM's .join() or .find_also_related() to join package to package_license on the foreign key relationship defined in the entity.' Line 46: 'entity/src/package_license.rs (Reuse Candidate #3) -- the existing SeaORM entity provides the table/column definitions for the JOIN and WHERE clause.' Line 110: 'Entity definitions -- no new entities or migrations required.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three dedicated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 7-19), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs (severity filter pattern)' (lines 23-46), and 'Reuse Candidate 3: entity/src/package_license.rs' (lines 50-74). Each section includes 'What it provides', 'How it would be reused', and 'Why reuse' subsections with concrete details on application. The summary table on lines 79-83 confirms all three are covered."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "The plan lists files under 'Files to Modify': (1) modules/fundamental/src/package/endpoints/list.rs, (2) modules/fundamental/src/package/service/mod.rs. Under 'Files to Create': (3) tests/api/package_license_filter.rs. The 'What is NOT changed' section (lines 107-112) explicitly confirms no changes to response shape, other endpoints, entity definitions, or common/src/db/query.rs. No files outside the expected scope are proposed for modification or creation."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 25: 'No new query-parameter parsing logic needed; the raw string is passed to the service layer where apply_filter handles parsing.' Line 45: 'common/src/db/query.rs::apply_filter (Reuse Candidate #1) -- reused directly, no wrapper or new utility needed.' Line 111: 'common/src/db/query.rs -- not modified, only consumed.' reuse-analysis.md line 85: 'No new utility functions, helpers, or abstractions need to be created. All required functionality is covered by existing code through direct reuse (Candidate 1 and 3) or pattern replication (Candidate 2).'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": false,
+      "evidence": "Searched all output files for terms like 'ambiguity', 'unclear', 'vague', 'undefined', 'unspecified', 'missing detail', 'assumption', 'pending clarification' — no matches found. The impact map (impact-map.md) lists changes as a straightforward plan without flagging any ambiguities. None of the 7 task descriptions call out ambiguities in the feature requirements (e.g., 'Make the search better', 'Some kind of filtering capability', 'Should be fast enough')."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": false,
+      "evidence": "Searched all output files for 'Better UI', 'non-MVP', 'design mockup', 'frontend', 'excluded', 'out of scope', 'scope' — no matches found. While 'Better UI' is implicitly absent (no tasks address it), there is no explicit acknowledgment anywhere in the impact map or task descriptions that 'Better UI' was excluded, nor any reasoning about the lack of design mockups or frontend repository."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 7 task files follow the template format. Each contains the required sections: Repository, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Optional sections are used appropriately: Files to Create (task 1), API Changes (task 5), Verification Commands (tasks 1, 7), Dependencies (tasks 2-7), Reuse Candidates (all tasks). The template specifies omitting sections that don't apply, which is correctly followed."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": false,
+      "evidence": "Searched all output files for 'assumption' and 'pending clarification' — no matches found. The tasks make many implicit assumptions (e.g., Task 1 assumes a 30-60 second cache TTL in task 6, Task 3 assumes specific filter types like severity/license/date-range, Task 5 assumes specific entity_type values) but none of these are explicitly labeled as assumptions pending clarification."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 7 task files contain a '## Repository' section followed by exactly 'trustify-backend' as a single repository name: task-1-search-indexes-migration.md line 3, task-2-entity-search-vector.md line 3, task-3-query-helpers-fulltext.md line 3, task-4-search-service-relevance.md line 3, task-5-search-endpoint-filters.md line 3, task-6-search-caching.md line 3, task-7-search-integration-tests.md line 3."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 7 task files contain exactly 3 matches for '## Description', '## Acceptance Criteria', and '## Test Requirements'. Verified via grep count: each task file shows count of 3, confirming all three sections are present in every task."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All 'Files to Modify' paths match the repo-backend.md manifest: migration/src/lib.rs (line 17), entity/src/sbom.rs (line 98), entity/src/advisory.rs (line 99), entity/src/package.rs (line 101), common/src/db/query.rs (line 27), modules/search/src/service/mod.rs (line 91), modules/search/src/endpoints/mod.rs (line 93), server/src/main.rs (line 107), tests/api/search.rs (line 113). The one 'Files to Create' path (migration/src/m0002_search_indexes/mod.rs) follows the established migration pattern from migration/src/m0001_initial/mod.rs (line 19) and is appropriately in the Files to Create section, not Files to Modify."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "All 7 tasks have Implementation Notes with specific file paths and code patterns: Task 1 references migration/src/m0001_initial/mod.rs, SQL patterns like 'CREATE INDEX idx_sbom_search ON sbom USING GIN(search_vector)'. Task 2 references entity/src/sbom.rs, entity/src/advisory.rs, entity/src/package.rs, SeaORM TsVector type. Task 3 references common/src/db/query.rs, common/src/model/paginated.rs, specific function names like filter_by_entity_type, plainto_tsquery(). Task 4 references modules/search/src/service/mod.rs, modules/fundamental/src/advisory/service/advisory.rs, common/src/db/query.rs. Task 5 references modules/fundamental/src/sbom/endpoints/list.rs, common/src/error.rs, Axum Query extractor, SearchQuery struct. Task 6 references server/src/main.rs, modules/fundamental/src/sbom/endpoints/mod.rs, tower-http caching middleware. Task 7 references tests/api/search.rs, tests/api/sbom.rs, assert_eq!(resp.status(), StatusCode::OK) pattern."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 3,
+    "total": 8,
+    "pass_rate": 0.625
+  }
+}

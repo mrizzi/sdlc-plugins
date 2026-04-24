@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "In report.md, the 'Acceptance Criteria' row shows 'PASS | 5 of 5 criteria met'. The 'Acceptance Criteria Detail' section lists all 5 criteria individually as PASS: (1) Single license filter, (2) Multi-license filter, (3) Invalid license returns 400, (4) Pagination integration, (5) Response shape unchanged. Additionally, criterion-1.md through criterion-5.md each contain detailed evidence and mark their respective criterion as PASS."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "In report.md, the 'Scope Containment' row shows 'PASS | Diff touches exactly the 3 files specified in the task: `modules/fundamental/src/package/endpoints/list.rs` (modified), `modules/fundamental/src/package/service/mod.rs` (modified), `tests/api/package.rs` (created). No out-of-scope files.'"
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "In report.md, the 'Review Feedback' row shows 'N/A | No review comments on this PR' and the 'Root-Cause Investigation' row shows 'N/A | No sub-tasks created'. No sub-task creation is mentioned anywhere in the outputs."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report files: report.md, criterion-1.md through criterion-5.md. All output files are verification reports containing analysis text. None of the output files contain code modifications, edit commands, or any indication that source files (list.rs, service/mod.rs, tests/api/package.rs) were modified. The report only reads and analyzes the diff content."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report.md concludes with 'Overall: PASS' as a finding summary. There is no mention of merging, auto-merge, gh pr merge, or any merge action anywhere in report.md or any of the criterion files. The report presents verification results (check table, acceptance criteria detail) for human review without taking any merge action."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "In report.md, the 'Sensitive Patterns' row shows 'PASS | No passwords, API keys, or private keys in diff'."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+      "passed": true,
+      "evidence": "In report.md, the 'Test Change Classification' row shows 'ADDITIVE | `tests/api/package.rs` is a new file (index 0000000..a1b2c3d, new file mode 100644). No existing test files were modified.'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

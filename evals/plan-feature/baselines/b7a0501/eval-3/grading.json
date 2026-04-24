@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "Tasks target both 'trustify-backend' and 'trustify-ui' repositories with at least one task per repo",
+      "passed": true,
+      "evidence": "Tasks 1-3 have 'Repository: trustify-backend' and Tasks 4-6 have 'Repository: trustify-ui'. Backend: task-1 (model/service), task-2 (endpoint), task-3 (integration tests). Frontend: task-4 (API/hook), task-5 (comparison page), task-6 (tests)."
+    },
+    {
+      "text": "Backend tasks have lower task numbers than the frontend tasks that depend on them",
+      "passed": true,
+      "evidence": "Backend tasks are numbered 1, 2, 3. Frontend tasks are numbered 4, 5, 6. Task 4 (frontend) depends on Task 2 (backend). Task 5 depends on Task 4. Task 6 depends on Task 5. All backend tasks have lower numbers than the frontend tasks that depend on them."
+    },
+    {
+      "text": "Frontend tasks reference Figma design context mentioning specific PatternFly components and visual specifications",
+      "passed": true,
+      "evidence": "Task 5 (frontend comparison page) extensively references Figma design specifications and PatternFly components: 'PatternFly Select (single, typeahead)', 'PatternFly ExpandableSection', 'PatternFly composable Table', 'PatternFly Dropdown', 'PatternFly EmptyState with CodeBranchIcon', 'PatternFly Skeleton', 'Badge', specific badge colors (green, red, blue, yellow), and visual specs like 'rows with severity === critical must have a highlighted background'. Task 5 also states 'based on the Figma design specifications' and 'per the Figma design'. The impact-map.md also references 'PatternFly ExpandableSection, Table, Select, Badge, and Dropdown components are used per the Figma design specifications'."
+    },
+    {
+      "text": "At least one frontend task explicitly depends on a backend task in its Dependencies section",
+      "passed": true,
+      "evidence": "Task 4 (frontend API/hook) has 'Dependencies: Depends on: Task 2 — Backend comparison endpoint (API contract must be available)'. This is a frontend task (Repository: trustify-ui) explicitly depending on a backend task (Task 2, Repository: trustify-backend)."
+    },
+    {
+      "text": "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+      "passed": true,
+      "evidence": "Backend tasks reference paths from repo-backend.md: Task 1 references 'modules/fundamental/src/sbom/model/mod.rs', 'modules/fundamental/src/sbom/service/mod.rs', 'modules/fundamental/src/sbom/model/summary.rs', 'entity/src/sbom_package.rs', 'common/src/error.rs', etc. Task 2 references 'modules/fundamental/src/sbom/endpoints/mod.rs', 'modules/fundamental/src/sbom/endpoints/get.rs', 'modules/fundamental/src/sbom/endpoints/list.rs'. Task 3 references 'tests/api/sbom.rs', 'tests/api/advisory.rs'. Frontend tasks reference paths from repo-frontend.md: Task 4 references 'src/api/models.ts', 'src/api/rest.ts', 'src/hooks/useSboms.ts', 'src/api/client.ts'. Task 5 references 'src/routes.tsx', 'src/pages/SbomListPage/', 'src/components/SeverityBadge.tsx', 'src/components/EmptyStateCard.tsx', 'src/components/FilterToolbar.tsx', 'src/utils/severityUtils.ts'. Task 6 references 'tests/mocks/handlers.ts', 'tests/mocks/fixtures/sboms.json', 'tests/setup.ts', 'tests/e2e/sbom-list.spec.ts'. All referenced paths match the directory structures in repo-backend.md and repo-frontend.md."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "Task 1: '## Repository\\ntrustify-backend'. Task 2: '## Repository\\ntrustify-backend'. Task 3: '## Repository\\ntrustify-backend'. Task 4: '## Repository\\ntrustify-ui'. Task 5: '## Repository\\ntrustify-ui'. Task 6: '## Repository\\ntrustify-ui'. Each task has exactly one repository name."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 6 tasks contain '## Description', '## Acceptance Criteria', and '## Test Requirements' sections. Task 1: Description (line 4), Acceptance Criteria (line 42), Test Requirements (line 54). Task 2: Description (line 4), Acceptance Criteria (line 31), Test Requirements (line 39). Task 3: Description (line 4), Acceptance Criteria (line 34), Test Requirements (line 42). Task 4: Description (line 4), Acceptance Criteria (line 46), Test Requirements (line 53). Task 5: Description (line 4), Acceptance Criteria (line 46), Test Requirements (line 59). Task 6: Description (line 4), Acceptance Criteria (line 42), Test Requirements (line 49)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": true,
+      "evidence": "Backend 'Files to Modify' paths all exist in repo-backend.md: 'modules/fundamental/src/sbom/model/mod.rs' (line 40), 'modules/fundamental/src/sbom/service/mod.rs' (line 45), 'modules/fundamental/src/sbom/endpoints/mod.rs' (line 48). Backend 'Files to Create' are new files in existing directories from repo-backend.md: 'modules/fundamental/src/sbom/model/comparison.rs' (new file in model/ dir), 'modules/fundamental/src/sbom/service/compare.rs' (new file in service/ dir), 'modules/fundamental/src/sbom/endpoints/compare.rs' (new file in endpoints/ dir), 'tests/api/sbom_compare.rs' (new file in tests/api/ dir). Frontend 'Files to Modify' paths all exist in repo-frontend.md: 'src/api/models.ts' (line 25), 'src/api/rest.ts' (line 26), 'src/routes.tsx' (line 53), 'tests/mocks/handlers.ts' (line 59). Frontend 'Files to Create' are new files in existing directories: 'src/hooks/useSbomComparison.ts' (new in hooks/ dir), 'src/pages/SbomComparePage/' components (new page dir following existing pattern), 'tests/mocks/fixtures/sbom-comparison.json' (new fixture in existing fixtures/ dir), 'tests/e2e/sbom-compare.spec.ts' (new in existing e2e/ dir). All paths follow the repository structures defined in the manifests."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference specific paths: 'modules/fundamental/src/sbom/model/summary.rs', 'modules/fundamental/src/sbom/model/details.rs', 'modules/fundamental/src/sbom/service/sbom.rs', 'modules/fundamental/src/package/model/summary.rs', 'modules/fundamental/src/advisory/model/summary.rs', 'entity/src/sbom_package.rs', 'entity/src/sbom_advisory.rs', 'entity/src/package_license.rs', 'common/src/error.rs' and specific patterns like 'derive Serialize, Deserialize, Debug, Clone and use utoipa::ToSchema', 'Result<T, AppError>'. Task 2 references 'modules/fundamental/src/sbom/endpoints/get.rs', 'modules/fundamental/src/sbom/endpoints/list.rs', 'modules/fundamental/src/sbom/endpoints/mod.rs' and patterns like '.route(\"/compare\", get(compare))'. Task 3 references 'tests/api/sbom.rs', 'tests/api/advisory.rs', 'modules/ingestor/src/graph/sbom/mod.rs', 'modules/ingestor/src/graph/advisory/mod.rs' and 'assert_eq!(resp.status(), StatusCode::OK)' pattern. Task 4 references 'src/api/models.ts', 'src/api/rest.ts', 'src/api/client.ts', 'src/hooks/useSboms.ts', 'src/hooks/useSbomById.ts'. Task 5 references 'src/pages/SbomListPage/', 'src/pages/SbomDetailPage/', 'src/hooks/useSboms.ts', 'src/components/SeverityBadge.tsx', 'src/components/EmptyStateCard.tsx', 'src/pages/SbomDetailPage/components/PackageTable.tsx', 'src/utils/severityUtils.ts'. Task 6 references 'tests/mocks/handlers.ts', 'tests/setup.ts', 'src/pages/SbomListPage/SbomListPage.test.tsx', 'tests/e2e/sbom-list.spec.ts'. All tasks reference concrete file paths and code patterns, not abstract guidance."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}
