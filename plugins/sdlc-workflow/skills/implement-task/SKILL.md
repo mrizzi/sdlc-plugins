@@ -620,6 +620,33 @@ If a doc file describes behavior that was changed and was not already updated in
 Step 6, update it now. This check is lightweight — only flag docs that directly
 describe the modified behavior.
 
+### Eval coverage currency
+
+If any modified file is a skill's `SKILL.md`, check whether corresponding eval
+coverage exists and is current:
+
+1. **Detect skill changes**: scan the `git diff --name-only` output for files
+   matching the pattern `skills/<skill-name>/SKILL.md`.
+2. **Derive skill name**: extract `<skill-name>` from the file path.
+3. **Check for eval infrastructure**: look for `evals/<skill-name>/evals.json`
+   in the repository. If the file does not exist, skip silently — not all skills
+   have eval suites.
+4. **Identify new behavior**: if `evals.json` exists, compare the SKILL.md diff
+   (`git diff` on the file) against the existing eval assertions. Look for new
+   behavior introduced in the SKILL.md that would be observable in eval outputs:
+   - New steps or sub-steps
+   - New report rows, classification outcomes, or verification checks
+   - Changed output formats or new output sections
+   - New decision branches (conditions that change which action the skill takes)
+5. **Flag coverage gaps**: for each new behavior that has no corresponding
+   assertion in `evals.json`, report the gap to the user. Include:
+   - The new behavior (quote the relevant SKILL.md diff)
+   - Which eval scenarios could cover it
+   - Whether an existing eval could be extended or a new one is needed
+6. **Ask, don't block**: present the gaps and ask the user whether to add eval
+   coverage now, defer it, or skip. Do **not** auto-create eval files or block
+   the commit — this is advisory, like Documentation currency.
+
 ### Example consistency
 
 If the implementation wrote or modified documentation that includes examples combining
