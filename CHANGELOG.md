@@ -5,6 +5,24 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.2] - 2026-04-24
+
+### Added
+
+- Eval suite for `setup` skill
+- Eval suite for `define-feature` skill
+- Eval coverage for test change classification in `verify-pr`
+
+### Changed
+
+- Added additive-vs-reductive test change detection to verify-pr Step 12
+- Added eval coverage detection to plan-feature task generation
+- Added eval coverage currency check to implement-task Step 9
+
+### Documentation
+
+- Added test change classification constraints §1.18-§1.21
+
 ## [0.7.1] - 2026-04-23
 
 ### Added
