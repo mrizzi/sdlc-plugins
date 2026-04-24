@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "plan.md lines 12-18 list all 4 files under 'Sibling Analysis Performed': 'modules/fundamental/src/advisory/endpoints/get.rs', 'modules/fundamental/src/advisory/service/advisory.rs', 'modules/fundamental/src/advisory/model/summary.rs', and 'common/src/error.rs'. All four are explicitly mentioned as inspected before planning changes."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "plan.md 'Files to Create' (lines 23-27) lists 3 files: severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs tests. 'Files to Modify' (lines 31-35) lists 3 files: advisory/service/advisory.rs, advisory/endpoints/mod.rs, advisory/model/mod.rs. The plan explicitly notes under 'Files NOT Modified' (line 39) that server/src/main.rs is not changed. No unrelated files appear in the plan. All 6 file descriptions (file-1 through file-6) correspond to exactly these 6 files."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md lines 23-27 lists: (1) 'modules/fundamental/src/advisory/model/severity_summary.rs' (SeveritySummary response struct), (2) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs' (GET handler), (3) 'tests/api/advisory_summary.rs' (Integration tests). file-1-description.md, file-2-description.md, and file-3-description.md all have 'Action: CREATE' and detail each of these files."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md lines 31-35 lists: (4) 'modules/fundamental/src/advisory/service/advisory.rs' (Add severity_summary method), (5) 'modules/fundamental/src/advisory/endpoints/mod.rs' (Register route), (6) 'modules/fundamental/src/advisory/model/mod.rs' (Add pub mod declaration). file-4-description.md, file-5-description.md, and file-6-description.md all have 'Action: MODIFY' and detail changes to each."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md lines 57-65 show the commit message: 'feat(advisory): add severity aggregation endpoint' followed by a body and 'TC-9201' in the footer. This follows Conventional Commits format with type 'feat', scope 'advisory', and the Jira ticket TC-9201 referenced in the footer."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": false,
+      "evidence": "The commit message in plan.md (lines 56-65) does not include '--trailer=Assisted-by: Claude Code' or any mention of the 'Assisted-by: Claude Code' trailer. The commit message section contains only the conventional commit message with the TC-9201 footer. No other output file mentions this trailer either."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1)",
+      "passed": false,
+      "evidence": "Neither plan.md nor any of the file description files mention creating a branch, a branch name, or a branch naming convention. There is no reference to 'TC-9201' as a branch name or any discussion of branching strategy in any output file."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md explicitly documents both patterns: (1) 'Error Handling Convention' section (lines 43-46): 'All handlers return Result<T, AppError>. Errors use .context() wrapping from the anyhow / AppError pattern defined in common/src/error.rs.' (2) 'Module Structure Convention' section (lines 6-22): describes the 'strict three-directory pattern' of model/, service/, endpoints/ under each domain module. Additionally many other patterns are identified including service method signatures, endpoint handler conventions, and testing conventions."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 2,
+    "total": 8,
+    "pass_rate": 0.75
+  }
+}

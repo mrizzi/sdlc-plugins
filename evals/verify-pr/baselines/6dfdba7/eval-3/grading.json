@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states '## Classification: code change request' and 'Action: Sub-task created to wrap the soft_delete operations in a database transaction.' subtask-30001.md exists and contains the sub-task description for transaction wrapping."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": false,
+      "evidence": "review-30002.md states '## Classification: suggestion' with 'Final classification: suggestion' and 'Action: No sub-task created. The suggestion is noted in the verification report for the reviewer’s consideration.' No subtask-30002.md file exists. The assertion requires classification as code change request (or upgraded suggestion) AND sub-task creation, but neither condition is met."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states '## Classification: nit' and 'Action: No sub-task created. Minor style feedback that does not affect correctness.' No subtask-30003.md file exists in the outputs directory."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": false,
+      "evidence": "review-30004.md states 'Initial classification: question' but then 'Reclassification rationale: The question identifies a missing required implementation per the task description. This is effectively a code change request' with 'Final classification: code change request' and 'Action: Sub-task created to add include_deleted parameter support to the GET /api/v2/sbom/{id} endpoint.' subtask-30004.md exists. The assertion requires final classification as 'question' with no sub-task, but the output reclassifies it to 'code change request' and creates a sub-task."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 7), '## Implementation Notes' (line 10), '## Acceptance Criteria' (line 17). subtask-30004.md contains: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 7), '## Implementation Notes' (line 11), '## Acceptance Criteria' (line 21). All required sections are present in both sub-tasks."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md line 33: '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'. subtask-30004.md line 36: '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'. Both sub-tasks include the correct Target PR section and URL."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md lines 27-30: '## Review Context' section with '**PR Comment:** \"The `soft_delete` method should run all three UPDATE statements inside a single database transaction...' containing the original reviewer text. subtask-30004.md lines 32-34: '## Review Context' section with '**PR Comment:** \"Have you considered what happens when someone queries `/api/v2/sbom/{id}` for a soft-deleted SBOM without `include_deleted=true`?...' containing the original reviewer text."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only: report.md, review-30001.md, review-30002.md, review-30003.md, review-30004.md, subtask-30001.md, subtask-30004.md. All are markdown analysis/report files. No source code files (.rs, .toml, .sql, etc.) appear in the outputs. The report and review files contain only analysis text, classifications, and sub-task descriptions."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments are processed with individual classification files: review-30001.md, review-30002.md, review-30003.md, review-30004.md. The report.md 'Review Comment Summary' table lists all four comments (30001-30004) with classifications and actions. All comments were processed before the report was generated."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md states '### Overall: FAIL' and 'Two issues require attention before this PR can be merged'. No merge action, merge command, or merge status is mentioned anywhere in the outputs. The report is purely analytical/advisory."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | ADDITIVE | New test file `tests/api/sbom_delete.rs` added; no existing tests modified or removed |'. The classification is exactly ADDITIVE with the correct justification referencing the new test file."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 2,
+    "total": 11,
+    "pass_rate": 0.82
+  }
+}

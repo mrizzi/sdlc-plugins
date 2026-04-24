@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing trustify-backend entry in the Repository Registry unchanged (same Role, Serena Instance, Path values as in claude-md-configured.md)",
+      "passed": true,
+      "evidence": "claude-md-result.md line 7 contains: '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' which exactly matches the original entry in claude-md-configured.md line 16: '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |'. Role ('Rust backend service'), Serena Instance ('serena_backend'), and Path ('/home/user/trustify-backend') are all preserved."
+    },
+    {
+      "text": "outputs/claude-md-result.md adds a new trustify-ui entry to the Repository Registry with serena_ui as the Serena Instance",
+      "passed": true,
+      "evidence": "claude-md-result.md line 8 contains: '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |'. This is a new entry not present in the original claude-md-configured.md, and it lists 'serena_ui' as the Serena Instance."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged — Project key remains TC, Cloud ID, Feature issue type ID remain as in claude-md-configured.md",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 12-17 contain the Jira Configuration section with: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747. All five fields match the original claude-md-configured.md lines 19-24 exactly."
+    },
+    {
+      "text": "outputs/changes-log.md explicitly identifies which entries were preserved (existing) and which were added (new)",
+      "passed": true,
+      "evidence": "changes-log.md uses explicit '### Preserved (no changes)' and '### Added' subsections under each category. Repository Registry section (lines 9-19) shows trustify-backend under 'Preserved (no changes)' and trustify-ui under 'Added'. Jira Configuration section (lines 22-35) shows all fields under 'Preserved (no changes)' with 'No new Jira fields added.' under Added. Code Intelligence section (lines 38-47) shows existing content under 'Preserved (no changes)' and the new serena_ui limitation under 'Added'."
+    },
+    {
+      "text": "outputs/discovery-log.md notes that serena_backend was already configured and serena_ui is newly discovered",
+      "passed": true,
+      "evidence": "discovery-log.md Step 2 (lines 22-29) contains a table with: '| serena_backend | Already in Registry | ...' and '| serena_ui | NEW -- not in Registry | ...'. This explicitly identifies serena_backend as already configured and serena_ui as newly discovered."
+    },
+    {
+      "text": "The existing Code Intelligence section content (naming convention, example, serena_backend limitations) is preserved — only new serena_ui content is added",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 19-34 preserve: (1) naming convention 'Tools are prefixed by Serena instance name: `mcp__<instance>__<tool>`.' (line 21), (2) the serena_backend find_symbol example (lines 23-28), (3) the serena_backend limitation '`serena_backend`: rust-analyzer may take 30-60 seconds to index on first use' (line 33). The only addition is line 34: '- `serena_ui`: No known limitations'. All original content matches claude-md-configured.md lines 28-41."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

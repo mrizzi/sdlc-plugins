@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md contains an 'Ambiguities and Open Questions' section with 7 numbered items: (1) no performance baseline or target latency, (2) 'more relevant results' is undefined, (3) 'add filters' lacks specificity, (4) no performance SLA, (5) scope of 'search' is ambiguous, (6) no indication of indexing strategy, (7) 'Better UI' has no frontend repo or mockups. This exceeds the minimum of 3."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "impact-map.md item 7 states: '\"Better UI\" requirement has no frontend repository or design mockups. This is marked non-MVP and cannot be planned -- there is no frontend repository in scope and no design specifications. This requirement is excluded from this plan.' The Scope Decisions section also states: 'Out of scope: \"Better UI\" (non-MVP, no frontend repository or design mockups available).'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 5 task files follow the template structure. Each contains the required sections: Repository (single repo name), Description, Files to Modify/Create, Implementation Notes, Acceptance Criteria, Test Requirements, and Verification Commands. Optional sections (API Changes, Reuse Candidates, Dependencies) are included where applicable and omitted where not, per template rules."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "All 5 tasks contain explicitly labeled assumptions: Task 1 has 2 ('Assumption (pending clarification):' about PostgreSQL approach and fields to index), Task 2 has 2 (filter types and relevance scoring), Task 3 has 2 (cross-entity search scope and result ordering), Task 4 has 2 (filter parameter naming convention and endpoint scope), Task 5 has 1 (performance threshold). Total: 9 assumptions across 5 tasks, all labeled 'Assumption (pending clarification):'."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 task files begin with '## Repository\\ntrustify-backend' -- a single repository name. No task lists multiple repositories. Verified in: task-1-search-indexes-migration.md (line 1-2), task-2-query-builder-filters.md (line 1-2), task-3-search-service-improvements.md (line 1-2), task-4-search-endpoint-filters.md (line 1-2), task-5-search-integration-tests.md (line 1-2)."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 tasks contain all three required sections: Task 1 has Description (line 4), Acceptance Criteria (line 34), Test Requirements (line 41). Task 2 has Description (line 4), Acceptance Criteria (line 34), Test Requirements (line 41). Task 3 has Description (line 4), Acceptance Criteria (line 33), Test Requirements (line 40). Task 4 has Description (line 4), Acceptance Criteria (line 33), Test Requirements (line 41). Task 5 has Description (line 4), Acceptance Criteria (line 33), Test Requirements (line 41)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All 'Files to Modify' paths exist in repo-backend.md: migration/src/lib.rs, common/src/db/query.rs, common/src/db/mod.rs, common/src/model/paginated.rs, modules/search/src/service/mod.rs, modules/search/src/lib.rs, modules/search/src/endpoints/mod.rs, tests/api/search.rs. 'Files to Create' paths (migration/src/m0002_search_indexes/mod.rs, common/src/db/search.rs) are new files in directories that exist in the manifest (migration/src/ and common/src/db/), following established naming patterns (m0001_initial -> m0002_search_indexes). No invented or nonexistent directory paths found."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references migration/src/m0001_initial/mod.rs and migration/Cargo.toml with SeaORM migration trait pattern. Task 2 references common/src/db/query.rs, common/src/model/paginated.rs (PaginatedResults<T>), common/src/error.rs (AppError enum). Task 3 references modules/search/src/service/mod.rs, common/src/db/search.rs, common/src/db/query.rs, common/src/model/paginated.rs, common/src/error.rs with .context() pattern. Task 4 references modules/search/src/endpoints/mod.rs, modules/fundamental/src/sbom/endpoints/mod.rs, modules/fundamental/src/advisory/endpoints/mod.rs, Axum Query<T> extractor, Result<T, AppError> pattern. Task 5 references tests/api/search.rs, tests/api/sbom.rs, tests/api/advisory.rs, tests/Cargo.toml, assert_eq!(resp.status(), StatusCode::OK) pattern, std::time::Instant."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

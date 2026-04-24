@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Section '1. Missing Implementation Notes Section' (lines 11-19) explicitly states: 'The task description does not contain an Implementation Notes section. This section is expected in well-formed tasks produced by plan-feature and is essential for guiding implementation.' The response also references constraint 1.6 on line 5: 'Per constraint 1.6, I must not improvise implementation details or draft a plan when the structured description is incomplete.'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Section '2. Vague Acceptance Criteria' (lines 20-36) explicitly calls out both criteria by name: '\"Search results are relevant\" -- The word \"relevant\" is undefined' (line 24) and '\"Performance is acceptable\" -- \"Acceptable\" has no measurable definition' (line 30). Each is accompanied by detailed explanation of why it is insufficiently specific."
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Section '3. Vague Test Requirements' (lines 38-47) states: 'The single test requirement -- \"Test that search works correctly\" -- does not define what \"correctly\" means.' It then enumerates specific gaps including missing test scenarios, response field assertions, error case coverage, and test pattern conventions."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 5 states: 'Per constraint 1.6, I must not improvise implementation details or draft a plan when the structured description is incomplete.' The response ends on line 105 with 'I will not proceed until the ambiguities above are resolved.' The 'Clarifying Questions' section (lines 63-95) poses five questions to the user. No implementation plan is produced — only a 'Next Steps' section (lines 98-103) describing what will happen after answers are received."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks 5 clarifying questions (Q1-Q5, lines 65-95). Q1 asks 'Which fields should the search query match against?' (line 65). Q2 asks 'What does \"relevant\" mean for result ranking?' (line 69). Q3 asks 'What is the measurable performance threshold?' (line 73). These three directly correspond to the required topics, and Q4 (search infrastructure approach) and Q5 (test scenarios) provide additional clarification requests."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
