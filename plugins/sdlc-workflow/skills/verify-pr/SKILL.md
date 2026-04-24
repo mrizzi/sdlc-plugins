@@ -760,14 +760,125 @@ Do **not** flag tests with different behavior, setup, or assertions.
 6. **Flag missing doc comments**: for each test function lacking a doc comment, record the
    file path and function name.
 
-7. **Record findings**: append doc comment findings to the Test Quality result. If test
-   functions are missing doc comments, record WARN with the list of undocumented functions.
-   If all test functions have doc comments, this sub-check passes silently (does not change
-   the overall Test Quality result from the repetitive test check).
+### Test change classification
 
-Record PASS if both sub-checks pass (no repetitive tests and no missing doc comments).
-Record WARN if either repetitive tests are found OR doc comments are missing.
-Record N/A if no test files exist in the PR diff.
+8. **Classify test file change types**: for each test file identified in sub-step 1,
+   classify as **new** (not on base branch), **deleted** (not on PR branch), or
+   **modified** (on both). Use the base branch resolved in Step 3. Check file existence
+   on the base branch:
+   ```
+   git show <base-branch>:<file-path>
+   ```
+   New test files are inherently additive and do not need sub-agent analysis.
+
+9. **Spawn additive-vs-reductive sub-agent**: if any test files are modified or deleted,
+   spawn a sub-agent. The sub-agent receives ONLY:
+   1. List of modified/deleted test file paths
+   2. Base branch name (for `git show <base-branch>:<path>`)
+   3. PR branch name (already checked out)
+
+   The sub-agent MUST NOT receive or access the Jira task description, review comments,
+   PR metadata, or outputs from other verify-pr steps. This prevents context pollution
+   and hallucination.
+
+   When a Serena MCP LSP server is available for the target repository (per the Repository
+   Registry in CLAUDE.md), the sub-agent should use `find_symbol` with `include_body=true`
+   to reliably identify test functions, assertions, and their structure. Fall back to
+   Read/Grep when no Serena instance is available.
+
+10. **Structural scan** (sub-agent): for each **modified** test file, read the base-branch
+    version (`git show <base-branch>:<file-path>`) and PR-branch version (Read). Count
+    signals:
+
+    | Signal | Additive | Reductive |
+    |--------|----------|-----------|
+    | Test functions | Functions added | Functions removed |
+    | Assertion statements | Assertions added | Assertions removed |
+    | Assertion specificity | Matchers tightened (e.g., `toBeTruthy` → `toEqual`) | Matchers relaxed (e.g., `toEqual` → `toBeTruthy`) |
+    | Disable/skip annotations | Annotations removed (re-enabling tests) | Annotations added (`.skip`, `@Disabled`, `@pytest.mark.skip`, `#[ignore]`) |
+    | Parameterized cases | Cases added to parameterized sets | Cases removed from parameterized sets |
+    | Mock scope | Mocks narrowed (more specific return values) | Mocks broadened (e.g., `any()` replacing a concrete value) |
+
+    For **deleted** test files: all signals are reductive. Read the base-branch version to
+    count what was lost.
+
+    The sub-agent uses its knowledge of test frameworks to identify assertion statements,
+    skip annotations, and mock patterns. The signal categories above are the taxonomy; the
+    sub-agent recognizes the language-specific syntax.
+
+    Output a tally per file (e.g., "+2 test functions, +5 assertions, -1 assertion relaxed,
+    +0/-0 skip annotations").
+
+11. **Semantic assessment** (sub-agent): for each modified file, identify behaviors under
+    test in base vs PR versions. Determine whether coverage intent changed. Three specific
+    cases the structural scan cannot catch:
+
+    1. **Assertion weakening without count change** — replacing a specific expected value
+       with a broad matcher (same count, weaker coverage)
+    2. **Mock broadening that hides behavior** — replacing a mock returning a specific error
+       with one returning generic success
+    3. **Restructuring that preserves coverage** — splitting or consolidating test functions
+       without changing what is tested
+
+    **Semantic assessment overrides structural signals when they disagree.** If structural
+    scan shows reductive signals but semantic assessment determines coverage is preserved
+    (restructuring), classify as NEUTRAL. If structural shows no reductive signals but
+    semantic finds weakened coverage (assertion weakening), classify as MIXED or REDUCTIVE.
+
+12. **Classify test changes**: sub-agent produces classification from combined structural
+    and semantic signals:
+
+    - **ADDITIVE** — no test functions removed, no assertions removed/relaxed, no skip
+      annotations added, no mocks broadened, semantic confirms no weakening
+    - **REDUCTIVE** — reductive signals present with no additive signals, semantic confirms
+      coverage loss
+    - **MIXED** — both additive and reductive signals present
+    - **NEUTRAL** — test files modified but coverage intent unchanged (restructuring,
+      renaming, helper extraction)
+
+    Sub-agent returns: classification, structural summary, semantic assessment, and
+    reductive findings. Return format:
+
+    ```
+    Classification: ADDITIVE | REDUCTIVE | MIXED | NEUTRAL
+
+    Structural summary:
+      - <file>: +N test functions, -N test functions, +N assertions,
+        -N assertions, <other signals>
+
+    Semantic assessment: <1-2 sentence explanation>
+
+    Reductive findings (if any):
+      - <file>: <what was weakened and why>
+    ```
+
+    Main agent then combines sub-agent result with new-file analysis:
+    - Only new test files and sub-agent not needed → ADDITIVE
+    - Only new test files and sub-agent returns ADDITIVE → ADDITIVE
+    - Sub-agent returns REDUCTIVE or MIXED → use that classification
+    - Sub-agent returns NEUTRAL and new test files exist → ADDITIVE
+    - Sub-agent returns NEUTRAL and no new test files → NEUTRAL
+
+<!-- Autonomous escalation intent: in future autonomous mode, REDUCTIVE and MIXED
+classifications should trigger `requires-manual-review` label addition. This is the
+defense against temporal split-payload test poisoning. Not implemented until autonomous
+mode is operational. -->
+
+13. **Record findings**: produce two separate results:
+    1. **Test Quality** — existing PASS/WARN/N/A based on repetitive tests and doc comments
+       (unchanged logic). Append doc comment findings to the Test Quality result. If test
+       functions are missing doc comments, record WARN with the list of undocumented
+       functions. If all test functions have doc comments, this sub-check passes silently
+       (does not change the overall Test Quality result from the repetitive test check).
+    2. **Test Change Classification** — ADDITIVE/REDUCTIVE/MIXED/NEUTRAL/N/A result for
+       the report table.
+
+Record Test Quality as PASS if both sub-checks pass (no repetitive tests and no missing
+doc comments). Record WARN if either repetitive tests are found OR doc comments are
+missing. Record N/A if no test files exist in the PR diff.
+
+Record Test Change Classification as ADDITIVE/REDUCTIVE/MIXED/NEUTRAL per the
+classification logic above, or N/A if no test files exist in the PR diff.
 
 **Note:** Test Quality WARN is advisory — it does **not** elevate the overall result
 to FAIL. Treat it like Diff Size: report for visibility, but do not block the PR.
@@ -801,6 +912,7 @@ Compile all findings from Steps 4–13 (including Step 10's CI failure sub-tasks
 | CI Status | PASS/WARN/FAIL | <summary> |
 | Acceptance Criteria | PASS/FAIL | <N of M criteria met> |
 | Test Quality | PASS/WARN | <summary> |
+| Test Change Classification | ADDITIVE/REDUCTIVE/MIXED/NEUTRAL/N/A | <summary> |
 | Verification Commands | PASS/FAIL/N/A | <summary> |
 
 ### Overall: PASS / WARN / FAIL
@@ -813,9 +925,9 @@ Overall result rules:
 - **WARN** — at least one WARN but no FAIL
 - **FAIL** — at least one FAIL
 
-**Note:** The Root-Cause Investigation and Test Quality rows are informational and do
-**NOT** affect the Overall result. Their values are reported for visibility but excluded
-from the PASS/WARN/FAIL determination.
+**Note:** The Root-Cause Investigation, Test Quality, and Test Change Classification rows
+are informational and do **NOT** affect the Overall result. Their values are reported for
+visibility but excluded from the PASS/WARN/FAIL determination.
 
 ## Step 15 – Post Report
 
