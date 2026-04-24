@@ -157,7 +157,71 @@ This is the only domain sub-agent that itself spawns a sub-agent — the test ch
 
 ---
 
-## Finding Contract -- Structured Template
+## Dispatch Contract -- Structured Input Template
+
+The orchestrator passes inputs to each sub-agent using a structured markdown template defined in `dispatch-template.md`. This is the common envelope; each sub-agent's skill file documents which Agent-Specific Inputs it expects.
+
+### Template
+
+```markdown
+## Sub-Agent Dispatch: <agent name>
+
+### Context
+- **Jira Task:** <task key>
+- **PR:** <PR URL>
+- **Branch:** <branch name>
+- **Base Branch:** <base branch name>
+
+### Classified Review Comments
+
+<all classified comments with IDs, classifications, and file/line references>
+
+### Agent-Specific Inputs
+
+<varies per agent -- see below>
+
+### Instructions
+
+<sub-agent skill file content>
+
+### Output Template
+
+<finding-template.md content>
+```
+
+### Agent-Specific Input Sections
+
+**Intent Alignment:**
+- `### PR Diff Summary` — file list with per-file line counts (additions/deletions), not full diff content
+- `### Task Specification` — Repository, Files to Modify, Files to Create sections from Jira task description
+- `### Jira Task ID` — the task key for commit traceability checking
+- `### PR Commits` — commit list with hashes and messages
+
+**Security:**
+- `### PR Diff` — full diff content for line-level pattern scanning
+
+**Correctness:**
+- `### PR Diff` — full diff content for code inspection
+- `### Task Specification` — Acceptance Criteria, Test Requirements, Verification Commands sections from Jira task description
+- `### Repository Info` — repository path and Serena instance info for code inspection
+- `### CI Status` — note to fetch CI status via `gh` CLI (not pre-fetched; sub-agent fetches on demand)
+
+**Style/Conventions:**
+- `### PR Diff` — full diff content for code inspection
+- `### CONVENTIONS.md` — full content of the repository's CONVENTIONS.md
+- `### Test Files` — list of modified/deleted test file paths
+- `### Branch Names` — base branch and PR branch names for test change classification sub-agent
+
+### Rules
+
+- Context section and Classified Review Comments are mandatory for all sub-agents
+- Agent-Specific Inputs section includes only the sections listed for that sub-agent
+- Instructions section contains the full content of the sub-agent's skill file (e.g., `intent-alignment.md`)
+- Output Template section contains the full content of `finding-template.md`
+
+---
+
+## Finding Contract -- Structured Output Template
 
 Each sub-agent returns its results using a structured markdown template defined in `finding-template.md`. The orchestrator expects this exact structure.
 
@@ -262,7 +326,8 @@ The improvement: root-cause now has richer, domain-attributed input. If the Secu
 ```
 plugins/sdlc-workflow/skills/verify-pr/
 |-- SKILL.md                  # Orchestrator (rewritten)
-|-- finding-template.md       # Structured output template for all sub-agents
+|-- dispatch-template.md      # Structured input template for sub-agent dispatch
+|-- finding-template.md       # Structured output template for sub-agent results
 |-- intent-alignment.md       # Steps 6, 7, 8
 |-- security.md               # Step 9
 |-- correctness.md            # Steps 10, 11, 13
@@ -332,7 +397,7 @@ Existing rules re-attributed to the component that now owns them:
 
 **Migration approach:** Atomic. The orchestrator and sub-agents are tightly coupled, so a half-decomposed skill does not work. One set of changes:
 
-1. Create `finding-template.md`
+1. Create `dispatch-template.md` and `finding-template.md`
 2. Create 4 sub-agent files by extracting their steps from current SKILL.md
 3. Rewrite SKILL.md as the orchestrator (dispatch + aggregation + side effects)
 4. Update `docs/constraints.md` with re-scoped and new constraints
