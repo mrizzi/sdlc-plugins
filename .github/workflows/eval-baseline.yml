@@ -113,9 +113,26 @@ jobs:
               exit 0
             fi
             echo "Push failed (attempt ${attempt}/3), rebasing on latest main..."
-            if ! git pull --rebase origin main; then
-              echo "::error::Rebase failed on attempt ${attempt} — manual intervention required"
-              exit 1
+            if ! git pull --rebase -X theirs origin main; then
+              # Resolve any remaining 'latest' symlink conflicts (ours is always newer after rebase)
+              for conflict in $(git diff --name-only --diff-filter=U 2>/dev/null); do
+                case "$conflict" in
+                  evals/*/baselines/latest)
+                    git checkout --theirs "$conflict"
+                    git add "$conflict"
+                    ;;
+                  *)
+                    echo "::error::Unexpected conflict in ${conflict} on attempt ${attempt}"
+                    git rebase --abort 2>/dev/null || true
+                    exit 1
+                    ;;
+                esac
+              done
+              if ! git rebase --continue --no-edit 2>/dev/null; then
+                echo "::error::Rebase --continue failed on attempt ${attempt}"
+                git rebase --abort 2>/dev/null || true
+                exit 1
+              fi
             fi
           done
           echo "::error::Push failed after 3 attempts"
