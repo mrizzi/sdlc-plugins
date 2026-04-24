@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 27: '## Test Change Classification: MIXED' and line 28: 'This PR contains **both additive and reductive** test changes.' Also line 96 in the Verification Checks table: '| Test Change Classification | MIXED | Both additive and reductive signals present (see detailed analysis above) |'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md lines 32-33 under '### Reductive Signals': '1. **Removed test function `test_recommend_purls_with_qualifiers`**: This test existed in the base branch of `tests/api/purl_recommend.rs` (lines 30-48 of base file) and was entirely deleted in the PR.'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the relaxed assertion in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers",
+      "passed": true,
+      "evidence": "report.md lines 34-45 under '### Reductive Signals': '2. **Relaxed assertion in `test_recommend_purls_basic`**: The base-branch version asserted the full PURL with qualifiers: ... The PR version asserts a simpler versioned PURL without qualifiers: ... the primary value assertion was relaxed from checking a specific fully-qualified string to checking a shorter string with fewer components.'"
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md lines 51-55 under '### Additive Signals': '2. **New test file `tests/api/purl_simplify.rs`**: Created with three new test functions: - `test_simplified_purl_no_version`, - `test_simplified_purl_mixed_types`, - `test_simplified_purl_ordering_preserved`'"
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md lines 49-50 under '### Additive Signals': '1. **New test function `test_recommend_purls_dedup`**: Added in `tests/api/purl_recommend.rs`. This test verifies a new behavior (deduplication after qualifier removal) that did not exist before.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only analysis/reporting files: criterion-1.md through criterion-9.md and report.md. All are verification documents presenting findings. No source code files (.rs, .toml, etc.) were created or modified in the outputs directory."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with '### Overall: PASS' followed by a narrative summary of findings. No merge commands, no auto-merge language, no 'gh pr merge' invocations appear anywhere in the output files. The report presents structured tables and analysis for human review."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

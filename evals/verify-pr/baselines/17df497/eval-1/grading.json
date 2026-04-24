@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "report.md lines 43-49 show all 5 acceptance criteria marked PASS: (1) single license filter via SPDX validation and is_in query, (2) comma-separated filter with Condition::any() and is_in union semantics, (3) 400 validation via Expression::parse failure mapped to AppError::BadRequest, (4) pagination integration with filter applied before count() and paginated fetch, (5) unchanged response shape PaginatedResults<PackageSummary>. Each criterion also has a dedicated criterion-N.md file confirming PASS."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "report.md line 29: 'Scope Containment | PASS | All 3 files changed match exactly the files listed in the task (2 modified, 1 created). No out-of-scope files touched.' Lines 18-21 enumerate the three files: list.rs (Modified, Yes - Files to Modify), service/mod.rs (Modified, Yes - Files to Modify), tests/api/package.rs (Created, Yes - Files to Create)."
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "report.md line 27: 'Review Feedback | N/A | No review comments on the PR' and line 28: 'Root-Cause Investigation | N/A | No sub-tasks created'. No sub-task creation is mentioned anywhere in the outputs."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All output files are report/documentation files: report.md and criterion-1.md through criterion-5.md. report.md line 37: 'Verification Commands | N/A | No local verification commands executed (file-based review only)'. No code files appear in the outputs directory and no evidence of code modification exists anywhere in the outputs."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md line 75: 'The PR is ready for human review and merge consideration.' The report explicitly defers the merge decision to a human reviewer. No merge action or merge command appears anywhere in the outputs."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "report.md line 32: 'Sensitive Patterns | PASS | No passwords, API keys, secrets, tokens, or credentials detected in the diff'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 36: 'Test Change Classification | ADDITIVE | New test file `tests/api/package.rs` created with 4 new test cases. No existing tests modified or removed.'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

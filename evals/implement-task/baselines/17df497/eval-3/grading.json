@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md Step 6 File 2 states: 'Use shared apply_filter to handle comma-separated values' with code `query = apply_filter(query, package_license::Column::License, license_value);` and imports `use common::db::query::apply_filter;`. Step 9 Duplication check states: 'the filter logic reuses apply_filter from common/src/db/query.rs rather than reimplementing comma-separated parsing.' Step 4 also inspects apply_filter: 'a function that takes a comma-separated string, splits it, and generates a SeaORM IN clause condition'."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md Step 4 lists 'modules/fundamental/src/advisory/endpoints/list.rs (reuse candidate -- sibling)' and calls it 'the structural template for the license filter.' Step 6 File 1 states: 'This mirrors the severity: Option<String> field in AdvisoryQuery from modules/fundamental/src/advisory/endpoints/list.rs.' Step 9 states: 'Sibling parity with AdvisoryService::list() severity filter: same pattern used'."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md Step 4 inspects 'entity/src/package_license.rs (reuse candidate)' for 'the entity struct and its columns/relations'. Step 6 File 2 shows `use entity::package_license;` and uses `package::Relation::PackageLicense.def()` for the JOIN and `package_license::Column::License` for the filter. reuse-analysis.md Candidate 3 explicitly states: 'Writing raw SQL or hand-coding a JOIN expression would bypass SeaORM’s type safety and risk column name mismatches.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three numbered sections under 'Reuse Candidates from Task Description': (1) common/src/db/query.rs::apply_filter with explanation of direct call usage, (2) modules/fundamental/src/advisory/endpoints/list.rs severity filter pattern with structural template explanation, (3) entity/src/package_license.rs with direct reference explanation. Each includes 'What it provides', 'How it would be reused', 'Reuse type', and 'Why reuse matters here' subsections."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "plan.md Step 1 parses the task scope as Files to Modify: 'modules/fundamental/src/package/endpoints/list.rs', 'modules/fundamental/src/package/service/mod.rs' and Files to Create: 'tests/api/package_license_filter.rs'. Step 9 Scope containment lists the git diff output as exactly these three files and confirms 'The first two are listed in Files to Modify. The third is listed in Files to Create. All files are in scope.' The only potential out-of-scope file (tests/api/mod.rs) is explicitly flagged for user approval rather than silently included."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan uses apply_filter directly via `query = apply_filter(query, package_license::Column::License, license_value);` in Step 6 File 2. Step 9 Duplication check explicitly confirms: 'No duplication expected: the filter logic reuses apply_filter from common/src/db/query.rs rather than reimplementing comma-separated parsing.' No new utility functions for parsing or filter generation are proposed anywhere in plan.md or reuse-analysis.md."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

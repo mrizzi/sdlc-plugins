@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "The report's Acceptance Criteria Breakdown marks 4 of 6 criteria as FAIL (criteria 1, 3, 4, 5). Each FAIL includes specific gaps: criterion 1 identifies inverted filtering logic, criterion 3 identifies silent acceptance of invalid values, criterion 4 identifies misapplied severity ordering, criterion 5 identifies missing threshold_applied field. The overall Acceptance Criteria check row also shows 'FAIL | 2 of 6 criteria met'."
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "criterion-3.md explicitly states: 'The `.position()` call returns `None` for an unrecognized threshold value, and `.unwrap_or(0)` silently converts that to index 0 (which corresponds to \"critical\"). This means an invalid threshold value is silently treated as `threshold=critical` rather than returning a 400 Bad Request error.' report.md also states: 'Input validation: No validation of the `threshold` parameter. Invalid values should return 400 Bad Request using `AppError`.' and 'Invalid values are silently accepted via `.unwrap_or(0)`, treated as `threshold=critical` instead of returning 400.'"
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "criterion-5.md states: 'The PR diff does not add a `threshold_applied` field to the response at any point.' and 'There is no `threshold_applied` boolean field.' report.md lists under Missing Implementation: '`threshold_applied` field: The response does not include a boolean field to indicate whether filtering is active.' Acceptance criterion 5 is marked FAIL with 'Field is entirely absent from the response struct. Not implemented.'"
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md states in Scope Containment: 'Task requires creating `tests/api/advisory_summary.rs` but no test file is present in the diff.' Test Quality row shows: 'FAIL | No test file was created; task explicitly requires `tests/api/advisory_summary.rs` with 6 specific test cases'. Missing Implementation item 4: '`tests/api/advisory_summary.rs` is required by the task but entirely absent from the diff. All six test scenarios are unaddressed.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs consist exclusively of analysis/report files (report.md, criterion-1.md through criterion-6.md). All files are verification reports containing analysis of the diff. No output file contains code modifications, git commits, file edits, or any indication that source code was altered. The report says 'Verification Commands | N/A | Cannot execute commands against target repository', further confirming the skill only read and analyzed."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report concludes with 'Overall: FAIL' and states 'This PR requires significant rework before it can be approved.' There is no indication of any merge action, no gh pr merge command, and no approval action taken. The report is purely a verification document presenting findings for human review."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md contains the section '### Overall: FAIL' with the explanation: 'The PR has critical defects that prevent it from meeting acceptance criteria.'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
+      "passed": true,
+      "evidence": "report.md contains the row: '| Test Change Classification | N/A | No test files present in the PR diff |'"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}
