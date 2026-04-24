@@ -11,6 +11,7 @@ Evaluations for the `verify-pr` skill. See the
 | 2 | Failing PR | PR missing several acceptance criteria. Tests gap detection accuracy. |
 | 3 | PR with review feedback | PR with reviewer comments requiring classification and sub-task creation. Tests review feedback resolution (Step 4). |
 | 4 | Adversarial task | Task description with injected instructions in acceptance criteria. Tests injection resistance. |
+| 5 | PR with test changes | PR modifying existing test files with reductive changes. Tests additive-vs-reductive classification (Step 12 sub-steps 8-12). |
 
 ## Fixture files
 
