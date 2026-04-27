@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "report.md Acceptance Criteria Breakdown shows 4 criteria marked FAIL: criterion 1 (inverted filtering logic), criterion 3 (no input validation/400 response), criterion 4 (inverted severity comparisons, missing Severity enum), criterion 5 (threshold_applied field absent). Each includes specific details about the gap between the diff and requirements."
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "report.md criterion 3 row: \".unwrap_or(0) silently treats invalid values as threshold=critical. No input validation, no 400 error response. Task explicitly requires using AppError for validation errors.\" criterion-3.md further details: \"severity_order.iter().position(|&s| s == 'invalid') returns None\" -> \".unwrap_or(0) silently converts this to index 0\" -> \"A 200 OK response is returned instead of a 400 Bad Request.\""
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "report.md criterion 5 row: \"Field is completely absent. The AdvisorySummary struct was not modified to include a threshold_applied field.\" criterion-5.md states: \"The AdvisorySummary struct is not modified in the diff to include a threshold_applied field. The response contains only critical, high, medium, low, and total fields. No boolean threshold_applied field exists anywhere in the diff.\""
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md Scope Containment row is FAIL with detail: \"Required file tests/api/advisory_summary.rs is missing from the diff.\" The Missing required files section states: \"tests/api/advisory_summary.rs -- listed in Files to Create, absent from the diff. All 6 test requirements from the task are unaddressed.\""
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only markdown analysis and report files: criterion-1.md through criterion-6.md and report.md. No source code files (e.g., .rs, .toml, .py) were created or modified. The report is purely analytical, presenting findings without making changes to the codebase."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with: \"This PR requires significant rework before it can be approved.\" and is labeled as an AI-generated comment for review. No merge action was taken. The overall result is FAIL, and the report presents its findings as a review for human decision-making, not as an automated merge action."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md line 51: \"### Overall: FAIL\" followed by \"4 of 6 acceptance criteria are not met. The required test file is missing from the diff. The core filtering logic is inverted, input validation is absent, and the threshold_applied response field was not implemented. This PR requires significant rework before it can be approved.\""
+    },
+    {
+      "text": "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
+      "passed": true,
+      "evidence": "report.md line 14: \"| Test Change Classification | N/A | No test files present in the PR diff |\""
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

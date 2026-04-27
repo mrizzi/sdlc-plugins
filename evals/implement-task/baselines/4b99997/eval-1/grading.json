@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The conventions.md file explicitly references analyzing sibling code from these files: 'Endpoint Conventions (from endpoints/get.rs, endpoints/list.rs siblings)', 'Service Conventions (from service/advisory.rs, service/sbom.rs siblings)', 'Model Conventions (from model/summary.rs, model/details.rs siblings)', and 'Error Handling' referencing 'AppError is defined in common/src/error.rs'. At least 4 of the specified files are mentioned as having been inspected: get.rs, advisory.rs, summary.rs, and error.rs."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan.md lists exactly 3 files to create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file. It lists exactly 3 files to modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs. The plan also explicitly notes under 'Files NOT Modified': 'server/src/main.rs -- No changes needed'. All 6 file descriptions (file-1 through file-6) correspond to these files only. No unrelated files are included."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "Plan.md 'Files to Create' table lists: (1) modules/fundamental/src/advisory/model/severity_summary.rs - SeveritySummary response struct, (2) modules/fundamental/src/advisory/endpoints/severity_summary.rs - GET handler, (3) tests/api/advisory_summary.rs - Integration tests. These are detailed in file-1-description.md (Action: CREATE for model), file-2-description.md (Action: CREATE for endpoint handler), and file-3-description.md (Action: CREATE for test file)."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "Plan.md 'Files to Modify' table lists: (4) modules/fundamental/src/advisory/service/advisory.rs - Add severity_summary method, (5) modules/fundamental/src/advisory/endpoints/mod.rs - Register the new route, (6) modules/fundamental/src/advisory/model/mod.rs - Add pub mod severity_summary. Corresponding file descriptions file-4-description.md (Action: MODIFY for service), file-5-description.md (Action: MODIFY for endpoints/mod.rs), and file-6-description.md (Action: MODIFY for model/mod.rs) confirm these modifications."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "Plan.md lines 84-92 show the commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format with type 'feat', scope '(advisory)', and description. The footer contains 'Implements TC-9201' which references the Jira ticket."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "Plan.md line 94 states: 'The commit would include --trailer=\"Assisted-by: Claude Code\".' This explicitly references the required trailer convention."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1)",
+      "passed": true,
+      "evidence": "Plan.md lines 98-100 show: 'git checkout -b TC-9201' under the 'Branch' section, explicitly creating a branch named TC-9201 matching the Jira ticket ID."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md identifies both patterns clearly: (1) Error handling - line 43-46: 'All handlers return Result<T, AppError> where AppError is defined in common/src/error.rs' and 'Errors are wrapped with .context() to add descriptive context at each call site'; (2) Module structure - lines 12-14: 'Every domain module follows a strict model/ + service/ + endpoints/ structure' and 'Each sub-directory has a mod.rs that re-exports public items'. Additional patterns identified include Axum framework conventions, service method signatures, and model derive macros."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with the table headers (Repository, Role, Serena Instance, Path) but no data rows, or explicitly notes that no repositories are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-25 contain '## Repository Registry' with table headers '| Repository | Role | Serena Instance | Path |' and separator '|---|---|---|---|' but no data rows. Line 25 states 'No repositories configured. No Serena MCP servers are available.'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with Project key (MYPROJ), Cloud ID (abc123), and Feature issue type ID (10001)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 27-31 contain '## Jira Configuration' with 'Project key: MYPROJ', 'Cloud ID: abc123', and 'Feature issue type ID: 10001'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that indicates no Serena instances are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md line 33 contains '## Code Intelligence' and line 35 states 'No Serena MCP servers are configured. Code intelligence is not available.'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Serena MCP tools were discovered among the available tools",
+      "passed": true,
+      "evidence": "discovery-log.md line 9 states 'No Serena MCP tools were discovered among the available tools. The tool listing contains only built-in tools (Bash, Read, Write, Edit, Glob, Grep) and GitHub MCP tools.'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Atlassian MCP tools were discovered and Jira fields were provided via manual entry",
+      "passed": true,
+      "evidence": "discovery-log.md line 13 states 'No Atlassian MCP tools were discovered. Jira configuration fields were provided via manual user entry.'"
+    },
+    {
+      "text": "The output or discovery log mentions prompting the user about continuing without code intelligence (the skill should ask whether to continue or set up Serena first)",
+      "passed": true,
+      "evidence": "discovery-log.md lines 16-17 under '## User Interaction' state 'The user was prompted about continuing without code intelligence since no Serena instances were found. The user chose to continue without code intelligence.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

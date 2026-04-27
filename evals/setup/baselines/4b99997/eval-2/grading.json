@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing trustify-backend entry in the Repository Registry unchanged (same Role, Serena Instance, Path values as in claude-md-configured.md)",
+      "passed": true,
+      "evidence": "claude-md-result.md line 16 contains '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' which matches the original claude-md-configured.md line 16 exactly."
+    },
+    {
+      "text": "outputs/claude-md-result.md adds a new trustify-ui entry to the Repository Registry with serena_ui as the Serena Instance",
+      "passed": true,
+      "evidence": "claude-md-result.md line 17 contains '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |' — a new entry added alongside the preserved trustify-backend row."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged — Project key remains TC, Cloud ID, Feature issue type ID remain as in claude-md-configured.md",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-25 show all 5 Jira fields identical to claude-md-configured.md: 'Project key: TC', 'Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432', 'Feature issue type ID: 10142', 'Git Pull Request custom field: customfield_10875', 'GitHub Issue custom field: customfield_10747'."
+    },
+    {
+      "text": "outputs/changes-log.md explicitly identifies which entries were preserved (existing) and which were added (new)",
+      "passed": true,
+      "evidence": "changes-log.md has two clear sections: 'Preserved Entries (Existing)' (lines 3-25) listing trustify-backend row, all 5 Jira fields, and Code Intelligence content as **preserved**, and 'Added Entries (New)' (lines 27-41) listing the new trustify-ui row and serena_ui limitation as added."
+    },
+    {
+      "text": "outputs/discovery-log.md notes that serena_backend was already configured and serena_ui is newly discovered",
+      "passed": true,
+      "evidence": "discovery-log.md line 9 states 'serena_backend — already configured in existing Repository Registry. No changes needed.' and line 10 states 'serena_ui — newly discovered from MCP tools prefixed with `mcp__serena_ui__` ... Not yet in the Registry — needs to be added.'"
+    },
+    {
+      "text": "The existing Code Intelligence section content (naming convention, example, serena_backend limitations) is preserved — only new serena_ui content is added",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 27-43 preserve the original Code Intelligence section: tool naming convention on line 29, example on lines 34-38 using serena_backend, and '### Limitations' on line 40 with the original serena_backend limitation on line 42 ('rust-analyzer may take 30-60 seconds to index on first use'). Line 43 adds the new entry: '- `serena_ui`: No known limitations'."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

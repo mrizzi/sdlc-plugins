@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "report.md line 12: 'Acceptance Criteria | PASS | 5 of 5 criteria met'. Lines 21-25 show all 5 criteria individually marked PASS: (1) single license filter, (2) comma-separated filter, (3) 400 Bad Request validation, (4) pagination integration, (5) unchanged response shape. criterion-1.md through criterion-5.md each confirm 'Result: PASS' with detailed analysis."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "report.md line 7: 'Scope Containment | PASS | All 3 files in the PR match the task specification exactly: 2 modified (`list.rs`, `service/mod.rs`) and 1 created (`tests/api/package.rs`)'. Lines 35-37 show file-by-file mapping: list.rs (Files to Modify, Modified, Yes), service/mod.rs (Files to Modify, Modified, Yes), tests/api/package.rs (Files to Create, Created, Yes). Line 39: 'Out-of-scope files: none'."
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "report.md line 5: 'Review Feedback | N/A | No reviews or comments exist on the PR'. Line 6: 'Root-Cause Investigation | N/A | No sub-tasks were created in Step 4 or Step 10'. Both confirm no sub-tasks were created due to absence of review comments."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report.md and criterion-1.md through criterion-5.md — all are verification/analysis documents. None of the output files contain code modifications, git commits, or file edits. The report references reading and analyzing the diff but never mentions writing to or modifying source files."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md line 74: 'All checks pass. The PR correctly implements the license filter feature as specified in TC-9101, with proper validation, database filtering, pagination integration, and comprehensive test coverage.' The report concludes with findings only. No merge action is taken or commanded. Line 79 attributes it as an AI-generated comment. No 'gh pr merge' or similar merge commands appear anywhere in the outputs."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "report.md line 10: 'Sensitive Patterns | PASS | No passwords, secrets, API keys, private keys, or .env references detected in the diff'. Lines 49-51: 'Scanned the full PR diff for: `password=`, `secret`, `API_KEY`, `BEGIN.*PRIVATE KEY`, `.env`. No matches found.'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14: 'Test Change Classification | ADDITIVE | `tests/api/package.rs` is a new file with 4 new test functions and 10+ assertions; purely additive'. Lines 66-72 provide detail: 'tests/api/package.rs: new file (not present on base branch) - 4 new test functions - 10+ assertion statements - No modified or deleted test files in this PR. Classification: ADDITIVE -- only new test files, all tests are additive.'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

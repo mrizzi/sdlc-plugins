@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with a table listing both 'trustify-backend' (serena_backend) and 'trustify-ui' (serena_ui) as entries",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-25 contain '## Repository Registry' with a table listing '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' and '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with all 5 fields: Project key (TC), Cloud ID, Feature issue type ID (10142), Git Pull Request custom field (customfield_10875), GitHub Issue custom field (customfield_10747)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 27-33 contain '## Jira Configuration' with all 5 fields: 'Project key: TC', 'Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432', 'Feature issue type ID: 10142', 'Git Pull Request custom field: customfield_10875', 'GitHub Issue custom field: customfield_10747'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that documents the mcp__<instance>__<tool> naming convention",
+      "passed": true,
+      "evidence": "claude-md-result.md line 35 contains '## Code Intelligence' and line 37 states 'Tools are prefixed by Serena instance name: `mcp__<instance>__<tool>`.' with a concrete example on lines 42-46 using mcp__serena_backend__find_symbol."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Limitations' subheading under Code Intelligence",
+      "passed": true,
+      "evidence": "claude-md-result.md line 48 contains '### Limitations' which appears after the '## Code Intelligence' section on line 35, making it a subheading under Code Intelligence."
+    },
+    {
+      "text": "outputs/discovery-log.md mentions discovering 2 Serena instances (serena_backend and serena_ui) from the MCP tool listing",
+      "passed": true,
+      "evidence": "discovery-log.md lines 9-10 under '## Discovered Serena Instances' lists: '1. **serena_backend** — discovered from MCP tools prefixed with `mcp__serena_backend__` (10 tools...)' and '2. **serena_ui** — discovered from MCP tools prefixed with `mcp__serena_ui__` (10 tools...)'. The source is identified as 'MCP tool listing' on line 5."
+    },
+    {
+      "text": "outputs/changes-log.md indicates all sections were newly added (no preserved entries since this is a greenfield setup)",
+      "passed": true,
+      "evidence": "changes-log.md lines 13-14 state 'The following sections were added as a new `# Project Configuration` block appended to the end of the file'. Lines 15, 25, and 34 label each section as '(new)': 'Repository Registry (new)', 'Jira Configuration (new)', 'Code Intelligence (new)'. Lines 42-44 state 'Nothing was removed. The setup skill is incremental and never removes existing entries.'"
+    },
+    {
+      "text": "The Repository Registry table contains columns: Repository, Role, Serena Instance, Path — matching project-config.template.md structure",
+      "passed": true,
+      "evidence": "claude-md-result.md line 22 shows '| Repository | Role | Serena Instance | Path |' which exactly matches the required column structure from the project-config-contract.md."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}
