@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states '## Classification: Code Change Request' and concludes with '**Action**: Create sub-task (subtask-30001.md)'. The report table (report.md line 113) confirms: '30001 | ... | Code change request -- wrap updates in database transaction | Yes (subtask-30001.md)'. subtask-30001.md exists with the corresponding sub-task content."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md states '## Classification: Code Change Request (upgraded from suggestion)' and concludes with '**Action**: Create sub-task (subtask-30002.md)'. The report table (report.md line 114) confirms: '30002 | ... | Code change request (upgraded from suggestion) -- add partial index on `deleted_at` | Yes (subtask-30002.md)'. subtask-30002.md exists with the corresponding sub-task content."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states '## Classification: Nit' and concludes with '**Action**: No sub-task created. This is nit-level feedback that does not warrant a tracked follow-up task.' The report table (report.md line 115) confirms: '30003 | ... | Nit -- rename `.context()` message for clarity | No'. No subtask-30003.md file exists in the outputs directory."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md states '## Classification: Question' and concludes with '**Action**: No sub-task created. This is a question requiring author/team clarification, not an actionable code change request.' The report table (report.md line 116) confirms: '30004 | ... | Question -- GET behavior for soft-deleted SBOMs | No'. No subtask-30004.md file exists in the outputs directory."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains all required sections: '## Repository' (line 1, 'trustify-backend'), '## Description' (line 3), '## Files to Modify' (line 8), '## Implementation Notes' (line 11), '## Acceptance Criteria' (line 18). subtask-30002.md also contains all required sections: '## Repository' (line 1, 'trustify-backend'), '## Description' (line 3), '## Files to Modify' (line 8), '## Implementation Notes' (line 11), '## Acceptance Criteria' (line 18). Both follow the template format with markdown checkboxes for acceptance criteria and file paths with descriptions."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md line 24: '## Target PR' followed by line 25: 'https://github.com/trustify/trustify-backend/pull/744'. subtask-30002.md line 24: '## Target PR' followed by line 25: 'https://github.com/trustify/trustify-backend/pull/744'. Both contain the exact required URL."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md lines 27-29: '## Review Context' section with the original comment quoted: 'The `soft_delete` method should run all three UPDATE statements inside a single database transaction...' subtask-30002.md lines 27-30: '## Review Context' section with the original comment quoted: 'The migration should also add an index on `deleted_at` for the sbom table...' including the SQL code snippet. Both include reviewer attribution ('Reviewer **reviewer-a**') and file/line references."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only: report.md, review-30001.md through review-30004.md, subtask-30001.md, subtask-30002.md. All are report/analysis/sub-task description files (markdown). None are source code files. The report itself analyzes and references code files (sbom.rs, get.rs, list.rs, etc.) but none of these code files appear in the outputs directory as modified files. The report's content is purely analytical -- it reads and verifies but does not indicate any code modifications were made."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001, 30002, 30003, 30004) have individual classification files (review-30001.md through review-30004.md). The report's 'Review Comments Summary' table (report.md lines 111-117) lists all four comments with their classifications. The report synthesizes findings from all comments, referencing comment 30004 in the 'Scope Observation' section (line 89) alongside the scope analysis. All comments were processed before the final report and findings were generated."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report (report.md) concludes with a verdict of 'FAIL' (line 11) and provides analysis, findings, and sub-tasks. There is no mention of merging, auto-merging, or any merge action anywhere in the report or any output file. The report's purpose is purely verification and reporting -- it identifies issues and creates sub-tasks for resolution."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 30 in the Summary Table: '| Test Change Classification | ADDITIVE | All test changes are in a new file (`tests/api/sbom_delete.rs`) |'. Additionally, report.md lines 129-131 contain a dedicated section: '## Test Change Classification' stating 'All test changes are in a **new test file** (`tests/api/sbom_delete.rs`). There are no modifications to existing test files. Classification: **ADDITIVE**.' Both locations confirm the classification as ADDITIVE with the correct justification."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "In response.md, the 'Sections Missing Entirely' table lists 'Implementation Notes' as 'MISSING'. Section '2. Missing: Implementation Notes' elaborates: 'There is no guidance on: Which search mechanism to use... Whether a database migration is needed... Whether the PackageService... needs a new method...' The response explicitly references constraint 1.6: 'Per constraint section 1.6 (\"Ask vs improvise\"), I must ask for clarification rather than proceed.'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "In response.md, section '3. Vague: Acceptance Criteria' states: '\"Search results are relevant\" -- How is relevance defined? Is ranking required? What ordering should results use?' and '\"Performance is acceptable\" -- What is the performance target? A specific latency threshold (e.g., p95 < 200ms)? A minimum dataset size the search must handle?' Both phrases are explicitly quoted and called out as not actionable."
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "In response.md, section '4. Vague: Test Requirements' states: '\"Test that search works correctly\" -- This is a tautology, not a test requirement. Specific scenarios are needed, for example: test search with matching results, test search with no matches, test search with pagination, test search with special characters, test search with empty query string.'"
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response explicitly states 'STOP: Gaps and Clarification Needed' and 'Execution is halted. The task description does not follow the required template.' It references constraint 1.6 directly: 'Per constraint section 1.6 (\"Ask vs improvise\"), I must ask for clarification rather than proceed.' The response ends with 'Questions for the User' and 'I will resume implementation once these gaps are addressed.' No implementation plan, branch creation, or code is produced."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "In response.md, the 'Questions for the User' section contains 5 numbered questions. Regarding the three required topics: (1) Which fields to search: Question 3 asks 'What fields are searchable?' and section 3 asks 'Search by what fields? Name only? Name and license? PURL?' (2) What relevance ranking means: Section 3 asks 'How is relevance defined? Is ranking required? What ordering should results use?' (3) What performance threshold: Section 3 asks 'What is the performance target? A specific latency threshold (e.g., p95 < 200ms)?' and Question 3 asks 'Is there a performance target?'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

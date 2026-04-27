@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The conventions.md file is titled 'Conventions Discovered from Sibling Analysis' and explicitly references inspecting at least 3 of the 4 listed files: (1) 'Sibling pattern from endpoints/get.rs: extracts Path(id), calls service method, maps errors, returns JSON' (conventions.md line 47), (2) 'AdvisorySummary in model/summary.rs contains a severity field' (conventions.md line 28), (3) 'AppError is defined in common/src/error.rs' (conventions.md line 57), (4) 'Pattern from AdvisoryService: fetch, list, search methods' referencing advisory/service/advisory.rs (conventions.md line 36). The plan.md also references following patterns from get.rs (file-4-description.md line 41) and service/advisory.rs (file-3-description.md)."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan lists exactly 3 files to modify: model/mod.rs, service/advisory.rs, endpoints/mod.rs (plan.md lines 23-27), and exactly 3 files to create: model/severity_summary.rs, endpoints/severity_summary.rs, tests/api/advisory_summary.rs (plan.md lines 31-35). These match the task specification exactly. The plan explicitly states 'All changes are confined to the files listed in the task' and lists files NOT modified: server/src/main.rs, entity/, common/, and other modules (plan.md lines 75-80). No file descriptions reference out-of-scope files."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "Plan.md lines 31-35 list all 3 files to create: (1) 'modules/fundamental/src/advisory/model/severity_summary.rs - SeveritySummary response struct', (2) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs - GET handler for /api/v2/sbom/{id}/advisory-summary', (3) 'tests/api/advisory_summary.rs - Integration tests (4 test cases)'. Each has a corresponding detailed file description: file-1-description.md, file-4-description.md, and file-6-description.md respectively."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "Plan.md lines 23-27 list all 3 files to modify: (1) 'modules/fundamental/src/advisory/model/mod.rs - Add pub mod severity_summary;', (2) 'modules/fundamental/src/advisory/service/advisory.rs - Add severity_summary method to AdvisoryService', (3) 'modules/fundamental/src/advisory/endpoints/mod.rs - Register new route and module declaration'. Each has a corresponding detailed file description: file-2-description.md, file-3-description.md, and file-5-description.md."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "Plan.md lines 95-104 show the commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format with type 'feat', scope 'advisory', and description. The footer contains 'Refs: TC-9201' which references the Jira ticket."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": false,
+      "evidence": "The plan includes 'Assisted-by: Claude Code' as a line in the commit message body (plan.md line 103), but it does NOT mention using the --trailer flag. The commit message section shows it inline as part of the message text, not as a separate --trailer='Assisted-by: Claude Code' git command flag. The assertion specifically requires mentioning '--trailer=' syntax, which is absent from all output files."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1)",
+      "passed": true,
+      "evidence": "Plan.md lines 15-17 specify the branch name under a '## Branch' section: 'TC-9201-advisory-severity-summary'. This starts with the ticket key TC-9201 followed by a descriptive suffix, satisfying the branch naming convention requirement."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "Conventions.md identifies both patterns: (1) Error handling - section 'Error Handling Convention' (lines 55-59): 'All handlers return Result<T, AppError> where AppError is defined in common/src/error.rs' and 'Context wrapping uses .context(\"operation description\") from anyhow'. (2) Module structure - section 'Module Structure Convention' (lines 5-19): describes the 'strict tripartite structure' of model/, service/, and endpoints/ directories with specific file patterns. Additional patterns also identified include service method signatures, endpoint handler conventions, testing conventions, and naming conventions."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 1,
+    "total": 8,
+    "pass_rate": 0.875
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 39: 'call `common::db::query::apply_filter` with the raw license string and the appropriate column from the `package_license` entity. `apply_filter` handles comma-separated parsing and generates the SQL `IN` clause, so no custom parsing logic is needed.' Also reuse-analysis.md lines 15-17: 'Instead of writing new parsing or clause-building logic, the implementation will call `apply_filter` directly, passing the raw `license` query parameter string and the target column reference.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 17: 'Following the pattern in `modules/fundamental/src/advisory/endpoints/list.rs` (Reuse Candidate 2), add an `Option<String>` field named `license` to the query parameter struct.' Line 27: 'This mirrors how the advisory list handler passes `severity` to `AdvisoryService::list()`.' Also reuse-analysis.md lines 27-31 detail the three-step pattern replication: Query struct, Extraction, and Delegation, each referencing the advisory endpoint as the structural template."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md lines 41-48: 'Use SeaORM's join capabilities with the existing `entity::package_license` entity to join the `package` table to the `package_license` table. The entity already defines the necessary `Relation`' with code example using `package_license::Relation::Package.def().rev()`. Line 50: 'apply the filter condition on `package_license::Column::License` using `apply_filter`'. Also plan.md line 100: 'entity/src/package_license.rs -- used as-is, not modified'."
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three dedicated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 9-18) explaining direct invocation for comma-separated parsing, 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs' (lines 22-35) explaining pattern replication for Query struct/extraction/delegation, and 'Reuse Candidate 3: entity/src/package_license.rs' (lines 39-49) explaining direct usage for JOIN. Each section includes 'What it provides', 'How it will be reused', and 'Reuse mode' subsections."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": false,
+      "evidence": "The task defines Files to Modify as modules/fundamental/src/package/endpoints/list.rs and modules/fundamental/src/package/service/mod.rs, and Files to Create as tests/api/package_license_filter.rs. The plan proposes modifying an additional file not in scope: plan.md line 69 states 'Register in test module: Add `mod package_license_filter;` to the test module's root (likely `tests/api/mod.rs` or via Cargo test configuration).' This modification to tests/api/mod.rs is outside the defined scope of Files to Modify and Files to Create."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 92: 'No new utility functions, helpers, or shared modules are created. All filtering infrastructure already exists in the codebase.' The plan consistently calls apply_filter directly (line 39: 'call `common::db::query::apply_filter`') and explicitly states no custom parsing logic is needed. reuse-analysis.md line 17 confirms: 'Instead of writing new parsing or clause-building logic, the implementation will call `apply_filter` directly.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  }
+}
