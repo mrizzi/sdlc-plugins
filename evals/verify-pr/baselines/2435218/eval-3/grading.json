@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md: '**Classification:** code change request'. Action section states: 'Sub-task created to address this feedback.' File subtask-30001.md exists with the sub-task content. Report table row: '| 30001 | ... | code change request | Sub-task created |'"
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md: '**Classification:** code change request'. Action section states: 'Sub-task created to address this feedback.' File subtask-30002.md exists with the sub-task content. Report table row: '| 30002 | ... | code change request | Sub-task created |'"
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md: '**Classification:** nit'. Action section states: 'No sub-task created. Nit-level feedback does not warrant tracked work items.' No subtask-30003.md file exists in the outputs directory."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md: '**Classification:** question'. Action section states: 'No sub-task created from this classification.' No subtask-30004.md file exists in the outputs directory."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 8), '## Implementation Notes' (line 11), '## Acceptance Criteria' (line 18). subtask-30002.md contains: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 8), '## Implementation Notes' (line 11), '## Acceptance Criteria' (line 18). All required sections are present in both sub-task files."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md line 26-27: '## Target PR\\nhttps://github.com/trustify/trustify-backend/pull/744'. subtask-30002.md line 24-25: '## Target PR\\nhttps://github.com/trustify/trustify-backend/pull/744'. Both contain the exact PR URL."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md lines 28-33: '## Review Context' section with Comment ID 30001, reviewer, file/line, and the full original comment text about transaction wrapping. subtask-30002.md lines 26-31: '## Review Context' section with Comment ID 30002, reviewer, file/line, and the full original comment text about adding an index."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only .md files: report.md, review-30001.md through review-30004.md, subtask-30001.md, subtask-30002.md, subtask-rc-30001.md, subtask-rc-30002.md. All are documentation/report files (review classifications, sub-task descriptions, root-cause analyses, and the verification report). No code files (.rs, .py, .js, .toml, etc.) were created or appear in the outputs. The report itself does not mention any code modifications made by the skill."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001, 30002, 30003, 30004) have individual classification files (review-30001.md through review-30004.md). The report.md contains a 'Review Comment Classifications' table listing all four comments with their classifications and actions. The report shows all comments were processed: 30001 (code change request), 30002 (code change request), 30003 (nit), 30004 (question)."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md shows 'Overall: FAIL' and contains no merge commands, merge actions, or any indication of auto-merging. The report is purely informational, listing check results, review classifications, acceptance criteria, and root-cause summaries. No merge-related language appears anywhere in the outputs."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | ADDITIVE | New test file only (`tests/api/sbom_delete.rs`); no modified or deleted test files. |'"
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

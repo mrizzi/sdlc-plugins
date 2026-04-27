@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "Line 1: \"Please run `/setup` first to configure your project\" and Line 9: \"Run `/setup` to generate this configuration, then re-run `/sdlc-workflow:define-feature`.\""
+    },
+    {
+      "text": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "Line 3: \"Your CLAUDE.md is missing the required `# Project Configuration` section\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "File /tmp/define-feature-eval-baseline/eval-3/outputs/preview.md does not exist (read returned 'File does not exist')."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "File /tmp/define-feature-eval-baseline/eval-3/outputs/jira-create.md does not exist (read returned 'File does not exist')."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "File /tmp/define-feature-eval-baseline/eval-3/outputs/jira-comment.md does not exist (read returned 'File does not exist')."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "Full file content (9 lines) was read. It contains only references to Project Configuration, Repository Registry, Jira Configuration, Code Intelligence, and /setup instructions. None of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, User Stories, Acceptance Criteria, Technical Considerations, Out of Scope, Open Questions) appear anywhere in the file."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}
