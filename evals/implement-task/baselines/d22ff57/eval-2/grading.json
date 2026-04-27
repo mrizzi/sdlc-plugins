@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Section '2. Missing \"Implementation Notes\" Section' (lines 48-55) explicitly states: 'The Implementation Notes section is required to provide concrete guidance on patterns to follow, existing code to reuse, and specific file paths and symbol names discovered during planning.' The parsed task table at line 27 shows 'Implementation Notes | **MISSING**'. Line 31 states: 'The structured description is incomplete. Two required sections are entirely absent... Per the skill's rules, I must list the gaps, ask the user for clarification, and stop execution immediately.'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Section '3. Vague Acceptance Criteria' (lines 57-75) explicitly calls out both criteria. Lines 63-68 address '\"Search results are relevant\" -- \"Relevant\" is undefined and unmeasurable' with detailed specifics about what's missing. Lines 69-73 address '\"Performance is acceptable\" -- \"Acceptable\" has no quantitative definition' listing missing latency targets, dataset size assumptions, indexing requirements, and pass/fail thresholds."
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Section '4. Vague Test Requirements' (lines 79-87) explicitly states: 'The single test requirement -- \"Test that search works correctly\" -- does not define what \"correctly\" means.' It then lists four specific gaps: which test scenarios to cover, which response fields to assert on, whether error cases need coverage, and whether tests should follow existing integration test patterns."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 31 states: 'I must list the gaps, ask the user for clarification, and stop execution immediately -- I will not proceed with any subsequent steps (branching, implementation planning, code changes) until the missing information is provided.' Lines 157-158 state: 'Stopping execution. No branch has been created, no code has been written, and no implementation plan has been drafted. I will not proceed until the ambiguities above are resolved.' The 'Clarifying Questions' section (lines 104-147) asks 6 specific questions. No implementation plan is produced."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks 6 clarifying questions (Q1-Q6). Q2 (lines 114-116): 'Which fields should the search match against? Should the search match on package name only, or also on other fields such as version, license, PURL, namespace/ecosystem, or description?' Q3 (lines 118-120): 'What does \"relevant\" mean for result ranking? Should results be ranked in a specific order (e.g., exact matches above partial matches, then alphabetical)?' Q5 (lines 131-133): 'What is the measurable performance threshold? Is there a latency target (e.g., p95 under 200ms for N packages)?'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

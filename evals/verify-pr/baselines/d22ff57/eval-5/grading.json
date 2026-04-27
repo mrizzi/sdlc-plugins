@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 105: '| Test Change Classification | MIXED | Both additive and reductive signals present: REDUCTIVE -- test_recommend_purls_with_qualifiers removed, assertion relaxed from qualified PURL to versioned PURL; ADDITIVE -- test_recommend_purls_dedup added, tests/api/purl_simplify.rs is a new file with 3 test functions |'. Also report.md line 28: '## Test Change Classification: MIXED' with detailed subsections for Reductive Signals and Additive Signals."
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md lines 32-33 under '### Reductive Signals': '1. **Removed test function `test_recommend_purls_with_qualifiers`**: This function existed in the base branch of `tests/api/purl_recommend.rs` (lines 30-48) and was entirely deleted.' Also in the structural summary line 58: '-1 test function (`test_recommend_purls_with_qualifiers`)'."
+    },
+    {
+      "text": "The structural summary or reductive findings identify the relaxed assertion in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers",
+      "passed": true,
+      "evidence": "report.md lines 34-45 under '### Reductive Signals': '2. **Relaxed assertion in `test_recommend_purls_basic`**: The base-branch version asserted the full PURL string including qualifiers: ... \"pkg:maven/org.apache/commons-lang3@3.12?repository_url=https://repo1.maven.org&type=jar\" ... The PR version asserts a shorter versioned PURL without qualifiers: ... \"pkg:maven/org.apache/commons-lang3@3.12\" ... This is a specificity reduction on the assertion matcher.'"
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md lines 49-54 under '### Additive Signals': '2. **New test file `tests/api/purl_simplify.rs`**: This file does not exist on the base branch, making it inherently additive. It contains three new test functions: test_simplified_purl_no_version, test_simplified_purl_mixed_types, test_simplified_purl_ordering_preserved'. Also structural summary line 59: 'tests/api/purl_simplify.rs: new file, +3 test functions, +12 assertions (inherently additive)'."
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md lines 47-48 under '### Additive Signals': '1. **New test function `test_recommend_purls_dedup`**: Added to `tests/api/purl_recommend.rs`. This tests a behavior that did not exist before -- deduplication of entries that become identical after qualifier removal.' Also structural summary line 58: '+1 test function (`test_recommend_purls_dedup`)'."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only analysis/report files: criterion-1.md through criterion-9.md and report.md. All files are verification reports containing analysis of the PR diff. No output file indicates any code modification was performed. The report describes reading diffs and verifying criteria but never mentions writing, editing, or modifying any source or test files."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with '### Overall: PASS' followed by a summary of findings (lines 110-112). There is no mention of merging, approving, or taking any action on the PR. The report presents verification checks, acceptance criteria results, and test change classification for human review. No merge commands or auto-merge indicators appear anywhere in the output files."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md lines 62-63 inspect apply_filter via Serena. Lines 170-179 show direct usage: 'query = apply_filter(query, \"package_license\", \"license\", &license_value)?;' with explanation that it 'handles: Parsing comma-separated values'. Line 194: 'common/src/db/query.rs::apply_filter — direct reuse for comma-separated parsing and SQL IN clause'. reuse-analysis.md lines 9-33 provide detailed coverage of apply_filter reuse for comma-separated parsing."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 145: 'This follows the same pattern as the severity field in the advisory list query struct (modules/fundamental/src/advisory/endpoints/list.rs).' Line 153: 'Follow the exact structural pattern from modules/fundamental/src/advisory/endpoints/list.rs for how the severity optional field is declared, extracted, and forwarded.' reuse-analysis.md lines 37-69 cover this as 'Reuse Candidate 2' with detailed structural pattern description."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md lines 68-69 identify entity/src/package_license.rs for inspection. Lines 183-191 show SeaORM entity-based JOIN: 'query = query.join(JoinType::InnerJoin, entity::package_license::Relation::Package.def().rev())'. Line 195: 'entity/src/package_license.rs — direct reuse of the existing entity and its relation definitions for the JOIN'. reuse-analysis.md lines 73-107 explain why this is preferred over raw SQL."
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md has three dedicated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 7-33), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs (severity filter pattern)' (lines 37-69), 'Reuse Candidate 3: entity/src/package_license.rs' (lines 73-107). Each contains 'How it would be reused' subsections with code examples and detailed explanations of application."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": false,
+      "evidence": "The task defines Files to Modify as modules/fundamental/src/package/endpoints/list.rs and modules/fundamental/src/package/service/mod.rs, and Files to Create as tests/api/package_license_filter.rs. The plan lists these correctly but also proposes changes to out-of-scope files: plan.md line 237 proposes 'Add mod package_license_filter; to tests/api/mod.rs', and lines 239-245 propose documentation changes to 'docs/api.md'. These files are not in the task's Files to Modify or Files to Create sections. Lines 280-282 acknowledge these as 'Possible out-of-scope files'."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan consistently calls apply_filter directly without creating wrappers or new parsing functions. plan.md line 153: 'Follow the exact structural pattern from modules/fundamental/src/advisory/endpoints/list.rs'. Lines 170-179 show direct apply_filter invocation with no new utility layer. reuse-analysis.md line 144: 'No new utility functions or shared modules need to be created — the existing infrastructure fully supports the license filter feature.' No code in the plan creates any new parsing, splitting, or filter-building utility."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  }
+}

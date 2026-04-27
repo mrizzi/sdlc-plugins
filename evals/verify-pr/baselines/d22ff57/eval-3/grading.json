@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states '## Classification: code change request' and concludes 'This is a clear **code change request** requiring a sub-task.' The report.md table row shows '30001 | reviewer-a | Code change request | Created (subtask-30001.md)'. The file subtask-30001.md exists with the sub-task content."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md states '## Classification: code change request' and explains the upgrade reasoning: 'While this could initially be viewed as a suggestion (proposing an optimization), it warrants upgrade to a code change request.' The report.md table shows '30002 | reviewer-a | Code change request | Created (subtask-30002.md)'. subtask-30002.md exists with sub-task content."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states '## Classification: nit' and concludes 'This is a **nit** -- minor style feedback that does not affect correctness. No sub-task created.' The report.md table shows '30003 | reviewer-a | Nit | None'. No subtask-30003.md file exists in the outputs directory."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md states '## Classification: question' and concludes 'This is a **question** -- the reviewer asks for clarification about the intended behavior. No sub-task created.' The report.md table shows '30004 | reviewer-a | Question | None'. No subtask-30004.md file exists in the outputs directory."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains all required sections: '## Repository' (trustify-backend), '## Description' (wrapping UPDATE statements in transaction), '## Files to Modify' (modules/fundamental/src/sbom/service/sbom.rs), '## Implementation Notes' (5 bullet points of guidance), '## Acceptance Criteria' (4 checkboxed criteria). subtask-30002.md also contains all required sections: '## Repository' (trustify-backend), '## Description' (add partial index), '## Files to Modify' (migration/src/m0042_sbom_soft_delete/mod.rs), '## Implementation Notes' (5 bullet points), '## Acceptance Criteria' (4 checkboxed criteria)."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'. subtask-30002.md contains '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains '## Review Context' with Comment ID 30001, Reviewer reviewer-a, File and line reference, and the full original comment text in a blockquote starting with '> The `soft_delete` method should run all three UPDATE statements inside a single database transaction.' subtask-30002.md contains '## Review Context' with Comment ID 30002, Reviewer reviewer-a, File and line reference, and the full original comment text in a blockquote starting with '> The migration should also add an index on `deleted_at` for the sbom table.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only 7 files: report.md, review-30001.md, review-30002.md, review-30003.md, review-30004.md, subtask-30001.md, subtask-30002.md. All are markdown documentation/report files. No source code files (.rs, .py, .js, .toml, etc.) are present in the outputs. The outputs consist entirely of classification reports, sub-task descriptions, and the verification report."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001, 30002, 30003, 30004) have corresponding classification files (review-30001.md through review-30004.md). The report.md Review Comment Summary table lists all four comments with their classifications. The report states '2 code change requests found (comments 30001, 30002); sub-tasks created. 1 nit (30003) and 1 question (30004) require no action.' This confirms all comments were processed."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report.md file contains no mention of merging, auto-merge, or any merge action. The overall result is 'WARN' with two issues requiring attention. There is no indication that the PR was merged or that any merge command was executed. The outputs are purely reporting/analytical documents."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md contains the row '| Test Change Classification | ADDITIVE | `tests/api/sbom_delete.rs` is a new file; no existing test files were modified or deleted. |' in the main verification table. Additionally, the 'Test Change Classification Detail' section at the bottom states: '`tests/api/sbom_delete.rs`: **NEW** file (not present on base branch). 5 test functions added, all with doc comments. Classification: ADDITIVE.'"
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}
