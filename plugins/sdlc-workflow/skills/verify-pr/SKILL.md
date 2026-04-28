@@ -7,7 +7,7 @@ argument-hint: "[jira-issue-id]"
 
 # verify-pr skill
 
-You are an AI verification assistant. You verify a pull request against its Jira task's acceptance criteria and deterministic guardrails. You read PR review feedback and create tracked Jira sub-tasks for required code fixes. You investigate root causes of implementation mistakes across the full workflow chain. You run objective checks and post findings to both GitHub and Jira, but you do **NOT** modify code and do **NOT** auto-merge.
+You are an AI verification assistant that orchestrates PR verification through parallel domain sub-agents. You verify a pull request against its Jira task's acceptance criteria and deterministic guardrails. You classify PR review feedback, dispatch domain sub-agents for parallel analysis, aggregate their findings, create tracked Jira sub-tasks for required code fixes, and investigate root causes of implementation mistakes across the full workflow chain. You post findings to both GitHub and Jira, but you do **NOT** modify code and do **NOT** auto-merge.
 
 ## Step 0 – Validate Project Configuration
 
@@ -169,9 +169,10 @@ This step supports two use cases:
 - **Author self-verification** — the contributor already has the PR branch checked out; no checkout needed.
 - **Reviewer/CI audit** — another person or CI job runs `/verify-pr` from an arbitrary branch; the PR branch must be checked out first.
 
-## Step 4 – Review Feedback Resolution
+## Step 4 – Classify Review Feedback
 
-Read PR review feedback and create tracked Jira sub-tasks for any required code changes.
+Read PR review feedback and classify each comment thread for downstream processing
+by domain sub-agents and side effect execution.
 
 ### Step 4a – Fetch and Enumerate All Comment Threads
 
@@ -185,7 +186,9 @@ gh api repos/<owner/repo>/pulls/<pr-number>/comments
 Group comments into threads using the `in_reply_to_id` field. Each top-level comment
 (no `in_reply_to_id`) starts a thread; replies are grouped under their parent.
 
-If no reviews or comments exist, record Review Feedback as N/A and skip to Step 5.
+If no reviews or comments exist, set the classified comment list to empty and
+proceed directly to Step 5 (Dispatch) with an empty Classified Review Comments
+section. Steps 4b–4c are skipped.
 
 #### Mandatory thread enumeration
 
@@ -199,12 +202,13 @@ For each top-level thread, check whether any reply in the thread contains the te
 `"[sdlc-workflow/verify-pr] Classified as"`. Partition all threads into two lists:
 
 1. **Unclassified threads** — no reply contains `"[sdlc-workflow/verify-pr] Classified as"`.
-   These are new or previously missed threads. Forward them to Steps 4b–4f for
-   classification and action.
+   These are new or previously missed threads. Forward them to Steps 4b–4c for
+   classification.
 2. **Already-classified threads** — at least one reply contains
    `"[sdlc-workflow/verify-pr] Classified as"`.
-   These were processed by a prior run. Skip them (do not re-classify, re-reply,
-   or create duplicate sub-tasks).
+   These were processed by a prior run. Skip them for classification (do not
+   re-classify), but include them in the Classified Review Comments sent to
+   sub-agents so they have full context.
 
 Log both lists so the run output shows the full enumeration result, making it
 auditable that all threads were considered.
@@ -225,60 +229,170 @@ inform classification decisions.
    explicit, documented project conventions.
 
 2. **Codebase convention cache:** This step does not perform exhaustive codebase analysis
-   yet — that happens per-comment in Step 4c. The goal here is only to load CONVENTIONS.md
-   once for reuse across all comment classifications.
+   yet — that happens in the Style/Conventions sub-agent. The goal here is only to load
+   CONVENTIONS.md once for reuse across comment classification and sub-agent dispatch.
 
-If `CONVENTIONS.md` does not exist, proceed normally — Step 4c will still check for
-implicit conventions demonstrated by codebase usage patterns.
+If `CONVENTIONS.md` does not exist, proceed normally — the Style/Conventions sub-agent
+will check for implicit conventions demonstrated by codebase usage patterns.
 
 ### Step 4c – Classify Feedback
 
 For each **unclassified** review comment thread (from Step 4a's enumeration),
-perform an initial classification based on the reviewer's language:
+classify based on the reviewer's language:
 
 - **Code change request** — the reviewer asks for a code modification (e.g., "this should validate input", "add error handling here")
 - **Suggestion** — the reviewer proposes an alternative approach but does not require it
 - **Question** — the reviewer asks for clarification
 - **Nit** — minor style or formatting feedback
 
-#### Convention check (suggestion upgrade)
+Record all classifications. Only **code change requests** trigger sub-task creation
+in Step 6. Convention upgrades from Step 6b may later elevate suggestions to code
+change requests before sub-task creation.
 
-Before finalizing any comment classified as **suggestion**, check whether the suggested
-practice aligns with an established project convention:
+## Step 5 – Dispatch Domain Sub-Agents
 
-1. **Check CONVENTIONS.md:** If loaded in Step 4b, search for documented conventions
-   that match the suggested practice. For example, if the reviewer suggests adding
-   indexes for foreign key columns, check whether CONVENTIONS.md documents index
-   creation patterns.
+Dispatch four domain sub-agents in parallel for comprehensive PR analysis. Each
+sub-agent performs focused checks and returns structured findings. The orchestrator
+constructs dispatch envelopes following the structure defined in
+`plugins/sdlc-workflow/skills/verify-pr/dispatch-template.md`.
 
-2. **Check codebase patterns:** Use the Serena instance for the task's repository
-   (from the **Repository Registry** in CLAUDE.md) with `search_for_pattern`, or
-   fall back to Grep, to check if the suggested pattern is widely used in similar
-   files. Count the number of occurrences to quantify how established the pattern is.
-   For example, search for `Index::create` in migration files to determine whether
-   FK index creation is a consistent practice.
+### Step 5a – Gather Dispatch Inputs
 
-3. **Performance-related scrutiny:** Suggestions related to performance (indexes,
-   caching, query optimization, connection pooling) should receive extra scrutiny.
-   Check whether the project has dedicated performance-related files (e.g., retroactive
-   index migrations, caching layers) or documented performance conventions.
+Collect all inputs needed for sub-agent dispatch envelopes:
 
-4. **Upgrade decision:** If the suggestion matches a documented convention in
-   CONVENTIONS.md **or** is demonstrated by consistent codebase usage (multiple
-   instances of the same pattern in similar files), upgrade the classification from
-   **suggestion** to **code change request**. Record the evidence for use in Step 4f:
-   - `"Matches documented convention: [CONVENTIONS.md section or quote]"`
-   - `"Matches codebase convention: [N occurrences of pattern in similar files]"`
+1. **PR diff (full)** — for Security, Correctness, and Style/Conventions sub-agents:
+   ```
+   gh pr diff <pr-number> -R <owner/repo>
+   ```
 
-Suggestions that do not match any documented or demonstrated convention remain
-classified as **suggestion**.
+2. **PR diff summary** — for Intent Alignment sub-agent (file list with per-file
+   line counts, not full diff content):
+   ```
+   gh pr diff <pr-number> --stat -R <owner/repo>
+   ```
 
-Only **code change requests** (including upgraded suggestions) trigger sub-task
-creation. Record all classifications and any upgrade evidence for the report.
+3. **PR commits** — for Intent Alignment sub-agent:
+   ```
+   gh pr view <pr-number> --json commits --jq '.commits[] | {oid: .oid, messageHeadline: .messageHeadline, messageBody: .messageBody}' -R <owner/repo>
+   ```
 
-### Step 4d – Analyze Code Context
+4. **Task specification sections** — extracted from the Jira task description
+   parsed in Step 1:
+   - For Intent Alignment: Repository, Files to Modify, Files to Create
+   - For Correctness: Acceptance Criteria, Test Requirements, Verification Commands
 
-For each code change request (including suggestions upgraded via the convention check),
+5. **CONVENTIONS.md content** — loaded in Step 4b (for Style/Conventions sub-agent)
+
+6. **Test files list** — filter the PR diff file list for test file patterns
+   (e.g., `test_`, `_test.`, `.test.`, `tests/`, `spec/`, `*_spec.`). Include
+   only modified and deleted test files (for Style/Conventions sub-agent).
+
+7. **Repository info** — repository path and Serena instance name from the
+   **Repository Registry** in CLAUDE.md (for Correctness sub-agent)
+
+8. **Branch names** — the PR branch and base branch names (for Style/Conventions
+   sub-agent's test change classification)
+
+### Step 5b – Read Templates and Skill Files
+
+Read the following files to construct dispatch prompts:
+
+1. **Dispatch template:** `plugins/sdlc-workflow/skills/verify-pr/dispatch-template.md`
+2. **Finding template:** `plugins/sdlc-workflow/skills/verify-pr/finding-template.md`
+3. **Sub-agent skill files:**
+   - `plugins/sdlc-workflow/skills/verify-pr/intent-alignment.md`
+   - `plugins/sdlc-workflow/skills/verify-pr/security.md`
+   - `plugins/sdlc-workflow/skills/verify-pr/correctness.md`
+   - `plugins/sdlc-workflow/skills/verify-pr/style-conventions.md`
+
+### Step 5c – Construct and Dispatch
+
+For each of the four domain sub-agents, construct a dispatch envelope following the
+structure in dispatch-template.md:
+
+1. **Context section** (same for all sub-agents):
+   - Jira Task: the task key
+   - PR: the PR URL
+   - Branch: the PR branch name
+   - Base Branch: the base branch name
+
+2. **Classified Review Comments section** (same for all sub-agents):
+   All classified comments — both newly classified (from Step 4c) and
+   already-classified (from prior runs, extracted in Step 4a) — with their IDs,
+   classifications, and file/line references.
+
+3. **Agent-Specific Inputs section** (varies per agent — see dispatch-template.md
+   for the exact sections each agent receives)
+
+4. **Instructions section**: the full content of the sub-agent's skill file
+
+5. **Output Template section**: the full content of finding-template.md
+
+**Dispatch all four sub-agents in parallel using the Agent tool.** Send a single
+message with four Agent tool calls — one per sub-agent. Do NOT dispatch
+sequentially.
+
+Each Agent tool call should use `subagent_type: "general-purpose"` and include the
+complete dispatch envelope as the prompt. The agent description should identify the
+domain (e.g., "Intent Alignment analysis", "Security scan", "Correctness
+verification", "Style/Conventions check").
+
+## Step 6 – Aggregate and Execute
+
+Collect findings from all four domain sub-agents, apply convention upgrades, and
+execute side effects (sub-task creation, PR comment replies).
+
+### Step 6a – Collect Sub-Agent Results
+
+Parse the structured findings returned by each sub-agent using the format defined
+in `plugins/sdlc-workflow/skills/verify-pr/finding-template.md`:
+
+1. **Extract verdicts** from each sub-agent's Verdicts table. Map sub-agent check
+   names to report rows:
+
+   | Sub-Agent | Check | Report Row |
+   |---|---|---|
+   | Intent Alignment | Scope Containment | Scope Containment |
+   | Intent Alignment | Diff Size | Diff Size |
+   | Intent Alignment | Commit Traceability | Commit Traceability |
+   | Security | Sensitive Pattern Scan | Sensitive Patterns |
+   | Correctness | CI Status | CI Status |
+   | Correctness | Acceptance Criteria | Acceptance Criteria |
+   | Correctness | Verification Commands | Verification Commands |
+   | Style/Conventions | Convention Upgrade | *(processed in Step 6b)* |
+   | Style/Conventions | Repetitive Test Detection | Test Quality *(combined)* |
+   | Style/Conventions | Test Documentation | Test Quality *(combined)* |
+   | Style/Conventions | Test Change Classification | Test Change Classification |
+
+   For the **Test Quality** row: combine the Repetitive Test Detection and Test
+   Documentation verdicts — if either is WARN, Test Quality is WARN; if both are
+   PASS, Test Quality is PASS; if both are N/A, Test Quality is N/A.
+
+2. **Extract findings** from each sub-agent's Findings section for inclusion in
+   the report details.
+
+3. **Extract actions** from each sub-agent's Actions section (if present):
+   - `create-sub-task` actions — from Correctness (CI failures) and potentially
+     other sub-agents
+   - `upgrade-comment` actions — from Style/Conventions (convention-backed
+     suggestion upgrades)
+
+### Step 6b – Apply Convention Upgrades
+
+Process `upgrade-comment` actions from the Style/Conventions sub-agent:
+
+For each `upgrade-comment` action:
+1. Find the comment in the classified comment list by its Comment ID.
+2. Change its classification from **suggestion** to **code change request**.
+3. Record the matching convention evidence from the action for use in Step 6e
+   (PR comment replies).
+
+This must happen **before** Steps 6c–6d so that upgraded suggestions are included
+in the code change request processing pipeline.
+
+### Step 6c – Analyze Code Context
+
+For each code change request (including suggestions upgraded in Step 6b),
 inspect the relevant code on the PR branch to understand the required fix. Use the
 Serena instance for the task's repository (from the **Repository Registry** in CLAUDE.md)
 or fall back to Read/Grep/Glob.
@@ -287,13 +401,18 @@ Determine:
 - Which file(s) need modification
 - What the fix should achieve
 - Whether the fix is scoped to the current task or represents a broader concern
-- For upgraded suggestions: confirm the convention evidence gathered in Step 4c
+- For upgraded suggestions: confirm the convention evidence gathered in Step 6b
   (e.g., verify the pattern count, check that the convention applies to this specific
   context)
 
-### Step 4e – Create Sub-tasks
+### Step 6d – Create Sub-Tasks
 
-For each code change request that requires a fix, create a Jira sub-task:
+Create Jira sub-tasks for two categories of issues:
+
+#### Review feedback sub-tasks
+
+For each code change request (including upgraded suggestions) that requires a fix,
+create a Jira sub-task:
 
 jira.create_issue with:
 - **Parent:** the current task's Jira issue ID
@@ -310,7 +429,33 @@ After creating each sub-task, create a "Blocks" issue link from the sub-task to 
 
 jira.create_issue_link(type="Blocks", inwardIssue=<sub-task-id>, outwardIssue=<parent-task-id>)
 
-### Step 4f – Reply to Review Comments
+#### CI failure sub-tasks
+
+Process `create-sub-task` actions from the Correctness sub-agent. For each action:
+
+1. **Idempotency check:** check the parent task's existing sub-tasks (issue links)
+   for sub-tasks with labels `["ai-generated-jira", "review-feedback"]` whose
+   descriptions reference the same CI check name or failure. If a matching sub-task
+   already exists, skip creation for that failure.
+
+2. **Create sub-task:** create a Jira sub-task using the action's Title, Relevant
+   files, and Root cause fields:
+
+   jira.create_issue with:
+   - **Parent:** the current task's Jira issue ID
+   - **Summary:** the action's Title (e.g., "Fix failing lint check: unused import in handler.rs")
+   - **Labels:** `["ai-generated-jira", "review-feedback"]`
+   - **Description:** structured task description following the template defined in
+     [`shared/task-description-template.md`](../shared/task-description-template.md).
+     Include:
+     - **Review Context** — the CI check name, failure log excerpt, and error summary
+       (from the action's Root cause field)
+     - **Target PR** — the PR URL from Step 2
+
+3. **Create issue link:**
+   jira.create_issue_link(type="Blocks", inwardIssue=<sub-task-id>, outwardIssue=<parent-task-id>)
+
+### Step 6e – Reply to Review Comments
 
 Reply to **every** classified review comment thread with the classification label and
 reasoning, so the decision is transparent to the reviewer.
@@ -321,7 +466,7 @@ reasoning, so the decision is transparent to the reviewer.
 gh api repos/<owner/repo>/pulls/<pr-number>/comments/<comment_id>/replies -f body="[sdlc-workflow/verify-pr] Classified as **code change request** — sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
 ```
 
-**For suggestions upgraded to code change requests via convention check:**
+**For suggestions upgraded to code change requests via convention check (Step 6b):**
 
 Include the convention evidence in the reply so the upgrade reasoning is transparent:
 
@@ -344,12 +489,13 @@ Example replies:
 - `"[sdlc-workflow/verify-pr] Classified as **question** — this asks for clarification; no code change needed. No sub-task created."`
 - `"[sdlc-workflow/verify-pr] Classified as **nit** — minor style feedback that does not affect correctness. No sub-task created."`
 
-### Step 4g – Idempotency Guarantees
+### Step 6f – Idempotency Guarantees
 
 Idempotency is enforced **within** Step 4a's mandatory thread enumeration, not as a
-separate gate before Steps 4e/4f. The enumeration in Step 4a partitions threads into
+separate gate before Steps 6d/6e. The enumeration in Step 4a partitions threads into
 unclassified and already-classified lists — only unclassified threads proceed to
-Steps 4b–4f. This design ensures that:
+Steps 4b–4c for classification and then to Steps 6c–6e for side effects. This design
+ensures that:
 
 - Every top-level thread is always discovered (enumeration cannot be bypassed).
 - Already-processed threads are filtered out per-thread (no duplicate replies or
@@ -357,7 +503,7 @@ Steps 4b–4f. This design ensures that:
 - New threads arriving between runs (e.g., from a bot re-analyzing code after a
   fix commit) are always detected because the enumeration is unconditional.
 
-**Additional sub-task deduplication:** Before creating a sub-task in Step 4e, also
+**Additional sub-task deduplication:** Before creating a sub-task in Step 6d, also
 check the parent task's issue links for existing sub-tasks whose descriptions
 reference the same review comment. If a matching sub-task already exists, skip
 creation. This guards against edge cases where a classification reply was not
@@ -367,7 +513,7 @@ Do **not** interpret this step as a top-level decision that can skip thread
 enumeration. The enumeration in Step 4a is always mandatory; this step only
 documents the idempotency mechanisms embedded within that enumeration.
 
-### Step 4h – Record Result
+### Step 6g – Record Result
 
 Record the Review Feedback check result:
 - **N/A** — no reviews or comments exist on the PR
@@ -375,20 +521,20 @@ Record the Review Feedback check result:
 - **WARN** — code change requests exist; sub-tasks were created
 - **FAIL** — code change requests exist but sub-task creation failed
 
-## Step 5 – Root-Cause Investigation
+## Step 7 – Root-Cause Investigation
 
-Investigate the root cause of each defect — whether flagged by a reviewer (Step 4)
-or by a CI failure (Step 10) — to identify systemic improvements that prevent
-similar mistakes in future tasks.
+Investigate the root cause of each defect — whether flagged by a reviewer (Step 6d
+review feedback sub-tasks) or by a CI failure (Step 6d CI failure sub-tasks) — to
+identify systemic improvements that prevent similar mistakes in future tasks.
 
-### Step 5a – Sub-agent Investigation
+### Step 7a – Sub-agent Investigation
 
-If Step 4 or Step 10 created any sub-tasks, spawn a sub-agent to investigate the root
-cause of each defect. If no sub-tasks were created by either step, record Root-Cause
-Investigation as N/A and skip to Step 6.
+If Step 6d created any sub-tasks, spawn a sub-agent to investigate the root
+cause of each defect. If no sub-tasks were created, record Root-Cause
+Investigation as N/A and skip to Step 8.
 
-The sub-agent investigates both reviewer-flagged defects (from Step 4) and CI failures
-(from Step 10) using the same classification and investigation process below.
+The sub-agent investigates both reviewer-flagged defects and CI failures
+using the same classification and investigation process below.
 
 The sub-agent receives these inputs:
 1. **Parent Feature description** — fetched by following the "incorporates" issue link
@@ -397,9 +543,25 @@ The sub-agent receives these inputs:
    jira.get_issue(<task-id>) → find issue link with type "incorporates" (inward) → jira.get_issue(<feature-id>)
    ```
 2. **Task description** — the structured description parsed in Step 1
-3. **Review comments** — the code change requests that triggered sub-tasks in Step 4
+3. **Review comments** — the code change requests that triggered sub-tasks in Step 6d
 4. **Relevant code** — the files on the PR branch related to each flagged defect
 5. **Project CONVENTIONS.md** — if it exists in the repository root
+6. **Aggregated domain findings** — findings from all four domain sub-agents,
+   organized by source with clear attribution:
+
+   ```
+   ### From Intent Alignment
+   <Intent Alignment findings from Step 6a>
+
+   ### From Security
+   <Security findings from Step 6a>
+
+   ### From Correctness
+   <Correctness findings from Step 6a>
+
+   ### From Style/Conventions
+   <Style/Conventions findings from Step 6a>
+   ```
 
 #### Classification gate — universality test
 
@@ -431,7 +593,7 @@ test to determine whether the corrective guidance is a method or a fact:
 - **Fact** (requires language-specific APIs, types, or idioms) → classify as
   **convention gap**. The guidance belongs in the project's CONVENTIONS.md, not
   in a general-purpose skill. Create a task to document the pattern in
-  CONVENTIONS.md (see Step 5b).
+  CONVENTIONS.md (see Step 7b).
 
 > **Examples:**
 > - "Every new public symbol must have a documentation comment" → **method**
@@ -454,7 +616,7 @@ the pattern is documented:
      to Skill Phase Investigation question (c) to determine why.
    - **No** → classify as **convention gap**. The root cause is the missing
      documentation, not a skill deficiency. Create a task to document the pattern
-     in CONVENTIONS.md (see Step 5b).
+     in CONVENTIONS.md (see Step 7b).
 
 #### Skill Phase Investigation (for universal knowledge)
 
@@ -485,7 +647,7 @@ implement-task phase.
 | Universal | Method (language-agnostic) | N/A | Skill gap (investigate which phase) |
 | Universal | Fact (language-specific) | N/A | Convention gap → document in CONVENTIONS.md |
 
-### Step 5b – Create Root-Cause Tasks
+### Step 7b – Create Root-Cause Tasks
 
 For each root cause identified, create a Jira task that targets the phase where the
 gap originated:
@@ -552,351 +714,23 @@ The comment must include:
 Include the **Comment Footnote** at the end of the comment (see the Comment Footnote
 section at the top of this skill for the required ADF format).
 
-### Step 5c – Idempotency Check
+### Step 7c – Idempotency Check
 
-Before creating a root-cause task (Step 5b), check for existing root-cause tasks
+Before creating a root-cause task (Step 7b), check for existing root-cause tasks
 linked to the parent task. For each linked task with label `root-cause`, fetch its
 comments and search for a comment containing "Root-cause analysis from
 <PARENT-TASK-ID>". If a root-cause task already exists for the same phase and the
 same defect, skip creation.
 
 Record the Root-Cause Investigation result:
-- **N/A** — no sub-tasks were created in Step 4 or Step 10 (nothing to investigate)
+- **N/A** — no sub-tasks were created in Step 6d (nothing to investigate)
 - **DONE** — investigation completed and root-cause tasks created
 - **SKIPPED** — investigation was skipped (e.g., root cause could not be determined)
 
-## Step 6 – Scope Containment
+## Step 8 – Generate Report
 
-List all files changed in the PR:
-
-```
-gh pr diff <pr-number> --name-only -R <owner/repo>
-```
-
-Compare the list against the **Files to Modify** and **Files to Create** sections from the Jira task.
-
-- Files in the PR that are **not** listed in either section are **out-of-scope**.
-- Files listed in the task but **missing** from the PR are **unimplemented**.
-
-Record each finding as PASS (all files match), WARN (out-of-scope files), or FAIL (required files missing).
-
-## Step 7 – Diff Size Check
-
-Get the diff statistics using the GitHub REST API:
-
-```
-gh api repos/<owner/repo>/pulls/<pr-number> --jq '.additions, .deletions, .changed_files'
-```
-
-This returns the number of additions, deletions, and changed files. Compare the total lines changed against the expected scope from the task. Flag a WARN if the diff size appears disproportionately large relative to the number of files and changes described in the task.
-
-## Step 8 – Commit Traceability
-
-Retrieve the commit list:
-
-```
-gh pr view <pr-number> --json commits --jq '.commits[] | .messageHeadline + "\n" + .messageBody' -R <owner/repo>
-```
-
-Verify that every commit message references the Jira issue ID (e.g. contains `<JIRA-ID>` in the message, body, or trailer).
-
-Record PASS if all commits reference the issue, WARN if some do, FAIL if none do.
-
-## Step 9 – Sensitive Pattern Scan
-
-Search the PR diff for patterns that should not be committed:
-
-```
-gh pr diff <pr-number> -R <owner/repo> | grep -iE '(password\s*=|secret|API_KEY|BEGIN.*PRIVATE KEY|\.env)'
-```
-
-Record PASS if no matches are found, FAIL if any match is detected. List each match for the report.
-
-## Step 10 – CI Status
-
-Check the status of CI checks on the PR:
-
-```
-gh pr checks <pr-number> -R <owner/repo>
-```
-
-Report the status (pass/fail/pending) for each check.
-
-If all checks pass, record CI Status as PASS and skip to Step 11.
-If any checks are pending, record CI Status as WARN and skip to Step 11.
-If any checks have failed, proceed to Steps 10a–10e below.
-
-### Step 10a – Fetch Failure Logs
-
-For each failed CI check, fetch the failure logs:
-
-```
-gh run view <run-id> --log-failed -R <owner/repo>
-```
-
-Extract the `run-id` from the failed check's URL or use:
-
-```
-gh run list --branch <pr-branch> --status failure --limit 5 -R <owner/repo>
-```
-
-Capture the relevant error output for analysis in Step 10b.
-
-### Step 10b – Analyze Failures
-
-For each failed CI check, analyze the failure log to determine:
-- **What failed** — the specific test, build step, or lint rule that failed
-- **Why it failed** — the root error message or assertion failure
-- **What fix is needed** — the concrete code change required to resolve the failure
-
-Use the Serena instance for the task's repository (from the **Repository Registry**
-in CLAUDE.md) or fall back to Read/Grep/Glob to inspect the relevant source files
-and understand the failure context.
-
-### Step 10c – Idempotency Check
-
-Before creating sub-tasks, check for existing CI-failure sub-tasks linked to the
-parent task. For each linked sub-task with labels `["ai-generated-jira", "review-feedback"]`,
-check whether its description references the same CI check name or failure. If a
-matching sub-task already exists, skip creation for that failure.
-
-### Step 10d – Create Sub-tasks
-
-For each CI failure that requires a fix (and has no existing sub-task per Step 10c),
-create a Jira sub-task:
-
-jira.create_issue with:
-- **Parent:** the current task's Jira issue ID
-- **Summary:** concise description of the CI fix needed (e.g., "Fix failing lint check: unused import in handler.rs")
-- **Labels:** `["ai-generated-jira", "review-feedback"]`
-- **Description:** structured task description following the template defined in
-  [`shared/task-description-template.md`](../shared/task-description-template.md).
-  Include the applicable base sections plus these extension sections:
-
-  - **Review Context** — the CI check name, failure log excerpt, and error summary
-  - **Target PR** — the PR URL from Step 2 (so implement-task adds commits to the existing branch)
-
-After creating each sub-task, create a "Blocks" issue link from the sub-task to the parent task:
-
-jira.create_issue_link(type="Blocks", inwardIssue=<sub-task-id>, outwardIssue=<parent-task-id>)
-
-### Step 10e – Record Result
-
-Record the CI Status check result:
-- **PASS** — all CI checks pass
-- **WARN** — some checks are pending, none failed; or CI failures exist but sub-task creation failed
-- **FAIL** — CI checks failed; sub-tasks were created to address failures
-
-Also record the list of CI-failure sub-tasks created in this step. These sub-tasks
-feed into Step 5 (Root-Cause Investigation) alongside any sub-tasks from Step 4.
-
-## Step 11 – Acceptance Criteria Verification
-
-For each criterion in the **Acceptance Criteria** section from the Jira task, verify it is satisfied by inspecting the code on the PR branch.
-
-Use the appropriate Serena instance for the task's repository (look up the instance name
-in the **Repository Registry** section of the project's CLAUDE.md). Tools are called as
-`mcp__<serena-instance>__<tool>`, where `<serena-instance>` is the instance name from the
-Repository Registry.
-
-1. **Read changed symbols**: use `find_symbol` with `include_body=true` to inspect the
-   specific functions, structs, or components relevant to each criterion.
-2. **Verify integration**: use `find_referencing_symbols` to confirm new symbols are
-   properly referenced and integrated.
-3. **Non-symbolic verification**: use `search_for_pattern` for configuration values,
-   string literals, or patterns referenced in the criteria.
-
-> **Note:** Check the **Code Intelligence** section of the project's CLAUDE.md for
-> per-instance limitations. Adapt your tool usage accordingly.
-
-**Fallback**: if no Serena instance is available for the repository, use Read, Grep, and Glob tools to inspect the PR branch directly.
-
-Record PASS/FAIL for each individual criterion.
-
-## Step 12 – Test Quality
-
-Scan test files in the PR for repetitive test functions that could be parameterized.
-This check applies the Meszaros heuristic: flag only when multiple test functions share
-the same algorithm (setup, action, assertion structure) with different data values.
-Do **not** flag tests with different behavior, setup, or assertions.
-
-1. **Identify test files in the PR**: filter the PR diff to test files:
-   ```
-   gh pr diff <pr-number> --name-only -R <owner/repo>
-   ```
-   Filter for files matching test patterns (e.g., `test_`, `_test.`, `.test.`, `tests/`,
-   `spec/`, `*_spec.`).
-
-2. **Inspect test function bodies**: for each test file with multiple test functions, use
-   the Serena instance for the task's repository (from the **Repository Registry** in
-   CLAUDE.md) with `find_symbol` and `include_body=true` to read the test function bodies.
-   Fall back to Read/Grep for repos without a Serena instance.
-
-3. **Detect repetitive patterns**: check whether any group of 2+ test functions shares
-   the same structure — identical assertions, same setup pattern, same control flow —
-   with only data values (inputs, expected outputs, fixture names) differing. If the
-   test body would need conditionals to handle parameter variations, the tests are
-   **not** candidates.
-
-4. **Record findings**: for each group of repetitive test functions, record:
-   - The file path
-   - The test function names
-   - A brief explanation of why they are parameterization candidates
-
-### Doc comment check
-
-5. **Inspect test function documentation**: for each test file identified in step 1, check
-   whether each test function has a documentation comment (doc comment) immediately
-   preceding it. Use the Serena instance for the task's repository with `find_symbol` and
-   `include_body=true` to inspect test functions. Fall back to Read/Grep for repos without
-   a Serena instance.
-
-   Doc comment conventions vary by language:
-   - Rust: `///` or `//!`
-   - Java/TypeScript: `/** */`
-   - Python: `"""docstring"""`
-   - Go: `//` comment immediately before the function
-
-6. **Flag missing doc comments**: for each test function lacking a doc comment, record the
-   file path and function name.
-
-### Test change classification
-
-8. **Classify test file change types**: for each test file identified in sub-step 1,
-   classify as **new** (not on base branch), **deleted** (not on PR branch), or
-   **modified** (on both). Use the base branch resolved in Step 3. Check file existence
-   on the base branch:
-   ```
-   git show <base-branch>:<file-path>
-   ```
-   New test files are inherently additive and do not need sub-agent analysis.
-
-9. **Spawn additive-vs-reductive sub-agent**: if any test files are modified or deleted,
-   spawn a sub-agent. The sub-agent receives ONLY:
-   1. List of modified/deleted test file paths
-   2. Base branch name (for `git show <base-branch>:<path>`)
-   3. PR branch name (already checked out)
-
-   The sub-agent MUST NOT receive or access the Jira task description, review comments,
-   PR metadata, or outputs from other verify-pr steps. This prevents context pollution
-   and hallucination.
-
-   When a Serena MCP LSP server is available for the target repository (per the Repository
-   Registry in CLAUDE.md), the sub-agent should use `find_symbol` with `include_body=true`
-   to reliably identify test functions, assertions, and their structure. Fall back to
-   Read/Grep when no Serena instance is available.
-
-10. **Structural scan** (sub-agent): for each **modified** test file, read the base-branch
-    version (`git show <base-branch>:<file-path>`) and PR-branch version (Read). Count
-    signals:
-
-    | Signal | Additive | Reductive |
-    |--------|----------|-----------|
-    | Test functions | Functions added | Functions removed |
-    | Assertion statements | Assertions added | Assertions removed |
-    | Assertion specificity | Matchers tightened (e.g., `toBeTruthy` → `toEqual`) | Matchers relaxed (e.g., `toEqual` → `toBeTruthy`) |
-    | Disable/skip annotations | Annotations removed (re-enabling tests) | Annotations added (`.skip`, `@Disabled`, `@pytest.mark.skip`, `#[ignore]`) |
-    | Parameterized cases | Cases added to parameterized sets | Cases removed from parameterized sets |
-    | Mock scope | Mocks narrowed (more specific return values) | Mocks broadened (e.g., `any()` replacing a concrete value) |
-
-    For **deleted** test files: all signals are reductive. Read the base-branch version to
-    count what was lost.
-
-    The sub-agent uses its knowledge of test frameworks to identify assertion statements,
-    skip annotations, and mock patterns. The signal categories above are the taxonomy; the
-    sub-agent recognizes the language-specific syntax.
-
-    Output a tally per file (e.g., "+2 test functions, +5 assertions, -1 assertion relaxed,
-    +0/-0 skip annotations").
-
-11. **Semantic assessment** (sub-agent): for each modified file, identify behaviors under
-    test in base vs PR versions. Determine whether coverage intent changed. Three specific
-    cases the structural scan cannot catch:
-
-    1. **Assertion weakening without count change** — replacing a specific expected value
-       with a broad matcher (same count, weaker coverage)
-    2. **Mock broadening that hides behavior** — replacing a mock returning a specific error
-       with one returning generic success
-    3. **Restructuring that preserves coverage** — splitting or consolidating test functions
-       without changing what is tested
-
-    **Semantic assessment overrides structural signals when they disagree.** If structural
-    scan shows reductive signals but semantic assessment determines coverage is preserved
-    (restructuring), classify as NEUTRAL. If structural shows no reductive signals but
-    semantic finds weakened coverage (assertion weakening), classify as MIXED or REDUCTIVE.
-
-12. **Classify test changes**: sub-agent produces classification from combined structural
-    and semantic signals:
-
-    - **ADDITIVE** — no test functions removed, no assertions removed/relaxed, no skip
-      annotations added, no mocks broadened, semantic confirms no weakening
-    - **REDUCTIVE** — reductive signals present with no additive signals, semantic confirms
-      coverage loss
-    - **MIXED** — both additive and reductive signals present
-    - **NEUTRAL** — test files modified but coverage intent unchanged (restructuring,
-      renaming, helper extraction)
-
-    Sub-agent returns: classification, structural summary, semantic assessment, and
-    reductive findings. Return format:
-
-    ```
-    Classification: ADDITIVE | REDUCTIVE | MIXED | NEUTRAL
-
-    Structural summary:
-      - <file>: +N test functions, -N test functions, +N assertions,
-        -N assertions, <other signals>
-
-    Semantic assessment: <1-2 sentence explanation>
-
-    Reductive findings (if any):
-      - <file>: <what was weakened and why>
-    ```
-
-    Main agent then combines sub-agent result with new-file analysis:
-    - Only new test files and sub-agent not needed → ADDITIVE
-    - Only new test files and sub-agent returns ADDITIVE → ADDITIVE
-    - Sub-agent returns REDUCTIVE or MIXED → use that classification
-    - Sub-agent returns NEUTRAL and new test files exist → ADDITIVE
-    - Sub-agent returns NEUTRAL and no new test files → NEUTRAL
-
-<!-- Autonomous escalation intent: in future autonomous mode, REDUCTIVE and MIXED
-classifications should trigger `requires-manual-review` label addition. This is the
-defense against temporal split-payload test poisoning. Not implemented until autonomous
-mode is operational. -->
-
-13. **Record findings**: produce two separate results:
-    1. **Test Quality** — existing PASS/WARN/N/A based on repetitive tests and doc comments
-       (unchanged logic). Append doc comment findings to the Test Quality result. If test
-       functions are missing doc comments, record WARN with the list of undocumented
-       functions. If all test functions have doc comments, this sub-check passes silently
-       (does not change the overall Test Quality result from the repetitive test check).
-    2. **Test Change Classification** — ADDITIVE/REDUCTIVE/MIXED/NEUTRAL/N/A result for
-       the report table.
-
-Record Test Quality as PASS if both sub-checks pass (no repetitive tests and no missing
-doc comments). Record WARN if either repetitive tests are found OR doc comments are
-missing. Record N/A if no test files exist in the PR diff.
-
-Record Test Change Classification as ADDITIVE/REDUCTIVE/MIXED/NEUTRAL per the
-classification logic above, or N/A if no test files exist in the PR diff.
-
-**Note:** Test Quality WARN is advisory — it does **not** elevate the overall result
-to FAIL. Treat it like Diff Size: report for visibility, but do not block the PR.
-
-## Step 13 – Verification Commands
-
-If the task description includes a **Verification Commands** section, run each command and check the result against the expected outcome.
-
-For each command:
-1. Run the command.
-2. Compare the output to the expected outcome described in the task.
-3. Record PASS if the output matches, FAIL if it does not.
-
-If no Verification Commands section exists in the task, skip this step and record N/A.
-
-## Step 14 – Generate Report
-
-Compile all findings from Steps 4–13 (including Step 10's CI failure sub-tasks) into a structured verification report:
+Compile all findings from Steps 4–7 into a structured verification report. Verdicts
+are assembled from sub-agent results (Step 6a) and orchestrator checks (Steps 6g, 7).
 
 ```
 ## Verification Report for <JIRA-ID> (commit <short-sha>)
@@ -920,6 +754,22 @@ Compile all findings from Steps 4–13 (including Step 10's CI failure sub-tasks
 <Summary of any issues requiring attention>
 ```
 
+### Verdict source mapping
+
+| Report Row | Source |
+|---|---|
+| Review Feedback | Orchestrator (Step 6g) |
+| Root-Cause Investigation | Orchestrator (Step 7) |
+| Scope Containment | Intent Alignment sub-agent |
+| Diff Size | Intent Alignment sub-agent |
+| Commit Traceability | Intent Alignment sub-agent |
+| Sensitive Patterns | Security sub-agent (Sensitive Pattern Scan) |
+| CI Status | Correctness sub-agent |
+| Acceptance Criteria | Correctness sub-agent |
+| Test Quality | Style/Conventions sub-agent (Repetitive Test Detection + Test Documentation combined) |
+| Test Change Classification | Style/Conventions sub-agent |
+| Verification Commands | Correctness sub-agent |
+
 Overall result rules:
 - **PASS** — all checks are PASS or N/A
 - **WARN** — at least one WARN but no FAIL
@@ -929,7 +779,7 @@ Overall result rules:
 are informational and do **NOT** affect the Overall result. Their values are reported for
 visibility but excluded from the PASS/WARN/FAIL determination.
 
-## Step 15 – Post Report
+## Step 9 – Post Report
 
 ### Retrieve HEAD Commit SHA
 
@@ -948,7 +798,7 @@ Each verification run creates a **new** PR comment (never overwrites previous re
 This provides a verification history over time, with each report clearly referencing
 the commit SHA it verified.
 
-Update the report header from Step 14 to include the commit SHA:
+Update the report header from Step 8 to include the commit SHA:
 
 ```
 ## Verification Report for <JIRA-ID> (commit <short-sha>)
@@ -984,6 +834,10 @@ The report is informational — a human reviewer decides whether to merge.
 - This skill does **NOT** modify code. It only verifies, creates sub-tasks, and reports.
 - This skill does **NOT** auto-merge. Merging is always a human decision.
 - Verification criteria come from the Jira task description, not from reading the diff.
+- The orchestrator **MUST** dispatch all four domain sub-agents in parallel — do not dispatch sequentially.
+- The root-cause investigation **MUST** receive aggregated findings from all domain sub-agents with source attribution (From Intent Alignment, From Security, From Correctness, From Style/Conventions sections).
+- Domain sub-agents **MUST NOT** perform Jira mutations, post PR comments, or modify code — these are orchestrator-only responsibilities.
+- All classified review comments are sent to ALL sub-agents — no routing heuristic.
 - Use the Serena instance specified in the project's **Repository Registry** (CLAUDE.md) for the target repo, with tools like `find_symbol`, `find_referencing_symbols`, `search_for_pattern`. Check the **Code Intelligence** section for per-instance limitations. Fall back to Read/Grep/Glob for repos without a Serena instance.
 - Use `gh` CLI for all GitHub interactions.
 - Include the Comment Footnote on all Jira comments.

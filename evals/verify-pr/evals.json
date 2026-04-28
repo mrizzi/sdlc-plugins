@@ -13,7 +13,8 @@
         "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
         "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
         "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
-        "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)"
+        "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+        "The verification report assembles verdicts from all four domain sub-agents: Scope Containment, Diff Size, and Commit Traceability from Intent Alignment; Sensitive Patterns from Security; CI Status, Acceptance Criteria, and Verification Commands from Correctness; Test Quality and Test Change Classification from Style/Conventions"
       ]
     },
     {
@@ -48,7 +49,8 @@
         "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
         "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
         "The report does NOT auto-merge the PR (constraint 1.13)",
-        "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)"
+        "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+        "All classified review comments (ids 30001-30004) are sent to all four domain sub-agents — the convention upgrade analysis for the index suggestion (id 30002) comes from the Style/Conventions sub-agent, not from inline orchestrator logic"
       ]
     },
     {
