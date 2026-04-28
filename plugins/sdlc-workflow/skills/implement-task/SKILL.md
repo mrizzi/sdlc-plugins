@@ -462,6 +462,57 @@ on the backend repo to perform the same verification.
 > - `DELETE /api/v2/sbom/{id}` — path ✗ — **MISMATCH** (backend uses `/api/v2/sboms/{id}` with trailing 's', see `modules/fundamental/src/sbom/endpoints/mod.rs:48`)
 > - `GET /api/v2/risk-assessment/group/{groupId}` — sort order ✗ — **MISMATCH** (frontend picks `assessments[0]` expecting newest, but backend returns `ORDER BY created_at ASC` — oldest first, see `modules/risk/src/assessment/endpoints/mod.rs:92`)
 
+### External API claim verification
+
+When the task Description or Implementation Notes contain claims about what an external
+API can or cannot do — for example, "X cannot be updated after creation", "Y does not
+support batch operations", "API does not allow Z" — verify those claims against the
+official API documentation before implementing based on them.
+
+This is especially important when the claim justifies removing existing functionality
+(e.g., dropping an upsert pattern because "the API doesn't support updates") or choosing
+a workaround over a direct approach.
+
+1. **Detect capability claims**: scan the task Description and Implementation Notes for
+   statements about external API limitations or capabilities. Look for patterns such as:
+   - "X cannot be updated / modified / changed after Y"
+   - "API does not support / allow / provide Z"
+   - "There is no endpoint for W"
+   - "Y is immutable once created"
+   - Negative capability assertions that constrain the implementation approach
+2. **Identify the API**: determine which external API the claim refers to (e.g., GitHub
+   REST API, Stripe API, AWS SDK). Note the specific resource and operation mentioned.
+3. **Verify against official documentation**: use WebSearch or WebFetch to check the
+   official API documentation for the claimed limitation. Look for:
+   - The specific endpoint or method the claim says does not exist
+   - Update/modify operations on the resource in question
+   - API changelogs that may have added the capability after the claim was written
+4. **Compare claim vs. reality**: determine whether the claim is:
+   - **Correct** — the API genuinely does not support the operation. Proceed with the
+     implementation as described.
+   - **Incorrect** — the API does support the operation. Flag the discrepancy to the
+     user before implementing.
+   - **Partially correct** — the API supports the operation with limitations (e.g.,
+     only certain fields can be updated). Flag the nuance to the user.
+5. **Flag incorrect claims**: if a claim is incorrect or partially correct, stop and
+   report to the user before implementing. Include:
+   - The original claim from the task description (quoted)
+   - What the official API documentation actually says
+   - A link to the relevant documentation page
+   - A proposed adjusted implementation that uses the actual API capability
+6. **Proceed with verified claims**: once all capability claims are confirmed correct,
+   or the user has approved an adjusted implementation for incorrect claims, continue
+   with implementation.
+
+> **Example output:**
+>
+> **External API claim verification results:**
+> - Claim: "PR reviews cannot be updated after submission" (from Implementation Notes)
+>   - API: GitHub REST API — Pull Request Reviews
+>   - Documentation: `PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}` exists and supports updating the review body after submission
+>   - Verdict: **INCORRECT** — the API does support updating PR reviews
+>   - Recommendation: retain the idempotent upsert pattern instead of removing it
+
 ### Code quality practices
 
 After implementing code changes, verify the following quality practices:
