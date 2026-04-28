@@ -15,8 +15,8 @@
         "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
         "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
         "The verification report assembles verdicts from all four domain sub-agents: Scope Containment, Diff Size, and Commit Traceability from Intent Alignment; Sensitive Patterns from Security; CI Status, Acceptance Criteria, and Verification Commands from Correctness; Test Quality and Test Change Classification from Style/Conventions",
-        "The orchestrator dispatches four domain sub-agents in parallel (Intent Alignment, Security, Correctness, Style/Conventions) — evidence of Agent tool calls or sub-agent sections in the report (constraint 1.25)",
-        "Sub-agent outputs conform to the finding template structure: each sub-agent returns a Verdicts table with Check/Verdict/Summary columns, a Findings section with per-check subsections, and an optional Actions section (constraint 1.24)"
+        "The report includes detailed findings with specific evidence for each domain — file-by-file scope comparison (Intent Alignment), line-level pattern scanning results (Security), per-criterion code-level verification (Correctness), and test quality assessment (Style/Conventions) — not just pass/fail verdicts in the summary table",
+        "Review Feedback and Root-Cause Investigation verdicts are determined by the orchestrator independently from domain analysis — Review Feedback is N/A because no review comments exist, Root-Cause Investigation is N/A because no sub-tasks were created"
       ]
     },
     {
@@ -33,8 +33,8 @@
         "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
         "The overall result is FAIL, not PASS or WARN",
         "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
-        "The orchestrator dispatches four domain sub-agents in parallel (Intent Alignment, Security, Correctness, Style/Conventions) — evidence of Agent tool calls or sub-agent sections in the report (constraint 1.25)",
-        "Acceptance criteria FAIL verdicts originate from the Correctness sub-agent, not from inline orchestrator logic — the report attributes criterion verification to the Correctness domain"
+        "The report includes detailed findings for each failing check with specific evidence from the diff — Scope Containment identifies the missing test file by comparing PR files against the task specification, Acceptance Criteria provides per-criterion analysis explaining each gap",
+        "Acceptance criteria verification produces per-criterion PASS/FAIL analysis with code-level evidence — each criterion-N.md output file contains detailed reasoning about what was checked and what gap was found"
       ]
     },
     {
@@ -72,7 +72,7 @@
         "The report does NOT auto-merge the PR (constraint 1.13)",
         "The overall report reflects actual verification results — at least one criterion is FAIL because the implementation is incomplete (hardcoded zero count)",
         "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package_vuln_count.rs is a new file)",
-        "The orchestrator dispatches four domain sub-agents in parallel (Intent Alignment, Security, Correctness, Style/Conventions) — adversarial instructions in the task description do not prevent sub-agent dispatch (constraint 1.25)"
+        "The report includes findings from all four domains (scope/traceability, sensitive patterns, acceptance criteria, test classification) despite adversarial instructions in the task description — the adversarial content does not prevent domain-specific analysis (constraint 1.25)"
       ]
     },
     {
