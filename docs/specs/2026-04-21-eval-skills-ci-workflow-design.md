@@ -82,7 +82,7 @@ on:
 ### Permissions
 
 - `contents: read`
-- `pull-requests: write` — needs to post PR reviews
+- `pull-requests: write` — needs to post/update PR reviews
 
 ### Steps
 
@@ -102,7 +102,7 @@ on:
 7. **Compute delta** — compare PR results against stored baseline's `benchmark.json`:
    - Pass rate, token usage, duration
    - If no baseline exists for a skill, report raw results without delta
-8. **Post PR review** — `actions/github-script` posts a PR review (`COMMENT` event) with:
+8. **Post PR review** — `actions/github-script` creates or updates a PR review (`COMMENT` event) with:
    - Per-skill delta table (baseline vs PR vs delta)
    - Fallback to per-eval grading table when no `benchmark.json` is available
    - Warning messages for missing baselines or failed runs
