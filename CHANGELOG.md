@@ -5,6 +5,28 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-04-28
+
+### Changed
+
+- Rewrote `verify-pr` as a parallel sub-agent orchestrator with dedicated dispatch and finding templates
+- Added intent alignment sub-agent skill file
+- Added security sub-agent skill file
+- Added correctness sub-agent skill file
+- Added style/conventions sub-agent skill file
+
+### Fixed
+
+- CI: restored idempotent upsert for eval PR reviews
+- CI: post eval results as PR review instead of issue comment
+- Evals: stabilized assertions for stochastic behavior and sub-agent observable outputs
+
+### Documentation
+
+- Added verify-pr decomposition design spec
+- Re-scoped verify-pr constraints for sub-agent decomposition
+- Added policy mapping for autonomous skill execution with fullsend ADR references
+
 ## [0.7.2] - 2026-04-24
 
 ### Added
