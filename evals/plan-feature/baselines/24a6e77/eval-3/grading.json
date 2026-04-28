@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "Tasks target both 'trustify-backend' and 'trustify-ui' repositories with at least one task per repo",
+      "passed": true,
+      "evidence": "Tasks 1 and 2 have '## Repository\\ntrustify-backend'. Tasks 3, 4, and 5 have '## Repository\\ntrustify-ui'. That is 2 backend tasks and 3 frontend tasks, satisfying at least one per repo."
+    },
+    {
+      "text": "Backend tasks have lower task numbers than the frontend tasks that depend on them",
+      "passed": true,
+      "evidence": "Backend tasks are Task 1 (model and service) and Task 2 (endpoint). Frontend tasks are Task 3, Task 4, and Task 5. Task 3 depends on Task 2 (backend), Task 4 depends on Task 3, Task 5 depends on Task 4. All backend task numbers (1, 2) are lower than all frontend task numbers (3, 4, 5)."
+    },
+    {
+      "text": "Frontend tasks reference Figma design context mentioning specific PatternFly components and visual specifications",
+      "passed": true,
+      "evidence": "Task 4 (SbomComparePage) extensively references Figma design with specific PatternFly components: 'Two PatternFly Select components (single-select, typeahead)', 'PatternFly Button, variant primary', 'PatternFly Dropdown', 'PatternFly ExpandableSection', 'PatternFly composable Table with sortable columns', 'PatternFly EmptyState with CodeBranchIcon', 'PatternFly Skeleton placeholders', and 'PatternFly Badge' with specific colors (green, red, blue, yellow). Visual specs include section order, table columns, badge colors, critical vulnerability row highlighting, and empty state text. Task 5 also references PatternFly components: 'PatternFly table row selection (checkboxes)', 'PatternFly Button with variant secondary'."
+    },
+    {
+      "text": "At least one frontend task explicitly depends on a backend task in its Dependencies section",
+      "passed": true,
+      "evidence": "Task 3 (frontend) states in its Dependencies section: 'Depends on: Task 2 — Backend: SBOM comparison endpoint and route registration (API contract must be finalized)'. Task 2 is a backend task in trustify-backend."
+    },
+    {
+      "text": "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+      "passed": true,
+      "evidence": "Backend Task 1 references paths from repo-backend.md: 'modules/fundamental/src/sbom/model/mod.rs', 'modules/fundamental/src/sbom/service/sbom.rs', 'modules/fundamental/src/sbom/model/summary.rs', 'modules/fundamental/src/sbom/model/details.rs', 'entity/src/sbom_package.rs', 'entity/src/sbom_advisory.rs', 'entity/src/package_license.rs', 'common/src/error.rs'. Backend Task 2 references: 'modules/fundamental/src/sbom/endpoints/mod.rs', 'modules/fundamental/src/sbom/endpoints/get.rs', 'modules/fundamental/src/sbom/endpoints/list.rs'. Frontend Task 3 references paths from repo-frontend.md: 'src/api/models.ts', 'src/api/rest.ts', 'src/hooks/useSboms.ts', 'src/hooks/useSbomById.ts', 'src/api/client.ts'. Frontend Task 4 references: 'src/routes.tsx', 'src/pages/SbomDetailPage/SbomDetailPage.tsx', 'src/pages/SbomDetailPage/components/PackageTable.tsx', 'src/components/SeverityBadge.tsx', 'src/components/EmptyStateCard.tsx', 'src/components/FilterToolbar.tsx', 'src/components/LoadingSpinner.tsx', 'src/hooks/useSboms.ts', 'src/utils/severityUtils.ts'. Frontend Task 5 references: 'src/pages/SbomListPage/SbomListPage.tsx', 'src/components/FilterToolbar.tsx'. All paths correspond to files listed in their respective repo structure manifests."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "Task 1: '## Repository\\ntrustify-backend'. Task 2: '## Repository\\ntrustify-backend'. Task 3: '## Repository\\ntrustify-ui'. Task 4: '## Repository\\ntrustify-ui'. Task 5: '## Repository\\ntrustify-ui'. Each task has exactly one repository name in its Repository section."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All five tasks contain the required sections. Task 1: '## Description' (line 7), '## Acceptance Criteria' (line 69), '## Test Requirements' (line 77). Task 2: '## Description' (line 7), '## Acceptance Criteria' (line 74), '## Test Requirements' (line 81). Task 3: '## Description' (line 7), '## Acceptance Criteria' (line 102), '## Test Requirements' (line 109). Task 4: '## Description' (line 7), '## Acceptance Criteria' (line 89), '## Test Requirements' (line 102). Task 5: '## Description' (line 7), '## Acceptance Criteria' (line 35), '## Test Requirements' (line 43)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": true,
+      "evidence": "Task 1 Files to Modify: 'modules/fundamental/src/sbom/model/mod.rs' (in repo-backend.md line 41), 'modules/fundamental/src/sbom/service/sbom.rs' (in repo-backend.md line 46). Files to Create: 'modules/fundamental/src/sbom/model/comparison.rs' — new file in existing directory 'modules/fundamental/src/sbom/model/' which exists in repo-backend.md. Task 2 Files to Modify: 'modules/fundamental/src/sbom/endpoints/mod.rs' (in repo-backend.md line 48). Files to Create: 'modules/fundamental/src/sbom/endpoints/compare.rs' — new file in existing directory. Task 3 Files to Modify: 'src/api/models.ts' (in repo-frontend.md line 25), 'src/api/rest.ts' (in repo-frontend.md line 26). Files to Create: 'src/hooks/useSbomComparison.ts' — new file in existing 'src/hooks/' directory. Task 4 Files to Modify: 'src/routes.tsx' (in repo-frontend.md line 53). Files to Create: 'src/pages/SbomComparePage/SbomComparePage.tsx' and sub-components — new page directory following the existing pattern. Task 5 Files to Modify: 'src/pages/SbomListPage/SbomListPage.tsx' (in repo-frontend.md line 33). All modified files exist in the manifests; created files are new files placed in existing directories from the manifests."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference specific paths and patterns: 'modules/fundamental/src/sbom/model/summary.rs and modules/fundamental/src/sbom/model/details.rs for struct layout, derive macros, and Serde attributes', 'entity/src/sbom_package.rs', 'entity/src/sbom_advisory.rs', 'entity/src/package_license.rs', 'common/src/error.rs AppError pattern', and specific method signature with SbomService::compare. Task 2 references: 'modules/fundamental/src/sbom/endpoints/get.rs and modules/fundamental/src/sbom/endpoints/list.rs' for handler patterns, specific code structures like CompareQuery struct and handler signature, '.route(\"/compare\", get(compare::compare))' pattern. Task 3 references: 'src/api/client.ts' Axios instance, 'src/hooks/useSboms.ts and src/hooks/useSbomById.ts' for hook patterns, 'src/api/rest.ts::fetchSboms()' for API function pattern, with specific code examples. Task 4 references: 'src/pages/SbomDetailPage/SbomDetailPage.tsx' for page layout, 'src/pages/SbomDetailPage/components/PackageTable.tsx' for table patterns, 'src/components/SeverityBadge.tsx', 'src/components/EmptyStateCard.tsx', 'src/components/FilterToolbar.tsx', 'src/hooks/useSboms.ts', 'src/utils/severityUtils.ts'. Task 5 references: 'src/pages/SbomListPage/SbomListPage.tsx' for existing toolbar layout, 'src/components/FilterToolbar.tsx' for toolbar patterns."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

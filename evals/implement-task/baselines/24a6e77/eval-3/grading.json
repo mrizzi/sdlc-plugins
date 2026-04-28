@@ -1,0 +1,41 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "Plan line 19: 'No new parsing logic is written here. The raw Option<String> is forwarded to the service layer, which delegates to apply_filter from common/src/db/query.rs for comma-separated parsing and SQL IN clause generation.' Line 29: 'use apply_filter from common/src/db/query.rs to parse the comma-separated string...no new parsing or filtering utility is created.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "Plan line 17: 'following the same pattern as the severity field in modules/fundamental/src/advisory/endpoints/list.rs'. Also listed in the Reuse Strategy Summary table as 'Used as the structural template for adding the license field to the package Query struct and wiring it through to the service layer.'"
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "Plan lines 30-31: 'JOIN through the entity::package_license entity (from entity/src/package_license.rs) to connect the package table to the license data. Use SeaORM's relation definitions already present on the entity rather than writing raw SQL.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "The reuse-analysis.md has three numbered sections covering all three candidates: (1) common/src/db/query.rs::apply_filter with 'What it provides', 'How it is reused', and 'Why this matters'; (2) modules/fundamental/src/advisory/endpoints/list.rs with the same structure; (3) entity/src/package_license.rs with the same structure. Each explains the specific application mechanism."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "Plan lists modified files as package/endpoints/list.rs and package/service/mod.rs, and created file as tests/api/package_license_filter.rs. Line 72 states 'No other files are touched.' All match the allowed scope exactly."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "Plan line 72: 'No new utility functions, helper modules, or shared code is introduced -- existing shared infrastructure (apply_filter, package_license entity) is reused as-is.' Line 29: 'no new parsing or filtering utility is created.'"
+    }
+  ],
+  "pass_rate": 1.0,
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

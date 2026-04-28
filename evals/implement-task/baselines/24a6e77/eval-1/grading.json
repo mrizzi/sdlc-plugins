@@ -1,0 +1,51 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it \u2014 mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The plan's 'Pre-implementation Analysis' section explicitly lists all 4 files: (1) 'modules/fundamental/src/advisory/endpoints/get.rs', (2) 'modules/fundamental/src/advisory/service/advisory.rs', (3) 'modules/fundamental/src/advisory/model/summary.rs', and (4) 'common/src/error.rs', with instructions to inspect each before making changes."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections \u2014 no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan lists exactly 3 files to create (severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs test) and 3 files to modify (advisory/model/mod.rs, advisory/endpoints/mod.rs, advisory/service/advisory.rs). All 6 files match the task's specified scope. No unrelated files are listed for modification."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "The plan's 'Files to Create' table lists: (1) 'modules/fundamental/src/advisory/model/severity_summary.rs' for the SeveritySummary struct, (2) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs' for the GET handler, and (3) 'tests/api/advisory_summary.rs' for integration tests."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "The plan's 'Files to Modify' table lists: (4) 'modules/fundamental/src/advisory/model/mod.rs', (5) 'modules/fundamental/src/advisory/endpoints/mod.rs', and (6) 'modules/fundamental/src/advisory/service/advisory.rs' \u2014 all three required files."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "The commit message is 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format with type 'feat', scope 'advisory', and description. The footer includes 'TC-9201' as a ticket reference."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "The commit command in the plan explicitly includes: --trailer='Assisted-by: Claude Code'"
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1)",
+      "passed": true,
+      "evidence": "The plan includes a 'Branch' section stating 'Create branch TC-9201 from main before starting implementation' and the commit section shows 'git checkout -b TC-9201'."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "The conventions.md file identifies both patterns explicitly: Section '1. Error Handling Pattern: Result<T, AppError> with .context()' describes the error handling convention with code examples, and Section '2. Module Structure: model/ + service/ + endpoints/' describes the three-subdirectory structure pattern. Additionally, it identifies 5 more patterns (endpoint handler pattern, route registration, response types, testing convention, model struct conventions)."
+    }
+  ],
+  "pass_rate": 1.0,
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

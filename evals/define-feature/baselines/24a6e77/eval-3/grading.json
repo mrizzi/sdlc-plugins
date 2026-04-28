@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 1: 'Please run /setup first to configure your project' and line 9: 'Run `/setup` to generate the Project Configuration section'"
+    },
+    {
+      "text": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 3: 'Your CLAUDE.md is missing the required **Project Configuration** section.'"
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "File /tmp/define-feature-eval-baseline/eval-3/outputs/preview.md does not exist: 'ls: cannot access ... No such file or directory'"
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "File /tmp/define-feature-eval-baseline/eval-3/outputs/jira-create.md does not exist: 'ls: cannot access ... No such file or directory'"
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "File /tmp/define-feature-eval-baseline/eval-3/outputs/jira-comment.md does not exist: 'ls: cannot access ... No such file or directory'"
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "grep for all 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, User Stories, Acceptance Criteria, Design, Technical Considerations, Open Questions) returned NO MATCHES FOUND in response.md"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

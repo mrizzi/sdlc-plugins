@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md contains an 'Ambiguity Notes' table that explicitly flags 4 ambiguities: (1) 'Search should be faster' — 'No latency target specified'; (2) 'Results should be more relevant' — 'No definition of relevance'; (3) 'Add filters' — 'Some kind of filtering capability — no specific filters listed'; (4) 'Should be fast enough' (NFR) — 'No quantifiable performance target'. All 4 are genuine ambiguities from the feature description."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": false,
+      "evidence": "The impact map and all 5 task descriptions were reviewed. None of them mention 'Better UI' at all. While the plan implicitly excludes it (no task addresses UI), there is no explicit acknowledgment that 'Better UI' cannot be planned without design mockups or a frontend repository. The assertion requires explicit acknowledgment, which is absent."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 5 task files follow the template format from task-description-template.md. Each contains the required sections: Repository, Description, Files to Modify (and/or Files to Create), Implementation Notes, Acceptance Criteria, Test Requirements, and Verification Commands. Optional sections like API Changes (task 3), Files to Create (task 1), Reuse Candidates, Dependencies, and Documentation Updates are included or omitted appropriately per the template rules."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": false,
+      "evidence": "While the impact-map.md documents 'Planning Interpretations' for ambiguous requirements and states 'These interpretations should be validated with the product owner before implementation begins,' the individual task descriptions do not label their filled-in details as 'assumptions pending clarification.' For example, Task 1 assumes tsvector columns and GIN indexes without labeling these as assumptions. Task 3 defines specific filters (entity_type, date_range, severity, license) without marking them as assumptions. Task 4 assumes a 500ms threshold without labeling it as an assumption. The assertion requires assumptions to be labeled as such within the tasks themselves."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 task descriptions contain a '## Repository' section with exactly one repository name: 'trustify-backend'. Task 1: line 3 'trustify-backend'; Task 2: line 3 'trustify-backend'; Task 3: line 3 'trustify-backend'; Task 4: line 3 'trustify-backend'; Task 5: line 3 'trustify-backend'."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 task descriptions contain all three required sections: Task 1 has '## Description' (line 6), '## Acceptance Criteria' (line 28), '## Test Requirements' (line 34). Task 2 has '## Description' (line 6), '## Acceptance Criteria' (line 29), '## Test Requirements' (line 36). Task 3 has '## Description' (line 6), '## Acceptance Criteria' (line 39), '## Test Requirements' (line 48). Task 4 has '## Description' (line 6), '## Acceptance Criteria' (line 27), '## Test Requirements' (line 34). Task 5 has '## Description' (line 6), '## Acceptance Criteria' (line 28), '## Test Requirements' (line 38)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Checking all file paths across all tasks against repo-backend.md: Task 1 modifies 'migration/src/lib.rs' (in manifest) and creates 'migration/src/m0002_search_indexes/mod.rs' (new file following the established pattern of m0001_initial/mod.rs, which is acceptable as Files to Create). Task 2 modifies 'modules/search/src/service/mod.rs' (in manifest) and 'modules/search/src/lib.rs' (in manifest). Task 3 modifies 'modules/search/src/endpoints/mod.rs' (in manifest), 'modules/search/src/service/mod.rs' (in manifest), 'common/src/db/query.rs' (in manifest). Task 4 modifies 'modules/search/src/service/mod.rs' (in manifest). Task 5 modifies 'tests/api/search.rs' (in manifest). All referenced paths exist in the repository structure or are legitimate new files following existing patterns."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references 'migration/src/m0001_initial/mod.rs' for migration pattern. Task 2 references 'modules/search/src/service/mod.rs', 'common/src/error.rs' for AppError, 'common/src/model/paginated.rs' for PaginatedResults<T>, and specific PostgreSQL functions (ts_rank, to_tsquery). Task 3 references 'modules/search/src/endpoints/mod.rs', 'modules/fundamental/src/sbom/endpoints/list.rs' for query parameter pattern, 'modules/fundamental/src/advisory/model/summary.rs' for severity field, 'modules/fundamental/src/package/model/summary.rs' for license field, 'common/src/db/query.rs' for helpers. Task 4 references 'modules/search/src/service/mod.rs' and specific crates/patterns (tracing, std::time::Instant). Task 5 references 'tests/api/search.rs', 'tests/api/sbom.rs', 'tests/api/advisory.rs' for test patterns, and the 'assert_eq!(resp.status(), StatusCode::OK)' convention from the repo."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 2,
+    "total": 8,
+    "pass_rate": 0.75
+  }
+}

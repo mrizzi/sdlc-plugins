@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | MIXED | Both additive and reductive test signals detected (see details below) |'. Lines 139-176 contain the detailed Test Change Classification section with heading '#### Test Change Classification -- MIXED' and explicitly states 'Both additive and reductive signals are present in this PR.'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md lines 146 and 156: Structural summary states '-1 test function (`test_recommend_purls_with_qualifiers` removed)'. Reductive signals section item 1 states: 'Removed test function: `test_recommend_purls_with_qualifiers` -- This function was present in the base branch and tested that PURL recommendations include qualifier details when present, asserting that both qualifier variants are returned as separate entries and that each contains `repository_url=`. This entire test function is absent from the PR branch.'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the relaxed assertion in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers",
+      "passed": true,
+      "evidence": "report.md lines 148 and 158-166: Structural summary states '-1 assertion relaxed: `test_recommend_purls_basic` changed from asserting a fully qualified PURL with qualifiers (`\"pkg:maven/org.apache/commons-lang3@3.12?repository_url=https://repo1.maven.org&type=jar\"`) to asserting a versioned PURL without qualifiers (`\"pkg:maven/org.apache/commons-lang3@3.12\"`)'. Reductive signals item 2 provides full details with the exact code for the base-branch and PR-branch assertions."
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md lines 150-151: Structural summary for '*New file: `tests/api/purl_simplify.rs`*' states '+3 test functions (`test_simplified_purl_no_version`, `test_simplified_purl_mixed_types`, `test_simplified_purl_ordering_preserved`)' and '+10 assertions (across all 3 new test functions)'. Additive signals item 2 states: 'New test file: `tests/api/purl_simplify.rs` -- Contains 3 new test functions testing simplified PURL format edge cases (no-version PURLs, mixed PURL types, ordering preservation).'"
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md line 145: Structural summary states '+1 test function (`test_recommend_purls_dedup` added)'. Additive signals item 1 (line 170): 'New test function: `test_recommend_purls_dedup` -- Added to `tests/api/purl_recommend.rs` to verify the new deduplication behavior after qualifier removal.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report files: report.md, criterion-1.md through criterion-5.md. All files are verification reports/analyses. No code files are present in the outputs directory. The report itself only describes reading and analyzing code (e.g., 'Scanned all added lines in the PR diff'), never modifying files."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md presents findings with a summary table and detailed domain findings. Line 17 states 'Overall: PASS' as a verdict but does not trigger any merge action. Line 19 notes 'The Test Change Classification is MIXED (informational, does not affect overall result) -- see detailed analysis below.' The report is purely informational with no merge commands or actions."
+    },
+    {
+      "text": "The test change classification is produced by the Style/Conventions sub-agent (which spawns a test classification sub-agent for modified files) — the classification verdict is attributed to the Style/Conventions domain in the report",
+      "passed": true,
+      "evidence": "report.md line 110: The Test Change Classification section appears under '### From Style/Conventions' (line 110). The section heading at line 139 is '#### Test Change Classification -- MIXED', nested under the Style/Conventions domain heading. This clearly attributes the classification to the Style/Conventions domain."
+    },
+    {
+      "text": "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)",
+      "passed": true,
+      "evidence": "report.md line 140: 'The classification is based on comparing the base-branch and PR-branch versions of the test files.' The structural summary (lines 144-151) enumerates concrete function additions/removals and assertion changes by comparing base vs PR branch content. Lines 156-166 reference specific base-branch code (the fully qualified PURL assertion) vs PR-branch code. Line 176 explicitly states: 'the classification is based purely on the structural and semantic comparison of base-branch vs PR-branch test content, independent of the acceptance criteria.'"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

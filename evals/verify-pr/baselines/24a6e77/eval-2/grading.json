@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "report.md Acceptance Criteria table shows criterion 3 (invalid threshold returns 400) as FAIL and criterion 5 (threshold_applied boolean field) as FAIL. The report states '4 of 6 acceptance criteria are satisfied. 2 criteria FAIL.' with specific gap details for each."
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "report.md criterion 3 row: 'No validation implemented. `unwrap_or(0)` silently treats invalid values as \"critical\" threshold, returning 200 OK with filtered results instead of 400.' criterion-3.md elaborates: '`.unwrap_or(0)` on line 46 of the modified `get.rs` is the specific code that silently swallows invalid values.'"
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "report.md criterion 5 row: 'Field is entirely absent from the response. The `AdvisorySummary` struct was not modified to include this field.' criterion-5.md states: 'The struct contains only: `critical`, `high`, `medium`, `low`, and `total`. There is no `threshold_applied` field.' and 'No `threshold_applied` field appears anywhere in the diff.'"
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md Scope Containment section: '`tests/api/advisory_summary.rs` -- MISSING from diff (was specified under \"Files to Create\")' and 'The task explicitly requires creating this file with integration tests for threshold filtering. The file is completely absent from the PR diff. All six test requirements specified in the task are unimplemented.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report files: report.md, criterion-1.md through criterion-6.md. All are verification/analysis documents. No code files (e.g., .rs, .toml, .json source files) were created or modified in the outputs. The report only analyzes the diff without making changes."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report presents findings with an overall FAIL verdict and a 'Missing Implementation Summary' section listing 4 items that need to be addressed. There is no mention of merging, approving, or any automated merge action. The report is structured as a review document for human consumption."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md contains '### Overall: FAIL' followed by 'Two acceptance criteria are not satisfied, a required file is entirely missing from the PR, and the total field computation contains a correctness bug.'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
+      "passed": true,
+      "evidence": "report.md summary table contains row: '| Test Change Classification | N/A | No test files exist in the PR diff |'. The detailed section also states: '### Test Change Classification -- N/A' and 'No test files exist in the PR diff. No test changes to classify.'"
+    },
+    {
+      "text": "The report includes detailed findings for each failing check with specific evidence from the diff — Scope Containment identifies the missing test file by comparing PR files against the task specification, Acceptance Criteria provides per-criterion analysis explaining each gap",
+      "passed": true,
+      "evidence": "Scope Containment section lists all 3 task-specified files with PRESENT/MISSING status, identifies tests/api/advisory_summary.rs as MISSING, and enumerates all 6 unimplemented test requirements. Evidence states: 'The diff contains changes to only two files (`get.rs` and `advisory.rs`). The `tests/api/advisory_summary.rs` file does not appear in any hunk header.' Acceptance Criteria section provides a 6-row table with per-criterion PASS/FAIL results and links to detailed criterion files. Each failing criterion (3 and 5) has specific code-level evidence from the diff."
+    },
+    {
+      "text": "Acceptance criteria verification produces per-criterion PASS/FAIL analysis with code-level evidence — each criterion-N.md output file contains detailed reasoning about what was checked and what gap was found",
+      "passed": true,
+      "evidence": "Six criterion files exist (criterion-1.md through criterion-6.md). Each contains: a Criterion statement, a Verdict (PASS/FAIL), a Reasoning section with detailed analysis, and an Evidence section with code snippets from the diff. criterion-3.md shows the unwrap_or(0) code and explains why it fails validation. criterion-5.md shows the AdvisorySummary struct fields and confirms threshold_applied is absent. criterion-1.md includes the full filtering logic with line-by-line analysis. All criterion files contain code-level evidence from the diff."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}
