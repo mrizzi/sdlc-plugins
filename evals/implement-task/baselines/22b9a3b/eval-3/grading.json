@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 27: 'call `apply_filter` from `common/src/db/query.rs` to parse the comma-separated string and generate a SQL `WHERE ... IN (...)` clause.' Line 74: '`apply_filter` from `common/src/db/query.rs` handles the comma-separated parsing and SQL IN clause generation -- no custom parsing code needed.' Also reuse-analysis.md Reuse Candidate 1 (lines 7-18) explicitly details direct invocation of apply_filter for this purpose."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 5: 'The implementation follows the existing advisory severity filter pattern'. Line 12: 'mirroring how the advisory `list.rs` defines its `severity` query parameter field'. Line 75: 'Advisory severity filter pattern from `modules/fundamental/src/advisory/endpoints/list.rs` provides the exact structural template: an optional field on the query struct, extraction in the handler, and delegation to the service layer.' reuse-analysis.md Reuse Candidate 2 (lines 22-35) provides detailed structural pattern replication explanation."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md line 28: 'The filter joins through the `package_license` entity (`entity/src/package_license.rs`) to match packages whose associated license SPDX identifier is in the provided set.' Line 29: 'Use SeaORM's relation/join API (consistent with how other join-table filters work in the codebase) rather than writing raw SQL.' Line 76: '`package_license` entity from `entity/src/package_license.rs` provides the SeaORM entity for the join table, avoiding any raw SQL for the package-to-license relationship.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three clearly labeled sections: 'Reuse Candidate 1: `common/src/db/query.rs::apply_filter`' (line 7) with 'How it is reused' at line 13, 'Reuse Candidate 2: `modules/fundamental/src/advisory/endpoints/list.rs`' (line 22) with 'How it is reused' at line 27, and 'Reuse Candidate 3: `entity/src/package_license.rs`' (line 39) with 'How it is reused' at line 45. All three candidates from the task description are covered with detailed application explanations."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": false,
+      "evidence": "The task defines Files to Modify as: modules/fundamental/src/package/endpoints/list.rs, modules/fundamental/src/package/service/mod.rs; Files to Create as: tests/api/package_license_filter.rs. The plan's section '4. Update `tests/Cargo.toml` (minor modification)' (plan.md lines 53-54) lists tests/Cargo.toml as a file to potentially modify, which is not included in the task's Files to Modify or Files to Create sections. This violates constraint 5.1 (file scope)."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 80: 'No new utility functions or helper modules are created. The implementation is purely compositional, assembling existing building blocks.' Line 74: 'no custom parsing code needed.' reuse-analysis.md line 74: 'No new utility functions, helpers, or abstractions are introduced.' The plan consistently calls apply_filter directly and explicitly states no new utilities are created."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "Line 1: \"Please run `/setup` first to configure your project\" and line 9: \"Run `/setup` to generate the required configuration\""
+    },
+    {
+      "text": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "Line 1: \"This skill requires Project Configuration in your CLAUDE.md.\" and line 3: \"Your CLAUDE.md is missing the required `# Project Configuration` section\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "Directory listing shows only one file: response.md. No preview.md exists in /tmp/define-feature-eval-baseline/eval-3/outputs/"
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "Directory listing shows only one file: response.md. No jira-create.md exists in /tmp/define-feature-eval-baseline/eval-3/outputs/"
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "Directory listing shows only one file: response.md. No jira-comment.md exists in /tmp/define-feature-eval-baseline/eval-3/outputs/"
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "Full content of response.md (9 lines) was read. It contains only the error message about missing Project Configuration and instructions to run /setup. None of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, User Stories, Non-Functional Requirements, Success Metrics, Dependencies, Open Questions) appear anywhere in the file."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

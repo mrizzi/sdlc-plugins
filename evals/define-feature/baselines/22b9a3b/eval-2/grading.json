@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "preview.md line 5: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 13: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "Searched preview.md — no heading '## Background and Strategic Fit' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Goals'",
+      "passed": true,
+      "evidence": "Searched preview.md — no heading '## Goals' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "Searched preview.md — no heading '## Non-Functional Requirements' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Use Cases'",
+      "passed": true,
+      "evidence": "Searched preview.md — no heading '## Use Cases' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "Searched preview.md — no heading '## Customer Considerations' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "Searched preview.md — no heading '## Customer Information/Supportability' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "Searched preview.md — no heading '## Documentation Considerations' found anywhere in the file."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'",
+      "passed": true,
+      "evidence": "jira-create.md line 27: 'assignee | *(not included — user chose unassigned)*'. No assignee field is set in the createJiraIssue call parameters."
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 12: '\"labels\": [\"ai-generated-jira\"]' in the createJiraIssue call, and line 26: 'labels | `[\"ai-generated-jira\"]`' in the parameters table."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

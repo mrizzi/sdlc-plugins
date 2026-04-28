@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | MIXED | Modified test file has both additive signals (new dedup test, tightened assertions) and reductive signals (removed qualifier test); new test file is purely additive |'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md lines 107-108: 'Reductive findings: - tests/api/purl_recommend.rs: test_recommend_purls_with_qualifiers removed (5 assertions lost), but the behavior it tested no longer exists in the system.' Also in the structural summary line 103: '-1 test function (test_recommend_purls_with_qualifiers)'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the relaxed assertion in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers",
+      "passed": false,
+      "evidence": "The report does NOT identify this as a relaxed assertion or reductive signal. The structural summary in report.md line 103 characterizes the assertion change as '+2 assertion specificity tightened (!contains(\"?\") checks added)' — framing the change as tightened rather than relaxed. criterion-1.md lines 37-39 describe the new assertions but do not note the relaxation from checking a fully qualified PURL to checking a versioned PURL without qualifiers. Nowhere in any output file is this change identified as a relaxed or reductive signal."
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md line 98: 'New file: tests/api/purl_simplify.rs -- 3 new test functions, purely additive.'"
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md line 103: '+1 test function (test_recommend_purls_dedup)' in the structural summary. Line 14: 'additive signals (new dedup test, tightened assertions)'. Line 19: 'additive (new dedup test, new simplify test file with 3 tests, tightened assertions)'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report/analysis files: report.md, criterion-1.md through criterion-5.md. All are markdown verification reports. No source code files (.rs, .toml, or other code files) were created or modified. The reports contain only analysis text with code snippets shown as quoted examples, not modifications."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report presents an 'Overall: PASS' verdict in report.md line 17 but takes no merge action. There is no mention of merging, no gh pr merge command, and no indication the PR was auto-merged. The report is purely informational, presenting findings with detailed analysis for human review."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 1,
+    "total": 7,
+    "pass_rate": 0.857
+  }
+}

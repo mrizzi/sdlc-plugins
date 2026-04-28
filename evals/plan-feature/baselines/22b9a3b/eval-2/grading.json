@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md explicitly identifies 5 ambiguities: (1) 'Search should be faster' — No performance baseline or target defined, (2) 'Results should be more relevant' — No definition of relevance, (3) 'Add filters — some kind of filtering capability' — Filter criteria unspecified, (4) 'Better UI' — Excluded from scope, (5) Non-functional requirements lack specificity. Each includes detailed questions and assumptions. This exceeds the minimum of 3."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "impact-map.md Ambiguity 4 states: 'The \"Better UI\" requirement is marked as non-MVP and cannot be planned without: Design mockups or Figma specifications, A frontend repository to target (only trustify-backend is in scope). Decision: \"Better UI\" is excluded from this implementation plan entirely. It should be planned separately once design assets and a frontend repository are available.' No task descriptions address Better UI."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 4 task files follow the template structure. Each contains: ## Repository (single repo name), ## Description, ## Files to Modify and/or ## Files to Create, ## Implementation Notes, ## Acceptance Criteria (with checkbox items), ## Test Requirements (with checkbox items), ## Verification Commands. Optional sections like ## API Changes (tasks 2, 3), ## Reuse Candidates (all tasks), ## Dependencies (tasks 2, 3, 4) are included where applicable and omitted otherwise, matching the template rule 'Omit sections that don't apply.'"
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Task 1: 'Ambiguity note: The exact fields to include in the tsvector columns are assumed based on the entity structures discovered in the repository. This assumption is pending clarification from the product owner.' Task 2: 'Ambiguity note: \"Relevance\" is not defined in the feature description. This task assumes relevance means PostgreSQL ts_rank scoring... this assumption is pending clarification.' Task 3: 'Ambiguity note: The feature description does not specify which fields should be filterable or how filters should be combined. This task assumes the MVP filter set is... This assumption is pending clarification from the product owner.' The impact map also labels all assumptions as 'Assumption (pending clarification)' in each ambiguity section."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 4 tasks contain '## Repository' as their first section with 'trustify-backend' as the sole repository name: task-1-full-text-search-migration.md line 1-2, task-2-search-service-relevance.md line 1-2, task-3-search-filters.md line 1-2, task-4-search-integration-tests.md line 1-2. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "Task 1: ## Description (line 3), ## Acceptance Criteria (lines 35-42), ## Test Requirements (lines 44-48). Task 2: ## Description (line 3), ## Acceptance Criteria (lines 39-46), ## Test Requirements (lines 48-53). Task 3: ## Description (line 3), ## Acceptance Criteria (lines 39-47), ## Test Requirements (lines 49-55). Task 4: ## Description (line 3), ## Acceptance Criteria (lines 28-35), ## Test Requirements (lines 37-47). All sections contain substantive content with checkbox items."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Files to Modify paths all exist in repo-backend.md manifest: migration/src/lib.rs (task 1), modules/search/src/service/mod.rs (tasks 2, 3), common/src/db/query.rs (tasks 2, 3), modules/search/src/endpoints/mod.rs (task 3), tests/api/search.rs (task 4). Files to Create paths are new files in directories that exist in the manifest: migration/src/m0002_full_text_search/mod.rs follows the m0001_initial pattern, common/src/db/full_text.rs is in the existing common/src/db/ directory, modules/search/src/model/mod.rs follows the model/ pattern used in modules/fundamental/. No invented or incorrect paths were found."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references: migration/src/m0001_initial/mod.rs, entity/src/sbom.rs, entity/src/advisory.rs, entity/src/package.rs, modules/fundamental/src/advisory/model/summary.rs (severity field), modules/fundamental/src/package/model/summary.rs (license field), SeaORM migration runner. Task 2 references: modules/search/src/service/mod.rs, common/src/db/full_text.rs, common/src/db/mod.rs, common/src/error.rs (AppError), common/src/model/paginated.rs (PaginatedResults<T>), modules/search/src/endpoints/mod.rs, Result<T, AppError> with .context() pattern, tower-http caching middleware. Task 3 references: modules/search/src/endpoints/mod.rs, modules/fundamental/ module pattern, modules/fundamental/src/advisory/model/summary.rs (severity field), common/src/db/query.rs, common/src/model/paginated.rs, Axum Query<T> extractor. Task 4 references: tests/api/search.rs, tests/api/sbom.rs, tests/api/advisory.rs, common/src/model/paginated.rs, assert_eq!(resp.status(), StatusCode::OK) assertion pattern."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}
