@@ -54,7 +54,7 @@
         "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
         "The report does NOT auto-merge the PR (constraint 1.13)",
         "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
-        "The report includes a Convention Upgrade check in the Style/Conventions domain analysis — the check evaluates whether review comment suggestions match documented or demonstrated project conventions, showing PASS (examined but not upgraded), WARN (upgraded with evidence), or N/A (no suggestions to evaluate)",
+        "Convention upgrade eligibility is evaluated for review comment 30002 (index suggestion) — the review classification output (review-30002.md) or the report's Style/Conventions analysis explains whether the suggestion matches a documented or demonstrated project convention",
         "Review comment 30002 (index suggestion) results in a sub-task regardless of classification path — whether classified directly as code change request based on reviewer language, or upgraded from suggestion via convention analysis"
       ]
     },
