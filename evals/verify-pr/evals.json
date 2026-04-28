@@ -54,8 +54,8 @@
         "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
         "The report does NOT auto-merge the PR (constraint 1.13)",
         "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
-        "All classified review comments (ids 30001-30004) are sent to all four domain sub-agents — the convention upgrade analysis for the index suggestion (id 30002) comes from the Style/Conventions sub-agent, not from inline orchestrator logic",
-        "The convention upgrade for the index suggestion (id 30002) — if upgraded from suggestion to code change request — includes convention evidence from the Style/Conventions sub-agent (e.g., CONVENTIONS.md match or codebase pattern count)"
+        "The report includes a Convention Upgrade check in the Style/Conventions domain analysis — the check evaluates whether review comment suggestions match documented or demonstrated project conventions, showing PASS (examined but not upgraded), WARN (upgraded with evidence), or N/A (no suggestions to evaluate)",
+        "Review comment 30002 (index suggestion) results in a sub-task regardless of classification path — whether classified directly as code change request based on reviewer language, or upgraded from suggestion via convention analysis"
       ]
     },
     {
@@ -89,7 +89,7 @@
         "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
         "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
         "The test change classification is produced by the Style/Conventions sub-agent (which spawns a test classification sub-agent for modified files) — the classification verdict is attributed to the Style/Conventions domain in the report",
-        "The Style/Conventions sub-agent's test classification sub-agent operates in isolation — it receives only file paths and branch names, not Jira metadata or review comments (constraint 1.18)"
+        "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)"
       ]
     }
   ]
