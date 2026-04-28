@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "preview.md line 5: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 13: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "Searched preview.md fully (25 lines). No heading '## Background and Strategic Fit' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Goals'",
+      "passed": true,
+      "evidence": "Searched preview.md fully (25 lines). No heading '## Goals' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "Searched preview.md fully (25 lines). No heading '## Non-Functional Requirements' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Use Cases'",
+      "passed": true,
+      "evidence": "Searched preview.md fully (25 lines). No heading '## Use Cases' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "Searched preview.md fully (25 lines). No heading '## Customer Considerations' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "Searched preview.md fully (25 lines). No heading '## Customer Information/Supportability' found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "Searched preview.md fully (25 lines). No heading '## Documentation Considerations' found anywhere in the file."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'",
+      "passed": true,
+      "evidence": "jira-create.md contains a createJiraIssue call with no assignee field in the parameters. The preview.md also confirms '**Assignee:** Unassigned' on line 22."
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 9: 'additional_fields={ \"labels\": [\"ai-generated-jira\"] }'"
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

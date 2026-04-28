@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "Each task file contains all required template sections: Repository, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "All 6 task files (task-1 through task-6) contain every required section. Task 1: Repository (line 4), Description (line 6), Files to Modify (line 9), Files to Create (line 12), Implementation Notes (line 15), Acceptance Criteria (line 32), Test Requirements (line 38). Task 2: Repository (line 4), Description (line 6), Files to Modify (line 9), Implementation Notes (line 12), Acceptance Criteria (line 30), Test Requirements (line 38). Task 3: Repository (line 4), Description (line 6), Files to Modify (line 9), Files to Create (line 12), Implementation Notes (line 19), Acceptance Criteria (line 33), Test Requirements (line 41). Task 4: Repository (line 4), Description (line 6), Files to Modify (line 9), Implementation Notes (line 12), Acceptance Criteria (line 28), Test Requirements (line 34). Task 5: Repository (line 4), Description (line 6), Files to Create (line 9), Files to Modify (line 12), Implementation Notes (line 15), Acceptance Criteria (line 31), Test Requirements (line 38). Task 6: Repository (line 4), Description (line 6), Files to Modify (line 9), Implementation Notes (line 12), Acceptance Criteria (line 28), Test Requirements (line 33)."
+    },
+    {
+      "text": "Task count is between 3 and 10 inclusive",
+      "passed": true,
+      "evidence": "There are exactly 6 task files in the outputs directory: task-1-advisory-severity-summary-model.md, task-2-severity-aggregation-service.md, task-3-advisory-summary-endpoint.md, task-4-cache-invalidation.md, task-5-integration-tests.md, task-6-api-documentation.md. 6 is within the range [3, 10]."
+    },
+    {
+      "text": "All tasks reference repository 'trustify-backend'",
+      "passed": true,
+      "evidence": "Every task file's Repository section contains exactly 'trustify-backend': Task 1 line 4: 'trustify-backend', Task 2 line 4: 'trustify-backend', Task 3 line 4: 'trustify-backend', Task 4 line 4: 'trustify-backend', Task 5 line 4: 'trustify-backend', Task 6 line 4: 'trustify-backend'."
+    },
+    {
+      "text": "Task dependencies form a DAG with no circular dependencies",
+      "passed": true,
+      "evidence": "Dependency graph: Task 1 has no dependencies. Task 2 depends on Task 1. Task 3 depends on Task 2. Task 4 depends on Task 3. Task 5 depends on Task 3 and Task 4. Task 6 depends on Task 3. This forms a directed acyclic graph: 1 -> 2 -> 3 -> 4 -> 5, and 3 -> 5 (second edge), and 3 -> 6. Topological ordering exists: 1, 2, 3, 4, 6, 5. No circular dependencies."
+    },
+    {
+      "text": "Every task's Files to Modify and Files to Create reference paths plausible within the repo-backend.md structure",
+      "passed": true,
+      "evidence": "All Files to Modify paths exist in repo-backend.md: modules/fundamental/src/sbom/model/mod.rs (line 41), modules/fundamental/src/sbom/service/sbom.rs (line 46), modules/fundamental/src/sbom/endpoints/mod.rs (line 49), modules/ingestor/src/graph/advisory/mod.rs (line 83), tests/Cargo.toml (line 114), README.md (line 14). All Files to Create paths are new files in existing directories from the manifest: modules/fundamental/src/sbom/model/advisory_summary.rs (new file in model/ dir shown at line 40), modules/fundamental/src/sbom/endpoints/advisory_summary.rs (new file in endpoints/ dir shown at line 48), tests/api/advisory_summary.rs (new file in tests/api/ dir shown at line 110)."
+    },
+    {
+      "text": "Impact map lists concrete, specific changes (not vague or abstract descriptions)",
+      "passed": true,
+      "evidence": "The impact map lists 7 changes, all concrete and specific: (1) 'Add AdvisorySeveritySummary response model struct with fields critical, high, medium, low, total in the SBOM model module' -- names the struct and fields. (2) 'Add service method on SbomService to query and aggregate advisory severity counts for a given SBOM ID, deduplicating by advisory ID, using the existing sbom_advisory join table and advisory entity' -- names the service, join table, and deduplication strategy. (3) 'Add GET /api/v2/sbom/{id}/advisory-summary endpoint handler' with specific query parameter ?threshold. (4) 'Register the new endpoint route in the SBOM endpoints module with 5-minute tower-http cache configuration' -- specifies cache duration and middleware. (5) 'Add cache invalidation logic in the advisory ingestion pipeline' -- specifies the trigger condition. (6) 'Add integration tests' with specific test scenarios listed. (7) 'Update API documentation' with specific endpoint details."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 6 tasks have a '## Repository' section containing only the single repository name 'trustify-backend'. No task lists multiple repositories. Task 1 line 3-4: '## Repository\\ntrustify-backend'. Same pattern in Tasks 2-6."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 6 tasks contain all three required sections: Task 1 has '## Description' (line 6), '## Acceptance Criteria' (line 32), '## Test Requirements' (line 38). Task 2 has '## Description' (line 6), '## Acceptance Criteria' (line 30), '## Test Requirements' (line 38). Task 3 has '## Description' (line 6), '## Acceptance Criteria' (line 33), '## Test Requirements' (line 41). Task 4 has '## Description' (line 6), '## Acceptance Criteria' (line 28), '## Test Requirements' (line 34). Task 5 has '## Description' (line 6), '## Acceptance Criteria' (line 31), '## Test Requirements' (line 38). Task 6 has '## Description' (line 6), '## Acceptance Criteria' (line 28), '## Test Requirements' (line 33)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All Files to Modify paths map directly to files in repo-backend.md directory tree: 'modules/fundamental/src/sbom/model/mod.rs' (repo-backend.md line 41), 'modules/fundamental/src/sbom/service/sbom.rs' (line 46), 'modules/fundamental/src/sbom/endpoints/mod.rs' (line 49), 'modules/ingestor/src/graph/advisory/mod.rs' (line 83), 'tests/Cargo.toml' (line 114), 'README.md' (line 14). Files to Create are new files placed in directories that exist in the manifest: 'modules/fundamental/src/sbom/model/advisory_summary.rs' in model/ dir, 'modules/fundamental/src/sbom/endpoints/advisory_summary.rs' in endpoints/ dir, 'tests/api/advisory_summary.rs' in tests/api/ dir. No paths reference invented or non-existent directory structures."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference: 'modules/fundamental/src/sbom/model/summary.rs', 'modules/fundamental/src/sbom/model/details.rs', 'modules/fundamental/src/advisory/model/summary.rs', 'modules/fundamental/src/sbom/endpoints/list.rs'. Task 2 references: 'entity/src/sbom_advisory.rs', 'entity/src/advisory.rs', 'common/src/db/query.rs', 'common/src/error.rs::AppError', 'modules/fundamental/src/sbom/service/sbom.rs', 'modules/fundamental/src/sbom/endpoints/get.rs', specific patterns like 'SELECT DISTINCT or GROUP BY' and 'Result<T, AppError>'. Task 3 references: 'modules/fundamental/src/sbom/endpoints/get.rs', 'modules/fundamental/src/sbom/endpoints/mod.rs', specific route pattern '.route(\"/:id/advisory-summary\", get(advisory_summary::handler))', 'common/src/error.rs'. Task 4 references: 'modules/ingestor/src/graph/advisory/mod.rs', 'server/src/main.rs', 'modules/ingestor/src/graph/sbom/mod.rs'. Task 5 references: 'tests/api/sbom.rs', 'tests/api/advisory.rs', specific pattern 'assert_eq!(resp.status(), StatusCode::OK)'. Task 6 references: 'README.md', 'GET /api/v2/sbom/{id}/advisory-summary' path and response shape."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

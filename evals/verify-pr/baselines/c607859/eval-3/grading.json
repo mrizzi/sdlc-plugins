@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states 'Classification: code change request' and 'This requires a sub-task to implement the fix.' report.md table row: '| 30001 | reviewer-a | ... | Code change request | Sub-task created |'. subtask-30001.md exists with full sub-task content."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": false,
+      "evidence": "review-30002.md states 'Classification: suggestion' and 'No sub-task created.' report.md table row: '| 30002 | reviewer-a | ... | Suggestion | No sub-task (no convention match) |'. No subtask-30002.md file exists. The comment was NOT upgraded to code change request and did NOT trigger sub-task creation."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states 'Classification: nit' and 'No sub-task created.' report.md table row: '| 30003 | reviewer-a | ... | Nit | No sub-task |'."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md states 'Classification: question' and 'No sub-task created from this classification (questions do not trigger sub-tasks)'. report.md table row: '| 30004 | reviewer-a | ... | Question | No sub-task |'."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains all required sections: '## Repository' (line 8: 'trustify-backend'), '## Description' (line 10), '## Files to Modify' (line 14), '## Implementation Notes' (line 17), '## Acceptance Criteria' (line 25). The only sub-task created is for comment 30001."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md lines 33-34: '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md lines 36-42: '## Review Context' section containing 'Review comment ID: 30001', 'Author: reviewer-a', 'File: modules/fundamental/src/sbom/service/sbom.rs (line 60)', and the full original review comment text quoted with '>'."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report.md, review-30001.md, review-30002.md, review-30003.md, review-30004.md, and subtask-30001.md. All files are analysis/reporting artifacts. No code files (*.rs, *.toml, etc.) appear in the outputs."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001-30004) have individual classification files (review-30001.md through review-30004.md). report.md's 'Classified Review Comments' table lists all four comment IDs with classifications and actions. The 'Review Feedback' row summarizes: '1 code change request (comment 30001), 1 suggestion (comment 30002), 1 nit (comment 30003), 1 question (comment 30004)'."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "No mention of merging, auto-merge, or merge commands in any output file. The report concludes with 'Overall: FAIL' and identifies 'Two issues require attention', indicating the PR is left for human action."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | ADDITIVE | `tests/api/sbom_delete.rs` is a new file with 5 test functions. No existing test files were modified or deleted. |' Also confirmed in Style/Conventions sub-agent section: '| Test Change Classification | ADDITIVE | New test file with 5 test functions, no modified/deleted tests |'."
+    },
+    {
+      "text": "All classified review comments (ids 30001-30004) are sent to all four domain sub-agents — the convention upgrade analysis for the index suggestion (id 30002) comes from the Style/Conventions sub-agent, not from inline orchestrator logic",
+      "passed": false,
+      "evidence": "The second part is supported: review-30002.md states 'The Style/Conventions sub-agent checked for convention upgrade eligibility' confirming the convention upgrade analysis came from that sub-agent. However, the first part ('all comments sent to all four sub-agents') lacks explicit evidence. The report's sub-agent sections show: Intent Alignment references comment 30004 only; Security references no specific comments; Correctness references comment 30004 only; Style/Conventions references comment 30002 only. There is no evidence that comments 30001 and 30003 were dispatched to all four sub-agents, or that any sub-agent other than Style/Conventions processed comment 30002."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 2,
+    "total": 12,
+    "pass_rate": 0.83
+  }
+}

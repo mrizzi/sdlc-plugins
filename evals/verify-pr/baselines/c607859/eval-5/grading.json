@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | MIXED | Both additive and reductive test changes detected (see details below) |'. Lines 69-113 provide a detailed breakdown with file-level classification table, structural summary table, and narrative sections for both reductive and additive signals."
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md line 83 structural summary: '| Test functions | +1 (`test_recommend_purls_dedup` added) | -1 (`test_recommend_purls_with_qualifiers` removed) |'. Lines 90-91 in Reductive signals: 'Function removal: `test_recommend_purls_with_qualifiers` was entirely removed. This function tested that qualifier-specific behavior returned separate entries with `repository_url=` present. That coverage is eliminated.'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the relaxed assertion in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers",
+      "passed": true,
+      "evidence": "report.md line 84: '| Assertion specificity | +2 ... | -1 (assertion in `test_recommend_purls_basic` relaxed from fully qualified PURL to versioned PURL without qualifiers) |'. Lines 92-99: 'Assertion relaxation in `test_recommend_purls_basic`: The assertion changed from: assert_eq!(body.items[0].purl, \"pkg:maven/org.apache/commons-lang3@3.12?repository_url=https://repo1.maven.org&type=jar\"); to: assert_eq!(body.items[0].purl, \"pkg:maven/org.apache/commons-lang3@3.12\"); This checks a less specific value -- the PURL without qualifiers instead of the fully qualified PURL.'"
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md line 77: '| `tests/api/purl_simplify.rs` | New file | ADDITIVE (3 new test functions) |'. Lines 106-109 enumerate the 3 functions: test_simplified_purl_no_version, test_simplified_purl_mixed_types, test_simplified_purl_ordering_preserved."
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md line 83: '| Test functions | +1 (`test_recommend_purls_dedup` added) | -1 ...|'. Line 103-104: 'New function `test_recommend_purls_dedup`: Tests deduplication behavior that did not exist before -- two PURLs differing only in qualifiers should produce one deduplicated result.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All 7 output files are report/analysis markdown files (report.md, criterion-1.md through criterion-5.md). The report describes reading diffs and verifying acceptance criteria but contains no evidence of modifying any source code files. All actions described are read-only: examining diffs, checking CI status, analyzing test changes."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report concludes with 'Overall: PASS' and states 'The Test Change Classification is MIXED (informational only, does not affect overall verdict).' No merge action is taken or mentioned anywhere in the outputs. The report presents detailed findings including reductive signals for human review without taking any merge action."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

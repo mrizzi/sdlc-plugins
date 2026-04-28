@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "report.md line 12: 'Acceptance Criteria | PASS | 5 of 5 criteria met'. Lines 61-65 detail each criterion: Criterion 1 (single license filter): PASS, Criterion 2 (comma-separated filter): PASS, Criterion 3 (invalid license 400): PASS, Criterion 4 (pagination integration): PASS, Criterion 5 (response shape unchanged): PASS. criterion-1.md through criterion-5.md each contain 'Verdict: PASS' with detailed analysis for single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape respectively."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "report.md line 7: 'Scope Containment | PASS | PR modifies exactly the 3 files specified in the task (2 to modify, 1 to create); no out-of-scope or unimplemented files'. Lines 32-35 detail: 'PR files: modules/fundamental/src/package/endpoints/list.rs, modules/fundamental/src/package/service/mod.rs, tests/api/package.rs', 'Task files to modify: ...list.rs, ...mod.rs', 'Task files to create: tests/api/package.rs', 'No out-of-scope files. No unimplemented files. Exact match.'"
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "report.md line 5: 'Review Feedback | N/A | No reviews or comments exist on the PR'. Line 6: 'Root-Cause Investigation | N/A | No sub-tasks were created; nothing to investigate'."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only read-only report files: report.md, criterion-1.md through criterion-5.md. No code files (*.rs, *.toml, etc.) appear in the outputs. The report and criterion files contain only analysis text and code quotations for verification purposes; no file modification operations are evidenced. The report describes reading and analyzing the diff but never mentions writing to or modifying any source files."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'Overall: PASS' and a summary of findings but contains no merge action, no gh pr merge command, and no indication of auto-merging. The report presents verdicts and analysis for human review. No output file contains any merge operation."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "report.md line 10: 'Sensitive Patterns | PASS | No secrets, credentials, API keys, or sensitive patterns detected in added lines across all 3 files'. Lines 49-52 detail: 'Scanned all added lines across 3 files. No hardcoded passwords, API keys, tokens, private keys, environment files, cloud provider credentials, or database credentials detected. Added lines contain only Rust source code: struct fields, function definitions, SeaORM query building, and test assertions. No false positive candidates identified.'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14: 'Test Change Classification | ADDITIVE | All test changes are in a new file (`tests/api/package.rs`); 4 new test functions added with no modifications or deletions to existing tests'. Lines 91-94 further detail: 'tests/api/package.rs is a new file (listed under \"Files to Create\" in the task). 4 new test functions added, 0 modified, 0 deleted. No existing test files were modified or removed. Classification: ADDITIVE (all test changes are purely additive).'"
+    },
+    {
+      "text": "The verification report assembles verdicts from all four domain sub-agents: Scope Containment, Diff Size, and Commit Traceability from Intent Alignment; Sensitive Patterns from Security; CI Status, Acceptance Criteria, and Verification Commands from Correctness; Test Quality and Test Change Classification from Style/Conventions",
+      "passed": true,
+      "evidence": "report.md lines 28-94 contain four sub-agent sections: '#### Intent Alignment' (lines 29-45) covering Scope Containment PASS, Diff Size PASS, Commit Traceability PASS; '#### Security' (lines 47-52) covering Sensitive Pattern Scan PASS; '#### Correctness' (lines 54-68) covering CI Status PASS, Acceptance Criteria PASS (5 criteria), Verification Commands N/A; '#### Style/Conventions' (lines 70-94) covering Convention Upgrade N/A, Repetitive Test Detection PASS, Test Documentation PASS, Test Change Classification ADDITIVE. All four domain sub-agents are present with their respective verdicts assembled into the main report table."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

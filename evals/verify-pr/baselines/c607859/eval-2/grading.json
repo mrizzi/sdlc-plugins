@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "report.md line 69 states 'Acceptance Criteria | FAIL | 3 of 6 criteria not met'. The acceptance criteria table (lines 73-79) marks criteria 1 (threshold=high filtering), 3 (invalid threshold returns 400), and 5 (threshold_applied boolean) as FAIL, each with specific details about the gap between the diff and requirements."
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "report.md line 77 states criterion 3 verdict is FAIL: '`unwrap_or(0)` silently defaults invalid values to \"critical\" behavior instead of returning 400.' Lines 84-85 elaborate: 'When an invalid threshold value is provided, `.position()` returns `None` and `.unwrap_or(0)` silently defaults to index 0 (critical). The task explicitly requires returning 400 Bad Request via `AppError` for invalid values. No validation or error handling exists.' criterion-3.md provides full details confirming this finding."
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "report.md line 79 states criterion 5 verdict is FAIL: 'Field is entirely absent from the response struct and construction logic.' Lines 86-87 elaborate: 'The `AdvisorySummary` struct is not modified to include a `threshold_applied: bool` field. The response construction does not set this field. This feature is completely missing.' criterion-5.md confirms: 'There is no `threshold_applied` field in this struct construction... This is a complete omission -- the feature was not implemented at all.'"
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md line 7 states 'Required file `tests/api/advisory_summary.rs` (Files to Create) is missing from the PR'. Line 36: '`tests/api/advisory_summary.rs` is listed under \"Files to Create\" in the task specification but does not appear in the PR diff at all.' Lines 113-125 list all 6 test requirements as 'NOT IMPLEMENTED' and conclude 'The file `tests/api/advisory_summary.rs` is entirely absent from the PR diff.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only analysis/report files: report.md, criterion-1.md through criterion-6.md. All files are verification findings and analysis documents. None of the output files contain code modifications, patches, or edit commands. The report only identifies issues and does not attempt to fix them."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md presents its findings as a verification report with an overall FAIL verdict (line 17: '### Overall: FAIL') and a summary of issues (lines 129-136). There is no merge action, no merge command, and no approval action taken. The report is structured as findings for human review with detailed issue descriptions."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md line 17 states '### Overall: FAIL'. The report summary (lines 19-20) explains: 'The PR has significant gaps in implementation. Three of six acceptance criteria are not satisfied, a required test file is entirely missing, and the filtering logic contains a comparison bug.'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
+      "passed": true,
+      "evidence": "report.md line 14 contains '| Test Change Classification | N/A | No test files exist in the PR diff; task required creating `tests/api/advisory_summary.rs` but it is absent |'. This is a row in the main verification table with N/A status and explicit explanation that no test files exist."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

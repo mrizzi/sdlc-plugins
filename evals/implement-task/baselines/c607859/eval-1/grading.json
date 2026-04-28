@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "plan.md Step 4 (lines 39-48) explicitly lists: 'Confirmed endpoint handler patterns in advisory/endpoints/get.rs', 'Confirmed service method patterns in advisory/service/advisory.rs', 'Confirmed model struct patterns in advisory/model/summary.rs'. That is 3 of the 4 listed files. conventions.md also references error handling with AppError from common/src/error.rs (line 32-34)."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "plan.md 'Files to Modify' (lines 52-57) lists exactly 3 files: advisory/service/advisory.rs, advisory/endpoints/mod.rs, advisory/model/mod.rs. 'Files to Create' (lines 60-64) lists exactly 3 files: severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs tests. The plan explicitly states (lines 89-91): 'All planned changes are within the task's Files to Modify and Files to Create lists. No out-of-scope files are modified.' file-6-description.md mentions tests/Cargo.toml 'may need to be updated' but qualifies it as conditional and does not include it in the plan's formal file lists."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md Files to Create table (lines 60-64) lists: File 4 'modules/fundamental/src/advisory/model/severity_summary.rs' (SeveritySummary response struct), File 5 'modules/fundamental/src/advisory/endpoints/severity_summary.rs' (GET handler), File 6 'tests/api/advisory_summary.rs' (Integration tests). Corresponding file descriptions exist in file-4-description.md, file-5-description.md, and file-6-description.md, all marked as 'Action: CREATE'."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md Files to Modify table (lines 52-57) lists: File 1 'modules/fundamental/src/advisory/service/advisory.rs' (Add severity_summary method), File 2 'modules/fundamental/src/advisory/endpoints/mod.rs' (Register new route), File 3 'modules/fundamental/src/advisory/model/mod.rs' (Add pub mod declaration). Corresponding file descriptions exist in file-1-description.md, file-2-description.md, and file-3-description.md, all marked as 'Action: MODIFY'."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md lines 96-104 show the commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' followed by a body and the footer 'Implements TC-9201'. This follows Conventional Commits format with type 'feat', scope 'advisory', and the Jira ticket TC-9201 in the footer."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "plan.md line 106 states: 'Commit would include `--trailer=\"Assisted-by: Claude Code\"`.' This explicitly references the required trailer."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1)",
+      "passed": false,
+      "evidence": "The plan.md does not mention creating a branch named TC-9201 or any branch naming convention. Line 33 says 'Target PR: none (default flow -- create new branch and PR)' but never specifies the branch name or naming convention. No other output file mentions branch naming."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md identifies both patterns clearly. Lines 6-8: 'Each domain module follows a strict model/ + service/ + endpoints/ tripartite structure.' Lines 26-27: 'All handlers return Result<T, AppError> with .context() wrapping for error propagation.' Lines 32-34: 'All errors use the AppError enum from common/src/error.rs... Error wrapping uses .context() for adding contextual messages.' These are the two required patterns."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 1,
+    "total": 8,
+    "pass_rate": 0.875
+  }
+}

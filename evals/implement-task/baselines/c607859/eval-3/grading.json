@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md lines 52-57 state: 'Apply the license filter using apply_filter from common/src/db/query.rs: This is the key reuse point. The apply_filter function already handles: Parsing comma-separated values into a Vec<String>, Generating a SQL IN clause for multi-value filtering, Handling the single-value case as a degenerate multi-value case. Call apply_filter with the license parameter and the appropriate column reference.' The plan explicitly calls out reusing apply_filter rather than writing new parsing logic."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md lines 33-34 state: 'Add license field to the Query struct: Following the pattern in modules/fundamental/src/advisory/endpoints/list.rs (the severity filter's Query struct), add an Option<String> field named license.' Line 40 states: 'Pass the license filter to the service layer: In the handler function, pass query.license to the PackageService::list() call. This follows the same pattern as how the advisory list handler passes query.severity to AdvisoryService::list().' The advisory endpoint is explicitly referenced as the structural guide."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md lines 59-72 state: 'JOIN through entity/src/package_license.rs: Use the existing package_license SeaORM entity to join the package table to the package_license table. This reuses the existing entity definition rather than writing raw SQL.' The code snippet shows 'use entity::package_license;' and uses SeaORM relation-based joins."
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three clearly delineated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 7-25), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs' (lines 29-45), and 'Reuse Candidate 3: entity/src/package_license.rs' (lines 49-69). Each section explains what the candidate provides, how it is reused, what is NOT duplicated, and the reuse type."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "The plan's 'Files to Modify' lists: (1) modules/fundamental/src/package/endpoints/list.rs, (2) modules/fundamental/src/package/service/mod.rs. The plan's 'Files to Create' lists: (1) tests/api/package_license_filter.rs. The 'Additional Files Potentially Affected' section (lines 149-153) identifies modules/fundamental/src/package/endpoints/mod.rs and tests/api/mod.rs as potentially affected but explicitly marks them as out-of-scope requiring user approval. No files outside the stated scope are proposed for modification without flagging them as out-of-scope."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan explicitly states on line 52: 'Apply the license filter using apply_filter from common/src/db/query.rs: This is the key reuse point.' reuse-analysis.md line 23 states: 'What is NOT duplicated: No new comma-parsing logic, no new SQL IN clause construction, no new single-vs-multi-value branching.' reuse-analysis.md lines 82-83 state: 'No new utility functions, no new entity definitions, and no new query-building logic are introduced.' No new utility functions duplicating apply_filter functionality are proposed anywhere in the plan."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}
