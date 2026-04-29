@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states 'Classification: code change request'. report.md table row: '30001 | modules/fundamental/src/sbom/service/sbom.rs:60 | code change request | Yes (subtask-1)'. subtask-1.md exists and addresses the transaction wrapping concern."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md classifies it as 'suggestion' but notes it is 'a candidate for convention upgrade'. report.md table shows '30002 | migration/src/m0042_sbom_soft_delete/mod.rs:14 | suggestion (upgraded to code change request) | Yes (subtask-3)'. subtask-3.md exists and addresses the index addition."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states 'Classification: nit'. report.md table row: '30003 | modules/fundamental/src/sbom/endpoints/mod.rs:18 | nit | No'. No subtask file references comment 30003."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": false,
+      "evidence": "review-30004.md classifies it as 'code change request', not 'question'. report.md table row: '30004 | modules/fundamental/src/sbom/endpoints/get.rs:1 | code change request | Yes (subtask-2)'. The classification reasoning states 'Although phrased as a question... the reviewer is identifying a functional gap' and it was classified as a code change request that triggered subtask-2 creation."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-1.md contains: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 7), '## Implementation Notes' (line 10), '## Acceptance Criteria' (line 16). subtask-2.md contains: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 8), '## Implementation Notes' (line 11), '## Acceptance Criteria' (line 18). subtask-3.md contains: '## Repository' (line 1), '## Description' (line 4), '## Files to Modify' (line 8), '## Implementation Notes' (line 11), '## Acceptance Criteria' (line 19). All three subtasks have all five required sections."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-1.md line 33: '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'. subtask-2.md line 34: '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'. subtask-3.md line 37: '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'. All three subtasks include the correct Target PR section and URL."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-1.md lines 27-30: '## Review Context' section with quoted original comment text from reviewer about transaction wrapping. subtask-2.md lines 27-29: '## Review Context' section with quoted original comment text about GET endpoint behavior. subtask-3.md lines 27-35: '## Review Context' section with quoted original comment text about adding partial index. All three subtasks include the Review Context section with the original review comment text."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only classification files (review-30001.md through review-30004.md), sub-task descriptions (subtask-1.md through subtask-3.md), and report.md. No source code files (.rs, .toml, etc.) are present in the outputs directory. The report identifies code issues and creates sub-tasks but does not contain any code modifications."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments are classified in separate files: review-30001.md, review-30002.md, review-30003.md, review-30004.md. The report.md contains a 'Classified Review Comments' table with all four comments (30001, 30002, 30003, 30004) listed with their classifications and sub-task status. All comments are processed before the findings sections (Intent Alignment, Security, Correctness, Style/Conventions) appear in the report."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md overall verdict is 'FAIL' with the statement 'Two issues require attention before this PR can be merged'. The report identifies failing checks (Scope Containment FAIL, Acceptance Criteria FAIL) and creates sub-tasks for remediation. There is no indication of any merge action being taken or recommended. The report is purely informational/diagnostic."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 25: '| Test Change Classification | ADDITIVE | All test files are newly created; no existing tests modified or removed |'. Additionally, lines 143-145: '#### Test Change Classification -- ADDITIVE' and 'tests/api/sbom_delete.rs is a newly created file. No existing test files were modified or deleted. All test changes are purely additive.'"
+    },
+    {
+      "text": "Convention upgrade eligibility is evaluated for review comment 30002 (index suggestion) — the review classification output (review-30002.md) or the report's Style/Conventions analysis explains whether the suggestion matches a documented or demonstrated project convention",
+      "passed": true,
+      "evidence": "review-30002.md states: 'This suggestion is a candidate for convention upgrade if the project's migration conventions establish a pattern of always adding indexes for columns used in frequent filter predicates. The Style/Conventions sub-agent should evaluate whether this matches an established codebase convention.' report.md lines 116-123 under 'Style/Conventions Findings > Convention Upgrade -- WARN': 'Comment 30002 (suggestion to add partial index on deleted_at) was evaluated for convention upgrade. Adding indexes for columns used in frequent filter predicates is a well-established database convention... The suggestion was upgraded from suggestion to code change request.'"
+    },
+    {
+      "text": "Review comment 30002 (index suggestion) results in a sub-task regardless of classification path — whether classified directly as code change request based on reviewer language, or upgraded from suggestion via convention analysis",
+      "passed": true,
+      "evidence": "report.md table shows: '30002 | migration/src/m0042_sbom_soft_delete/mod.rs:14 | suggestion (upgraded to code change request) | Yes (subtask-3)'. subtask-3.md exists and contains the full sub-task description for adding the partial index. The suggestion was upgraded via convention analysis and resulted in subtask-3 creation."
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 1,
+    "total": 13,
+    "pass_rate": 0.923
+  }
+}

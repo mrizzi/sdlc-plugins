@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "In the Step 1 table, the row for 'Implementation Notes' shows Status 'Missing' with assessment 'No references to existing code patterns, no mention of reuse candidates'. Section '2. Missing Implementation Notes section' in 'Identified Gaps' elaborates with 4 bullet points. The response explicitly halts execution citing 'constraint 1.6' in the Decision: STOP section."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "In the Step 1 table, Acceptance Criteria is marked 'Present but vague' with: '\"Search results are relevant\" (how is relevance defined?), \"Performance is acceptable\" (what threshold?)'. Section '3. Vague Acceptance Criteria' further expands: '\"Search results are relevant\" -- what defines relevance? Exact match? Substring match? Full-text search ranking?' and '\"Performance is acceptable\" -- what is the performance target? Response time under a specific threshold?'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "In the Step 1 table, Test Requirements is marked 'Present but vague' with: 'Single item \"Test that search works correctly\" -- no specific test scenarios, no edge cases, no error case coverage'. Section '4. Vague Test Requirements' states: '\"Test that search works correctly\" is not actionable. Specific test scenarios are needed' and lists 6 concrete example test scenarios that would be needed."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The 'Decision: STOP' section explicitly states: 'Per the implement-task skill rules (constraint 1.6), when the structured description is incomplete, execution must halt immediately. I am not drafting an implementation plan, creating branches, or proceeding with any subsequent steps.' The final paragraph requests: 'Please provide the missing information listed above... so that implementation can proceed with deterministic guidance rather than guesswork.'"
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "Which fields to search: Section 3 asks '\"Users can search for packages\" -- search by what fields? Package name? Version? License? All of these?' Relevance ranking: Section 3 asks '\"Search results are relevant\" -- what defines relevance? Exact match? Substring match? Full-text search ranking? Is there a minimum result quality expectation?' Performance threshold: Section 3 asks '\"Performance is acceptable\" -- what is the performance target? Response time under a specific threshold? Pagination required for large result sets?' Additional questions are asked in sections 1, 2, and 4 covering API design, implementation approach, and test scenarios."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

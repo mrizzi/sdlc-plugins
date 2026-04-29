@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 29: 'Call common::db::query::apply_filter with the raw license string. apply_filter already handles parsing comma-separated values and generating a SQL IN clause, so no custom parsing is needed.' Also line 84: 'common/src/db/query.rs::apply_filter | Called directly in the service layer to parse the comma-separated license string and generate the SQL IN clause. No custom parsing or SQL generation is written.' reuse-analysis.md section 1 explicitly covers apply_filter and states 'Writing custom comma-splitting and SQL IN clause generation would duplicate logic that already exists.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 17: 'following the same pattern used by modules/fundamental/src/advisory/endpoints/list.rs for its severity field.' plan.md line 85: 'modules/fundamental/src/advisory/endpoints/list.rs | The severity filter's Query struct pattern (optional field in the query extraction struct, passed to the service) is replicated exactly for the license field. The advisory endpoint serves as the structural template.' reuse-analysis.md section 2 covers this in detail."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md line 30: 'Build a JOIN through entity::package_license (the package_license SeaORM entity from entity/src/package_license.rs) to reach the license column.' plan.md line 86: 'entity/src/package_license.rs | The existing SeaORM entity is used in the service layer to construct the JOIN between package and package_license tables, avoiding raw SQL.' reuse-analysis.md section 3 states: 'Writing raw SQL JOINs would bypass SeaORM’s type safety' and 'No modification to the entity file is needed.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md has three numbered sections under 'Reuse Candidates from Task Description': (1) common/src/db/query.rs::apply_filter, (2) modules/fundamental/src/advisory/endpoints/list.rs (severity filter pattern), (3) entity/src/package_license.rs. Each section includes 'What it provides', 'How it is reused', 'Why reuse instead of writing new code', and 'Reuse type' subsections with detailed explanations."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "plan.md lists files to modify: (1) modules/fundamental/src/package/endpoints/list.rs, (2) modules/fundamental/src/package/service/mod.rs. File to create: (3) tests/api/package_license_filter.rs. The plan also explicitly has a 'Files NOT Modified' section (lines 59-67) listing files left untouched: entity/src/package_license.rs, common/src/db/query.rs, summary.rs, endpoints/mod.rs, server/src/main.rs. No files outside expected scope are proposed for modification or creation."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 29: 'apply_filter already handles parsing comma-separated values and generating a SQL IN clause, so no custom parsing is needed.' plan.md line 64: 'common/src/db/query.rs -- apply_filter already handles comma-separated multi-value parsing and SQL IN clause generation. No changes required.' reuse-analysis.md line 99: 'No new utility functions, abstractions, or shared modules are needed.' No part of the plan proposes creating parsing, splitting, or SQL IN clause generation functions."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}
