@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with the table headers (Repository, Role, Serena Instance, Path) but no data rows, or explicitly notes that no repositories are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 3-6 contain '## Repository Registry' with a table header row '| Repository | Role | Serena Instance | Path |' and a separator row '|---|---|---|---|' but no data rows follow."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with Project key (MYPROJ), Cloud ID (abc123), and Feature issue type ID (10001)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 8-11 contain '## Jira Configuration' with '- Project key: MYPROJ', '- Cloud ID: abc123', and '- Feature issue type ID: 10001'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that indicates no Serena instances are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 14-16 contain '## Code Intelligence' followed by 'No Serena MCP servers are configured. Code intelligence is not available.'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Serena MCP tools were discovered among the available tools",
+      "passed": true,
+      "evidence": "discovery-log.md lines 5-6: 'Scanned available MCP tools for Serena instances (pattern: `mcp__serena-*`)' and '**Result**: No Serena MCP tools found'."
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Atlassian MCP tools were discovered and Jira fields were provided via manual entry",
+      "passed": true,
+      "evidence": "discovery-log.md lines 7-8: 'Scanned available MCP tools for Atlassian/Jira instances (pattern: `mcp__atlassian*`, `mcp__jira*`)' and '**Result**: No Atlassian or Jira MCP tools found'. Lines 20-21: 'No Atlassian MCP tools available for automatic discovery' and 'Fell back to manual entry for Jira configuration'."
+    },
+    {
+      "text": "The output or discovery log mentions prompting the user about continuing without code intelligence (the skill should ask whether to continue or set up Serena first)",
+      "passed": true,
+      "evidence": "discovery-log.md line 14: 'Prompted user: \"No Serena MCP servers were found. Would you like to continue without code intelligence, or set up Serena first?\"'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

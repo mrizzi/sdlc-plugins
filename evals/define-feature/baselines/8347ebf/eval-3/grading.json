@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "Line 1 of response.md: \"Please run `/setup` first to configure your project, then re-run this skill.\""
+    },
+    {
+      "text": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "Line 1 of response.md: \"This skill requires Project Configuration in your CLAUDE.md.\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/define-feature-eval-baseline/eval-3/outputs/preview.md — file does not exist."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/define-feature-eval-baseline/eval-3/outputs/jira-create.md — file does not exist."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/define-feature-eval-baseline/eval-3/outputs/jira-comment.md — file does not exist."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "The entire content of response.md is a single line: \"This skill requires Project Configuration in your CLAUDE.md. Please run `/setup` first to configure your project, then re-run this skill.\" No section headings are present."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": false,
+      "evidence": "Searched all output files for terms: ambiguity, unclear, vague, undefined, unspecified, assumption, clarification, open question, TBD, gap, unknown. No matches found in any file. The impact-map.md contains no section identifying ambiguities. The feature description contains obvious ambiguities ('should be fast enough', 'some kind of filtering capability', 'search is slow' without metrics, 'results should be more relevant' without definition) but none are explicitly flagged in any output file."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": false,
+      "evidence": "Searched all output files for 'Better UI', 'non-MVP', 'mockup', 'design mock', 'frontend repo', 'exclude', 'out of scope', 'scope'. No mention of the 'Better UI' requirement appears anywhere in the outputs. The plan silently omits it without acknowledging the omission or explaining why it cannot be planned."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All four task files (task-1 through task-4) follow the template format. Each contains the required sections from task-description-template.md: Repository, Description, Files to Modify (or Files to Create), Implementation Notes, Acceptance Criteria, Test Requirements. Optional sections like API Changes, Verification Commands, Dependencies, and Reuse Candidates are included where relevant and omitted where not applicable, consistent with template rules."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": false,
+      "evidence": "Searched all output files for 'assumption', 'pending', 'clarification', 'TBD', 'open question'. No matches found. The tasks make implicit assumptions (e.g., task-1 assumes tsvector/GIN is the right approach, task-4 assumes 500ms threshold for 'fast enough', task-3 assumes specific filter types for 'some kind of filtering') but none are labeled as assumptions pending clarification."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All four task files contain a Repository section with exactly one repository name: task-1 line 3: 'trustify-backend', task-2 line 3: 'trustify-backend', task-3 line 3: 'trustify-backend', task-4 line 3: 'trustify-backend'. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All four tasks contain all three required sections: Task 1 has Description (line 5), Acceptance Criteria (line 28), Test Requirements (line 35). Task 2 has Description (line 5), Acceptance Criteria (line 33), Test Requirements (line 40). Task 3 has Description (line 5), Acceptance Criteria (line 39), Test Requirements (line 48). Task 4 has Description (line 5), Acceptance Criteria (line 27), Test Requirements (line 33)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Verified all file paths against repo-backend.md structure: Task 1 - 'migration/src/lib.rs' (exists in manifest), 'migration/src/m0002_search_indexes/mod.rs' (new file following the established pattern of m0001_initial/mod.rs). Task 2 - 'modules/search/src/service/mod.rs' (line 91 of manifest), 'modules/search/src/endpoints/mod.rs' (line 93), 'common/src/model/paginated.rs' (line 31). Task 3 - 'modules/search/src/endpoints/mod.rs' (line 93), 'modules/search/src/service/mod.rs' (line 91), 'common/src/db/query.rs' (line 28). Task 4 - 'tests/api/search.rs' (line 113). All paths trace to the manifest. The one new file (m0002_search_indexes/mod.rs) follows the established migration naming pattern from the manifest."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference: 'migration/src/m0001_initial/mod.rs' for migration pattern, SeaORM migration trait, PostgreSQL tsvector/GIN specifics. Task 2 Implementation Notes reference: 'modules/search/src/service/mod.rs' for existing SearchService, 'common/src/error.rs' for AppError pattern, specific functions like plainto_tsquery and ts_rank, Result<T, AppError> with .context() wrapping. Task 3 Implementation Notes reference: 'common/src/db/query.rs' for filter helpers, 'modules/fundamental/src/advisory/model/summary.rs' for severity field, 'modules/fundamental/src/package/model/summary.rs' for license field, 'entity/src/package_license.rs', Axum extractors pattern, Result<T, AppError>. Task 4 Implementation Notes reference: 'tests/api/search.rs', 'tests/api/sbom.rs', 'tests/api/advisory.rs' for test patterns, specific Rust constructs like std::time::Instant, assert_eq!(resp.status(), StatusCode::OK) pattern."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 3,
+    "total": 8,
+    "pass_rate": 0.625
+  }
+}
