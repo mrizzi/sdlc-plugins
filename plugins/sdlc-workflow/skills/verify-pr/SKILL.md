@@ -420,6 +420,8 @@ jira.create_issue with:
 - **Labels:** `["ai-generated-jira", "review-feedback"]`
 - **Description:** structured task description following the template defined in
   [`shared/task-description-template.md`](../shared/task-description-template.md).
+  Apply the eval coverage propagation from
+  [`shared/eval-coverage-propagation.md`](../shared/eval-coverage-propagation.md).
   Include the applicable base sections plus these extension sections:
 
   - **Review Context** — the original review comment text and PR file/line reference
@@ -668,6 +670,8 @@ jira.create_issue with:
 - **Labels:** `["ai-generated-jira", "root-cause"]`
 - **Description:** structured task description following the template defined in
   [`shared/task-description-template.md`](../shared/task-description-template.md).
+  Apply the eval coverage propagation from
+  [`shared/eval-coverage-propagation.md`](../shared/eval-coverage-propagation.md).
   The description must be actionable — it describes the concrete change to the
   skill, prompt, or convention that prevents the gap from recurring. Do **not**
   include the root-cause analysis narrative in the description.
