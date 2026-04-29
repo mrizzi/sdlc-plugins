@@ -176,6 +176,46 @@ Walk through each of the 9 sections in order. For each section:
 
 Skipped sections are recorded as skipped and will be **omitted** from the final description — they will not appear as empty headings.
 
+### External API Claim Verification
+
+After the user provides input for any section, scan their content for claims about
+external API capabilities or limitations. A claim is a statement asserting what an
+external API can or cannot do. Look for patterns such as:
+
+- "X cannot be updated / deleted / modified after creation"
+- "The API does not support Y"
+- "There is no endpoint for Z"
+- "X is read-only / immutable / write-once"
+- "You can only create X, not update it"
+
+When a claim is detected:
+
+1. **Notify the user** — state which claim was identified and that you will verify it
+   against official API documentation.
+2. **Verify against official documentation** — use WebSearch to locate the API's official
+   documentation for the specific capability referenced by the claim, then use WebFetch
+   to read the relevant page. Focus on whether the endpoint, method, or capability the
+   claim denies actually exists.
+3. **Present the verification result** before finalizing the section:
+   - If the claim is **confirmed** — the API genuinely lacks the capability — inform the
+     user and proceed with the original wording.
+   - If the claim is **incorrect** — the API does support the capability — present the
+     evidence (endpoint, method, documentation link) and suggest corrected language for
+     the Feature description. Ask the user to confirm the correction before moving on.
+   - If verification is **inconclusive** — the documentation is ambiguous or does not
+     clearly address the claim — state what you found and ask the user whether to keep
+     the original wording or revise it.
+4. **Fallback** — if WebSearch or WebFetch are unavailable or return no useful results,
+   flag the unverified claim to the user:
+
+   > "I detected a claim about an external API but cannot verify it right now
+   > (web tools unavailable). The claim is: **{claim}**. Would you like to proceed
+   > as-is, or verify it manually before continuing?"
+
+This verification applies to every section but is especially important in **Feature
+Overview** (Step 3a), **Requirements** (Step 3d), and **Use Cases** (Step 3f), where
+technical assumptions about API capabilities shape downstream planning and implementation.
+
 ### Step 3a – Feature Overview (Required)
 
 Ask for a high-level description of the feature — the executive summary covering the "What & Why".
