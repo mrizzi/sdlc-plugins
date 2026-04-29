@@ -20,13 +20,14 @@ def load_grading_files(results_dir: Path) -> list[dict]:
     return gradings
 
 
-def render(results_dir: Path, baseline_dir: Path | None) -> str:
+def render(results_dir: Path, baseline_dir: Path | None, skill: str | None = None) -> str:
     gradings = load_grading_files(results_dir)
 
     if not gradings:
         return "> No eval results found.\n"
 
-    lines = ["## Eval Results", ""]
+    heading = f"## Eval Results: {skill}" if skill else "## Eval Results"
+    lines = [heading, ""]
 
     # Per-eval table
     lines.append("| Eval | Passed | Failed | Pass Rate |")
@@ -106,6 +107,12 @@ def main():
         "--baseline", type=Path, default=None, help="Baseline directory"
     )
     parser.add_argument(
+        "--skill",
+        type=str,
+        default=None,
+        help="Skill name to include in the heading",
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=None,
@@ -122,7 +129,7 @@ def main():
         print(f"Warning: baseline not found: {baseline}", file=sys.stderr)
         baseline = None
 
-    md = render(args.results, baseline)
+    md = render(args.results, baseline, args.skill)
 
     output_path = args.output or (args.results / "summary.md")
     output_path.write_text(md)

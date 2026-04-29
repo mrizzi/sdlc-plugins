@@ -166,12 +166,14 @@ Write `<workspace>/feedback.json` with empty strings for each eval:
 
 Determine the baseline path: `evals/<skill-name>/baselines/latest/`.
 
-Run the render script:
+Run the render script, passing the skill name so the heading identifies
+which skill the results belong to:
 
 ```bash
 python3 <skill-dir>/scripts/render_summary.py \
   --results <workspace> \
-  --baseline <baseline-path>
+  --baseline <baseline-path> \
+  --skill <skill-name>
 ```
 
 If the baseline path does not exist, omit `--baseline` — the script
