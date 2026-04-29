@@ -87,6 +87,7 @@ Not applicable — this is a documentation repository with no runtime code.
 ## Shared Modules and Reuse
 
 - **`plugins/sdlc-workflow/shared/task-description-template.md`** — canonical task template structure used by `plan-feature`, `verify-pr` (producers) and `implement-task` (consumer)
+- **`plugins/sdlc-workflow/shared/description-digest-protocol.md`** — cross-phase integrity protocol: `plan-feature` posts a SHA-256 digest of each task description, `implement-task` verifies it before implementation
 - **`plugins/sdlc-workflow/skills/setup/*.template.md`** — templates for scaffolding:
   - `conventions.template.md` — CONVENTIONS.md scaffold
   - `constraints.template.md` — constraints document scaffold
