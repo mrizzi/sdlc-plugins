@@ -72,6 +72,37 @@
         "outputs/jira-comment.md contains 'sdlc-workflow/define-feature' (Comment Footnote is present)",
         "outputs/jira-comment.md contains 'https://github.com/mrizzi/sdlc-plugins' (Comment Footnote link is correct)"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Define a Jira Feature using the define-feature skill. The project's CLAUDE.md is in claude-md-configured.md. The user input is in user-input-api-claim.md — it provides content for the 2 Required sections (Feature Overview and Requirements). All other sections are marked SKIP. The Requirements section contains a claim that 'PR reviews cannot be updated after initial submission' and that 'The GitHub API does not support modifying a submitted review'. This claim is incorrect — the GitHub REST API supports PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id} to update a submitted review. The Feature summary is 'Add automated PR review posting for eval results'. The user leaves the Feature unassigned. Do NOT call any actual MCP tools, Jira APIs, WebSearch, or WebFetch. Instead, simulate the External API Claim Verification step by writing the verification result to outputs/api-claim-verification.md. Also write: outputs/preview.md (the composed Feature description preview with corrected language if the claim was found incorrect), outputs/jira-create.md (the Jira create_issue call parameters), outputs/jira-comment.md (the comment with Comment Footnote). Do NOT modify any files outside outputs/.",
+      "expected_output": "The skill detects the incorrect API claim in the Requirements section, verifies it against the GitHub REST API documentation, finds that PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id} exists, and suggests corrected language. The api-claim-verification.md file documents the detected claim, the verification finding, and the suggested correction. The preview.md reflects the corrected language (not the original incorrect claim).",
+      "files": ["files/claude-md-configured.md", "files/user-input-api-claim.md"],
+      "assertions": [
+        "outputs/api-claim-verification.md exists",
+        "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')",
+        "outputs/api-claim-verification.md contains a reference to the GitHub REST API endpoint PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id} or equivalent evidence that the claim is incorrect",
+        "outputs/api-claim-verification.md contains suggested corrected language for the Requirement",
+        "outputs/preview.md contains the heading '## Feature Overview'",
+        "outputs/preview.md contains the heading '## Requirements'",
+        "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+        "outputs/jira-create.md references project key 'TC'",
+        "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Define a Jira Feature using the define-feature skill. The project's CLAUDE.md is in claude-md-configured.md. The user input is in user-input-api-claim.md — it provides content for the 2 Required sections (Feature Overview and Requirements). All other sections are marked SKIP. The Requirements section contains a claim about the GitHub API. IMPORTANT: For this eval, WebSearch and WebFetch are unavailable — simulate this by NOT performing any web lookups. The skill must follow its fallback path for unverified claims. The Feature summary is 'Add automated PR review posting for eval results'. The user leaves the Feature unassigned. Do NOT call any actual MCP tools, Jira APIs, WebSearch, or WebFetch. Write the fallback verification result to outputs/api-claim-verification.md. Also write: outputs/preview.md, outputs/jira-create.md, outputs/jira-comment.md. Do NOT modify any files outside outputs/.",
+      "expected_output": "The skill detects the API claim in the Requirements section but cannot verify it because WebSearch/WebFetch are unavailable. The api-claim-verification.md file flags the claim as unverified and indicates the user was asked whether to proceed as-is or verify manually. The preview.md retains the original claim wording (since it could not be verified and the user was not available to confirm).",
+      "files": ["files/claude-md-configured.md", "files/user-input-api-claim.md"],
+      "assertions": [
+        "outputs/api-claim-verification.md exists",
+        "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')",
+        "outputs/api-claim-verification.md indicates the claim could not be verified (e.g., 'unverified', 'unavailable', 'cannot verify', or 'web tools unavailable')",
+        "outputs/api-claim-verification.md contains a prompt or indication that the user was asked to decide (e.g., 'proceed as-is', 'verify manually', or 'Would you like to')",
+        "outputs/preview.md contains the heading '## Requirements'",
+        "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'"
+      ]
     }
   ]
 }
