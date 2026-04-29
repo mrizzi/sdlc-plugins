@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact map (impact-map.md) contains an 'Ambiguities Identified' section listing 5 explicit ambiguities: (1) 'Search should be faster' — no latency targets, (2) 'Results should be more relevant' — no definition of relevant, (3) 'Add filters' — no specification of which filters, (4) 'Should be fast enough' (NFR) — no quantitative target, (5) Scope of 'search' — unclear which endpoints. All 5 directly reference vague language from the feature description TC-9002."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": false,
+      "evidence": "Grep of all output files for 'Better UI', 'frontend', 'mockup', 'design', 'non-MVP' returned zero matches. The impact map does not mention 'Better UI' at all. While the non-MVP requirement is implicitly excluded (no task covers UI changes), there is no explicit acknowledgment that it cannot be planned without design mockups or a frontend repository. The omission is silent with no stated rationale."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 4 task files (task-1 through task-4) follow the template structure from plugins/sdlc-workflow/shared/task-description-template.md. Each contains the required sections: Repository, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Optional sections (Files to Create, API Changes, Reuse Candidates, Verification Commands, Dependencies) are included where applicable and omitted where not, per template rules. Section ordering and formatting (markdown headers, checkbox lists) match the template."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": false,
+      "evidence": "Grep of all output files for 'assumption', 'assumed', 'assume', and 'pending clarification' returned zero matches. The impact map uses 'Resolved by...' phrasing for ambiguities and notes 'These should be confirmed with the product owner before implementation begins', but the individual task descriptions themselves contain no labeled assumptions. For example, Task 1 assumes GIN indexes and tsvector columns are the right approach for 'faster search' but does not label this as an assumption. Task 3 assumes entity_type/severity/date_range are the correct filters for the vague 'Add filters' requirement but does not label this as an assumption."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 4 task descriptions contain a '## Repository' section with exactly one repository name: task-1-search-indexes-migration.md line 4: 'trustify-backend', task-2-search-relevance-ranking.md line 4: 'trustify-backend', task-3-search-filters.md line 4: 'trustify-backend', task-4-search-integration-tests.md line 4: 'trustify-backend'. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 4 task descriptions contain all three required sections: Task 1 has '## Description' (line 7), '## Acceptance Criteria' (line 29), '## Test Requirements' (line 37). Task 2 has '## Description' (line 7), '## Acceptance Criteria' (line 32), '## Test Requirements' (line 39). Task 3 has '## Description' (line 7), '## Acceptance Criteria' (line 39), '## Test Requirements' (line 50). Task 4 has '## Description' (line 7), '## Acceptance Criteria' (line 29), '## Test Requirements' (line 38)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All 'Files to Modify' entries reference paths present in repo-backend.md: migration/src/lib.rs (repo line 17), modules/search/src/service/mod.rs (repo line 91), common/src/db/query.rs (repo line 27), modules/search/src/endpoints/mod.rs (repo line 93), tests/api/search.rs (repo line 113). The one 'Files to Create' entry — migration/src/m0002_search_indexes/mod.rs — follows the established naming pattern from migration/src/m0001_initial/mod.rs (repo line 19) and is appropriately listed under 'Files to Create' rather than 'Files to Modify'."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references migration/src/m0001_initial/mod.rs, common/src/db/query.rs, and SeaORM migration API patterns. Task 2 references modules/search/src/service/mod.rs, common/src/db/query.rs, common/src/model/paginated.rs, common/src/error.rs, and the 'Result<T, AppError> with .context() wrapping' pattern. Task 3 references modules/search/src/endpoints/mod.rs, SearchService, PaginatedResults<T>, common/src/model/paginated.rs, AdvisorySummary severity field, and modules/fundamental/src/sbom/endpoints/list.rs as a pattern example. Task 4 references tests/api/search.rs, tests/api/sbom.rs, tests/api/advisory.rs, and the 'assert_eq!(resp.status(), StatusCode::OK)' test pattern. All implementation notes cite concrete file paths and code symbols from the repository."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 2,
+    "total": 8,
+    "pass_rate": 0.75
+  }
+}

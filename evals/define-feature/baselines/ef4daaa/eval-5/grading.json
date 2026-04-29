@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/api-claim-verification.md exists",
+      "passed": true,
+      "evidence": "File exists at /tmp/define-feature-eval-baseline/eval-5/outputs/api-claim-verification.md and contains 38 lines of content."
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')",
+      "passed": true,
+      "evidence": "Line 7: '\"PR reviews cannot be updated after initial submission\" / \"The GitHub API does not support modifying a submitted review\"'"
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains a reference to the GitHub REST API endpoint PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id} or equivalent evidence that the claim is incorrect",
+      "passed": true,
+      "evidence": "Line 20-21: 'PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}' and line 23: documentation link to https://docs.github.com/en/rest/pulls/reviews#update-a-pull-request-review. Line 13: 'The claim is **incorrect**. The GitHub REST API does support updating a submitted pull request review.'"
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains suggested corrected language for the Requirement",
+      "passed": true,
+      "evidence": "Lines 28-37: Section '### Suggested Correction' provides corrected language: 'Update existing eval review if one was previously posted; create a new review only on first run' / 'Use PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id} to update an existing review'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "Line 13: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "Line 17: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "The file contains 24 lines total. No line contains '## Background and Strategic Fit'. The only headings are '# Feature Preview', '## Feature Overview', and '## Requirements'."
+    },
+    {
+      "text": "outputs/jira-create.md references project key 'TC'",
+      "passed": true,
+      "evidence": "Line 5: '- **Project key:** TC' and line 13: 'projectKey=\"TC\"'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "Line 185: '\"text\": \"sdlc-workflow/define-feature\"'"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}
