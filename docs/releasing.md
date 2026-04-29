@@ -68,6 +68,12 @@ These examples use real commit messages from this project to illustrate the dist
 - `feat(skills): add verify-pr skill for PR verification against Jira tasks` — introduces an entirely new skill that didn't exist before
 - `feat(plan-feature): add constraint-aware task generation` — adds a new capability (constraint awareness) that changes how tasks are generated, altering the task template output
 
+## Changelog Scope
+
+Not all commits belong in the changelog. Exclude commits that are purely internal housekeeping and have no user-facing impact:
+
+- **Eval baselines** (`chore(evals): create baselines for …`) — these record expected outputs for skill evaluations and do not change plugin behavior.
+
 ## Versioning Rules
 
 - The version in `marketplace.json` is what Claude Code uses to detect whether an update is available for relative-path plugins. If the version doesn't change, `/plugin marketplace update` will skip the plugin even if files have changed.
