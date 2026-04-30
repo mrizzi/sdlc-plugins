@@ -43,21 +43,21 @@ Before attempting any JIRA operations (Steps 1, 2, 3, 11), determine the access 
    Choose (1/2/3):
    ```
    
-3. **If "1. Yes":** Check CLAUDE.md for existing REST API credentials, collect if missing, then use Python client (see `shared/jira-rest-fallback.md`)
+3. **If "1. Yes":** Check CLAUDE.md for existing REST API credentials, collect if missing, then use JIRA REST API Python client (see `shared/jira-rest-fallback.md`)
 4. **If "2. No":** Skip the JIRA operation and inform user
 5. **If "3. Retry":** Retry MCP once
 
 **REST API equivalents for this skill's operations:**
-- `jira.get_issue(id)` → `python3 scripts/jira-client.py get_issue <id> --fields "*all"`
-- `jira.user_info()` → `python3 scripts/jira-client.py get_user_info`
-- `jira.edit_issue(id, assignee=accountId)` → `python3 scripts/jira-client.py update_issue <id> --fields-json '{"assignee": {"id": "<accountId>"}}'`
-- `jira.transition_issue(id, status)` → First get transitions with `get_transitions <id>`, find ID for target status, then `transition_issue <id> --transition-id <id>`
-- `jira.update_issue(id, fields)` → `python3 scripts/jira-client.py update_issue <id> --fields-json '<json>'`
-- `jira.add_comment(id, text)` → `python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
+- `jira.get_issue(id)` → `cd <plugin-root> && python3 scripts/jira-client.py get_issue <id> --fields "*all"`
+- `jira.user_info()` → `cd <plugin-root> && python3 scripts/jira-client.py get_user_info`
+- `jira.edit_issue(id, assignee=accountId)` → `cd <plugin-root> && python3 scripts/jira-client.py update_issue <id> --fields-json '{"assignee": {"id": "<accountId>"}}'`
+- `jira.transition_issue(id, status)` → First get transitions with `cd <plugin-root> && python3 scripts/jira-client.py get_transitions <id>`, find ID for target status, then `cd <plugin-root> && python3 scripts/jira-client.py transition_issue <id> --transition-id <id>`
+- `jira.update_issue(id, fields)` → `cd <plugin-root> && python3 scripts/jira-client.py update_issue <id> --fields-json '<json>'`
+- `jira.add_comment(id, text)` → `cd <plugin-root> && python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
 
 **Exception for Bash tool:** When using REST API fallback, this skill may use `bash -c "python3 scripts/jira-client.py <command>"` for JIRA operations only.
 
-Refer to `shared/jira-rest-fallback.md` for complete implementation details.
+**Script execution pattern:** See `shared/jira-rest-fallback.md` § "Script Execution Context" for the `cd <plugin-root> && python3 scripts/jira-client.py <command>` pattern and complete implementation guidance.
 
 ## Inputs
 

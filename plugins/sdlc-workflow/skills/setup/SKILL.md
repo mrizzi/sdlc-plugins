@@ -22,6 +22,8 @@ When Atlassian MCP is unavailable, this skill may use the Bash tool to invoke th
 - ✅ Allowed: `bash -c "python3 scripts/jira-client.py <command>"`
 - ❌ Forbidden: any other Bash file modification commands
 
+**Script execution pattern:** See `shared/jira-rest-fallback.md` § "Script Execution Context" for the `cd <plugin-root> && python3 scripts/jira-client.py <command>` pattern and complete implementation guidance.
+
 ## Template
 
 Read the file `project-config.template.md` in this skill's directory. Use it as the structural reference for generating the `# Project Configuration` section. Replace the `{{placeholder}}` markers with actual values gathered during the steps below. Preserve the exact headings, table format, and section order from the template.
@@ -93,7 +95,7 @@ Choose (1/2/3):
 3. If credentials do not exist:
    - Follow credential collection flow (see `shared/jira-rest-fallback.md`)
    - Collect: Server URL, Email, API Token
-   - Validate with: `python3 scripts/jira-client.py get_user_info`
+   - Validate with: `cd <plugin-root> && python3 scripts/jira-client.py get_user_info`
    - On success: Display "✅ Authentication successful! Logged in as: {displayName}"
    - Ask storage preference (all in CLAUDE.md / URL+email with env var / don't store)
    - Store if requested under `### REST API Credentials (MCP Fallback)` in `## Jira Configuration`
@@ -108,11 +110,11 @@ Choose (1/2/3):
 
 ### Step 3.3 – Use REST API for Discovery
 
-Use the Python client to gather Jira configuration:
+Use the JIRA REST API Python client script to gather Jira configuration:
 
 1. **Get project metadata:**
    ```bash
-   python3 scripts/jira-client.py get_project_metadata <project-key>
+   cd <plugin-root> && python3 scripts/jira-client.py get_project_metadata <project-key>
    ```
    Ask user which project key to use if not already known. The response provides:
    - Project key
@@ -120,7 +122,7 @@ Use the Python client to gather Jira configuration:
 
 2. **Get user info:**
    ```bash
-   python3 scripts/jira-client.py get_user_info
+   cd <plugin-root> && python3 scripts/jira-client.py get_user_info
    ```
    Extract Cloud ID from the response (if present in user metadata).
    If Cloud ID is not available via API, ask user to provide it manually.

@@ -85,6 +85,30 @@ that skills need to create issues, query tasks, and update fields.
 | GitHub Issue custom field | Custom field ID containing a GitHub issue URL (plain string or ADF) | `customfield_10747` |
 | Default labels | Labels to apply to AI-generated issues | `ai-generated-jira` |
 
+#### Discovery vs. Configuration
+
+The Jira Configuration section stores **project-level identifiers** that remain constant across all tasks and workflows. These are discovered once during `/setup` and reused by all skills.
+
+**What goes in CLAUDE.md** (project-level, stable):
+- **Project key** - never changes for a project (e.g., `TC`)
+- **Cloud ID** - identifies your Jira instance
+- **Feature issue type ID** - discovered via `get_project_metadata` during `/setup`
+- **Custom field IDs** (optional) - discovered via `get_project_metadata`, prompted during `/setup`
+
+**What is discovered at runtime** (task-specific, varies by workflow):
+- **Transition IDs** - vary by issue type and workflow configuration, discovered via `get_transitions`
+- **User account IDs** - discovered via `get_user_info` when assigning issues
+- **Available transitions for an issue** - queried via `get_transitions` before each transition
+
+Skills never hardcode transition IDs or assume specific workflow configurations. They always query available transitions and match by status name.
+
+**Example**: To transition an issue to "In Review" status:
+1. Query available transitions: `get_transitions TC-123`
+2. Find the transition ID where `name == "In Review"`
+3. Execute transition: `transition_issue TC-123 --transition-id <discovered-id>`
+
+This ensures the workflow adapts to each project's specific Jira configuration.
+
 #### Optional subsection: REST API Credentials (MCP Fallback)
 
 When Atlassian MCP is unavailable due to organizational policies, skills can fall back to JIRA REST API v3. This subsection stores the credentials needed for REST API access.

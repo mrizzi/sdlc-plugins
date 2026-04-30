@@ -24,6 +24,8 @@ When Atlassian MCP is unavailable, this skill may use the Bash tool to invoke th
 - ✅ Allowed: `bash -c "python3 scripts/jira-client.py <command>"`
 - ❌ Forbidden: any other Bash file modification commands
 
+**Script execution pattern:** See `shared/jira-rest-fallback.md` § "Script Execution Context" for the `cd <plugin-root> && python3 scripts/jira-client.py <command>` pattern and complete implementation guidance.
+
 ## Comment Footnote
 
 Every comment posted to Jira by this skill MUST end with the following footnote,
@@ -116,7 +118,7 @@ Before attempting JIRA operations, determine the access method. This initializat
      - If credentials do not exist:
        - Follow credential collection flow (see `shared/jira-rest-fallback.md`)
        - Collect: Server URL, Email, API Token
-       - Validate with: `python3 scripts/jira-client.py get_user_info`
+       - Validate with: `cd <plugin-root> && python3 scripts/jira-client.py get_user_info`
        - On success: Display "✅ Authentication successful! Logged in as: {displayName}"
        - Ask storage preference (all in CLAUDE.md / URL+email with env var / don't store)
        - Store if requested
@@ -347,7 +349,7 @@ getJiraProjectIssueTypesMetadata(cloudId, projectKey)
 
 **On MCP failure, if REST API chosen (Step 0.5):**
 ```bash
-python3 scripts/jira-client.py get_project_metadata <project-key>
+cd <plugin-root> && python3 scripts/jira-client.py get_project_metadata <project-key>
 ```
 
 Find the issue type whose ID matches the configured Feature issue type ID and use its name.
@@ -376,13 +378,14 @@ additional_fields: { "labels": ["ai-generated-jira"], "assignee": { "accountId":
 
 First, if self-assignment was chosen, get the current user's account ID:
 ```bash
-USER_INFO=$(python3 scripts/jira-client.py get_user_info)
+USER_INFO=$(cd <plugin-root> && python3 scripts/jira-client.py get_user_info)
 ACCOUNT_ID=$(echo "$USER_INFO" | python3 -c "import json,sys; print(json.load(sys.stdin)['accountId'])")
 ```
 
 Then create the issue:
 ```bash
-python3 scripts/jira-client.py create_issue \
+cd <plugin-root> && \
+  python3 scripts/jira-client.py create_issue \
   --project <project-key> \
   --summary "<collected-summary>" \
   --description-md "<composed-description>" \
@@ -391,7 +394,7 @@ python3 scripts/jira-client.py create_issue \
   --assignee-id "$ACCOUNT_ID"  # omit if no self-assignment
 ```
 
-The Python client automatically converts markdown to ADF.
+The JIRA REST API Python client automatically converts markdown to ADF.
 
 Record the created issue key and URL from the JSON response.
 
@@ -407,11 +410,12 @@ addCommentToJiraIssue(cloudId, issueIdOrKey=<created-issue-key>, comment=<summar
 
 **On MCP failure, if REST API chosen (Step 0.5):**
 ```bash
-python3 scripts/jira-client.py add_comment <created-issue-key> \
+cd <plugin-root> && \
+  python3 scripts/jira-client.py add_comment <created-issue-key> \
   --comment-md "<summary-comment>"
 ```
 
-The Python client automatically converts markdown to ADF.
+The JIRA REST API Python client automatically converts markdown to ADF.
 
 **Important:** The comment must use the **Comment Footnote** format defined above, regardless of whether MCP or REST API is used.
 

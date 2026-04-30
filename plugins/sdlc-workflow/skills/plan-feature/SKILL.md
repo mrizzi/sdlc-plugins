@@ -24,6 +24,8 @@ When Atlassian MCP is unavailable, this skill may use the Bash tool to invoke th
 - ✅ Allowed: `bash -c "python3 scripts/jira-client.py <command>"`
 - ❌ Forbidden: any other Bash file modification commands
 
+**Script execution pattern:** See `shared/jira-rest-fallback.md` § "Script Execution Context" for the `cd <plugin-root> && python3 scripts/jira-client.py <command>` pattern and complete implementation guidance.
+
 ## Comment Footnote
 
 Every comment posted to Jira by this skill MUST end with the following footnote,
@@ -102,15 +104,15 @@ Before attempting any JIRA operations (Steps 1, 4, 6), determine the access meth
    Choose (1/2/3):
    ```
    
-3. **If "1. Yes":** Check CLAUDE.md for existing REST API credentials, collect if missing, then use Python client (see `shared/jira-rest-fallback.md`)
+3. **If "1. Yes":** Check CLAUDE.md for existing REST API credentials, collect if missing, then use JIRA REST API Python client (see `shared/jira-rest-fallback.md`)
 4. **If "2. No":** Skip the JIRA operation and inform user
 5. **If "3. Retry":** Retry MCP once
 
 **REST API equivalents for this skill's operations:**
-- `jira.get_issue(id)` → `python3 scripts/jira-client.py get_issue <id> --fields "*all"`
-- `jira.add_comment(id, text)` → `python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
-- `jira.create_issue(...)` → `python3 scripts/jira-client.py create_issue --project <key> --summary "<summary>" --description-md "<desc>" --issue-type Task --labels <labels>`
-- `jira.create_issue_link(...)` → `python3 scripts/jira-client.py create_link --inward <issue1> --outward <issue2> --link-type <type>`
+- `jira.get_issue(id)` → `cd <plugin-root> && python3 scripts/jira-client.py get_issue <id> --fields "*all"`
+- `jira.add_comment(id, text)` → `cd <plugin-root> && python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
+- `jira.create_issue(...)` → `cd <plugin-root> && python3 scripts/jira-client.py create_issue --project <key> --summary "<summary>" --description-md "<desc>" --issue-type Task --labels <labels>`
+- `jira.create_issue_link(...)` → `cd <plugin-root> && python3 scripts/jira-client.py create_link --inward <issue1> --outward <issue2> --link-type <type>`
 
 Refer to `shared/jira-rest-fallback.md` for complete implementation details.
 

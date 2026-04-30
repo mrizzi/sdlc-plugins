@@ -43,20 +43,20 @@ Before attempting any JIRA operations throughout this skill, determine the acces
    Choose (1/2/3):
    ```
    
-3. **If "1. Yes":** Check CLAUDE.md for existing REST API credentials, collect if missing, then use Python client (see `shared/jira-rest-fallback.md`)
+3. **If "1. Yes":** Check CLAUDE.md for existing REST API credentials, collect if missing, then use JIRA REST API Python client (see `shared/jira-rest-fallback.md`)
 4. **If "2. No":** Skip the JIRA operation and inform user
 5. **If "3. Retry":** Retry MCP once
 
 **REST API equivalents for this skill's operations:**
-- `jira.get_issue(id)` → `python3 scripts/jira-client.py get_issue <id> --fields "*all"`
-- `jira.create_issue(...)` → `python3 scripts/jira-client.py create_issue --project <key> --summary "<summary>" --description-md "<desc>" --issue-type Task --labels <labels>`
-- `jira.create_issue_link(...)` → `python3 scripts/jira-client.py create_link --inward <issue1> --outward <issue2> --link-type <type>`
-- `jira.add_comment(id, text)` → `python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
-- `jira.transition_issue(id, status)` → Get transitions, find ID, then `transition_issue <id> --transition-id <id>`
+- `jira.get_issue(id)` → `cd <plugin-root> && python3 scripts/jira-client.py get_issue <id> --fields "*all"`
+- `jira.create_issue(...)` → `cd <plugin-root> && python3 scripts/jira-client.py create_issue --project <key> --summary "<summary>" --description-md "<desc>" --issue-type Task --labels <labels>`
+- `jira.create_issue_link(...)` → `cd <plugin-root> && python3 scripts/jira-client.py create_link --inward <issue1> --outward <issue2> --link-type <type>`
+- `jira.add_comment(id, text)` → `cd <plugin-root> && python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
+- `jira.transition_issue(id, status)` → Get transitions, find ID, then `cd <plugin-root> && python3 scripts/jira-client.py transition_issue <id> --transition-id <id>`
 
 **Exception for Bash tool:** When using REST API fallback, this skill may use `bash -c "python3 scripts/jira-client.py <command>"`  for JIRA operations only.
 
-Refer to `shared/jira-rest-fallback.md` for complete implementation details.
+**Script execution pattern:** See `shared/jira-rest-fallback.md` § "Script Execution Context" for the `cd <plugin-root> && python3 scripts/jira-client.py <command>` pattern and complete implementation guidance.
 
 ## Inputs
 
