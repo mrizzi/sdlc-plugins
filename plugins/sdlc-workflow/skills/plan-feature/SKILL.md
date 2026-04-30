@@ -439,9 +439,13 @@ misses a convention that was never mentioned.
 
 1. For each task, review its Files to Modify, Files to Create, and Description against the
    conventions collected in Step 3.
-2. When a match is found, add a line to Implementation Notes of the form:
+2. Before including a convention, validate its file-type applicability per
+   `shared/convention-applicability-rules.md`. Exclude conventions whose scope does not
+   overlap with the task's target files, and include an applicability rationale for each
+   convention that passes.
+3. When a match is found, add a line to Implementation Notes of the form:
    `"Per CONVENTIONS.md §<Section Name>: <specific action required>"`
-3. Include a reference to an existing file that demonstrates the convention in practice,
+4. Include a reference to an existing file that demonstrates the convention in practice,
    so the implementer has a concrete example to follow.
 
 **Example — database migrations with foreign keys:**
