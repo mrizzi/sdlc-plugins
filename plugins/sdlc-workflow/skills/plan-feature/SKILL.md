@@ -521,12 +521,12 @@ For every created task, call:
 ```
 jira.create_issue_link(
   link_type="Incorporates",
-  inward_issue_key=<created-task-key>,
-  outward_issue_key=<feature-issue-key>
+  inward_issue_key=<feature-issue-key>,
+  outward_issue_key=<created-task-key>
 )
 ```
 
-This makes the feature show "incorporates TASK-X" on its outward side.
+This makes the feature show "incorporates TASK-X" and the task show "is incorporated by FEATURE-Y".
 
 **Task "depends on" other tasks:**
 
@@ -535,12 +535,12 @@ For each task whose Dependencies section references another task, resolve the re
 ```
 jira.create_issue_link(
   link_type="Depend",
-  inward_issue_key=<dependency-task-key>,
-  outward_issue_key=<dependent-task-key>
+  inward_issue_key=<dependent-task-key>,
+  outward_issue_key=<dependency-task-key>
 )
 ```
 
-This makes the dependent task show "depends on DEPENDENCY-TASK" on its outward side.
+This makes the dependent task show "depends on DEPENDENCY-TASK" and the dependency show "is depended on by DEPENDENT-TASK".
 
 ### 6c – Comment on the feature
 
