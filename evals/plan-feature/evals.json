@@ -1,5 +1,6 @@
 {
   "skill_name": "plan-feature",
+  "plugin": "sdlc-workflow",
   "evals": [
     {
       "id": 1,

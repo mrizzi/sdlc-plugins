@@ -1,5 +1,6 @@
 {
   "skill_name": "implement-task",
+  "plugin": "sdlc-workflow",
   "evals": [
     {
       "id": 1,
