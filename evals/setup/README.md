@@ -60,7 +60,7 @@ Mock MCP tool listings simulating tool discovery output:
 ## Running
 
 ```
-/sdlc-workflow:run-evals Run evals for setup.
+/skill-litmus:run-evals Run evals for setup.
 Evals path: evals/setup/evals.json
 Workspace: /tmp/setup-eval
 ```

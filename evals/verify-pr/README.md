@@ -59,7 +59,7 @@ from `docs/constraints.md`:
 ## Running
 
 ```
-/sdlc-workflow:run-evals Run evals for verify-pr.
+/skill-litmus:run-evals Run evals for verify-pr.
 Evals path: evals/verify-pr/evals.json
 Workspace: /tmp/verify-pr-eval
 ```
