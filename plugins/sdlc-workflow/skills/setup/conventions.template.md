@@ -111,3 +111,20 @@
      - Pin exact versions in Cargo.toml -->
 
 {{dependencies}}
+
+## Performance Optimization
+
+<!-- Document performance optimization conventions for your project.
+     This section guides performance workflow usage and metrics expectations.
+     See the Performance Workflow documentation for details on the performance
+     optimization workflow (setup, baseline, analyze, plan, implement, verify).
+     
+     Example:
+     - Baseline capture frequency: Before major releases, after library upgrades
+     - Target metrics: LCP < 2500ms (p95), FCP < 1800ms (p95), TTI < 3500ms (p95)
+     - Anti-pattern severity thresholds: Follow default thresholds in performance-metrics-guide.md
+     - Commit message type: Use `perf(scope): description` for performance optimizations
+     - Performance documentation: Quick reference style (tables, bullets, minimal prose)
+     - Regression threshold: 5% degradation in non-target scenarios triggers investigation -->
+
+{{performance-optimization}}

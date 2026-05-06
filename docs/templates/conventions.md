@@ -69,3 +69,22 @@
      - Prefer standard library over external crates when reasonable
      - All new npm packages require team review
      - Pin exact versions in Cargo.toml -->
+
+## Performance Optimization
+
+<!-- TODO: Document when and how to run performance optimization workflow.
+     Example:
+     - Run `/sdlc-workflow:performance-setup` once per repository to initialize configuration
+     - Capture baseline before starting optimization work
+     - Re-capture baseline after major feature additions or library upgrades
+     - Target metrics for this repository:
+       * LCP (p95): < 2500 ms
+       * FCP (p95): < 1800 ms
+       * DOM Interactive (p95): < 3500 ms
+       * Bundle size: < 500 KB (main bundle)
+     - Anti-pattern severity thresholds:
+       * High: Impacts LCP by > 500ms or bundle size by > 100KB
+       * Medium: Impacts LCP by 200-500ms or bundle size by 50-100KB
+       * Low: Impacts LCP by < 200ms or bundle size by < 50KB
+     - Baseline capture frequency: weekly, before/after optimization, before release
+     - Performance budget enforcement: CI fails if LCP > 3000ms or bundle > 600KB -->

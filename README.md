@@ -31,6 +31,28 @@ implementing tasks, and verifying pull requests:
 - **verify-pr** — Verify a PR against its Jira task's acceptance criteria and
   deterministic guardrails.
 
+- **performance-setup** — Initialize performance optimization workflow
+  configuration for a target repository (workflow discovery, baseline capture
+  settings, target directories).
+
+- **performance-baseline** — Capture performance baseline metrics for selected
+  workflow scenarios using automated browser testing.
+
+- **performance-analyze-module** — Analyze a workflow module for performance
+  anti-patterns (over-fetching, N+1 queries, waterfall loading, render-blocking
+  resources, etc.) and generate an analysis report.
+
+- **performance-plan-optimization** — Generate structured optimization plan from
+  analysis reports, creating Jira Epic and Tasks for optimization work.
+
+- **performance-implement-optimization** — Execute performance optimization task
+  by implementing code changes, running performance tests, and comparing results
+  against targets.
+
+- **performance-verify-optimization** — Verify a performance optimization PR by
+  reading review feedback, validating acceptance criteria, optionally re-running
+  performance baseline, and creating sub-tasks for change requests.
+
 ## Installation
 
 ### 1. Add the marketplace

@@ -14,35 +14,42 @@ Skills must implement a graceful fallback pattern:
 
 **IMPORTANT**: The `scripts/jira-client.py` script is located in the plugin cache, not your current working directory.
 
-When a skill is invoked, Claude Code provides the skill base directory in the invocation message:
-```
-Base directory for this skill: /path/to/.claude/plugins/cache/sdlc-plugins/sdlc-workflow/<version>/skills/<skill-name>
+### Resolving Plugin Root
+
+Before any script invocation, resolve the plugin root directory using this platform-agnostic approach:
+
+```bash
+# Resolve plugin root — works for any registry name and any version
+plugin_root=$(ls -d "${HOME}/.claude/plugins/cache/"*/sdlc-workflow/*/ 2>/dev/null \
+  | sort -V | tail -1)
+
+if [ -z "$plugin_root" ] || [ ! -d "$plugin_root" ]; then
+  echo "❌ sdlc-workflow plugin not found in ~/.claude/plugins/cache/"
+  echo "   Ensure the plugin is installed and try again."
+  exit 1
+fi
 ```
 
-The **plugin root** is 2 directory levels up from the skill base:
-- Skill base: `.../sdlc-workflow/0.6.0/skills/define-feature`
-- Plugin root: `.../sdlc-workflow/0.6.0` (go up 2 levels)
+**Why this works:**
+- Glob `cache/*/sdlc-workflow/*/` matches any registry name (sdlc-plugins-local, sdlc-plugins, marketplace names)
+- Matches any version number in the plugin cache
+- `sort -V | tail -1` selects the latest version if multiple are present
+- Uses `$HOME` for cross-platform compatibility
 
 **All script invocations must use this pattern:**
 ```bash
-cd <plugin-root> && python3 scripts/jira-client.py <command>
+python3 "$plugin_root/scripts/jira-client.py" <command>
 ```
-
-Where `<plugin-root>` is extracted from the skill base directory shown in the invocation header.
 
 **Example:**
-If the skill invocation shows:
-```
-Base directory for this skill: /home/user/.claude/plugins/cache/sdlc-plugins/sdlc-workflow/0.6.0/skills/define-feature
-```
-
-Then plugin root is: `/home/user/.claude/plugins/cache/sdlc-plugins/sdlc-workflow/0.6.0`
+If plugin is installed at: `/home/user/.claude/plugins/cache/sdlc-plugins-local/sdlc-workflow/0.6.1/`
 
 Use:
 ```bash
-cd /home/user/.claude/plugins/cache/sdlc-plugins/sdlc-workflow/0.6.0 && \
-  python3 scripts/jira-client.py get_user_info
+python3 "$plugin_root/scripts/jira-client.py" get_user_info
 ```
+
+**Note:** The `$plugin_root` variable should be resolved once at skill initialization and reused for all script invocations.
 
 ## Credential Storage
 
@@ -154,7 +161,7 @@ export JIRA_EMAIL="<email>"
 export JIRA_API_TOKEN="<api-token>"
 
 # Test with get_user_info
-cd <plugin-root> && python3 scripts/jira-client.py get_user_info
+python3 "$plugin_root/scripts/jira-client.py" get_user_info
 ```
 
 On success:
@@ -264,8 +271,7 @@ export JIRA_API_TOKEN="<from-CLAUDE.md-or-env-var>"
 
 **Get Issue:**
 ```bash
-cd <plugin-root> && \
-  python3 scripts/jira-client.py get_issue TC-123 --fields "summary,status,description,labels,assignee"
+python3 "$plugin_root/scripts/jira-client.py" get_issue TC-123 --fields "summary,status,description,labels,assignee"
 ```
 
 Returns JSON:
@@ -284,13 +290,12 @@ Returns JSON:
 
 **Create Issue:**
 ```bash
-cd <plugin-root> && \
-  python3 scripts/jira-client.py create_issue \
-    --project TC \
-    --summary "New feature request" \
-    --description-md "This is the **description** in markdown." \
-    --issue-type "10142" \
-    --labels ai-generated-jira,feature
+python3 "$plugin_root/scripts/jira-client.py" create_issue \
+  --project TC \
+  --summary "New feature request" \
+  --description-md "This is the **description** in markdown." \
+  --issue-type "10142" \
+  --labels ai-generated-jira,feature
 ```
 
 Returns JSON:
@@ -303,53 +308,49 @@ Returns JSON:
 
 **Update Issue:**
 ```bash
-cd <plugin-root> && \
-  python3 scripts/jira-client.py update_issue TC-123 \
-    --fields-json '{"labels": ["ai-generated-jira", "updated"]}'
+python3 "$plugin_root/scripts/jira-client.py" update_issue TC-123 \
+  --fields-json '{"labels": ["ai-generated-jira", "updated"]}'
 ```
 
 **Add Comment:**
 ```bash
-cd <plugin-root> && \
-  python3 scripts/jira-client.py add_comment TC-123 \
-    --comment-md "This is a comment with **bold** text."
+python3 "$plugin_root/scripts/jira-client.py" add_comment TC-123 \
+  --comment-md "This is a comment with **bold** text."
 ```
 
 **Transition Issue:**
 ```bash
 # First, get available transitions
-cd <plugin-root> && python3 scripts/jira-client.py get_transitions TC-123
+python3 "$plugin_root/scripts/jira-client.py" get_transitions TC-123
 
 # Then transition using the ID
-cd <plugin-root> && python3 scripts/jira-client.py transition_issue TC-123 --transition-id 31
+python3 "$plugin_root/scripts/jira-client.py" transition_issue TC-123 --transition-id 31
 ```
 
 **Search with JQL:**
 ```bash
-cd <plugin-root> && \
-  python3 scripts/jira-client.py search_jql \
-    --jql "project = TC AND status = 'In Progress'" \
-    --fields "summary,status,assignee" \
-    --max-results 50
+python3 "$plugin_root/scripts/jira-client.py" search_jql \
+  --jql "project = TC AND status = 'In Progress'" \
+  --fields "summary,status,assignee" \
+  --max-results 50
 ```
 
 **Create Issue Link:**
 ```bash
-cd <plugin-root> && \
-  python3 scripts/jira-client.py create_link \
-    --inward TC-123 \
-    --outward TC-456 \
-    --link-type Incorporates
+python3 "$plugin_root/scripts/jira-client.py" create_link \
+  --inward TC-123 \
+  --outward TC-456 \
+  --link-type Incorporates
 ```
 
 **Get User Info:**
 ```bash
-cd <plugin-root> && python3 scripts/jira-client.py get_user_info
+python3 "$plugin_root/scripts/jira-client.py" get_user_info
 ```
 
 **Get Project Metadata:**
 ```bash
-cd <plugin-root> && python3 scripts/jira-client.py get_project_metadata TC
+python3 "$plugin_root/scripts/jira-client.py" get_project_metadata TC
 ```
 
 ## Error Handling

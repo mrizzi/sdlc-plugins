@@ -125,3 +125,25 @@ Not applicable — this is a documentation repository with no runtime code.
 - **Version synchronization**: The plugin version must be kept in sync between:
   - `.claude-plugin/marketplace.json` (required for update detection)
   - `plugins/sdlc-workflow/.claude-plugin/plugin.json` (required by CI validation)
+
+## Performance Optimization
+
+- **Documentation style**: Quick reference format — tables, bullet points, minimal prose
+  - Core principles: Scannable, concise, actionable
+  - Avoid: Long paragraphs, verbose examples, extensive troubleshooting prose
+  - Prefer: Tables for structured data, bullet lists for procedures, diagrams for workflows
+- **Commit message type**: Use `perf(scope): description` for performance optimization features
+  - Example: `feat(performance): add baseline capture skill with test data verification`
+- **Skill distinctions**: Make explicit which skills inspect source code vs read reports
+  - Skills that inspect code: `performance-analyze-module` (analyzes source code for anti-patterns)
+  - Skills that read reports: `performance-plan-optimization` (reads analysis reports), `performance-verify-optimization` (reads implementation results)
+  - Document this distinction in skill descriptions and documentation
+- **Metrics conventions**:
+  - Default aggregation: p95 (95th percentile) across 5 iterations
+  - Core Web Vitals: LCP (2500ms), FCP (1800ms), TTI (3500ms), Total Load Time (4000ms)
+  - Regression threshold: 5% degradation in non-target scenarios
+- **Baseline capture**:
+  - Tool: Playwright for browser automation
+  - Security: Validate user input, use timeouts, graceful degradation
+  - Configuration: Store in `.claude/performance-config.md` in target repository
+- **Anti-pattern detection**: 9 standard patterns (over-fetching, N+1 queries, waterfall loading, render-blocking, unused code, expensive re-renders, long tasks, layout thrashing, missing lazy loading)
