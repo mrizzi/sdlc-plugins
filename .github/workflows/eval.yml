@@ -26,7 +26,7 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - uses: mrizzi/skill-litmus@v0.1.3
+      - uses: mrizzi/skill-litmus@v0.1.4
         env:
           CLAUDE_CODE_USE_VERTEX: "1"
           CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
