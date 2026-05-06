@@ -262,6 +262,9 @@ The performance optimization workflow is a specialized workflow for discovering,
 
 **Backend Analysis Capabilities:**
 - Database N+1 query detection (queries in loops)
+- Deep service chain analysis (recursive call graph tracing to detect hidden N+1, wasted computation, and anti-patterns below the handler layer)
+- Wasted computation detection (handlers fetching more data than they use)
+- Missing database index detection (WHERE/JOIN columns lacking indexes, cross-referenced against migration files)
 - Missing pagination on collection endpoints
 - Missing caching for expensive operations
 - Inefficient queries (SELECT *, unnecessary columns)

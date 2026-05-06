@@ -213,6 +213,8 @@ Implement the optimization described in the task's Description section. Use File
 - **Render optimization:** Component memoization, virtual scrolling, avoid layout thrashing
 - **Resource optimization:** Async/defer scripts, parallel loading, image compression
 - **Long task mitigation:** Code splitting, web workers, async patterns
+- **Service chain optimization:** Eliminate hidden N+1 queries at service/model layer (detected via call graph), add missing database indexes
+- **Wasted computation elimination:** Create targeted service methods or projections so handlers fetch only the data they use
 
 Follow the same code modification principles as implement-task:
 - Reuse existing code when possible
@@ -313,7 +315,7 @@ Re-run the performance baseline capture for scenarios affected by this optimizat
 
 4. Parse the JSON output to extract current frontend metrics (LCP, FCP, DOM Interactive, Total Load Time, bundle size)
 
-**If metric_type = "backend" or "hybrid" (OHA benchmarking):**
+**If metric_type = "backend" or "hybrid" (curl/bc benchmarking):**
 
 **Apply:** [Pattern 10: API Profiling](../performance/common-patterns.md#pattern-10-api-profiling)
 

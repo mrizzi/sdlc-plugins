@@ -1438,6 +1438,8 @@ Read `performance-config.md`. If the Development Environment table shows a Dev C
 
 **Step 8.4.F2 – Discover, Approve, and Save Command**
 
+**Apply:** [Common Pattern: Dev Command Approval](../performance/common-patterns.md#pattern-7-dev-command-approval)
+
 **Part A – Command Discovery (first-match-wins, use Read/Glob tool in `frontend_path`):**
 
 | Priority | Source | What to extract |
@@ -1537,6 +1539,8 @@ Read `performance-config.md`. If the Development Environment table shows a Dev C
 ---
 
 **Step 8.4.B2 – Discover, Approve, and Save Command**
+
+**Apply:** [Common Pattern: Dev Command Approval](../performance/common-patterns.md#pattern-7-dev-command-approval)
 
 **Part A – Command Discovery (first-match-wins, use Read/Glob tool in `backend_path`):**
 
@@ -1747,7 +1751,7 @@ Read `metadata.analysis_scope` from config to determine capture method:
 
 - **If `analysis_scope = "full-stack"` or `"full-stack-monorepo"`:** Execute dual baseline capture (Step 9.B below) → skip to Step 10
 
-**Note:** Full-stack modes capture BOTH frontend (Playwright) and backend (OHA) metrics for comprehensive cross-layer analysis.
+**Note:** Full-stack modes capture BOTH frontend (Playwright) and backend (curl/bc) metrics for comprehensive cross-layer analysis.
 
 ---
 
@@ -1765,7 +1769,7 @@ function run_backend_baseline() {
   port=$(grep "| Port |" .claude/performance-config.md | awk -F'|' '{print $3}' | xargs)
   iterations=$(grep "| Iterations |" .claude/performance-config.md | awk -F'|' '{print $3}' | xargs)
   
-  # Pattern 10 Step A - Check Prerequisites and Install OHA
+  # Pattern 10 Step A - Check Prerequisites (curl and bc)
   # (Full code from common-patterns.md - see Pattern 10 Step A)
   
   # Pattern 10 Step B - Execute Benchmark with Cache Measurement  
@@ -1876,7 +1880,7 @@ After Step 9.A completes, proceed to Step 10 (baseline report generation).
 
 **This step ONLY runs if `analysis_scope` is "full-stack" or "full-stack-monorepo".**
 
-**Purpose:** Capture BOTH frontend (browser metrics via Playwright) AND backend (API metrics via OHA) baselines for comprehensive cross-layer performance analysis.
+**Purpose:** Capture BOTH frontend (browser metrics via Playwright) AND backend (API metrics via curl/bc) baselines for comprehensive cross-layer performance analysis.
 
 #### Step 9.B.1 – Frontend Baseline Capture (Playwright)
 
@@ -1886,9 +1890,9 @@ Execute Steps 9.1-9.3 (Playwright browser automation) as documented below.
 
 **Note:** This is the same Playwright capture used in frontend-only mode, but we save to a temporary file instead of generating the final report immediately.
 
-#### Step 9.B.2 – Backend Baseline Capture (OHA)
+#### Step 9.B.2 – Backend Baseline Capture (curl/bc)
 
-Execute Step 9.A (OHA API Profiling) to benchmark backend endpoints.
+Execute Step 9.A (curl/bc API Profiling) to benchmark backend endpoints.
 
 **Output:** Save backend results to `{baseline-directory}/benchmark-results.json`
 

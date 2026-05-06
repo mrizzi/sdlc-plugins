@@ -109,7 +109,7 @@ This baseline measures **cold-start performance** (initial page load with empty 
 
 **Backend Baselines** (if capture-mode = "api-benchmark" or "hybrid"):
 
-This baseline measures **API endpoint performance** under controlled load (OHA HTTP benchmarking). It does **not** capture:
+This baseline measures **API endpoint performance** under controlled load (curl/bc HTTP benchmarking). It does **not** capture:
 
 - **Database query-level profiling:** Individual query execution times (use database slow query logs or APM tools)
 - **Connection pool saturation:** Maximum concurrent connection limits or pool exhaustion behavior

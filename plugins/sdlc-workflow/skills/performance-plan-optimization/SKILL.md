@@ -286,7 +286,11 @@ For each optimization, create a structured impact analysis document:
 - Layout thrashing fix → Reflow savings: `(n_reflows - 1) × 5ms`
 
 **For Backend Optimizations:**
-- N+1 query fix → Response time savings: `(n_queries - 1) × 10ms` per request
+- N+1 query fix → Response time savings: `(n_queries - 1) × analysis_db_latency_ms` per request
+  (DB Query Base Latency from config, default 10ms)
+- Deep service chain N+1 fix → Use effective query count from call graph query ledger: `(total_effective_queries - 1) × analysis_db_latency_ms` (DB Query Base Latency from config, default 10ms)
+- Missing index addition → Response time savings: Assume 80–95% reduction for affected query (sequential scan → index lookup)
+- Wasted computation fix → Savings: `(wasted_fields / total_fields) × avg_service_latency_ms` (eliminates DB queries for unused fields)
 - Pagination implementation → Latency reduction: Assume 50% for large result sets (>1000 rows)
 - Caching implementation → Latency reduction: `operation_time × cache_hit_rate`
   - Example: 100ms operation with 80% cache hit rate = 80ms average savings
@@ -401,11 +405,14 @@ Optimizations are categorized by **LAYER** and **TYPE** to support full-stack pe
 
 - **Category 2A: Query Optimization**
   - Eliminate database N+1 queries (batch queries, eager loading)
+  - Eliminate deep service chain N+1 queries (hidden at service/model layer, detected via call graph)
   - Add pagination to unbounded endpoints
   - Optimize inefficient queries (specific column selection, add indexes)
+  - Add missing database indexes (WHERE/JOIN columns found via call chain analysis)
 
 - **Category 2B: Response Optimization**
   - Reduce over-fetching (create specialized DTOs, GraphQL)
+  - Eliminate wasted computation (create targeted service methods that return only needed data)
   - Add caching for expensive operations (Redis, in-memory)
 
 **LAYER 3: Integration Optimizations** (cross-cutting frontend/backend)
@@ -604,7 +611,7 @@ For each grouped optimization task (from Step 6), create a Jira Task.
 
 ### Step 9.1 – Construct Task Description
 
-Use the task-description-template.md structure, extending with performance-specific sections:
+Use the optimization-task.template.md structure, extending with performance-specific sections:
 
 ```markdown
 ## Repository

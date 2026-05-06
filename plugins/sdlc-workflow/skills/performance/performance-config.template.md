@@ -191,6 +191,7 @@ Adjust these to match your environment for more accurate estimates.
 | Cache Hit Rate | 0.8 | ratio (0.0–1.0) | Proportion of API requests expected to be served from cache |
 | DB Query Base Latency | 10 | ms | Per-query database overhead for N+1 query impact estimation (backend) |
 | Concurrent Connection Limit | 100 | connections | Maximum concurrent requests the backend can handle (backend) |
+| Chain Analysis Depth | 3 | levels (1–5) | Recursion depth for service chain tracing in deep call graph analysis (backend) |
 
 **Note:** Impact estimates derived from these constants are order-of-magnitude approximations.
 For frontend optimizations, verify with browser profiling tools. For backend optimizations, verify with load testing and database profiling tools before committing.

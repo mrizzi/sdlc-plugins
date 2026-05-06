@@ -614,6 +614,8 @@ Use the appropriate Serena tool for each operation:
 | Callers of a function | `find_referencing_symbols` | `name_path=handler_name`, `relative_path=file` |
 | File/module overview | `get_symbols_overview` | `relative_path=file`, `depth=1` |
 | Named symbol search | `find_symbol` | `name_path_pattern=name`, `substring_matching=true` |
+| Trace call to declaration | `find_declaration` | `relative_path=file`, `regex="obj\\.(method)\\("`, `include_body=true` |
+| Find trait implementations | `find_implementations` | `name_path="Trait/method"`, `relative_path=file`, `include_info=true` |
 
 **Batch over HTTP methods:** A single `find_symbol` call per file with `name_path_pattern="/"`
 and `include_body=true` returns all handler functions including their route decorators
@@ -1146,6 +1148,195 @@ Common Jira operations with REST API fallback commands (using $plugin_root from 
 - `$plugin_root` variable must be determined once at skill initialization (Step 1) and reused for all Jira operations
 - The plugin path is typically `~/.claude/plugins/sdlc-workflow` but may vary by installation
 - REST API fallback is only for Jira operations - never for code analysis or file operations
+
+---
+
+## Pattern 12: Call Chain Analysis Strategy
+
+**Purpose:** Recursively trace function calls from an entry point (HTTP handler, service method, etc.) to detect performance anti-patterns hidden at any depth in the call graph — including service-layer N+1 queries, wasted computation, and unnecessary database operations.
+
+**When to use:** After reading a handler/entry-point body, when the handler delegates to service methods, model builders, or utility functions that may contain queries, loops, or expensive operations.
+
+**Used by:**
+- performance-analyze-module (Steps 7.6.2-A, 7.6.2-B)
+- Any future skills that need deep code inspection
+
+**Core Principle:**
+
+The pattern maintains three data structures during traversal:
+
+1. **`call_graph`** — ordered list of `{caller, callee, file, depth}` edges representing the call tree
+2. **`visited`** — set of `(file, symbol_name)` pairs to prevent infinite recursion on circular calls
+3. **`query_ledger`** — list of `{description, depth, loop_multiplier, source_file, source_symbol}` entries for total query counting
+
+**Configurable depth:** `analysis_chain_depth` (default: 3, read from Analysis Assumptions in `performance-config.md`).
+
+---
+
+### Step 1: Extract Call Sites from Body
+
+Given a function body (from `find_symbol` with `include_body=true` or from the Read tool), extract method/function calls by matching these patterns:
+
+| Call Pattern | Example | Resolution Strategy |
+|---|---|---|
+| `self.method_name(...)` | `self.fetch_sbom(id, &tx)` | Resolve within current impl block |
+| `service.method_name(...)` | `fetcher.fetch_sbom_details(...)` | Determine service type from params, resolve in service file |
+| `Type::associated_fn(...)` | `SbomDetails::from_entity(...)` | Resolve in type's impl block |
+| `module::function(...)` | `utils::parse_id(...)` | Resolve in module directory |
+| Direct function call | `decompress_async(bytes, ...)` | Resolve in current module or imports |
+
+**Priority for tracing:** Focus on calls that are likely to contain database queries or expensive operations. Deprioritize calls to standard library functions, logging, serialization, or simple utility functions.
+
+**Model builder heuristic:** Calls matching `Type::from_entity(...)`, `Type::from_row(...)`, `Type::from_model(...)`, or `Type::new(...)` are high-priority — these commonly contain hidden queries in Rust/Java/Python ORMs.
+
+---
+
+### Step 2: Resolve Each Call Site
+
+**Path A — Serena (`serena_mode = live`):**
+
+| Call Type | Serena Tool | Parameters |
+|---|---|---|
+| `self.method(...)` in same file | `find_declaration` | `relative_path=current_file`, `regex="self\\.(method)\\("`, `include_body=true` |
+| `service.method(...)` typed param | `find_symbol` | `name_path_pattern="ServiceType/method"`, `relative_path=service_dir/`, `include_body=true`, `max_matches=1` |
+| `Type::associated_fn(...)` | `find_symbol` | `name_path_pattern="Type/associated_fn"`, `include_body=true`, `max_matches=1` |
+| Trait method call | `find_implementations` | `name_path="TraitName/method"`, `relative_path=file`, `include_info=true` |
+
+If `find_symbol` returns no results, retry once with `substring_matching=true`. If still no result, record "Unresolved call: {call_expression}" and skip this branch.
+
+**Path B — Grep (`serena_mode = down | not-configured`):**
+
+1. Determine the target type from handler parameters (e.g., `fetcher: web::Data<SbomService>`)
+2. Find the impl block: `grep -rn "impl ServiceType" modules/ --include="*.rs"`
+3. Find the method: `grep -n "fn method_name" path/to/service.rs`
+4. Read the method body with the Read tool (use line offset/limit from grep result)
+
+Set `confidence = "medium"` at depth 0, `"low"` at depth > 1 for all Grep-path findings.
+
+---
+
+### Step 3: Recurse with Depth Limit and Cycle Detection
+
+Before descending into a callee:
+
+1. **Check depth:** `depth < analysis_chain_depth` (default 3)
+2. **Check cycles:** `(callee_file, callee_name) not in visited`
+
+**If either check fails:**
+- Record the call edge in `call_graph` with annotation: `"⋯ Depth limit"` or `"⟳ Circular"`
+- Do NOT descend — continue with remaining call sites at current depth
+
+**If both checks pass:**
+1. Add `(callee_file, callee_name)` to `visited`
+2. Read the callee's body (Serena `find_symbol` with `include_body=true`, or Read tool)
+3. Apply anti-pattern detection (Step 4)
+4. Extract call sites from this callee's body → recurse back to Step 1 at `depth + 1`
+
+---
+
+### Step 4: Apply Anti-Pattern Checks at Each Depth
+
+At every function body encountered during traversal, check for:
+
+- **N+1 patterns:** Queries inside loops (same detection logic as Step 7.3 of performance-analyze-module)
+- **Unused JOINs:** JOIN operations where joined table fields are never accessed (same as Step 7.6.1)
+- **SELECT \* patterns:** ORM queries that fetch all columns without `.select_only()` (same as Step 7.6)
+- **Missing caching:** Expensive operations without cache layer (same as Step 7.5)
+- **Unnecessary computation:** Work done that is discarded by the caller (detected by comparing return type fields against caller's field access — see Step 7.6.3 in performance-analyze-module)
+- **Conditional queries via lazy-load parameters (Memo/Option pattern):** When a function body
+  contains a match/if on a `Memo<T>`, `Option<T>`, or similar lazy-load wrapper where one branch
+  triggers a DB query and the other uses a pre-provided value:
+  - Identify the parameter name and its type (e.g., `issuer: Memo<organization::Model>`)
+  - Detect the branching pattern:
+    ```
+    Memo::Provided(value) => /* use value directly, no query */
+    Memo::NotProvided => entity.find_related(...).one(tx).await?  // QUERY
+    ```
+  - Walk the `call_graph` upward to find ALL callers of this function
+  - For each caller, check whether it passes the lazy variant (`Memo::NotProvided`, `None`) or the
+    pre-loaded variant (`Memo::Provided(...)`, `Some(...)`)
+  - If a caller passes the lazy variant, add the conditional query to `query_ledger` with
+    `conditional: true` and `trigger` annotation (see format below)
+  - Multiply by the caller's loop context if the caller is itself inside a loop
+  - **Language-specific patterns:**
+    - **Rust:** `Memo::NotProvided`, `Option::None`, `Lazy::new(|| ...)`
+    - **Java:** `Optional.empty()`, `null` parameter, `@Lazy` annotation
+    - **Python:** `None` default parameter, `lazy=True` flag
+    - **Node:** `undefined` / `null` parameter, callback-based lazy loading
+
+For each query or expensive operation found, add an entry to `query_ledger`:
+```
+{
+  description: "human-readable query description",
+  source_file: "relative/path/to/file.rs",
+  source_line: 123,
+  source_symbol: "SbomSummary::from_entity",
+  depth: 2,
+  query_type: "SELECT" | "COUNT" | "INSERT" | "UPDATE" | "DELETE",
+  conditional: false,
+  trigger: null,
+  loop_context: {
+    in_loop: true/false,
+    loop_variable: "items",
+    estimated_iterations: 25 or "N",
+    loop_source: "paginated query with default limit 25"
+  }
+}
+```
+
+For conditional queries (Memo/Option pattern), set:
+```
+  conditional: true,
+  trigger: "Memo::NotProvided passed by {caller_name} at {file}:{line}"
+```
+
+---
+
+### Step 5: Calculate Query Totals
+
+After traversal completes, process `query_ledger` to compute effective query counts:
+
+```
+For each query Q in query_ledger:
+    effective_multiplier = 1
+    
+    Walk the call_graph from handler root to Q's source_symbol.
+    For each edge on the path:
+        If the caller contains a loop that iterates over the callee:
+            effective_multiplier *= loop_iteration_count
+    
+    Also check Q's own loop_context:
+    If Q.loop_context.in_loop:
+        effective_multiplier *= Q.loop_context.estimated_iterations
+    
+    Q.effective_count = effective_multiplier
+
+total_queries = sum(Q.effective_count for all Q in query_ledger)
+estimated_db_latency = total_queries * analysis_db_latency_ms  # from Analysis Assumptions in performance-config.md, default 10ms
+```
+
+**Loop iteration estimation heuristics:**
+- Collection from paginated query: use page_size (typically 20-25)
+- Collection from unbounded query: use "N" and flag as "missing pagination"
+- Fixed-size input (enum, config): use exact count
+- Indeterminate: use "N" with note
+
+**Post-traversal analysis:** After query totals are computed, the completed `query_ledger` can be
+analyzed for inter-query duplication — see
+[Step 7.6.5 in performance-analyze-module](../performance-analyze-module/SKILL.md#step-765--inter-query-duplication-detection)
+for detection of shared CTEs and overlapping SQL logic across queries within the same handler chain.
+
+---
+
+### Error Handling
+
+| Error | Action |
+|---|---|
+| `find_declaration` fails for a call site | Log it, skip that branch, continue with others |
+| `find_symbol` returns no results | Retry once with `substring_matching=true`; if still empty, skip branch |
+| Function body too large (> 500 lines) | Read body but limit recursion: extract only top-10 call sites by priority |
+| Circular call detected | Record edge with "⟳ Circular" annotation, do not descend |
+| Depth limit reached | Record edge with "⋯ Depth limit" annotation, do not descend |
 
 ---
 

@@ -374,6 +374,25 @@ Read the **Repository** section from the Jira task description (parsed in Step 1
 - If user selects different mode, warn about invalid comparison and note in verification report
 - Use selected mode for baseline re-capture
 
+Extract the application port from configuration (required for all metric types):
+
+```bash
+# Read port stored by performance-baseline in Development Environment section
+port=$(grep "| Port |" {target-repo-path}/.claude/performance-config.md | awk -F'|' '{print $3}' | xargs)
+
+if [ -z "$port" ] || [ "$port" = "TBD" ]; then
+  echo "❌ Application port not configured in performance-config.md."
+  echo "Please run /sdlc-workflow:performance-baseline first so the port is discovered and stored."
+  exit 1
+fi
+```
+
+Branch on `metric_type`:
+
+---
+
+**If `metric_type = "frontend"` or `metric_type = "hybrid"` — Playwright capture:**
+
 Locate the plugin cache and copy the capture script:
 
 ```bash
@@ -399,32 +418,42 @@ cp "$template_path" /tmp/capture-baseline-verify.mjs
 chmod +x /tmp/capture-baseline-verify.mjs
 ```
 
-Extract the application port from configuration:
+Run the capture script using the stored mode (not hardcoded):
 
 ```bash
-# Read port stored by performance-baseline in Development Environment section
-port=$(grep "| Port |" {target-repo-path}/.claude/performance-config.md | awk -F'|' '{print $3}' | xargs)
-
-if [ -z "$port" ] || [ "$port" = "TBD" ]; then
-  echo "❌ Application port not configured in performance-config.md."
-  echo "Please run /sdlc-workflow:performance-baseline first so the port is discovered and stored."
-  exit 1
-fi
+node /tmp/capture-baseline-verify.mjs \
+  --config {target-repo-path}/.claude/performance-config.md \
+  --port "$port" \
+  --mode "$stored_mode"
 ```
 
-Run the capture script with mode-specific parameters:
+Parse the JSON output for: LCP, FCP, DOM Interactive, Total Load Time, bundle size.
+
+---
+
+**If `metric_type = "backend"` or `metric_type = "hybrid"` — API profiling via Pattern 10:**
+
+**Apply:** [Common Pattern: API Profiling](../performance/common-patterns.md#pattern-10-api-profiling)
+
+- Use `port` extracted above and endpoints from `{target-repo-path}/.claude/performance/test-data/manifest.json`
+- After Pattern 10 completes, write collected results to `{target-repo-path}/.claude/performance/benchmark-results-verify.json`:
 
 ```bash
-node /tmp/capture-baseline-verify.mjs --config {target-repo-path}/.claude/performance-config.md --port "$port" --mode cold-start
+# Serialize dynamic_results associative array to JSON
+{
+  echo "{"
+  first=true
+  for scenario in "${!dynamic_results[@]}"; do
+    [ "$first" = true ] && first=false || echo ","
+    echo "  \"$scenario\": ${dynamic_results[$scenario]}"
+  done
+  echo "}"
+} > {target-repo-path}/.claude/performance/benchmark-results-verify.json
 ```
 
-Parse the output to extract current metrics based on metric_type:
+Parse `benchmark-results-verify.json` for: Response Time (p50/p95/p99), mean latency, cache effectiveness per endpoint.
 
-**If metric_type = "frontend" or "hybrid":**
-- Parse JSON output for LCP, FCP, DOM Interactive, Total Load Time, bundle size
-
-**If metric_type = "backend" or "hybrid":**
-- Parse benchmark-results-verify.json for Response Time (p50/p95/p99), Throughput, Error Rate
+---
 
 ### Step 6.3 – Compare with Implementation Results
 

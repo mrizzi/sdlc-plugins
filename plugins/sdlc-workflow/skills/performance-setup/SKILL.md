@@ -450,8 +450,10 @@ Read the template from `plugins/sdlc-workflow/skills/performance/performance-con
    |---|---|---|
    | Average Bandwidth | `analysis_bandwidth_mbps` | 5 |
    | API Latency (average) | `analysis_api_latency_ms` | 100 |
-   | Reflow Cost (per operation) | `analysis_reflow_cost_ms` | 50 |
+   | Reflow Cost (per operation) | `analysis_reflow_cost_ms` | 5 |
    | Cache Hit Rate | `analysis_cache_hit_rate` | 0.8 |
+   | Chain Analysis Depth | `analysis_chain_depth` | 3 |
+   | DB Query Base Latency | `analysis_db_latency_ms` | 10 |
 
 7. **Module Registry section** — **LEAVE EMPTY** with note: "Will be populated by performance-baseline after workflow selection"
 

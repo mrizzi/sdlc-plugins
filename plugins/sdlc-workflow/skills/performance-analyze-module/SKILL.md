@@ -84,7 +84,7 @@ If the user provided a repository path as an argument, use that as the target. O
 
 ### Step 2.0 – Read Analysis Assumptions
 
-Read the `## Analysis Assumptions` section from `performance-config.md` and extract the four
+Read the `## Analysis Assumptions` section from `performance-config.md` and extract the
 constants used in impact calculations:
 
 | Config field | Variable | Default (if section missing) |
@@ -93,12 +93,16 @@ constants used in impact calculations:
 | API Latency (average) | `analysis_api_latency_ms` | 100 |
 | Layout Reflow Cost | `analysis_reflow_cost_ms` | 5 |
 | Cache Hit Rate | `analysis_cache_hit_rate` | 0.8 |
+| Chain Analysis Depth | `analysis_chain_depth` | 3 |
+| DB Query Base Latency | `analysis_db_latency_ms` | 10 |
 
 **Validation:**
 - `analysis_bandwidth_mbps` must be > 0
 - `analysis_api_latency_ms` must be > 0
 - `analysis_reflow_cost_ms` must be > 0
 - `analysis_cache_hit_rate` must be between 0.0 and 1.0 inclusive
+- `analysis_chain_depth` must be an integer between 1 and 5 inclusive
+- `analysis_db_latency_ms` must be > 0
 
 If any value fails validation, use the default and log a warning:
 > ⚠️ Invalid value for `{field}` in Analysis Assumptions — using default ({default})
@@ -108,7 +112,7 @@ and log:
 > ℹ️ Analysis Assumptions section not found in config — using built-in defaults.
 > Run `/sdlc-workflow:performance-setup` to add configurable assumptions to your config.
 
-Store all four values for use throughout Steps 6 and 7.
+Store all values for use throughout Steps 6 and 7.
 
 ### Step 2.1 – Check for Selected Workflow
 
@@ -127,7 +131,7 @@ Store all four values for use throughout Steps 6 and 7.
 
 **If `backend_available = true`:**
 
-Extract backend configuration from `## Backend Repository Configuration` section:
+Extract backend configuration from `### Backend Repository` section (under `## Repository Configuration`):
 - Backend repo name
 - Backend path
 - Backend framework
@@ -136,7 +140,7 @@ Extract backend configuration from `## Backend Repository Configuration` section
 
 **If frontend is included (`analysis_scope` in ["full-stack", "full-stack-monorepo", "frontend-only"]):**
 
-Extract frontend configuration from `## Frontend Repository Configuration` section:
+Extract frontend configuration from `### Frontend Repository` section (under `## Repository Configuration`):
 - Frontend repo name
 - Frontend path
 - Frontend framework
@@ -177,7 +181,7 @@ backend analysis begins. The probe call (`get_symbols_overview`) sets `serena_mo
 >
 > Check MCP server is running and verify Serena instance name in CLAUDE.md.
 
-**If unavailable:** Proceed to Step 2.2.2 (Grep-based backend validation)
+**If unavailable:** `serena_instance` is stored for later use. Backend analysis will use Grep paths when the live probe runs at Step 6.10. Continue to Step 3.
 
 **If `backend_available = false`:**
 
@@ -227,7 +231,7 @@ Check for frontend baseline: `{baseline-directory}/baseline-report.md`
 Check for backend baseline: `{baseline-directory}/benchmark-results.json`
 
 - **If baseline does not exist:** Inform the user:
-  > "Backend baseline not found. Please run `/sdlc-workflow:performance-baseline` first to capture API metrics via OHA, then re-run this skill."
+  > "Backend baseline not found. Please run `/sdlc-workflow:performance-baseline` first to capture API metrics, then re-run this skill."
   
   Stop execution.
 
@@ -243,7 +247,7 @@ Check for BOTH `baseline-report.md` AND `benchmark-results.json`. Both must exis
 
 **Note:** 
 - Frontend baselines use cold-start mode (Playwright browser automation)
-- Backend baselines use api-benchmark mode (OHA HTTP load testing)
+- Backend baselines use api-benchmark mode (HTTP load testing)
 - Hybrid mode captures both
 
 ## Step 4 – Read Baseline Data
@@ -803,9 +807,9 @@ Fields:
 - **Low:** < 5 queries in loop, or parallelized execution
 
 **Quantified impact:**
-- Estimated latency impact: `(n_queries - 1) * avg_db_query_latency`
-- Assume `avg_db_query_latency = 10ms` for calculation
-- Example: 10 queries → `(10-1) * 10ms = 90ms` added latency
+- Estimated latency impact: `(n_queries - 1) * analysis_db_latency_ms`
+  (using configured DB Query Base Latency; default 10ms)
+- Example: 10 queries → `(10-1) * analysis_db_latency_ms = 90ms` added latency (at default)
 
 ### Step 7.4 – Detect Missing Pagination
 
@@ -1150,6 +1154,345 @@ Add findings to the analysis report template under "Backend Database Anti-Patter
 
 **Note:** For low confidence detections, flag for manual review rather than auto-suggesting removal.
 
+### Step 7.6.2 – Deep Service Chain Analysis
+
+**Purpose:** Trace function calls from each handler into service methods, model builders, and utility functions to detect anti-patterns hidden below the handler layer. This step closes the gap between handler-level analysis (Steps 7.3-7.6.1) and the actual query execution depth.
+
+**Apply:** [Common Pattern: Call Chain Analysis Strategy — Pattern 12](../performance/common-patterns.md#pattern-12-call-chain-analysis-strategy)
+
+**Configurable depth:** `analysis_chain_depth` (default: 3). Read from `## Analysis Assumptions` section in `performance-config.md` if present; otherwise use default.
+
+**For EACH handler analyzed in Steps 7.1-7.6:**
+
+Initialize:
+- `call_graph = []`
+- `visited = {(handler_file, handler_name)}`
+- `query_ledger = []` (carries forward any queries already found in Steps 7.3-7.6 for this handler)
+- `depth = 0`
+
+---
+
+#### Step 7.6.2-A – Recursive Chain Tracing via Serena (`serena_mode = live`)
+
+> Grep is not available in this path.
+
+**A1. Extract call sites from handler body** (already retrieved in Step 7.1-A):
+
+Parse body text to identify method/function calls. For each call expression, classify and resolve it:
+
+| Call Pattern | Resolution Strategy |
+|---|---|
+| `self.method_name(...)` | `mcp__{serena_instance}__find_declaration(relative_path=handler_file, regex="self\\.(method_name)\\(", include_body=true)` |
+| `service.method_name(...)` | Determine service type from handler params (e.g., `fetcher: web::Data<SbomService>`), then `mcp__{serena_instance}__find_symbol(name_path_pattern="SbomService/method_name", relative_path="modules/", include_body=true, max_matches=1)` |
+| `Type::associated_fn(...)` | `mcp__{serena_instance}__find_symbol(name_path_pattern="Type/associated_fn", include_body=true, max_matches=1)` |
+| Trait method call | `mcp__{serena_instance}__find_implementations(name_path="TraitName/method", relative_path=file, include_info=true)`, then `find_symbol` on concrete implementation with `include_body=true` |
+
+If `find_symbol` returns no results, retry once with `substring_matching=true`. If still empty, record "Unresolved call: {expression}" and skip this branch.
+
+**A2. For each resolved callee:**
+
+1. **Check cycle:** if `(callee_file, callee_name) in visited` → record edge with "⟳ Circular" annotation, skip
+2. **Check depth:** if `depth >= analysis_chain_depth` → record edge with "⋯ Depth limit" annotation, skip
+3. Add `(callee_file, callee_name)` to `visited`
+4. Record edge in `call_graph`: `{caller: handler_name, callee: callee_name, file: callee_file, depth: depth+1}`
+5. Read callee body (already retrieved via `find_symbol` with `include_body=true`)
+6. **Apply anti-pattern checks** at this depth:
+   - N+1 patterns (same detection logic as Step 7.3)
+   - Unused JOINs (same logic as Step 7.6.1)
+   - SELECT * patterns (same logic as Step 7.6)
+   - Missing caching (same logic as Step 7.5)
+7. **Detect conditional query parameters (Memo/Option pattern):**
+   - Scan the callee's function signature for parameters of type `Memo<T>`, `Option<T>`, or
+     equivalent lazy-load wrappers
+   - If found, scan the callee's body for branching patterns where one branch triggers a query
+     and the other uses the pre-provided value
+   - Check what the CALLER passes for this parameter:
+     - If `Memo::NotProvided` / `None` / lazy variant → the conditional query WILL fire
+     - If `Memo::Provided(value)` / `Some(value)` → the conditional query is SKIPPED
+   - When a conditional query is detected and the caller triggers it:
+     - Add to `query_ledger` with `conditional: true` and `trigger` annotation
+     - **Extend depth by 1 for this branch:** If the conditional query is at
+       `depth == analysis_chain_depth`, extend by 1 level to trace the query itself.
+       This ensures that conditional queries at the depth boundary are not silently truncated.
+       (Maximum extension: 1 level beyond configured depth.)
+8. For each query found, add to `query_ledger`:
+   ```
+   {description, depth: depth+1, loop_multiplier, source_file, source_symbol, query_type, conditional: false, trigger: null}
+   ```
+9. Extract call sites from this callee's body → recurse back to A1 with `depth + 1`
+
+**A3. Model builder heuristic:**
+
+When a call matches `Type::from_entity(...)`, `Type::from_row(...)`, `Type::from_model(...)`, or `Type::new(...)`:
+- These commonly contain hidden queries in Rust/Java/Python ORMs
+- Always trace into them regardless of call priority
+- Flag any query found inside a `from_entity` method with annotation: "Model construction query — fires once per entity instantiation"
+
+**A4. Trait dispatch resolution:**
+
+When a callee is a trait method (detected by `impl TraitName for Type` in surrounding context):
+- Use `mcp__{serena_instance}__find_implementations(name_path="TraitName/method_name", relative_path=file)` to find all concrete implementations
+- Trace into the concrete implementation matching the handler's type parameter or the most likely runtime type
+
+---
+
+#### Step 7.6.2-B – Recursive Chain Tracing via Grep (`serena_mode = down | not-configured`)
+
+**B1. Extract call sites from handler body** (already retrieved via Read in Step 7.1-B):
+
+Same text parsing as A1, but resolution uses Grep and Read:
+
+| Call Pattern | Resolution Strategy |
+|---|---|
+| `self.method_name(...)` | Grep for `fn method_name` in the handler's module directory |
+| `service.method_name(...)` | Determine service type from params; `grep -rn "impl ServiceType" modules/`; find method in matching file |
+| `Type::associated_fn(...)` | `grep -rn "impl Type" modules/`; find `fn associated_fn` in matching file |
+| Trait method call | `grep -rn "impl TraitName for" modules/`; find concrete implementation |
+
+**B2. For each located callee:**
+
+1. Read file with Read tool (use line offset/limit from grep result)
+2. Apply same cycle detection, depth check, anti-pattern detection, and recursion as A2
+3. Set `confidence = "medium"` for depth-0 findings, `"low"` for depth > 0
+
+**B2a. Conditional query detection (Memo/Option) in Grep path:**
+
+Conditional query detection (sub-step 7 from A2) is **Serena-only** for full caller argument
+analysis. In the Grep path, determining what each caller passes for a `Memo<T>`/`Option<T>`
+parameter requires `find_referencing_symbols` — this cannot be reliably done with Grep across files.
+
+**If a function with `Memo<T>` / `Option<T>` parameters is encountered in the Grep path:**
+- Log: "Conditional query parameter detected in `{function_name}` — Serena MCP required for
+  caller argument analysis. Flagging as potential conditional query (confidence: low)."
+- Add to query_ledger with `conditional: true, trigger: "Unknown — Grep cannot resolve caller arguments"`
+- Set confidence to **low** for this finding
+
+**B3. Grep limitations at depth:**
+
+Document in report: "Grep-based chain tracing may miss calls through trait objects, closures, or dynamic dispatch. Serena MCP provides more accurate cross-file tracing. Conditional query detection (Memo/Option pattern) requires Serena for caller argument analysis."
+
+---
+
+#### Step 7.6.2-C – Build Call Graph Summary
+
+After recursion completes for each handler, produce two outputs:
+
+**Call Graph (text format, for report):**
+```
+GET /v3/sbom/{id}/advisory
+  └─ SbomService::fetch_sbom_details          [service/sbom.rs:88]
+       ├─ SbomService::fetch_sbom              [service/sbom.rs:71]    ← 1 query
+       └─ SbomDetails::from_entity             [model/details.rs:76]
+            ├─ SbomSummary::from_entity         [model/mod.rs:93]
+            │    ├─ describes_packages           [service/sbom.rs:493]  ← 1 query (N+1 if in loop)
+            │    └─ SbomHead::from_entity       [model/mod.rs:55]      ← 1 query (COUNT)
+            └─ [advisory join query]            [model/details.rs:88]  ← 1 query (multi-JOIN)
+```
+
+**Query Ledger (table format, for report):**
+
+| # | Query | Source | Depth | Loop Mult. | Cond? | Effective Count |
+|---|---|---|---|---|---|---|
+| 1 | {description} | {file:line} | {depth} | {multiplier} | | {effective} |
+| **Total** | | | | | | **{total_queries}** |
+
+**†** Conditional query — fires only when caller passes `Memo::NotProvided` / `None`.
+See Conditional Query Patterns section for caller analysis. Mark with `†` in the `Cond?` column.
+
+**Multiplier propagation:** For each query in the ledger, walk the `call_graph` from handler root to the query's source symbol. If any edge on the path is inside a loop, multiply the query count by the loop's iteration count. The effective count for a query is:
+```
+effective_count = product(loop_multipliers on path from root to query)
+```
+
+**Estimated total DB latency:** `total_queries * analysis_db_latency_ms` (using configured DB Query Base Latency)
+
+---
+
+### Step 7.6.3 – Wasted Computation Detection
+
+**Purpose:** Detect when a handler calls a service method that computes/fetches substantial data but the handler only uses a subset of the result. This catches cases like `fetch_sbom_details()` returning full SBOM data while the handler only serializes `.advisories`.
+
+**Detection approach:**
+
+**For each handler analyzed in Step 7.1:**
+
+1. **Identify the service call return value and its usage:**
+   - From the handler body, extract the variable receiving the service result (e.g., `let result = service.fetch_sbom_details(...)`)
+   - Identify which fields of the result the handler actually accesses (e.g., `result.advisories`, `v.advisories`)
+   - Look for patterns: `result.field_name`, `v.field`, direct field access after `match` or `if let`
+
+2. **Determine the service method's full return type:**
+   - From the call chain analysis (Step 7.6.2), the callee's return type is visible in its signature
+   - Use `find_symbol` on the return type struct to enumerate all its fields (with `include_body=true`)
+
+3. **Compare handler field access vs. full struct fields:**
+   - Count total fields in the return type struct
+   - Count fields accessed by the handler
+   - Calculate usage ratio: `used_fields / total_fields`
+
+4. **Cross-reference with query_ledger for wasted query cost:**
+   - For each unused field in the return type, check if populating that field requires queries (visible in the call graph from Step 7.6.2)
+   - Sum the query costs attributable to unused fields
+
+5. **Flag wasted computation:**
+
+**Severity classification:**
+- **High:** Handler uses < 50% of returned fields AND unused portion involves queries from the call graph (quantified as `wasted_query_count * analysis_db_latency_ms`)
+- **Medium:** Handler uses < 50% of returned fields but unused portion is CPU-only (serialization, transformation)
+- **Low:** Handler uses 50-75% of returned fields, or unused portion is trivial
+
+**Report format per finding:**
+```
+Handler: {handler_name} ({file}:{line})
+Calls: {service_method} → returns {ReturnType} ({total_fields} fields)
+Uses: Only {used_field_list} ({used_count} fields)
+Wasted: {unused_field_list} ({unused_count} fields, {usage_pct}% used)
+Wasted Queries: {count} queries ({wasted_latency}ms estimated)
+Recommendation: Create {optimized_method_name}() that returns only needed data
+```
+
+---
+
+### Step 7.6.4 – Missing Index Detection
+
+**Purpose:** Cross-reference query WHERE/JOIN columns (found at any depth in the call chain from Step 7.6.2) against migration files to detect missing database indexes.
+
+**Detection approach:**
+
+**For each query in `query_ledger` (from Step 7.6.2):**
+
+#### 1. Extract filterable columns
+
+From the query text or ORM call, extract columns used in:
+- **WHERE clauses:** equality (`=`), range (`<`, `>`), IN, LIKE, BETWEEN filters
+- **JOIN ON clauses:** columns in join conditions
+- **ORDER BY:** columns used for sorting on large result sets
+- **ORM filter methods:** `.filter(Column::Name.eq(...))`, `.filter(Column::Name.is_in(...))`, etc.
+
+#### 2. Build index registry from migration files
+
+Search the `migration/` directory (or framework-specific migration path) for index definitions:
+
+```bash
+# Rust (SeaORM) migrations
+grep -rn "create_index\|CreateIndex\|add_index" migration/src/ --include="*.rs"
+
+# Raw SQL indexes
+grep -rn "CREATE INDEX\|CREATE UNIQUE INDEX" migration/src/ --include="*.rs" --include="*.sql"
+
+# Also check for primary keys and unique constraints
+grep -rn "primary_key\|unique_index\|UniqueIndex" migration/src/ --include="*.rs"
+```
+
+Parse index definitions to build an index registry:
+```
+{table_name: [indexed_column_set_1, indexed_column_set_2, ...]}
+```
+
+Include primary keys and unique constraints as "indexed."
+
+#### 3. Check index coverage
+
+For each WHERE/JOIN column extracted in sub-step 1:
+- Look up the column's table in the index registry
+- If no index covers the column (either as a single-column index or as the leading prefix of a composite index), flag it
+
+#### 4. Report missing indexes
+
+For each missing index:
+```
+Missing Index: {table_name}.{column_name}
+Used In: {query_description} ({source_file}:{line})
+Query Type: WHERE filter / JOIN condition / ORDER BY
+Loop Multiplier: {from query_ledger — how many times this query fires per request}
+Estimated Impact: Sequential scan on {estimated_rows} rows vs. index lookup
+Recommended Fix: CREATE INDEX idx_{table}_{column} ON {table}({column});
+```
+
+**Severity classification:**
+- **High:** Missing index on JOIN column or WHERE equality filter, query is in a loop (multiplier > 1 from query_ledger)
+- **Medium:** Missing index on WHERE range filter or single-execution query on large table
+- **Low:** Missing index on ORDER BY, or small table (< 1,000 estimated rows)
+
+**Note:** If migration files are not found at the expected location, document: "Migration files not found at {searched_path}. Index analysis skipped." and continue with remaining steps.
+
+### Step 7.6.5 – Inter-Query Duplication Detection
+
+**Purpose:** Detect when multiple queries within the same handler's call chain contain overlapping
+SQL logic (shared CTEs, repeated subqueries, or identical JOIN structures), causing the database
+to compute the same intermediate results multiple times per request.
+
+**Detection approach:**
+
+**For each handler's `query_ledger` (from Step 7.6.2):**
+
+#### 1. Collect raw SQL text for all queries
+
+For each entry in the query_ledger:
+- If the query is a raw SQL string (e.g., from `Statement::from_sql_and_values` or `Expr::cust`),
+  extract the full SQL text
+- If the query is an ORM query builder chain, extract the generated SQL (from body analysis) or
+  reconstruct the logical query from the builder calls (table names, JOIN clauses, WHERE filters)
+- If the query includes inline SQL fragments (e.g., `Expr::cust_with_values(SOME_CONSTANT, ...)`),
+  resolve the constant to its SQL text
+
+#### 2. Extract CTE and subquery names
+
+Parse each SQL string for:
+- **WITH clauses:** Extract CTE names (e.g., `WITH related_nodes AS (...)`)
+- **Subquery aliases:** Extract aliased subqueries in FROM clauses
+- **Inline subqueries:** Extract subqueries in WHERE/JOIN conditions (e.g., `IN (SELECT ...)`)
+- **SQL constant references:** Resolve Rust/Java/Python constants that hold SQL fragments
+  (e.g., `CONTEXT_CPE_FILTER_SQL`) to their string values
+
+Build a map: `{cte_or_subquery_name: [query_ledger_entry_indices]}`
+
+#### 3. Detect overlapping logic
+
+For each CTE or subquery name that appears in 2+ queries within the same handler chain:
+- Compare the SQL body of the CTE/subquery across the occurrences
+- If the SQL bodies are identical or semantically equivalent (same tables, same JOINs,
+  same filters with same parameters):
+  - Flag as **duplicated computation**
+  - Estimate the overhead: `(occurrence_count - 1) × analysis_db_latency_ms`
+    (Use `analysis_db_latency_ms` from Analysis Assumptions as the per-execution estimate
+    when CTE cost cannot be directly measured.)
+
+For queries without named CTEs, compare:
+- JOIN structures (same tables joined in same order with same conditions)
+- WHERE clause patterns (same filter columns and operators)
+- Flag as **partially overlapping** if > 50% of JOIN/WHERE logic is shared
+
+#### 4. Report duplicated computations
+
+For each duplicated CTE/subquery:
+
+```
+Duplicated SQL Logic: {cte_name} (appears in {count} queries within same handler)
+Queries:
+  - Query #{ledger_idx_1}: {description_1} ({source_file_1}:{line_1})
+  - Query #{ledger_idx_2}: {description_2} ({source_file_2}:{line_2})
+SQL Body (shared):
+  {sql_fragment}
+Estimated Overhead: {(count-1)} redundant executions per request
+Recommendation: Extract shared CTE into a materialized subquery or temporary table,
+  or refactor to execute the shared logic once and pass results to both consumers
+```
+
+**Severity classification:**
+- **High:** Same CTE executed 3+ times per request, or duplicated logic involves table scans
+  on large tables (> 10,000 rows estimated from migration files or schema)
+- **Medium:** Same CTE executed 2 times per request, or table size cannot be estimated
+  statically (default to Medium when row count is unknown)
+- **Low:** Partially overlapping logic (> 50% shared) across 2 queries
+
+**Confidence Level:** High for exact CTE name matches; Medium for semantic equivalence
+detection.
+
+**Note:** This step analyzes queries within a single handler's call chain. Cross-handler
+duplication (e.g., two different endpoints sharing CTEs) is out of scope — it would be caught
+if both handlers are analyzed for the same workflow.
+
 ## Step 7.7 – Backend Dynamic Performance Testing
 
 **Purpose:** Validate static analysis findings with actual HTTP benchmarking when the backend is running.
@@ -1173,7 +1516,7 @@ Wrap Pattern 10 in a shell function for this module's endpoints only:
 function run_module_profiling() {
   export CALLER_SKILL="performance-analyze-module"
   
-  # Pattern 10 Step A - Check Prerequisites and Install OHA
+  # Pattern 10 Step A - Check Prerequisites and Install benchmark tool
   # (Full code from common-patterns.md)
   
   # Pattern 10 Step B - Execute Benchmark with Cache Measurement
@@ -1335,6 +1678,83 @@ Payload Waste: 3.5 KB unused per call
 Recommendation: Create ProductSummaryResponse with only used fields, or use GraphQL
 ```
 
+**Step F – Cross-Layer Computation Waste Detection**
+
+**Purpose:** Detect when the backend computes expensive fields (requiring DB queries) that the
+frontend never uses. This extends Step 7.6.3 (handler-level waste) to the full frontend→backend
+layer boundary.
+
+**Prerequisites:** Step 7.6.2 query_ledger AND Step 8B frontend field usage results.
+
+**Guard conditions — skip Step 8.F if ANY of the following are true:**
+- `backend_available = false` (no backend to analyze)
+- `analysis_scope` is `"backend-only"` or `"frontend-only"` (cross-layer analysis requires both)
+- The endpoint has no `query_ledger` from Step 7.6.2 (chain analysis was skipped or failed)
+
+**If skipped:** Log "Step 8.F skipped — requires full-stack analysis scope with completed
+chain analysis." and continue to Step 9.
+
+**Detection approach:**
+
+For each endpoint analyzed:
+
+1. **Map response fields to their computation cost:**
+   - From the call graph (Step 7.6.2), identify which queries populate which response fields
+   - For each field in the response type, determine:
+     - Whether populating it requires database queries (and which ones from the query_ledger)
+     - The estimated cost: sum of `effective_count × analysis_db_latency_ms` for queries
+       attributable to this field
+
+   **Heuristic for field→query mapping:**
+   - If a field is populated by a `from_entity` / `from_model` call that contains queries,
+     those queries are attributable to that field
+   - If a response struct field is populated by a service method call that returns a sub-struct,
+     all queries in that service method's sub-tree are attributable to that field
+   - Example: `SbomSummary.described_by` is populated by `describes_packages()` which runs 1 query
+     → that query is attributable to the `described_by` field
+
+2. **Cross-reference with frontend field usage (from Step 8B):**
+   - For each response field marked as UNUSED by the frontend:
+     - Look up its computation cost from sub-step 1
+     - If computation cost > 0 (field requires queries), flag as **cross-layer waste**
+
+3. **Calculate total cross-layer waste:**
+   - Sum the query costs for all frontend-unused fields that require backend queries
+   - Multiply by call count if N+1 pattern exists for this endpoint
+   - Compare against total endpoint query cost to get waste percentage
+
+**Severity classification:**
+- **Critical:** Frontend-unused fields account for > 50% of the endpoint's total query cost
+  AND endpoint is called in N+1 pattern (waste multiplied by N)
+- **High:** Frontend-unused fields account for > 50% of total query cost (single call)
+- **Medium:** Frontend-unused fields account for 25-50% of total query cost
+- **Low:** Frontend-unused fields account for < 25% of total query cost
+
+**Report format per finding:**
+```
+Endpoint: {method} {path}
+Total Backend Query Cost: {total_queries} queries ({total_latency}ms)
+Frontend-Used Fields: {used_field_list} — Cost: {used_queries} queries ({used_latency}ms)
+Frontend-Unused Fields: {unused_field_list} — Cost: {wasted_queries} queries ({wasted_latency}ms)
+Cross-Layer Waste: {waste_pct}% of backend computation serves no frontend purpose
+Call Pattern: {single / N+1 with count}
+Total Wasted Queries: {wasted_queries × call_count}
+Recommendation: {Create targeted endpoint / Add field projection / Use GraphQL}
+```
+
+**Example:**
+```
+Endpoint: GET /v3/advisory
+Total Backend Query Cost: 53 queries (530ms) for 10 advisories
+Frontend-Used Fields: head.uuid, head.document_id, head.ingested, total — Cost: 3 queries (30ms)
+Frontend-Unused Fields: vulnerabilities[] (with scores, descriptions) — Cost: 50 queries (500ms)
+Cross-Layer Waste: 94% of backend computation serves no frontend purpose
+Call Pattern: Single call
+Total Wasted Queries: 50
+Recommendation: Create lightweight /v3/advisory/summary endpoint returning only
+  {uuid, document_id, ingested} with count, skipping vulnerability loading entirely
+```
+
 ## Step 9 – Generate Workflow Analysis Report
 
 Create a comprehensive analysis report at `{analysis-directory}/workflow-analysis-report.md`.
@@ -1363,6 +1783,12 @@ Include sections:
 Include sections:
 - Backend Performance Summary (Response Time p50/p95/p99, Throughput, Error Rate from benchmark-results.json)
 - Backend anti-patterns (N+1 queries, missing pagination, missing caching, over-fetching, unused JOINs)
+- Service chain analysis with call graphs and query ledgers (from Step 7.6.2)
+- Wasted computation findings (from Step 7.6.3)
+- Conditional query pattern findings (from Step 7.6.2 extended — Memo/Option detection)
+- Inter-query SQL duplication findings (from Step 7.6.5)
+- Missing database index findings (from Step 7.6.4)
+- Cross-layer computation waste findings (from Step 8.F, only when analysis_scope is full-stack)
 - Dynamic performance testing results (if Step 7.7 executed)
 - Regression detection results (if baseline exists)
 
@@ -1399,10 +1825,12 @@ Calculate separate ratings for frontend and backend, then combine:
 
 Sort all detected anti-patterns by estimated impact (time or size savings) descending.
 
+**Impact estimation using query ledger data:** When the deep service chain analysis (Step 7.6.2) has produced a query ledger, use the total estimated queries per endpoint as the primary impact metric for backend optimizations. An endpoint with 73 total queries (accounting for loop multipliers) should rank higher than one with 3 surface-level N+1 instances.
+
 Assign effort estimates based on:
-- **Low effort:** Configuration changes, adding `async`/`defer` attributes, removing unused imports
-- **Medium effort:** Refactoring API calls, adding memoization, implementing lazy loading
-- **High effort:** Bundle splitting, architecture changes, replacing third-party libraries
+- **Low effort:** Configuration changes, adding `async`/`defer` attributes, removing unused imports, adding indexes
+- **Medium effort:** Refactoring API calls, adding memoization, implementing lazy loading, batching N+1 queries
+- **High effort:** Bundle splitting, architecture changes, replacing third-party libraries, creating new service methods
 
 Generate the prioritized optimization table with the top 10 recommendations.
 

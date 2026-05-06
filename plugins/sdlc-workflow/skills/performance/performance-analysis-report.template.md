@@ -189,6 +189,141 @@
 
 **Total Estimated Impact:** {sum_of_all_impacts}ms reduction across {count} endpoints
 
+#### Service Chain Analysis (Deep Call Graph)
+
+**Depth Analyzed:** {chain_depth} levels  
+**Total Handlers Traced:** {handler_count}  
+**Analysis Method:** {Serena MCP (High Confidence) / Grep (Fallback - Medium Confidence)}
+
+{... for each handler with call chain findings ...}
+
+##### Endpoint: {endpoint_method} {endpoint_path}
+
+**Call Graph:**
+```
+{endpoint_method} {endpoint_path}
+  └─ {callee_1}          [{file}:{line}]
+       ├─ {callee_2}     [{file}:{line}]    ← {query_annotation}
+       └─ {callee_3}     [{file}:{line}]
+            ├─ {callee_4}  [{file}:{line}]  ← {query_annotation}
+            └─ {callee_5}  [{file}:{line}]  ← {query_annotation}
+```
+
+**Query Ledger:**
+
+| # | Query | Source | Depth | Loop Mult. | Effective Count |
+|---|---|---|---|---|---|
+| {n} | {description} | {file:line} | {depth} | {multiplier} | {effective} |
+| **Total** | | | | | **{total_queries}** |
+
+**Estimated Total DB Latency:** {total_queries * analysis_db_latency_ms}ms  
+
+**Anti-Patterns Found at Depth:**
+- Depth {N}: {anti-pattern-description} in `{symbol_name}` ({file}:{line})
+
+{... end for each handler ...}
+
+---
+
+#### Wasted Computation
+
+**Severity:** {High / Medium / Low}  
+**Instances Found:** {count}
+
+**Description:** Handlers that call service methods returning substantial data but only use a subset of the result. The unused portion may involve database queries that execute needlessly.
+
+**Detected Instances:**
+
+1. **Endpoint:** {endpoint_method} {endpoint_path}
+   **Handler:** {handler-file-path}:{line-number}  
+   **Service Call:** `{service.method_name(...)}`  
+   **Returns:** `{ReturnType}` with {total_field_count} fields  
+   **Handler Uses:** {used_field_count} fields ({used_field_list})  
+   **Wasted Fields:** {unused_field_list}  
+   **Wasted Queries:** {count} queries ({wasted_query_latency}ms estimated)  
+   **Recommended Fix:** Create `{optimized_method_name}()` that returns only needed data, or add a field projection parameter
+
+{... repeat for each wasted computation instance ...}
+
+---
+
+#### Conditional Query Patterns (Memo/Option)
+
+**Severity:** {High / Medium / Low}
+**Instances Found:** {count}
+**Estimated Impact:** {total_conditional_queries} additional queries per request
+
+**Description:** Functions that accept lazy-load parameters (`Memo<T>`, `Option<T>`) and fire
+database queries when callers pass the un-provided variant instead of pre-loading the data.
+
+**Detected Instances:**
+
+1. **Function:** `{function_name}` ({file}:{line})
+   **Parameter:** `{param_name}: Memo<{Type}>`
+   **Conditional Query:** `{query_description}` — fires when `Memo::NotProvided` is passed
+   **Callers passing NotProvided:**
+   - `{caller_1}` ({file}:{line}) — inside loop (×{iterations}) = {effective_count} queries
+   - `{caller_2}` ({file}:{line}) — single call = 1 query
+   **Total Impact:** {sum_effective} conditional queries per request
+   **Recommended Fix:** Pre-load `{Type}` in batch at the caller level and pass via `Memo::Provided`
+
+{... repeat for each instance ...}
+
+---
+
+#### Inter-Query SQL Duplication
+
+**Severity:** {High / Medium / Low}
+**Instances Found:** {count}
+**Estimated Impact:** {redundant_executions} redundant CTE/subquery executions per request
+
+**Description:** Multiple queries within the same handler chain that contain identical or
+semantically equivalent CTEs/subqueries, causing the database to compute the same intermediate
+results multiple times.
+
+**Detected Instances:**
+
+1. **Duplicated CTE:** `{cte_name}`
+   **Appears in:** {count} queries within handler for {endpoint}
+   **Queries:**
+   - Query #{n1}: {description_1} ({source_1})
+   - Query #{n2}: {description_2} ({source_2})
+   **Shared SQL:**
+   ```sql
+   {shared_sql_fragment}
+   ```
+   **Estimated Overhead:** {(count-1)} redundant executions × {est_time}ms = {total_overhead}ms
+   **Recommended Fix:** {Extract to materialized temp table / Refactor to single query}
+
+{... repeat for each instance ...}
+
+---
+
+#### Missing Database Indexes
+
+**Severity:** {High / Medium / Low}  
+**Instances Found:** {count}  
+**Migration Directory:** {migration_path}
+
+**Description:** Query WHERE/JOIN columns (found at any depth in the call chain) that lack database indexes, causing sequential scans instead of index lookups.
+
+**Detected Instances:**
+
+1. **Table:** `{table_name}`  
+   **Column:** `{column_name}`  
+   **Used In:** {query_description} (`{source_file}:{line}`)  
+   **Query Type:** {WHERE filter / JOIN condition / ORDER BY}  
+   **Loop Multiplier:** {from query_ledger — how many times this query fires per request}  
+   **Estimated Impact:** Sequential scan on {estimated_rows} rows vs. index lookup  
+   **Recommended Fix:**
+   ```sql
+   CREATE INDEX idx_{table}_{column} ON {table}({column});
+   ```
+
+{... repeat for each missing index ...}
+
+---
+
 ### Cross-Repository Over-Fetching Analysis
 
 **Note:** This analysis cross-references backend response schemas with frontend field usage.
@@ -208,6 +343,34 @@
 **Recommendation:** {Create specialized DTO / Use GraphQL / Field projection}
 
 {... repeat for each endpoint ...}
+
+---
+
+### Cross-Layer Computation Waste
+
+**Note:** This section is included only when `analysis_scope` is `full-stack` or `full-stack-monorepo`
+AND backend chain analysis (Step 7.6.2) completed successfully.
+
+**Severity:** {Critical / High / Medium / Low}
+**Instances Found:** {count}
+**Estimated Impact:** {total_wasted_queries} wasted queries per dashboard load
+
+**Description:** Backend endpoints compute expensive response fields (requiring database queries)
+that the frontend never reads. Unlike handler-level waste (Wasted Computation section above),
+this detects waste at the HTTP API boundary — where the backend serves fields the frontend discards.
+
+**Detected Instances:**
+
+1. **Endpoint:** {method} {path}
+   **Total Backend Query Cost:** {total_queries} queries ({total_latency}ms)
+   **Frontend-Used Fields:** {field_list} — Cost: {used_queries} queries
+   **Frontend-Unused Fields:** {field_list} — Cost: {wasted_queries} queries
+   **Cross-Layer Waste:** {waste_pct}% of backend computation serves no frontend purpose
+   **Call Pattern:** {single / N+1 (×count)}
+   **Total Wasted Queries:** {wasted × call_count}
+   **Recommended Fix:** {recommendation}
+
+{... repeat for each instance ...}
 
 ---
 
