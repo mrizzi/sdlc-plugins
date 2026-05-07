@@ -69,7 +69,10 @@ jobs:
   gate:
     name: Approval Gate
     needs: discover
-    if: needs.discover.outputs.trusted != 'true' && needs.discover.outputs.skills != ''
+    if: >-
+      needs.discover.result == 'success' &&
+      needs.discover.outputs.trusted != 'true' &&
+      needs.discover.outputs.skills != ''
     runs-on: ubuntu-latest
     environment: eval-protected
     steps:
