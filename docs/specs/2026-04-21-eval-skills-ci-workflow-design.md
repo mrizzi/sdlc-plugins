@@ -166,6 +166,7 @@ The prompt describes the task in natural language (slash commands are interactiv
   - No secrets are exposed beyond `ANTHROPIC_API_KEY`
   - This is a feasibility proof, not a production gate
 - Future hardening: migrate to `--permission-mode dontAsk` with `--allowedTools` once tool requirements are known from initial runs.
+- Fork PR secret access is handled via `workflow_run` dispatch — see [Eval PR Fork Dispatch](2026-05-07-eval-pr-fork-dispatch-design.md).
 
 ## Out of Scope
 

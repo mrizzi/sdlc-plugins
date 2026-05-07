@@ -1,0 +1,217 @@
+# Runs evals for PRs via workflow_run dispatch, enabling secret access
+# for fork PRs. Pairs with eval-pr.yml (Stage 1: discovery).
+#
+# Trust model:
+# - Collaborators with write/admin permission: evals run automatically
+# - External contributors: require manual approval via eval-protected environment
+#
+# See docs/specs/2026-05-07-eval-pr-fork-dispatch-design.md for full design.
+
+name: Eval PR Run
+
+on:
+  workflow_run:
+    workflows: ["Eval PR"]
+    types: [completed]
+
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
+jobs:
+  discover:
+    name: Discover PR Context
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      skills: ${{ steps.metadata.outputs.skills }}
+      pr_number: ${{ steps.metadata.outputs.pr_number }}
+      author: ${{ steps.metadata.outputs.author }}
+      trusted: ${{ steps.metadata.outputs.trusted }}
+    steps:
+      - name: Download PR metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: eval-pr-metadata
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve PR identity and check trust
+        id: metadata
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const metadata = JSON.parse(fs.readFileSync('eval-pr-metadata.json', 'utf8'));
+
+            // Validate skills format (artifact is untrusted — attacker can modify eval-pr.yml)
+            if (metadata.skills && !/^[a-z0-9-]+(,[a-z0-9-]+)*$/.test(metadata.skills)) {
+              core.setFailed(`Invalid skills format: ${metadata.skills}`);
+              return;
+            }
+            core.setOutput('skills', metadata.skills || '');
+
+            // Derive PR number and author from GitHub API to prevent spoofing.
+            // workflow_run.pull_requests is empty for fork PRs, so search by commit SHA.
+            const headSha = context.payload.workflow_run.head_sha;
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: headSha
+            });
+
+            const openToMain = prs.filter(p => p.state === 'open' && p.base.ref === 'main');
+            if (openToMain.length === 0) {
+              core.setFailed(`No open PR targeting main found for commit ${headSha}`);
+              return;
+            }
+
+            const pr = openToMain[0];
+            const prNumber = pr.number;
+            const author = pr.user.login;
+
+            core.setOutput('pr_number', prNumber.toString());
+            core.setOutput('author', author);
+
+            let trusted = false;
+            try {
+              const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: author
+              });
+              trusted = ['admin', 'write'].includes(data.permission);
+              console.log(`Author ${author}: permission=${data.permission}, trusted=${trusted}`);
+            } catch (e) {
+              console.log(`Author ${author}: not a collaborator (${e.status}), trusted=false`);
+            }
+
+            core.setOutput('trusted', trusted.toString());
+
+  gate:
+    name: Approval Gate
+    needs: discover
+    if: >-
+      needs.discover.result == 'success' &&
+      needs.discover.outputs.trusted != 'true' &&
+      needs.discover.outputs.skills != ''
+    runs-on: ubuntu-latest
+    environment: eval-protected
+    steps:
+      - run: echo "Approved by reviewer"
+
+  run-evals:
+    name: Run PR Evals
+    needs: [discover, gate]
+    if: >-
+      !cancelled() &&
+      needs.discover.result == 'success' &&
+      needs.discover.outputs.skills != '' &&
+      (needs.discover.outputs.trusted == 'true' || needs.gate.result == 'success')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR merge commit
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ needs.discover.outputs.pr_number }}/merge
+          fetch-depth: 0
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Install Claude Code
+        run: curl -fsSL https://claude.ai/install.sh | bash
+
+      - name: Run PR evals
+        env:
+          SKILLS_CSV: ${{ needs.discover.outputs.skills }}
+          CLAUDE_CODE_USE_VERTEX: "1"
+          CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
+          ANTHROPIC_DEFAULT_SONNET_MODEL: "claude-sonnet-4-6"
+          ANTHROPIC_DEFAULT_OPUS_MODEL: "claude-opus-4-6"
+          ANTHROPIC_MODEL: "claude-opus-4-6"
+        run: |
+          IFS=',' read -ra SKILLS <<< "$SKILLS_CSV"
+
+          for skill in "${SKILLS[@]}"; do
+            eval_count=$(jq '.evals | length' "evals/${skill}/evals.json")
+            workspace="/tmp/${skill}-eval-pr"
+            mkdir -p "${workspace}"
+
+            echo "=== Running PR evals for ${skill} (${eval_count} cases) ==="
+            echo "Workspace: ${workspace}"
+
+            claude -p "$(cat <<PROMPT
+          Use the sdlc-workflow:run-evals skill for skill /${skill}.
+          Evals path: evals/${skill}/evals.json
+          Workspace: ${workspace}
+          PROMPT
+            )" --permission-mode dontAsk \
+              --allowedTools Read Write Bash Skill Agent Glob \
+              2>&1 || {
+              echo "::warning::PR eval run failed for ${skill} (exit $?)"
+              continue
+            }
+
+            echo "--- Workspace contents ---"
+            find "${workspace}" -type f 2>/dev/null | head -80 || true
+          done
+
+      - name: Post eval results review
+        env:
+          SKILLS_CSV: ${{ needs.discover.outputs.skills }}
+          PR_NUMBER: ${{ needs.discover.outputs.pr_number }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const skills = process.env.SKILLS_CSV.split(',').filter(Boolean);
+            const prNumber = parseInt(process.env.PR_NUMBER);
+
+            let body = '## Eval Results\n\n';
+            for (const skill of skills) {
+              const summaryPath = `/tmp/${skill}-eval-pr/summary.md`;
+              if (fs.existsSync(summaryPath)) {
+                body += fs.readFileSync(summaryPath, 'utf8');
+              } else {
+                body += `### ${skill}\n\n> No results produced. See workflow logs.\n\n`;
+              }
+            }
+
+            const pluginJson = JSON.parse(fs.readFileSync('plugins/sdlc-workflow/.claude-plugin/plugin.json', 'utf8'));
+            const version = pluginJson.version;
+
+            body += '---\n';
+            body += `*Generated by [sdlc-workflow/run-evals](plugins/sdlc-workflow/skills/run-evals) v${version}*\n`;
+
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            const marker = '## Eval Results';
+            const existing = reviews.find(r =>
+              r.user?.login === 'github-actions[bot]' && r.body?.startsWith(marker)
+            );
+
+            if (existing) {
+              await github.rest.pulls.updateReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                review_id: existing.id,
+                body
+              });
+            } else {
+              await github.rest.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                event: 'COMMENT',
+                body
+              });
+            }
