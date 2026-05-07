@@ -7,7 +7,7 @@ baselines.
 For architectural decisions and known limitations, see the
 [design spec](../docs/specs/2026-04-16-skill-eval-framework-design.md).
 
-## Why a custom eval skill
+## Why skill-litmus
 
 Anthropic's `skill-creator` includes eval capabilities, but it is designed
 for interactive skill development — running both with-skill and
@@ -16,16 +16,17 @@ iterating through improvement cycles with human review.
 
 CI evaluation has different requirements: deterministic output paths,
 single-configuration runs, no browser, and a summary that can be posted
-as a PR comment or displayed in a terminal. Rather than fighting
-skill-creator's interactive assumptions, `run-evals`
-(`/sdlc-workflow:run-evals`) is a purpose-built skill that:
+as a PR comment or displayed in a terminal.
+[skill-litmus](https://github.com/mrizzi/skill-litmus) is a standalone
+plugin and GitHub Action (`/skill-litmus:run-evals`) that provides a
+shell-driven eval engine:
 
 - Produces results in a fixed directory layout — no variation between runs
 - Runs only the current skill version (baselines are stored separately)
 - Grades assertions and aggregates metrics into `benchmark.json`
-- Renders a Markdown summary via `render_summary.py`, comparing against
-  stored baselines when available
+- Renders a Markdown summary comparing against stored baselines when available
 - Works identically in interactive and headless (`claude -p`) modes
+- Provides a reusable GitHub Action for CI integration
 
 ## Directory structure
 
@@ -59,6 +60,7 @@ Each skill defines its test cases in `evals.json`:
 ```json
 {
   "skill_name": "plan-feature",
+  "plugin": "sdlc-workflow",
   "evals": [
     {
       "id": 1,
@@ -77,6 +79,7 @@ Each skill defines its test cases in `evals.json`:
 | Field | Type | Description |
 |-------|------|-------------|
 | `skill_name` | string | Name of the skill being evaluated |
+| `plugin` | string | Plugin that owns the skill (e.g., `sdlc-workflow`) |
 | `evals[].id` | number | Unique identifier for the test case |
 | `evals[].prompt` | string | The prompt sent to the skill agent |
 | `evals[].expected_output` | string | Natural language description of expected behavior |
@@ -89,13 +92,13 @@ Start a Claude Code session in the repo root and invoke the `run-evals`
 skill:
 
 ```
-/sdlc-workflow:run-evals Run evals for plan-feature.
+/skill-litmus:run-evals Run evals for plan-feature.
 Evals path: evals/plan-feature/evals.json
 Workspace: /tmp/plan-feature-eval
 ```
 
 The skill:
-1. Reads `evals.json` and spawns a subagent per test case
+1. Reads `evals.json` and runs each test case via `claude -p`
 2. Grades each run's outputs against the assertions
 3. Aggregates results into `benchmark.json`
 4. Compares against the stored baseline at `evals/plan-feature/baselines/latest/`
@@ -137,35 +140,24 @@ Every run produces this exact layout:
 | `time_seconds` | Large increases may indicate the skill is doing unnecessary work. |
 | `tokens` | Token usage proxy for cost. Compare across runs. |
 
-## CI workflows
+## CI workflow
 
-Two GitHub Actions workflows automate eval execution. Neither gates
-merges — they report results only.
+A single GitHub Actions workflow (`eval.yml`) automates eval execution
+using the [`mrizzi/skill-litmus`](https://github.com/mrizzi/skill-litmus)
+composite action. It does not gate merges — it reports results only.
 
-### eval-pr.yml (pull request)
+The workflow triggers when `plugins/sdlc-workflow/skills/**/*.md` or
+`evals/**/evals.json` are modified, on both pull requests and pushes to
+main.
 
-Triggers when a PR modifies `plugins/sdlc-workflow/skills/**/*.md` or
-`evals/**/evals.json`.
+- **On pull request** — discovers changed skills, runs their evals,
+  compares against stored baselines, and posts a PR review with the
+  results.
+- **On push to main** — runs all eval suites and commits baseline
+  results to `evals/<skill>/baselines/<hash>/`, updating the `latest`
+  symlink.
 
-1. **Discover changed skills** — `git diff` maps changed files to eval suites
-2. **Run evals** — invokes `run-evals` via `claude -p` for each changed skill
-3. **Post PR comment** — reads `summary.md` from the workspace and posts it
-
-The skill's `render_summary.py` script handles baseline comparison. If
-`evals/<skill>/baselines/latest/` exists, the summary includes a delta
-line. If not, it shows raw results only.
-
-### eval-baseline.yml (push to main)
-
-Triggers when skill or eval files are merged to main.
-
-1. **Discover all eval suites** — runs all skills, not just changed ones
-2. **Run evals** — invokes `run-evals` via `claude -p` for each skill
-3. **Store baselines** — commits results to `evals/<skill>/baselines/<hash>/`
-4. **Update `latest` symlink** — points to the new baseline
-
-This ensures every merge to main has a complete baseline that subsequent
-PRs can compare against.
+Both modes are handled automatically by the skill-litmus action.
 
 ## Baseline strategy
 
@@ -175,7 +167,7 @@ the baseline via the symlink — they don't need to know the exact commit
 hash.
 
 If main receives commits that don't touch skill or eval files, the
-`eval-baseline` workflow doesn't trigger, but `latest` still points to
+eval workflow doesn't trigger, but `latest` still points to
 the most recent valid baseline.
 
 ## Adding evals for a new skill
@@ -220,7 +212,7 @@ network dependencies:
        └───────────────────────────────────────────────────────────┘
 ```
 
-1. **Run** — invoke `/sdlc-workflow:run-evals`
+1. **Run** — invoke `/skill-litmus:run-evals`
 2. **Grade** — the skill grades assertions and produces `grading.json`
 3. **Review** — inspect outputs and record feedback in `feedback.json`
 4. **Improve** — edit the skill's `SKILL.md` based on failures and feedback

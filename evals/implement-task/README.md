@@ -62,7 +62,7 @@ during Step 0 validation.
 ## Running
 
 ```
-/sdlc-workflow:run-evals Run evals for implement-task.
+/skill-litmus:run-evals Run evals for implement-task.
 Evals path: evals/implement-task/evals.json
 Workspace: /tmp/implement-task-eval
 ```

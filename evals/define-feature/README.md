@@ -58,7 +58,7 @@ Mock CLAUDE.md files representing different project states:
 ## Running
 
 ```
-/sdlc-workflow:run-evals Run evals for define-feature.
+/skill-litmus:run-evals Run evals for define-feature.
 Evals path: evals/define-feature/evals.json
 Workspace: /tmp/define-feature-eval
 ```

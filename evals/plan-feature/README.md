@@ -37,7 +37,7 @@ multi-repo test case.
 ## Running
 
 ```
-/sdlc-workflow:run-evals Run evals for plan-feature.
+/skill-litmus:run-evals Run evals for plan-feature.
 Evals path: evals/plan-feature/evals.json
 Workspace: /tmp/plan-feature-eval
 ```

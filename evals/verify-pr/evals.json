@@ -1,5 +1,6 @@
 {
   "skill_name": "verify-pr",
+  "plugin": "sdlc-workflow",
   "evals": [
     {
       "id": 1,
