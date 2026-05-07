@@ -28,7 +28,6 @@ jobs:
     outputs:
       skills: ${{ steps.metadata.outputs.skills }}
       pr_number: ${{ steps.metadata.outputs.pr_number }}
-      head_sha: ${{ steps.metadata.outputs.head_sha }}
       author: ${{ steps.metadata.outputs.author }}
       trusted: ${{ steps.metadata.outputs.trusted }}
     steps:
@@ -68,12 +67,11 @@ jobs:
               return;
             }
 
-            const pr = prs[0];
+            const pr = prs.find(p => p.number === metadata.pr_number) || prs[0];
             const prNumber = pr.number;
             const author = pr.user.login;
 
             core.setOutput('pr_number', prNumber.toString());
-            core.setOutput('head_sha', headSha);
             core.setOutput('author', author);
 
             let trusted = false;
