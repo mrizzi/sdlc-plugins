@@ -58,14 +58,12 @@ jobs:
           SKILLS: ${{ steps.discover.outputs.skills }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-          AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
           jq -n \
             --arg skills "$SKILLS" \
             --argjson pr_number "$PR_NUMBER" \
             --arg head_sha "$HEAD_SHA" \
-            --arg author "$AUTHOR" \
-            '{skills: $skills, pr_number: $pr_number, head_sha: $head_sha, author: $author}' \
+            '{skills: $skills, pr_number: $pr_number, head_sha: $head_sha}' \
             > eval-pr-metadata.json
           cat eval-pr-metadata.json
 
