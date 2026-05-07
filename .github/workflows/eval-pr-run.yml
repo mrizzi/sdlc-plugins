@@ -62,12 +62,13 @@ jobs:
               commit_sha: headSha
             });
 
-            if (prs.length === 0) {
-              core.setFailed(`No PR found for commit ${headSha}`);
+            const openToMain = prs.filter(p => p.state === 'open' && p.base.ref === 'main');
+            if (openToMain.length === 0) {
+              core.setFailed(`No open PR targeting main found for commit ${headSha}`);
               return;
             }
 
-            const pr = prs.find(p => p.number === metadata.pr_number) || prs[0];
+            const pr = openToMain[0];
             const prNumber = pr.number;
             const author = pr.user.login;
 
