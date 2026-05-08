@@ -1,5 +1,6 @@
-# Discovers changed skills for PR evals and uploads metadata for the
-# dispatch workflow (eval-pr-run.yml) to execute with secret access.
+# Path-filtered trigger for the eval dispatch workflow (eval-pr-run.yml).
+# This workflow does no work itself — its completion signals eval-pr-run.yml
+# to run via workflow_run.
 #
 # See docs/specs/2026-05-07-eval-pr-fork-dispatch-design.md for full design.
 
@@ -14,57 +15,10 @@ on:
       - '.github/workflows/eval-pr.yml'
 
 jobs:
-  discover:
-    name: Discover Changed Skills
+  trigger:
+    name: Trigger Eval Dispatch
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Discover changed skills
-        id: discover
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: |
-          changed_files=$(git diff --name-only "$BASE_SHA"...HEAD)
-          echo "Changed files:"
-          echo "$changed_files"
-
-          skills=""
-          for file in $changed_files; do
-            skill=""
-            if [[ "$file" =~ ^plugins/sdlc-workflow/skills/([^/]+)/ ]]; then
-              skill="${BASH_REMATCH[1]}"
-            elif [[ "$file" =~ ^evals/([^/]+)/ ]]; then
-              skill="${BASH_REMATCH[1]}"
-            fi
-
-            if [ -n "$skill" ] && [ -f "evals/${skill}/evals.json" ]; then
-              if [[ ! ",$skills," == *",$skill,"* ]]; then
-                skills="${skills:+${skills},}${skill}"
-              fi
-            fi
-          done
-
-          echo "skills=${skills}" >> "$GITHUB_OUTPUT"
-          echo "Discovered changed skills with evals: ${skills:-none}"
-
-      - name: Write PR metadata
-        env:
-          SKILLS: ${{ steps.discover.outputs.skills }}
-        run: |
-          jq -n \
-            --arg skills "$SKILLS" \
-            '{skills: $skills}' \
-            > eval-pr-metadata.json
-          cat eval-pr-metadata.json
-
-      - name: Upload PR metadata
-        uses: actions/upload-artifact@v4
-        with:
-          name: eval-pr-metadata
-          path: eval-pr-metadata.json
+      - run: echo "PR touches eval paths — dispatching eval run"

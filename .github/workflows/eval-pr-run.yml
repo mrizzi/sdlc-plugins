@@ -1,9 +1,13 @@
 # Runs evals for PRs via workflow_run dispatch, enabling secret access
-# for fork PRs. Pairs with eval-pr.yml (Stage 1: discovery).
+# for fork PRs. Triggered by eval-pr.yml completion (path-filtered gate).
 #
 # Trust model:
 # - Collaborators with write/admin permission: evals run automatically
 # - External contributors: require manual approval via eval-protected environment
+#
+# All PR identity and skill discovery is derived from the GitHub API and
+# the checked-out PR merge commit — no data from the triggering workflow
+# is trusted.
 #
 # See docs/specs/2026-05-07-eval-pr-fork-dispatch-design.md for full design.
 
@@ -13,7 +17,6 @@ on:
   workflow_run:
     workflows: ["Eval PR"]
     types: [completed]
-
 
 permissions:
   contents: read
@@ -26,35 +29,16 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     outputs:
-      skills: ${{ steps.metadata.outputs.skills }}
-      pr_number: ${{ steps.metadata.outputs.pr_number }}
-      author: ${{ steps.metadata.outputs.author }}
-      trusted: ${{ steps.metadata.outputs.trusted }}
+      skills: ${{ steps.discover.outputs.skills }}
+      pr_number: ${{ steps.pr.outputs.pr_number }}
+      author: ${{ steps.pr.outputs.author }}
+      trusted: ${{ steps.pr.outputs.trusted }}
     steps:
-      - name: Download PR metadata
-        uses: actions/download-artifact@v4
-        with:
-          name: eval-pr-metadata
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Resolve PR identity and check trust
-        id: metadata
+        id: pr
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const metadata = JSON.parse(fs.readFileSync('eval-pr-metadata.json', 'utf8'));
-
-            // Validate skills format (artifact is untrusted — attacker can modify eval-pr.yml)
-            if (metadata.skills && !/^[a-z0-9-]+(,[a-z0-9-]+)*$/.test(metadata.skills)) {
-              core.setFailed(`Invalid skills format: ${metadata.skills}`);
-              return;
-            }
-            core.setOutput('skills', metadata.skills || '');
-
-            // Derive PR number and author from GitHub API to prevent spoofing.
-            // workflow_run.pull_requests is empty for fork PRs, so search by commit SHA.
             const headSha = context.payload.workflow_run.head_sha;
             const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
               owner: context.repo.owner,
@@ -69,26 +53,58 @@ jobs:
             }
 
             const pr = openToMain[0];
-            const prNumber = pr.number;
-            const author = pr.user.login;
-
-            core.setOutput('pr_number', prNumber.toString());
-            core.setOutput('author', author);
+            core.setOutput('pr_number', pr.number.toString());
+            core.setOutput('base_sha', pr.base.sha);
+            core.setOutput('author', pr.user.login);
 
             let trusted = false;
             try {
               const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                username: author
+                username: pr.user.login
               });
               trusted = ['admin', 'write'].includes(data.permission);
-              console.log(`Author ${author}: permission=${data.permission}, trusted=${trusted}`);
+              console.log(`Author ${pr.user.login}: permission=${data.permission}, trusted=${trusted}`);
             } catch (e) {
-              console.log(`Author ${author}: not a collaborator (${e.status}), trusted=false`);
+              console.log(`Author ${pr.user.login}: not a collaborator (${e.status}), trusted=false`);
             }
 
             core.setOutput('trusted', trusted.toString());
+
+      - name: Checkout PR merge commit
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ steps.pr.outputs.pr_number }}/merge
+          fetch-depth: 0
+
+      - name: Discover changed skills
+        id: discover
+        env:
+          BASE_SHA: ${{ steps.pr.outputs.base_sha }}
+        run: |
+          changed_files=$(git diff --name-only "$BASE_SHA"...HEAD)
+          echo "Changed files:"
+          echo "$changed_files"
+
+          skills=""
+          for file in $changed_files; do
+            skill=""
+            if [[ "$file" =~ ^plugins/sdlc-workflow/skills/([^/]+)/ ]]; then
+              skill="${BASH_REMATCH[1]}"
+            elif [[ "$file" =~ ^evals/([^/]+)/ ]]; then
+              skill="${BASH_REMATCH[1]}"
+            fi
+
+            if [ -n "$skill" ] && [ -f "evals/${skill}/evals.json" ]; then
+              if [[ ! ",$skills," == *",$skill,"* ]]; then
+                skills="${skills:+${skills},}${skill}"
+              fi
+            fi
+          done
+
+          echo "skills=${skills}" >> "$GITHUB_OUTPUT"
+          echo "Discovered changed skills with evals: ${skills:-none}"
 
   gate:
     name: Approval Gate
