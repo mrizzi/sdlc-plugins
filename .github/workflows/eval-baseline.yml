@@ -50,6 +50,7 @@ jobs:
         if: steps.discover.outputs.skills != ''
         env:
           CLAUDE_CODE_USE_VERTEX: "1"
+          ANTHROPIC_VERTEX_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
           ANTHROPIC_DEFAULT_SONNET_MODEL: "claude-sonnet-4-6"
           ANTHROPIC_DEFAULT_OPUS_MODEL: "claude-opus-4-6"
@@ -57,6 +58,7 @@ jobs:
         run: |
           COMMIT_HASH="${{ steps.discover.outputs.commit_hash }}"
           IFS=',' read -ra SKILLS <<< "${{ steps.discover.outputs.skills }}"
+          failed=0
 
           for skill in "${SKILLS[@]}"; do
             workspace="/tmp/${skill}-eval-baseline"
@@ -74,7 +76,8 @@ jobs:
             )" --permission-mode dontAsk \
               --allowedTools Read Write Bash Skill Agent Glob \
               --verbose 2>&1 || {
-              echo "::warning::Eval run failed for ${skill} (exit $?)"
+              echo "::error::Eval run failed for ${skill} (exit $?)"
+              failed=1
               continue
             }
 
@@ -97,6 +100,11 @@ jobs:
             echo "--- Baseline contents ---"
             find "${baseline_dir}" -type f 2>/dev/null || true
           done
+
+          if [ "$failed" -ne 0 ]; then
+            echo "::error::One or more eval runs failed"
+            exit 1
+          fi
 
       - name: Commit baselines
         if: steps.discover.outputs.skills != ''

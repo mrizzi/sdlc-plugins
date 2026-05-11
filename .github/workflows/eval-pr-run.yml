@@ -184,12 +184,14 @@ jobs:
         env:
           SKILLS_CSV: ${{ needs.discover.outputs.skills }}
           CLAUDE_CODE_USE_VERTEX: "1"
+          ANTHROPIC_VERTEX_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
           ANTHROPIC_DEFAULT_SONNET_MODEL: "claude-sonnet-4-6"
           ANTHROPIC_DEFAULT_OPUS_MODEL: "claude-opus-4-6"
           ANTHROPIC_MODEL: "claude-opus-4-6"
         run: |
           IFS=',' read -ra SKILLS <<< "$SKILLS_CSV"
+          failed=0
 
           for skill in "${SKILLS[@]}"; do
             eval_count=$(jq '.evals | length' "evals/${skill}/evals.json")
@@ -207,13 +209,19 @@ jobs:
             )" --permission-mode dontAsk \
               --allowedTools Read Write Bash Skill Agent Glob \
               2>&1 || {
-              echo "::warning::PR eval run failed for ${skill} (exit $?)"
+              echo "::error::PR eval run failed for ${skill} (exit $?)"
+              failed=1
               continue
             }
 
             echo "--- Workspace contents ---"
             find "${workspace}" -type f 2>/dev/null | head -80 || true
           done
+
+          if [ "$failed" -ne 0 ]; then
+            echo "::error::One or more eval runs failed"
+            exit 1
+          fi
 
       - name: Post eval results review
         env:
