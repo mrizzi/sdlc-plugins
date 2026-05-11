@@ -23,6 +23,7 @@ permissions:
   pull-requests: write
   actions: read
   statuses: write
+  id-token: write
 
 jobs:
   discover:
@@ -170,7 +171,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
 
       - name: Install Claude Code
         run: curl -fsSL https://claude.ai/install.sh | bash
