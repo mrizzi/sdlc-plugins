@@ -74,6 +74,26 @@ body starts with the marker string `[sdlc-workflow] Description digest:`. If fou
 Display the expected vs actual digest and ask whether to proceed or abort. Do not
 silently continue.
 
+### Comment Edit Detection
+
+After locating the digest comment, check whether it was edited after posting by
+comparing the comment's `created` and `updated` timestamps (both are returned by
+the Jira REST API on every comment object):
+
+1. If `updated` equals `created` — the comment is unmodified; proceed with digest
+   comparison as above
+2. If `updated` is later than `created` — the comment was edited after initial
+   posting. Warn: "Digest comment was edited after initial posting — integrity
+   cannot be fully guaranteed." Proceed with digest comparison but surface the
+   warning to the user alongside any match/mismatch result
+3. If the API response does not include `created`/`updated` fields (e.g., the MCP
+   tool omits them) — skip this check silently and proceed with digest comparison
+   only
+
+This is a defense-in-depth measure. It detects the case where an attacker modifies
+both the task description and the digest comment to match. Timestamp manipulation
+by a Jira admin would bypass this check, but it raises the bar for casual tampering.
+
 ## Backward Compatibility
 
 Tasks created before this protocol was introduced will not have a digest comment.
@@ -89,4 +109,6 @@ When the consumer finds no comment matching the marker string:
   before creating issue links or other comments
 - The digest comment must be a standalone comment, not embedded in other comments
 - Consumers must treat a missing digest as a non-blocking warning, not an error
+- Consumers should check digest comment `created` vs `updated` timestamps when
+  available, and warn if the comment was edited — but proceed regardless
 - The marker string is fixed — do not vary it per skill or per invocation
