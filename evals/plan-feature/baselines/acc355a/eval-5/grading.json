@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md contains 'Selected mode: feature-branch' with rationale citing three atomicity indicators: 'Coordinated schema migrations', 'Breaking API changes', and 'Cross-cutting refactors', explaining that partial delivery would leave the codebase in an inconsistent state."
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md is the first task and contains '## Bookend Type\ncreate-branch'."
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md is the last task (7 of 7) and contains '## Bookend Type\nmerge-branch'."
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-6) have '## Target Branch\nTC-9005': task-2-database-migration.md line 8, task-3-update-seaorm-entities.md line 8, task-4-update-advisory-service-endpoints.md line 8, task-5-update-ingestion-pipeline.md line 8, task-6-update-integration-tests.md line 8."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Target Branch\nmain' (lines 7-8)."
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md contains '## Target Branch\nmain' (lines 7-8)."
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-6) list Task 1 as a dependency: task-2 line 51 'Depends on: Task 1', task-3 line 45 'Depends on: Task 1', task-4 line 49 'Depends on: Task 1', task-5 line 44 'Depends on: Task 1', task-6 line 46 'Depends on: Task 1'."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md lists all 5 intermediate tasks as dependencies: 'Depends on: Task 2', 'Depends on: Task 3', 'Depends on: Task 4', 'Depends on: Task 5', 'Depends on: Task 6' (lines 33-37)."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "Bookend tasks (1 and 7) are exempt from Files to Modify/Create and Implementation Notes. Task 1 has: Repository (line 4), Target Branch (line 8), Description (line 13), Acceptance Criteria (line 16), Test Requirements (line 19). Task 7 has: Repository (line 4), Target Branch (line 8), Description (line 13), Acceptance Criteria (line 23), Test Requirements (line 29). Intermediate tasks all have all required sections: Task 2 has Repository, Target Branch, Description, Files to Create, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Task 3 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Task 4 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Task 5 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Task 6 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": true,
+      "evidence": "impact-map.md contains 'Action: Apply the workflow:feature-branch label to feature issue TC-9005' (line 17)."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

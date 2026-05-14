@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with the table headers (Repository, Role, Serena Instance, Path) but no data rows, or explicitly notes that no repositories are configured",
+      "passed": false,
+      "evidence": "The file contains a '## Repository Registry' section with correct headers (Repository, Role, Serena Instance, Path) on line 20, but it includes a data row on line 22: '| my-project | Web application | -- | ./ |'. The assertion requires either no data rows or an explicit note that no repositories are configured. Neither condition is met -- a data row is present and there is no note about no repositories being configured."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with Project key (MYPROJ), Cloud ID (abc123), and Feature issue type ID (10001)",
+      "passed": true,
+      "evidence": "Lines 25-28 of claude-md-result.md contain: '## Jira Configuration' followed by '- Project key: MYPROJ', '- Cloud ID: abc123', '- Feature issue type ID: 10001'. All three required values are present and correct."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that indicates no Serena instances are configured",
+      "passed": true,
+      "evidence": "Line 30 contains '## Code Intelligence' and line 32 states 'No Serena MCP servers are configured. Code intelligence is not available.' Line 36 also reinforces: 'No limitations known -- no Serena instances configured.'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Serena MCP tools were discovered among the available tools",
+      "passed": true,
+      "evidence": "Line 18 of discovery-log.md states: '**No Serena MCP tools found** -- no tools matching the `mcp__<instance>__find_symbol` / `mcp__<instance>__get_symbols_overview` pattern'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Atlassian MCP tools were discovered and Jira fields were provided via manual entry",
+      "passed": true,
+      "evidence": "Line 29 states '**No Atlassian MCP tools found**'. Lines 33-34 state 'User chose: **Option 2 -- Skip auto-discovery, provide fields manually**'. Lines 36-42 document 'Step 3.4 -- Manual Entry' with user-provided values for Project key (MYPROJ), Cloud ID (abc123), and Feature issue type ID (10001)."
+    },
+    {
+      "text": "The output or discovery log mentions prompting the user about continuing without code intelligence (the skill should ask whether to continue or set up Serena first)",
+      "passed": true,
+      "evidence": "Lines 19-20 of discovery-log.md state: 'Informed user: no Serena MCP servers were found' followed by 'User chose: **Continue without code intelligence**'. This documents that the user was prompted and chose to continue without code intelligence."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The plan's 'Pre-Implementation: Code Inspection' section explicitly lists all 4 files: (1) 'modules/fundamental/src/advisory/endpoints/get.rs', (2) 'modules/fundamental/src/advisory/service/advisory.rs', (3) 'modules/fundamental/src/advisory/model/summary.rs', and (4) 'common/src/error.rs', with detailed descriptions of what to inspect in each."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan lists exactly 3 files to create (severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs test) and 3 files to modify (advisory/service/advisory.rs, advisory/endpoints/mod.rs, advisory/model/mod.rs). All 6 files match the task's specified scope. The plan explicitly notes 'server/src/main.rs — no changes needed'."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "The plan's 'Files to Create' table lists: (1) 'modules/fundamental/src/advisory/model/severity_summary.rs' for SeveritySummary struct, (2) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs' for GET handler, and (3) 'tests/api/advisory_summary.rs' for integration tests."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "The plan's 'Files to Modify' table lists: (4) 'modules/fundamental/src/advisory/service/advisory.rs', (5) 'modules/fundamental/src/advisory/endpoints/mod.rs', and (6) 'modules/fundamental/src/advisory/model/mod.rs' — all three required files."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "The commit message is 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format with type 'feat', scope 'advisory', and description. The footer includes 'Implements TC-9201'."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "The plan states: 'The commit will be created with `--trailer='Assisted-by: Claude Code'` to attribute AI assistance (constraint 2.3).'"
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "The Branch Strategy section states: 'Branch name: TC-9201 (per constraint 3.1: branch named after Jira task issue ID)' and 'Target branch: main (extracted from the task description's Target Branch section)'."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "The conventions.md file identifies both patterns: Section 'Error Handling with Result<T, AppError> and .context()' describes the error handling convention with detailed patterns, and Section 'Module Structure' describes the 'model/ + service/ + endpoints/ tripartite structure'. Additionally identifies 5+ more patterns (endpoint handler, service, model, database/ORM, naming, test conventions)."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "The Task Summary section states 'Target Branch: main' and the Branch Strategy section states 'Target branch: main (extracted from the task description's Target Branch section)' with PR base '--base main'."
+    }
+  ],
+  "pass_rate": 1.0,
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}
