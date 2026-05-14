@@ -10,6 +10,9 @@ skills that consume tasks (implement-task) parse it.
 ## Repository
 <repository-name>
 
+## Target Branch
+<branch-name (e.g., main or TC-4418)>
+
 ## Description
 <What this task achieves and why>
 
@@ -53,6 +56,8 @@ Reference actual file paths and symbol names found during repository analysis.>
 
 - Omit sections that don't apply (e.g. no API Changes for a pure UI task, no Files
   to Create if only modifying, no Documentation Updates if no docs are impacted)
+- Target Branch is always required — use `main` for standard direct-to-main workflow,
+  or the feature issue ID for feature-branch workflow
 - Repository must be a single repository per task
 - File paths must be real paths discovered during repository or code analysis
 - Implementation Notes must reference existing patterns, not abstract guidance —
@@ -77,3 +82,6 @@ These extensions are documented in the skill that produces them:
   implement-task adds commits to an existing PR branch
 - **Review Context** — used by verify-pr (Step 4e) to capture the original review
   comment text and PR file/line reference
+- **Bookend Type** — used by plan-feature for feature-branch bookend tasks,
+  values: `create-branch` or `merge-branch`. implement-task uses this to skip
+  normal implementation steps and handle branch/PR operations instead
