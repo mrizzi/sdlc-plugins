@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 27 of response.md: 'Implementation Notes | **MISSING** | No patterns, code references, or reuse candidates referenced'. Gap 2 (lines 55-61) is titled 'Missing Implementation Notes section' and elaborates on the missing content. Line 38 explicitly cites constraint 1.6: 'implement-task MUST ask the user for clarification and stop execution when the structured description is incomplete'."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Line 28: 'Acceptance Criteria | Present but **vague and non-verifiable** | All three criteria are subjective, not pass/fail'. Gap 3 (lines 65-69) specifically calls out: '\"Search results are relevant\" -- what defines relevance? Exact match? Partial match? Ranking?' and '\"Performance is acceptable\" -- what is acceptable? Response time threshold? Maximum result set size?'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Line 29: 'Test Requirements | Present but **vague and non-verifiable** | Single item \"Test that search works correctly\" is not actionable'. Gap 4 (lines 81-82): 'The current test requirement \"Test that search works correctly\" provides no guidance on what test cases to write.' This directly addresses that the test requirement does not define what 'correctly' means."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 38 explicitly states: 'Execution must stop here per constraint 1.6: \"implement-task MUST ask the user for clarification and stop execution when the structured description is incomplete -- it MUST NOT draft an implementation plan or proceed with any subsequent steps until the user responds.\"' Line 122-123: 'I am stopping execution here and will not proceed with branching, implementation planning, or code changes until these gaps are resolved.' The response contains a 'Questions for the User' section (lines 104-121) with clarifying questions, and no implementation plan is produced."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The 'Questions for the User' section (lines 104-121) contains 7 numbered questions. Specifically: Question 3 (line 112): 'Search Scope: Which Package entity fields should be searchable (name, license, version, etc.)?' addresses which fields to search. Gap 3 (line 68): '\"Search results are relevant\" -- what defines relevance? Exact match? Partial match? Ranking?' addresses relevance ranking. Gap 3 (line 69): '\"Performance is acceptable\" -- what is acceptable? Response time threshold? Maximum result set size?' addresses performance threshold. Question 5 (line 116) also asks for specific verifiable acceptance criteria to replace subjective ones."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md: '## Classification: code change request' and '## Action\\nSub-task creation required.' subtask-30001.md exists with full sub-task content. report.md table row: '| 30001 | ... | code change request | Yes -- wrap soft_delete in transaction |'"
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md: '## Classification: code change request' and '## Action\\nSub-task creation required.' subtask-30002.md exists with full sub-task content. report.md table row: '| 30002 | ... | code change request | Yes -- add partial index on deleted_at |'"
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md: '## Classification: nit' and '## Action\\nNo sub-task created. Nit-level feedback does not trigger sub-task creation.' No subtask-30003.md file exists in the outputs directory. report.md table row: '| 30003 | ... | nit | No |'"
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md: '## Classification: question' and '## Action\\nNo sub-task created. Questions do not trigger sub-task creation.' No subtask-30004.md file exists in the outputs directory. report.md table row: '| 30004 | ... | question | No |'"
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains all required sections: '## Repository' (line 9), '## Description' (line 16), '## Files to Modify' (line 19), '## Implementation Notes' (line 22), '## Acceptance Criteria' (line 29). subtask-30002.md contains all required sections: '## Repository' (line 9), '## Description' (line 16), '## Files to Modify' (line 19), '## Implementation Notes' (line 22), '## Acceptance Criteria' (line 29)."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md line 37-38: '## Target PR\\nhttps://github.com/trustify/trustify-backend/pull/744'. subtask-30002.md line 39-40: '## Target PR\\nhttps://github.com/trustify/trustify-backend/pull/744'."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md lines 40-46: '## Review Context' section includes Comment ID 30001, Author, File, and the full original comment text starting with 'The soft_delete method should run all three UPDATE statements...'. subtask-30002.md lines 42-50: '## Review Context' section includes Comment ID 30002, Author, File, and the full original comment text starting with 'The migration should also add an index on deleted_at...'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only classification files (review-30001.md through review-30004.md), sub-task descriptions (subtask-30001.md, subtask-30002.md), and a report (report.md). All are documentation/analysis outputs. No source code files (.rs, .toml, etc.) appear in the outputs directory. The report explicitly states findings without modifying code."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001, 30002, 30003, 30004) have corresponding classification files (review-30001.md through review-30004.md). The report.md contains a 'Review Comment Classifications' table with all four comments listed. The report references all four comments in its analysis sections."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md overall status is '### Overall: WARN' and states 'Two code change requests require attention before merge'. The report does not contain any merge action, merge command, or indication of auto-merging. No merge-related files exist in the outputs."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md main table row: '| Test Change Classification | ADDITIVE | All test files are newly created; 5 new test functions with 5+ assertions added |'. Also in Style/Conventions section: '**Test Change Classification:** ADDITIVE. `tests/api/sbom_delete.rs` is a newly created file with 5 new test functions and 5+ assertion statements. No existing tests were modified or removed.'"
+    },
+    {
+      "text": "Convention upgrade eligibility is evaluated for review comment 30002 (index suggestion) — the review classification output (review-30002.md) or the report's Style/Conventions analysis explains whether the suggestion matches a documented or demonstrated project convention",
+      "passed": false,
+      "evidence": "review-30002.md does not mention convention upgrade analysis. The report's Style/Conventions section states: '**Convention Upgrade:** No suggestions to evaluate for upgrade. The two reviewer comments classified as code change requests were already correctly classified at that level based on their directive language.' This explicitly skips convention upgrade evaluation for comment 30002 rather than evaluating whether the index suggestion matches a project convention. The assertion requires that convention upgrade eligibility IS evaluated for comment 30002, but the output states there are no suggestions to evaluate because 30002 was already classified as a code change request."
+    },
+    {
+      "text": "Review comment 30002 (index suggestion) results in a sub-task regardless of classification path — whether classified directly as code change request based on reviewer language, or upgraded from suggestion via convention analysis",
+      "passed": true,
+      "evidence": "subtask-30002.md exists and contains a complete sub-task description for adding a partial index. review-30002.md classifies it as 'code change request' with action 'Sub-task creation required.' report.md table: '| 30002 | ... | code change request | Yes -- add partial index on deleted_at |'. The sub-task was created via direct classification as a code change request."
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 1,
+    "total": 13,
+    "pass_rate": 0.923
+  }
+}

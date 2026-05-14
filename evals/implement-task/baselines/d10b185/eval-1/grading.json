@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The conventions.md file explicitly references analyzing sibling code including: advisory/endpoints/get.rs (\"Follows the exact pattern from advisory/endpoints/get.rs\" in file-2-description.md), advisory/service/advisory.rs (\"Follows the existing fetch and list pattern\" in file-4-description.md, and \"Services are structs with methods like fetch, list, search\" in conventions.md), advisory/model/summary.rs (\"The AdvisorySummary struct in model/summary.rs includes a severity field\" in conventions.md), and common/src/error.rs (\"AppError is defined in common/src/error.rs\" in conventions.md). At least 4 of the listed files are referenced as having been inspected."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan.md lists exactly 3 files to create (severity_summary.rs model, severity_summary.rs endpoint handler, advisory_summary.rs test file) and 3 files to modify (advisory/service/advisory.rs, advisory/endpoints/mod.rs, advisory/model/mod.rs). The plan also explicitly notes under 'Files NOT Modified': 'server/src/main.rs -- No changes needed.' The git add command in the plan lists only these 6 files. No unrelated files are included."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md 'Files to Create' table lists: (1) modules/fundamental/src/advisory/model/severity_summary.rs - SeveritySummary response struct, (2) modules/fundamental/src/advisory/endpoints/severity_summary.rs - GET handler, (3) tests/api/advisory_summary.rs - Integration tests. Corresponding file descriptions (file-1-description.md, file-2-description.md, file-3-description.md) all have 'Action: CREATE'."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md 'Files to Modify' table lists: (4) modules/fundamental/src/advisory/service/advisory.rs - Add severity_summary method, (5) modules/fundamental/src/advisory/endpoints/mod.rs - Register new route, (6) modules/fundamental/src/advisory/model/mod.rs - Add pub mod severity_summary. Corresponding file descriptions (file-4-description.md, file-5-description.md, file-6-description.md) all have 'Action: MODIFY'."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' followed by body text and footer 'Refs: TC-9201'. The format is type(scope): description with 'feat' as type, 'advisory' as scope. TC-9201 is referenced in the footer."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "plan.md Git Commands section includes: git commit --trailer='Assisted-by: Claude Code' -m \"feat(advisory): add severity aggregation endpoint for SBOM advisories...\". The --trailer flag is explicitly present in the git commit command."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "plan.md has 'Branch Name: TC-9201' (line 13) and 'Target Branch: main' (line 9). The Git Commands section shows 'git checkout main' followed by 'git checkout -b TC-9201', confirming both the branch name and target branch are referenced."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md 'Error Handling Pattern' section: 'All endpoint handlers return Result<T, AppError>. AppError is defined in common/src/error.rs... Errors are wrapped with .context(\"descriptive message\") before being propagated with ?'. conventions.md 'Module Structure Convention' section: 'Every domain module under modules/fundamental/src/ follows a strict tri-directory pattern: <domain>/ mod.rs model/ ... service/ ... endpoints/ ...'. Both patterns are clearly identified with specific details."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "plan.md line 8-9: '## Target Branch' followed by '`main`'. The Git Commands section also begins with 'git checkout main' and 'git pull origin main' before creating the feature branch, demonstrating the target branch value is used in the workflow."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

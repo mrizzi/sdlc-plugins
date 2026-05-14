@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md 'Ambiguities Flagged' section lists 5 explicit ambiguities: (1) 'No performance targets for search should be faster', (2) 'No relevance criteria for results should be more relevant', (3) 'No filter specification for add filters', (4) 'No specification of which search entities are in scope', (5) 'Non-functional requirements are unmeasurable'. All are clearly flagged with bold headings and detailed explanations."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "The impact-map.md contains a 'Scope Exclusion' section stating: '\"Better UI\" (non-MVP) is excluded from this plan. This requirement cannot be planned without design mockups or a frontend repository. The Repository Registry contains only trustify-backend — no frontend repository is available. This requirement should be addressed in a separate feature once a Figma design and frontend repository are available.'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All three task files follow the template format. Each contains the required sections: Repository, Target Branch, Description, Files to Modify (and/or Files to Create), Implementation Notes, Acceptance Criteria, Test Requirements, plus optional sections like API Changes, Reuse Candidates, Verification Commands, Documentation Updates, and Dependencies as appropriate. This matches the template structure defined in task-description-template.md."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "All three tasks and the impact map use the exact phrase 'Assumption pending clarification:' to label assumptions. Task 1: 'Assumption pending clarification: The specific columns indexed are assumed based on likely search targets...' Task 2: 'Assumption pending clarification: The relevance ranking uses PostgreSQL's default ts_rank normalization...' Task 3: 'Assumption pending clarification: The filter specification is assumed as follows since the feature description only says some kind of filtering capability...' The impact map also labels each ambiguity with 'Assumption pending clarification:' statements."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "Task 1 has '## Repository\\ntrustify-backend'. Task 2 has '## Repository\\ntrustify-backend'. Task 3 has '## Repository\\ntrustify-backend'. Each contains exactly one repository name, no task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "Task 1 contains: '## Target Branch' (line 7), '## Description' (line 9), '## Acceptance Criteria' (line 38), '## Test Requirements' (line 46). Task 2 contains: '## Target Branch' (line 7), '## Description' (line 9), '## Acceptance Criteria' (line 42), '## Test Requirements' (line 49). Task 3 contains: '## Target Branch' (line 7), '## Description' (line 9), '## Acceptance Criteria' (line 52), '## Test Requirements' (line 61). All four required sections are present in every task."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Task 1 Files to Modify: 'migration/src/lib.rs' (exists in manifest line 17). Files to Create: 'migration/src/m0002_full_text_search/mod.rs' (follows pattern of migration/src/m0001_initial/mod.rs from manifest line 19, new migration is a legitimate creation). Task 2 Files to Modify: 'modules/search/src/service/mod.rs' (manifest line 91), 'modules/search/src/endpoints/mod.rs' (manifest line 93), 'modules/search/Cargo.toml' (manifest line 94). Task 3 Files to Modify: 'modules/search/src/endpoints/mod.rs' (manifest line 93), 'modules/search/src/service/mod.rs' (manifest line 91), 'modules/fundamental/src/advisory/endpoints/list.rs' (manifest line 62), 'modules/fundamental/src/sbom/endpoints/list.rs' (manifest line 49), 'common/src/db/query.rs' (manifest line 27). All referenced paths exist in the repo-backend.md manifest or follow established patterns for new files."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference: 'migration/src/m0001_initial/mod.rs' for module structure, 'sea_orm_migration::prelude::*', 'manager.get_connection().execute_unprepared()'. Task 2 Implementation Notes reference: 'modules/search/src/service/mod.rs' (existing SearchService), 'common/src/db/query.rs' for pagination/sorting, 'common/src/model/paginated.rs' (PaginatedResults<T>), 'common/src/error.rs' (AppError), 'sea_orm::Statement::from_string()', 'sea_orm::DatabaseBackend::Postgres'. Task 3 Implementation Notes reference: 'common/src/db/query.rs' for shared filtering logic, 'modules/fundamental/src/advisory/endpoints/list.rs' and 'modules/fundamental/src/sbom/endpoints/list.rs' for existing endpoint patterns, 'modules/fundamental/src/advisory/model/summary.rs' (severity field on AdvisorySummary), 'modules/fundamental/src/package/model/summary.rs' (license field on PackageSummary). All tasks cite specific file paths, symbol names, and codebase patterns."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "Task 1: '## Target Branch\\nmain' (lines 7-8). Task 2: '## Target Branch\\nmain' (lines 7-8). Task 3: '## Target Branch\\nmain' (lines 7-8). All three tasks set Target Branch to 'main'."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}
