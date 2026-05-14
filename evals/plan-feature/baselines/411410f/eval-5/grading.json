@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md contains 'Mode: feature-branch' under 'Workflow Mode Decision' and provides rationale based on atomicity constraints: 'Coordinated schema migration', 'Tightly coupled code and schema changes', and 'The feature description explicitly states \"All changes must land together.\"'"
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md is the first task and contains '## Bookend Type\ncreate-branch'"
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-8-merge-feature-branch.md is the last task (out of 8 tasks) and contains '## Bookend Type\nmerge-branch'"
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-7) have '## Target Branch\nTC-9005': task-2 line 8, task-3 line 8, task-4 line 8, task-5 line 8, task-6 line 8, task-7 line 8."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Target Branch\nmain' (lines 7-8)"
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-8-merge-feature-branch.md contains '## Target Branch\nmain' (lines 7-8)"
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-7) list Task 1 as a dependency: Task 2: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 3: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 4: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 5: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 6: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 7: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-8-merge-feature-branch.md Dependencies section lists all 6 intermediate tasks: 'Depends on: Task 2', 'Depends on: Task 3', 'Depends on: Task 4', 'Depends on: Task 5', 'Depends on: Task 6', 'Depends on: Task 7'."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "Bookend tasks (1, 8) have Repository, Target Branch, Bookend Type, Description, Acceptance Criteria, Test Requirements (bookends are exempt from Files to Modify/Create and Implementation Notes per grading rules). Intermediate tasks (2-7) all have: Repository, Target Branch, Description, Acceptance Criteria, Test Requirements. Files: Task 2 has Files to Create and Files to Modify; Task 3 has Files to Modify and Files to Create (listed as 'None'); Task 4 has Files to Modify; Task 5 has Files to Modify; Task 6 has Files to Modify; Task 7 has Files to Modify. Implementation Notes: Tasks 2-7 all have Implementation Notes sections."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": true,
+      "evidence": "impact-map.md contains 'Label: `workflow:feature-branch`' in the Workflow Mode Decision section (line 10)."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

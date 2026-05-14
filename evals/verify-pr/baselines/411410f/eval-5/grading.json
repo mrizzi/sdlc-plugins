@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | MIXED | Removed `test_recommend_purls_with_qualifiers`, added `test_recommend_purls_dedup` and 3 new tests in `purl_simplify.rs`; structural signals are mixed but semantically justified by the intentional behavioral change |'. The row explicitly uses the MIXED verdict and identifies both additive (new tests) and reductive (removed test) signals."
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md Test Changes Summary table, line 38: '| `tests/api/purl_recommend.rs` | Removed `test_recommend_purls_with_qualifiers` | Reductive (removed function) |'. The removed function is explicitly identified and labeled as a reductive signal."
+    },
+    {
+      "text": "The structural summary or reductive findings identify the relaxed assertion in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers",
+      "passed": false,
+      "evidence": "report.md Test Changes Summary table, line 37: '| `tests/api/purl_recommend.rs` | Updated `test_recommend_purls_basic` assertions | Neutral (aligned to new behavior) |'. While the change is noted, it is classified as 'Neutral' rather than being identified as a reductive signal (relaxed assertion). criterion-1.md lines 16-19 describe the new assertions but present them positively as evidence the criterion is satisfied, not as a relaxed/reductive finding. No output file identifies this as a relaxed assertion or reductive signal."
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md Test Changes Summary table, line 40: '| `tests/api/purl_simplify.rs` | New file with 3 test functions | Additive (new file) |'. The new file is explicitly recognized with 3 test functions and labeled as additive."
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md Test Changes Summary table, line 39: '| `tests/api/purl_recommend.rs` | Added `test_recommend_purls_dedup` | Additive (new function) |'. The new function in the modified file is explicitly recognized and labeled as an additive signal."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report/analysis files: report.md, criterion-1.md through criterion-5.md. All are verification report documents. No source code files (.rs, .toml, etc.) were created or modified. The report content is purely analytical — it describes code changes observed in the PR diff but does not make any modifications."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md presents a detailed verification report with an 'Overall: PASS' verdict (line 17), acceptance criteria analysis, test changes summary, and minor observations labeled as 'non-blocking'. No merge action is taken or commanded. The report structure (tables, detail sections, caveats) is designed for human review and decision-making."
+    },
+    {
+      "text": "The test change classification is produced by the Style/Conventions sub-agent (which spawns a test classification sub-agent for modified files) — the classification verdict is attributed to the Style/Conventions domain in the report",
+      "passed": false,
+      "evidence": "No mention of 'Style/Conventions' appears anywhere in the output files (report.md or criterion-1.md through criterion-5.md). The Test Change Classification row in report.md line 14 is presented without any domain attribution. There is no reference to any sub-agent, domain assignment, or Style/Conventions label in any output file."
+    },
+    {
+      "text": "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)",
+      "passed": false,
+      "evidence": "The test change classification in report.md does reference test file content structurally (specific function names added/removed, specific files). However, the analysis also references task requirements: line 14 says 'semantically justified by the intentional behavioral change' and the Test Changes Summary table line 37 labels the test_recommend_purls_basic change as 'Neutral (aligned to new behavior)' — both phrases reference the task's behavioral intent rather than purely comparing file content. The assertion requires the assessment to reference 'test file content, not acceptance criteria or task requirements,' but the report mixes both, violating the exclusivity requirement of constraint 1.18."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 3,
+    "total": 9,
+    "pass_rate": 0.67
+  }
+}

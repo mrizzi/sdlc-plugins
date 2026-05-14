@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The plan and file descriptions reference inspecting multiple sibling files. file-2-description.md states 'Follows the pattern of modules/fundamental/src/advisory/endpoints/get.rs (GET /api/v2/advisory/{id}) -- extracts path params via Path<Id>, calls service, returns JSON' and 'The exact State extractor pattern and Transactional parameter should match what sibling endpoint handlers use (inspect get.rs to confirm exact signature)'. file-4-description.md references the pattern of 'fetch' and 'list' methods in advisory/service/advisory.rs. file-1-description.md references 'modules/fundamental/src/advisory/model/summary.rs (AdvisorySummary)'. The conventions.md references 'AppError enum from common/src/error.rs'. The plan.md Cross-Section Reference Consistency section references 'AdvisorySummary (existing): referenced in Implementation Notes at modules/fundamental/src/advisory/model/summary.rs'. This covers at least 3 of the 4 listed files: get.rs, advisory.rs (service), summary.rs, and error.rs."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan lists exactly 6 files: 3 to create (severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs test) and 3 to modify (advisory/service/advisory.rs, advisory/endpoints/mod.rs, advisory/model/mod.rs). The plan explicitly states under 'Files NOT Modified': 'server/src/main.rs -- no changes needed (routes auto-mount via module registration)'. No other files outside the defined scope appear in the modification list."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md lists three files to create: File 1 'modules/fundamental/src/advisory/model/severity_summary.rs' (model), File 2 'modules/fundamental/src/advisory/endpoints/severity_summary.rs' (endpoint handler), and File 3 'tests/api/advisory_summary.rs' (test file). Each has a corresponding file description (file-1-description.md, file-2-description.md, file-3-description.md) with Action: CREATE."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md lists three files to modify: File 4 'modules/fundamental/src/advisory/service/advisory.rs', File 5 'modules/fundamental/src/advisory/endpoints/mod.rs', and File 6 'modules/fundamental/src/advisory/model/mod.rs'. Each has a corresponding file description (file-4-description.md, file-5-description.md, file-6-description.md) with Action: MODIFY."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md contains the commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' (follows type(scope): description format). The footer contains 'Implements TC-9201' which references the task ID."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "plan.md line 89 states: 'With `--trailer=\"Assisted-by: Claude Code\"`.' immediately after the commit message block."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": false,
+      "evidence": "The plan does not mention creating a branch named TC-9201 or any branch naming convention anywhere in plan.md or any of the file description files. There is no mention of a branch name at all. Additionally, while the PR description mentions TC-9201, there is no explicit reference to a 'Target Branch' value or 'main' as a target branch for the PR."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md explicitly identifies both patterns. Under 'Error handling': 'All errors use the AppError enum from common/src/error.rs. Errors are wrapped with .context() to provide descriptive messages.' and 'All handlers return Result<T, AppError> for consistent error handling.' Under 'Module structure': 'Every domain module follows the model/ + service/ + endpoints/ structure (observed in sbom/, advisory/, package/).' Under 'Service conventions': 'Services return Result<T, AppError> with .context() wrapping for error propagation.'"
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": false,
+      "evidence": "Neither plan.md nor any of the file description files contain a reference to a 'Target Branch' section or explicitly identify 'main' as the target branch. The plan does not mention the target branch at all."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 2,
+    "total": 9,
+    "pass_rate": 0.78
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 29: 'Implementation Notes | **MISSING** | No patterns, code references, or architectural guidance provided'. Lines 49-53 elaborate under 'Identified Gaps Requiring Clarification' item 2: '**Implementation Notes section is missing.** The task does not reference: Which existing patterns to follow... Whether to use the existing SearchService... Whether to use the shared query builder helpers... How search should be implemented at the database level'. Line 39 explicitly invokes constraint 1.6: 'Per implement-task rules (constraint 1.6), I must ask the user for clarification and halt execution immediately.'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Line 30: 'Acceptance Criteria | Present but **INCOMPLETE** | Vague criteria: \"Users can search for packages\", \"Search results are relevant\", \"Performance is acceptable\" — none are pass/fail verifiable'. Lines 55-58 elaborate: '\"Search results are relevant\" — what defines relevance? Exact match? Substring match? Ranked results? What ranking criteria?' and '\"Performance is acceptable\" — what is the threshold? Response time under a specific value? Tested against a specific dataset size?'. Both phrases are specifically called out as insufficiently specific."
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Line 31: 'Test Requirements | Present but **INCOMPLETE** | Only \"Test that search works correctly\" — no specific test scenarios, assertions, or test file locations'. Lines 60-63 elaborate under gap 4: '**Test Requirements are too vague.** Need specific test scenarios such as: Which test file to create or modify... Specific test cases: search by name returns matching packages, search with no results returns empty list, search with pagination works correctly, search with invalid parameters returns appropriate error'. The response implicitly identifies that 'correctly' is undefined by demanding specific test scenarios."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 39: 'STOP — The structured description is incomplete. Per implement-task rules (constraint 1.6), I must ask the user for clarification and halt execution immediately. I will not draft an implementation plan, create branches, or proceed with any subsequent steps until the user provides the missing information.' Lines 67-72 contain a 'Request to User' section with specific questions. Line 76: '**Execution halted.** Awaiting user clarification before proceeding with Steps 2-11 (dependency verification, branch creation, code inspection, implementation, testing, self-verification, commit, PR creation, and Jira updates).' No implementation plan is produced."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks about which fields to search in multiple places: line 57 ('search by what fields? Name? Namespace? License? PURL? What constitutes a match?') and line 45 ('What query parameters does the search accept? (e.g., q for free-text, name, namespace, type, license)'). It asks about relevance ranking on line 58: '\"Search results are relevant\" — what defines relevance? Exact match? Substring match? Ranked results? What ranking criteria?'. It asks about performance threshold on line 59: '\"Performance is acceptable\" — what is the threshold? Response time under a specific value? Tested against a specific dataset size?'. Additionally, it asks about API endpoint specification (line 69), implementation approach (line 70), and test file locations (line 72) — well exceeding the minimum of 3 clarifying questions."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

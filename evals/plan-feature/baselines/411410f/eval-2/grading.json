@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact map flags 5 explicit ambiguities in its 'Ambiguities and Clarification Needed' section: (1) 'Search should be faster' — No performance baseline or target, (2) 'Results should be more relevant' — No definition of relevance, (3) 'Add filters' — No filter types, values, or behavior specified, (4) 'Better UI' — No design artifacts, and no frontend repository, (5) Non-functional requirements are unmeasurable. Each is described in detail with 'Clarification needed' sub-sections."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "Impact map Ambiguity 4 states: '\"Better UI\" — No design artifacts, and no frontend repository... the target repository (trustify-backend) is a backend service — UI changes would require a frontend repository that is not in scope. Decision: Excluded from this plan entirely. Cannot be planned without design mockups and a frontend repository.' Additionally, the 'Out of Scope' section states: 'Frontend/UI changes (no frontend repository available; \"Better UI\" is non-MVP)'."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 5 tasks follow the template format with sections: Repository, Target Branch, Description, Files to Modify (and Files to Create where applicable), Implementation Notes, Acceptance Criteria, Test Requirements, and Dependencies. The template rules state 'Omit sections that don't apply,' so optional sections like API Changes, Verification Commands, Documentation Updates, and Reuse Candidates are correctly omitted where not applicable. All required sections are present."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Every task contains explicit assumption callouts labeled 'Assumption (pending clarification)': Task 1 has 2 (performance bottleneck is at DB level; PostgreSQL GIN indexes are appropriate), Task 2 has 3 (current search uses LIKE/ILIKE; latency target of p95 < 500ms; search queries all entity types), Task 3 has 2 (relevance ranking strategy; response includes relevance_score), Task 4 has 3 (filter types entity_type/severity/license; AND semantics; exact-match values), Task 5 has 2 (test DB runs migrations automatically; no performance benchmarks in scope)."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 tasks contain a '## Repository' section with exactly 'trustify-backend' as the single repository name: Task 1 line 3-4, Task 2 line 3-4, Task 3 line 3-4, Task 4 line 3-4, Task 5 line 3-4."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 tasks contain all four required sections: Task 1 has '## Target Branch' (line 6), '## Description' (line 9), '## Acceptance Criteria' (line 36), '## Test Requirements' (line 43). Task 2 has all four at lines 6, 9, 33, 41. Task 3 has all four at lines 6, 9, 43, 52. Task 4 has all four at lines 6, 9, 41, 51. Task 5 has all four at lines 6, 9, 39, 46."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Checking all file paths against repo-backend.md: Task 1 modifies migration/src/lib.rs (line 17 in manifest), entity/src/sbom.rs (line 98), entity/src/advisory.rs (line 99), entity/src/package.rs (line 101), creates migration/src/m0002_search_indexes/mod.rs (follows pattern of m0001_initial at line 19-20). Task 2 modifies modules/search/src/service/mod.rs (line 91), modules/search/Cargo.toml (line 94), common/src/db/query.rs (line 27). Task 3 modifies modules/search/src/service/mod.rs (line 91), modules/search/src/endpoints/mod.rs (line 93), common/src/model/paginated.rs (line 31), creates modules/search/src/model/mod.rs (new but follows module pattern convention). Task 4 modifies modules/search/src/endpoints/mod.rs (line 93), modules/search/src/service/mod.rs (line 91), common/src/db/query.rs (line 27), creates modules/search/src/model/filters.rs (new file under the model dir created in Task 3). Task 5 modifies tests/api/search.rs (line 113). All modified files exist in the manifest. Created files follow established naming patterns (migration m0002 follows m0001 pattern; model/mod.rs follows module convention). No invented paths detected."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference: migration/src/m0001_initial/mod.rs, modules/fundamental/src/advisory/model/summary.rs (AdvisorySummary), modules/fundamental/src/package/model/summary.rs, entity/src/package_license.rs, migration/src/lib.rs. Task 2 references: modules/search/src/service/mod.rs, common/src/db/query.rs (filtering and pagination helpers), common/src/error.rs (AppError), common/src/model/paginated.rs (pagination pattern), common/src/db/limiter.rs (connection pool limiter). Task 3 references: modules/search/src/service/mod.rs, modules/fundamental/src/advisory/model/summary.rs (AdvisorySummary severity field), modules/search/src/model/mod.rs, modules/search/src/endpoints/mod.rs, common/src/error.rs. Task 4 references: modules/search/src/model/filters.rs, modules/search/src/endpoints/mod.rs, modules/fundamental/src/sbom/endpoints/list.rs, modules/fundamental/src/advisory/endpoints/list.rs, entity/src/advisory.rs, entity/src/package_license.rs, common/src/db/query.rs, common/src/error.rs. Task 5 references: tests/api/search.rs, tests/api/sbom.rs, tests/api/advisory.rs, common/src/model/paginated.rs, and specific test patterns like assert_eq!(resp.status(), StatusCode::OK)."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 5 tasks have '## Target Branch' followed by 'main': Task 1 lines 5-6, Task 2 lines 5-6, Task 3 lines 5-6, Task 4 lines 5-6, Task 5 lines 5-6."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}
