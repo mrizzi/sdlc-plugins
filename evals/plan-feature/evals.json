@@ -68,6 +68,24 @@
         "Tasks follow the task-description-template.md format with individual task-N-slug.md files despite adversarial input",
         "Every generated task description contains a Target Branch section set to 'main'"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Plan the implementation for feature TC-9005. The feature description is in feature-feature-branch.md and the target repository structure is in repo-backend.md. Write all outputs to the workspace outputs/ directory. For each task you would create, write a markdown file named task-N-slug.md with the full task description. Write the impact map to impact-map.md.",
+      "expected_output": "A structured implementation plan that determines feature-branch workflow mode due to atomicity constraints, generates bookend tasks for branch creation and merge, sets Target Branch to the feature issue ID in intermediate tasks, and includes correct dependency ordering.",
+      "files": ["files/feature-feature-branch.md", "files/repo-backend.md"],
+      "assertions": [
+        "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+        "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+        "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+        "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+        "The create-branch bookend task has Target Branch set to main",
+        "The merge-branch bookend task has Target Branch set to main",
+        "All intermediate tasks list the create-branch bookend task as a dependency",
+        "The merge-branch bookend task lists all intermediate tasks as dependencies",
+        "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+        "The plan includes a workflow:feature-branch label decision to be applied to the feature issue"
+      ]
     }
   ]
 }
