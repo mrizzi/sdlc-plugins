@@ -407,7 +407,61 @@ Once the user approves the map, post it as a comment on the Jira feature issue u
 
 jira.add_comment(<jira-issue-id>, <impact-map>)
 
-**Important:** The Repository Impact Map is an input for Jira task creation (Step 5), not a trigger to start coding. Do not implement any changes — proceed to Step 5.
+**Important:** The Repository Impact Map is an input for Jira task creation (Step 5), not a trigger to start coding. Do not implement any changes — proceed to Step 4.5.
+
+## Step 4.5 – Determine Workflow Mode
+
+After the Repository Impact Map is approved, determine whether the feature requires
+**feature-branch mode** (all-or-nothing delivery) or **direct-to-main mode** (incremental
+delivery). This decision governs how tasks are generated in Step 5.
+
+### Decision criteria
+
+Analyze the feature requirements and the Repository Impact Map to determine if any task
+PR would leave `main` in a broken state without the others. Evaluate the following
+atomicity indicators:
+
+1. **Coordinated schema migrations** — multiple tasks modify the same database schema or
+   data model in a way that requires all changes to land together (e.g., a migration adds
+   a column that another task's code depends on).
+2. **Breaking API changes** — one task modifies an API contract (request/response shape,
+   endpoint path, authentication) that another task's code consumes, such that merging
+   only one side would break the integration.
+3. **Cross-cutting refactors** — a structural change (rename, module reorganization,
+   shared type change) spans multiple tasks and partial delivery would leave the codebase
+   in an inconsistent state.
+4. **Tightly coupled feature components** — the feature consists of frontend and backend
+   changes where neither side functions independently (e.g., a new UI page that requires
+   a new API endpoint that does not yet exist).
+
+### Decision output
+
+- If **one or more** atomicity indicators are present: select `feature-branch` mode.
+- If **no** atomicity indicators are identified: select `direct-to-main` mode.
+
+**Default:** `direct-to-main` when no atomicity constraint is identified. This preserves
+backward compatibility — features that do not require coordinated delivery behave exactly
+as before.
+
+**Determinism requirement:** the same feature description and Repository Impact Map should
+produce the same mode conclusion. Base the decision on structural properties of the
+changes (cross-task data dependencies, API contract breaks), not on subjective assessment
+of risk.
+
+### Record the decision
+
+Post the workflow mode decision as a comment on the Jira feature issue (or append it to
+the impact map comment). Include:
+
+- The selected mode (`feature-branch` or `direct-to-main`)
+- The rationale: which atomicity indicators were found (or that none were found)
+- For `feature-branch` mode: which specific tasks are interdependent and why
+
+Use:
+
+jira.add_comment(<jira-issue-id>, <workflow-mode-decision>)
+
+Proceed to Step 5 with the selected workflow mode.
 
 ## Step 5 – Generate Jira Tasks
 
@@ -493,6 +547,69 @@ endpoint.
 > Verify these contracts against the backend repo during implementation using the
 > implement-task cross-repo API verification step.
 
+### Target Branch assignment
+
+Every generated task description MUST include a `## Target Branch` section — this is a
+mandatory section per the task description template. The value depends on the workflow
+mode determined in Step 4.5:
+
+- **`direct-to-main` mode:** set Target Branch to `main` in every task.
+- **`feature-branch` mode:** set Target Branch to the feature issue ID (e.g., `TC-4418`)
+  in every **intermediate** task. Bookend tasks (see below) use `main` as their Target
+  Branch because they operate on the main branch directly.
+
+### Bookend task generation (feature-branch mode only)
+
+When the workflow mode is `feature-branch`, generate two additional bookend tasks that
+bracket the intermediate implementation tasks:
+
+**First task — create feature branch:**
+
+- **Summary:** `Create feature branch <feature-id> from main`
+- **Description sections:**
+  - `## Repository` — the primary repository for the feature
+  - `## Target Branch` — `main` (this task branches FROM main)
+  - `## Bookend Type` — `create-branch`
+  - `## Description` — Create and push the feature branch `<feature-id>` from the
+    latest `main`. All subsequent implementation tasks will target this branch.
+  - `## Acceptance Criteria` — the feature branch `<feature-id>` exists and is pushed
+    to the remote
+  - `## Test Requirements` — verify the branch exists on the remote after push
+- All other template sections (Files to Modify, Implementation Notes, etc.) are omitted.
+- All intermediate tasks MUST list this task in their `## Dependencies` section.
+
+**Last task — merge feature branch:**
+
+- **Summary:** `Merge feature branch <feature-id> to main`
+- **Description sections:**
+  - `## Repository` — the primary repository for the feature
+  - `## Target Branch` — `main` (this task creates a PR TO main)
+  - `## Bookend Type` — `merge-branch`
+  - `## Description` — Create a PR to merge feature branch `<feature-id>` into `main`.
+    The PR description should summarize all changes made across the feature's tasks.
+  - `## Acceptance Criteria` — a PR from `<feature-id>` to `main` is open and ready
+    for review
+  - `## Test Requirements` — verify all intermediate task PRs have been merged into
+    the feature branch before creating the merge PR
+- All other template sections (Files to Modify, Implementation Notes, etc.) are omitted.
+- This task MUST list all intermediate tasks in its `## Dependencies` section.
+
+### Bookend task idempotency guard
+
+Before generating bookend tasks, check the feature issue's existing "incorporates" links
+for tasks whose summaries contain "Create feature branch" or "Merge feature branch".
+
+1. Inspect the feature issue's `issuelinks` for outward links of type "Incorporates".
+2. For each linked task, check if its summary contains "Create feature branch" or
+   "Merge feature branch".
+3. If existing bookend tasks are found: skip bookend task creation entirely and log
+   that existing bookend tasks were detected (e.g., "Bookend tasks already exist:
+   PROJ-100 (create-branch), PROJ-105 (merge-branch) — skipping generation").
+4. If no existing bookend tasks are found: proceed with bookend task generation.
+
+This guard prevents duplicate bookend tasks when plan-feature is re-run on a feature
+that already has bookend tasks from a previous run.
+
 ## Step 6 – Create Tasks in Jira
 
 ### 6a – Create the tasks
@@ -509,6 +626,19 @@ additional_fields: { "labels": ["ai-generated-jira"] }
 ```
 
 As each task is created, record a mapping of **task number/title → Jira key** (e.g. "Task 1 — Add CSV endpoint" → PROJ-231). This mapping is needed for link creation below.
+
+When the workflow mode is `feature-branch`, add the `workflow:feature-branch` label to
+the **feature issue** (not the individual tasks) after all tasks are created:
+
+```
+jira.edit_issue(
+  <feature-issue-key>,
+  fields={ "labels": [<existing-labels>, "workflow:feature-branch"] }
+)
+```
+
+Preserve any existing labels on the feature issue — append `workflow:feature-branch` to
+the current label list rather than replacing it.
 
 ### 6b – Create issue links
 
