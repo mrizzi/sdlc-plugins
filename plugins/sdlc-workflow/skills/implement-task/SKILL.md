@@ -119,6 +119,7 @@ jira.get_issue(<jira-issue-id>)
 
 Parse the structured description expecting these sections:
 - **Repository** — which repo to work in
+- **Target Branch** — the branch to use as PR base (mandatory)
 - **Description** — what to achieve
 - **Files to Modify** — existing files to change
 - **Files to Create** — new files to add
@@ -128,6 +129,7 @@ Parse the structured description expecting these sections:
 - **Test Requirements** — tests to write or update
 - **Target PR** — an existing PR URL to add commits to (optional, used for review feedback fixes)
 - **Review Context** — the original review comment that triggered this task (optional)
+- **Bookend Type** — `create-branch` or `merge-branch` for feature branch bookend tasks (optional)
 - **Dependencies** — prerequisite tasks (verify they are Done)
 
 Also capture the issue's `webUrl` field from the API response (e.g. `https://redhat.atlassian.net/browse/PROJ-231`). This URL will be used later to create a clickable link in the PR description.
@@ -141,6 +143,22 @@ Steps 5, 10, and 11.
 
 When Target PR is present, the task is a review feedback fix — the implementation adds
 commits to the existing PR branch instead of creating a new branch and PR.
+
+### Target Branch extraction
+
+Extract the branch name from the **Target Branch** section. This is mandatory — every
+task description must include it. The value is a single branch name (e.g., `main` for
+direct-to-main workflow, or a feature issue ID like `TC-4418` for feature-branch workflow).
+Store the value for use in Steps 5 and 10.
+
+### Bookend Type extraction
+
+If the task description contains a **Bookend Type** section, extract the value
+(`create-branch` or `merge-branch`). Store the value for use in Steps 5, 10, and 11.
+
+When Bookend Type is present, the task is a feature-branch bookend — it performs
+branch or PR operations only and skips normal implementation steps. See
+**Step 5.5 – Bookend Task Handling** for the full skip logic.
 
 If any required section is missing or the description doesn't follow the template, list the
 gaps, ask the user for clarification, and **stop execution immediately** — do not proceed
@@ -327,16 +345,24 @@ For each test file being created or modified:
 
 ## Step 5 – Create Branch
 
-**Default flow (no Target PR):**
+**Default flow (no Target PR, no Bookend Type):**
 
-Create a feature branch named after the Jira issue:
+Check out the target branch, pull latest changes, and create a task branch named
+after the Jira issue:
 
+```
+git checkout <target-branch>
+git pull
 git checkout -b <jira-issue-id>
+```
+
+Where `<target-branch>` is the value extracted from the Target Branch section in Step 1.
 
 **Target PR flow:**
 
 When Target PR is present (parsed in Step 1), check out the existing PR branch
-instead of creating a new one:
+instead of creating a new one. Target PR takes precedence over Target Branch when
+both are present.
 
 1. Resolve the PR's head branch name:
    ```
@@ -349,6 +375,44 @@ instead of creating a new one:
    ```
 
 This ensures the fix commits are added to the existing PR branch.
+
+**Create-branch bookend flow:**
+
+When Bookend Type is `create-branch`, create and push the feature branch from main.
+The branch name is the feature issue ID (from the parent feature), not this task's
+Jira issue ID:
+
+```
+git checkout main
+git pull
+git checkout -b <feature-branch-name>
+git push -u origin <feature-branch-name>
+```
+
+After pushing, skip to Step 5.5 (Bookend Task Handling).
+
+## Step 5.5 – Bookend Task Handling
+
+When the task has a Bookend Type (parsed in Step 1), it performs branch or PR
+operations only — normal implementation steps are skipped.
+
+**Create-branch bookend (`create-branch`):**
+
+After creating and pushing the feature branch in Step 5, skip Steps 6–10 entirely.
+Proceed directly to Step 11 with the following differences:
+- Do **not** set the Git Pull Request custom field (there is no PR).
+- Add a Jira comment stating that the feature branch was created, including the
+  branch name.
+- Transition the task to **Done** (not In Review, since there is no PR to review).
+
+**Merge-branch bookend (`merge-branch`):**
+
+Skip Steps 4–9 entirely. Proceed directly to Step 10 with the merge-branch
+bookend flow (create a PR from the feature branch to main). Then continue to
+Step 11 to update Jira with the PR link and transition to In Review.
+
+For merge-branch, Step 3 (assign and transition to In Progress) still runs
+before skipping to Step 10.
 
 ## Step 6 – Implement Changes
 
@@ -900,10 +964,17 @@ Use a scope when relevant (e.g. `feat(api): add AIBOM endpoint`).
 The footer MUST reference the Jira issue ID.
 Always include `--trailer="Assisted-by: Claude Code"` to attribute AI assistance.
 
-**Default flow (no Target PR):**
+**Default flow (no Target PR, no Bookend Type):**
 
-Push the branch and open a pull request. In the PR description, use a Markdown link
-for the "Implements" line so the Jira issue is clickable:
+Push the branch and open a pull request. Always specify `--base <target-branch>`
+explicitly to ensure the PR targets the correct branch:
+
+```
+gh pr create --base <target-branch> ...
+```
+
+In the PR description, use a Markdown link for the "Implements" line so the Jira
+issue is clickable:
 
 Implements [<JIRA-ID>](<webUrl>)
 
@@ -930,6 +1001,19 @@ instead of creating a new PR:
    Add the current task's Jira issue ID to the PR description's Summary section
    (e.g., a new bullet point describing the fix). Preserve the existing PR description
    content — only append to the Summary bullets.
+
+**Merge-branch bookend flow:**
+
+When Bookend Type is `merge-branch`, create a PR from the feature branch to main.
+No new commits are needed — the PR aggregates all commits already on the feature
+branch:
+
+```
+gh pr create --base main --head <feature-branch-name> ...
+```
+
+In the PR description, reference the feature issue and list the tasks that were
+implemented on the feature branch.
 
 ## Step 11 – Update Jira
 
@@ -976,6 +1060,21 @@ Include:
 Transition the task:
 
 jira.transition_issue → In Review
+
+**Create-branch bookend flow:**
+
+When Bookend Type is `create-branch`:
+- Skip the Git Pull Request custom field update (there is no PR).
+- Add a Jira comment stating the feature branch was created, including the branch name.
+- Transition the task to **Done** (not In Review).
+
+**Merge-branch bookend flow:**
+
+When Bookend Type is `merge-branch`:
+- Update the Git Pull Request custom field with the merge PR URL (if configured).
+- Add a Jira comment with the merge PR link and a summary of the feature branch
+  being merged.
+- Transition the task to **In Review**.
 
 ## Important Rules
 
