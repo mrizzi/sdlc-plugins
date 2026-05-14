@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "preview.md line 5: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 9: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "preview.md does not contain the heading '## Background and Strategic Fit' anywhere in its 21 lines."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Goals'",
+      "passed": true,
+      "evidence": "preview.md does not contain the heading '## Goals' anywhere in its 21 lines."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "preview.md does not contain the heading '## Non-Functional Requirements' anywhere in its 21 lines."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Use Cases'",
+      "passed": true,
+      "evidence": "preview.md does not contain the heading '## Use Cases' anywhere in its 21 lines."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "preview.md does not contain the heading '## Customer Considerations' anywhere in its 21 lines."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "preview.md does not contain the heading '## Customer Information/Supportability' anywhere in its 21 lines."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "preview.md does not contain the heading '## Documentation Considerations' anywhere in its 21 lines."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'",
+      "passed": true,
+      "evidence": "jira-create.md line 17: '**Note:** No assignee is included. The user chose to leave the Feature unassigned.' The createJiraIssue call has no assignee parameter in additional_fields."
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 13: '\"labels\": [\"ai-generated-jira\"]'"
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

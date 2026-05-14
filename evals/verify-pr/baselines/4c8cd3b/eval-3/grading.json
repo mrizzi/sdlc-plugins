@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md contains '## Classification: Code Change Request' and '**Action**: Create sub-task (subtask-30001.md)'. subtask-30001.md exists with the transaction wrapping task description. report.md row for 30001 shows 'Code change request -- wrap updates in transaction | Yes (subtask-30001.md)'."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md contains '## Classification: Code Change Request (upgraded from suggestion)' and '**Action**: Create sub-task (subtask-30002.md)'. subtask-30002.md exists with the index addition task. report.md row for 30002 shows 'Code change request (upgraded from suggestion) -- add partial index | Yes (subtask-30002.md)'."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md contains '## Classification: Nit' and '**Action**: No sub-task created. This is a nit-level comment that does not warrant a follow-up task.' No subtask-30003.md file exists. report.md row for 30003 shows 'Nit -- rename context message | No'."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md contains '## Classification: Question' and '**Action**: No sub-task created. This is a question requiring author/team clarification, not an actionable code change request.' No subtask-30004.md file exists. report.md row for 30004 shows 'Question -- GET behavior for deleted SBOMs | No'."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains sections: '## Repository' (trustify-backend), '## Description' (wrap three UPDATE statements...), '## Files to Modify' (modules/fundamental/src/sbom/service/sbom.rs), '## Implementation Notes' (SeaORM transaction API details), '## Acceptance Criteria' (4 checkbox items). subtask-30002.md contains sections: '## Repository' (trustify-backend), '## Description' (add partial index...), '## Files to Modify' (migration/src/m0042_sbom_soft_delete/mod.rs), '## Implementation Notes' (SeaORM migration API details), '## Acceptance Criteria' (4 checkbox items)."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'. subtask-30002.md contains '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains '## Review Context' with 'Reviewer **reviewer-a** commented on `modules/fundamental/src/sbom/service/sbom.rs` (line 60):' followed by the full quoted comment text about transaction wrapping. subtask-30002.md contains '## Review Context' with 'Reviewer **reviewer-a** commented on `migration/src/m0042_sbom_soft_delete/mod.rs` (line 14):' followed by the full quoted comment text about adding an index including the SQL code block."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only classification files (review-30001.md through review-30004.md), sub-task description files (subtask-30001.md, subtask-30002.md), and a report (report.md). All output files are markdown analysis/description documents. No source code files (.rs, .toml, etc.) appear in the outputs. The report confirms 'No out-of-scope files modified' under Scope Containment."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001, 30002, 30003, 30004) have individual classification files (review-30001.md through review-30004.md). The report.md contains a 'Review Comments Summary' table listing all four comments with their classifications and sub-task decisions. The Findings section references comments 30001, 30002, 30003, and 30004."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md states '## Verdict: FAIL -- Changes Requested by Reviewer' and notes 'the reviewer has requested changes (transaction wrapping and index addition) that must be addressed before the PR can be approved.' There is no mention of merging, auto-merging, or any merge action in the report."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": false,
+      "evidence": "The report.md has a '## Test Classification' section that states 'All test changes are in a **new test file** (`tests/api/sbom_delete.rs`). There are no modifications to existing test files.' However, it does not use the word 'ADDITIVE' or present this as a structured row with an explicit ADDITIVE classification label. The content conveys the same meaning but does not match the expected format of a 'Test Change Classification row with ADDITIVE'."
+    },
+    {
+      "text": "Convention upgrade eligibility is evaluated for review comment 30002 (index suggestion) — the review classification output (review-30002.md) or the report's Style/Conventions analysis explains whether the suggestion matches a documented or demonstrated project convention",
+      "passed": true,
+      "evidence": "review-30002.md explicitly evaluates convention alignment under the Reasoning section: '1. **Convention alignment**: Adding indexes for frequently-filtered columns is a standard database performance practice. The `list` endpoint filters by `deleted_at IS NULL` on every default query, making this a high-frequency query path. Omitting an index on a column used in a WHERE clause on every list request would create a performance concern in production as the table grows.' The classification concludes: 'Given the performance implications for the primary list endpoint and the alignment with standard database practices, this is upgraded from a suggestion to a code change request.'"
+    },
+    {
+      "text": "Review comment 30002 (index suggestion) results in a sub-task regardless of classification path — whether classified directly as code change request based on reviewer language, or upgraded from suggestion via convention analysis",
+      "passed": true,
+      "evidence": "review-30002.md classifies comment 30002 as 'Code Change Request (upgraded from suggestion)' with '**Action**: Create sub-task (subtask-30002.md)'. subtask-30002.md exists and contains a complete sub-task description for adding the partial index. report.md confirms in the Review Comments Summary table: '30002 | ... | Code change request (upgraded from suggestion) -- add partial index | Yes (subtask-30002.md)'."
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 1,
+    "total": 13,
+    "pass_rate": 0.923
+  }
+}

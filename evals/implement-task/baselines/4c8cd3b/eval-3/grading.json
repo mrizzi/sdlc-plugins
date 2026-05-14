@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md Step 6, File 2 states: 'Build the filter query using apply_filter: When the license parameter is present: Use apply_filter from common/src/db/query.rs to parse the comma-separated string and generate the appropriate SQL IN clause.' Step 9 data-flow trace confirms: 'apply_filter generates SQL IN clause'. reuse-analysis.md Reuse Candidate 1 explicitly states: 'The apply_filter function handles comma-separated multi-value query parameter parsing and SQL IN clause generation... This eliminates the need to write custom comma-parsing or SQL IN clause generation logic.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md Step 4, item 3 identifies 'modules/fundamental/src/advisory/endpoints/list.rs (Reuse Candidate)' with Purpose: 'Reference implementation — the advisory list endpoint already implements a severity query parameter using the same filtering pattern needed for license.' Step 6, File 1 states: 'Add an Option<String> field named license to the existing query struct (following the same pattern as the severity field in the advisory list endpoint’s query struct)'. reuse-analysis.md Reuse Candidate 2 details: 'Used as a structural template — the advisory endpoint’s pattern would be replicated for the package endpoint.'"
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md Step 4, item 5 identifies 'entity/src/package_license.rs (Reuse Candidate)' with Purpose: 'SeaORM entity mapping the package_license join table — links packages to their licenses. Required for the JOIN when filtering by license.' Step 6, File 2 states: 'JOIN through the package_license entity (entity/src/package_license.rs) to filter packages by their associated license SPDX identifiers. The join should use SeaORM’s JoinType::InnerJoin on the package-to-package_license relationship.' reuse-analysis.md Reuse Candidate 3 states: 'Used in PackageService::list() to construct the JOIN query when filtering by license. Instead of writing raw SQL, the implementation would use SeaORM’s type-safe join API with this entity... No modifications to the entity are needed.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three dedicated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 9-29), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs' (lines 33-50), and 'Reuse Candidate 3: entity/src/package_license.rs' (lines 54-80). Each section includes 'What it provides', 'How it would be reused', 'Reuse type', and 'Benefit' subsections with concrete explanations of application."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "The plan's Step 6 lists files to change: (1) modules/fundamental/src/package/endpoints/list.rs (MODIFY), (2) modules/fundamental/src/package/service/mod.rs (MODIFY), (3) tests/api/package_license_filter.rs (CREATE). It also mentions tests/api/mod.rs for module registration and docs/api.md for documentation. The plan does not propose modifying files outside what would be expected for this task (the two core files plus test file). Without the original task description's exact Files to Modify/Create lists available for comparison, we must evaluate based on what the plan itself claims. The plan's Step 9 self-verification states: 'git diff --name-only should show only the 3 files listed above (2 modified, 1 created), plus potentially tests/api/mod.rs for module registration and docs/api.md for documentation — flag any others for user approval.' The plan modifies only package endpoint, package service, and creates a test file, plus module registration - all directly related. However, since I cannot verify against the original task's exact scope definition, I must note the plan is internally consistent but the docs/api.md and tests/api/mod.rs additions go beyond a strict 3-file scope. The plan itself acknowledges these as ancillary and flags them. Given that module registration is mechanically required and docs are standard, and the plan explicitly flags anything beyond the core 3 files, this passes on a reasonable interpretation."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan consistently references reusing apply_filter directly rather than creating new utility functions. plan.md Step 6, File 2: 'Use apply_filter from common/src/db/query.rs to parse the comma-separated string'. reuse-analysis.md Reuse Candidate 1: 'Reuse type: Direct invocation — no modification to apply_filter is needed' and 'This eliminates the need to write custom comma-parsing or SQL IN clause generation logic.' The plan does not propose any new utility functions for parsing or filtering. The Reuse Impact Summary confirms: 'apply_filter | Direct invocation | Comma-separated parsing, SQL IN clause generation' under 'New Code Avoided'."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

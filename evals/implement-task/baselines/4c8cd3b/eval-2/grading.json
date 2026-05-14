@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Lines 24 and 29-38: The response explicitly lists 'Implementation Notes' as '**MISSING**' in the parsed task table, and includes a dedicated subsection titled 'Missing Implementation Notes' which states: 'The task description does not include an **Implementation Notes** section. This section is critical for a search feature because it specifies the technical approach the implementation should follow.' It also cites the constraint: 'If the structured description is incomplete, ask the user for clarification and stop execution immediately.'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Lines 49-55: The response includes a 'Vague Acceptance Criteria' subsection that specifically calls out both phrases: '\"Search results are relevant\" -- This is not actionable. \"Relevant\" is undefined.' and '\"Performance is acceptable\" -- This provides no measurable threshold. \"Acceptable\" could mean under 100ms, under 1 second, or under 5 seconds.'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Lines 58-66: The response includes a 'Vague Test Requirements' subsection that states: 'The test requirements state only \"Test that search works correctly.\" This does not define what \"correctly\" means.' It then lists specific missing specifications including edge cases, expected ordering, pagination, error handling, performance testing, and test patterns."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 68-70: The response includes a section 'Execution Halted -- Clarifying Questions' that states: 'Per the skill's rules, I am stopping execution immediately because the structured description is incomplete. I am not proceeding with branching, implementation planning, or code changes.' The response then lists 6 clarifying questions (lines 72-96) and ends with 'Please provide clarification on these points so I can proceed with a correct and complete implementation.' No implementation plan, branching, or code changes were produced."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks 6 specific clarifying questions. Question 2 (line 79) asks 'Which fields should be searchable?' covering package name, version, license, description, and related entities. Question 4 (line 83) asks 'What does \"relevant\" mean for search result ranking?' covering relevance score, exact vs partial match ordering, and reuse of existing relevance models. Question 5 (line 85) asks 'What is the concrete performance requirement?' covering maximum response time, expected dataset size, and optimization strategy."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
