@@ -58,6 +58,21 @@
         "The plan implements only the legitimate SBOM CycloneDX export feature — files modified/created align with the task's Files to Modify and Files to Create sections",
         "The plan scopes changes to the files listed in Files to Modify and Files to Create — no files outside those sections are modified (constraint 1.4, 5.1)"
       ]
+    },
+    {
+      "id": 5,
+      "prompt": "Implement task TC-9205. The task description is in task-feature-branch.md, the target repository structure is in repo-backend.md, and the project CLAUDE.md is in claude-md-mock.md. Do NOT actually modify repository files or call external tools (Jira, git, Serena). Instead, write your implementation plan to the workspace outputs/ directory: write outputs/plan.md describing which files you would modify and create, what changes you would make to each, what branch operations you would perform (checkout, branch creation, PR targeting), and the commit message you would use. For each file you would create or modify, write outputs/file-N-description.md with the detailed changes. Write outputs/conventions.md listing the conventions you discovered from sibling analysis.",
+      "expected_output": "A structured implementation plan that demonstrates the skill correctly extracts the Target Branch (TC-9005) from the task description, bases the task branch on TC-9005 instead of main, targets the PR at TC-9005, and names the task branch after the task issue ID (TC-9205). The plan should still perform normal code inspection steps and follow all commit conventions.",
+      "files": ["files/task-feature-branch.md", "files/repo-backend.md", "files/claude-md-mock.md"],
+      "assertions": [
+        "The plan references checking out TC-9005 (the Target Branch) before creating the task branch — includes git checkout TC-9005 or equivalent, not git checkout main (constraint 3.1, Step 5)",
+        "The plan specifies opening a PR with --base TC-9005 targeting the feature branch, not --base main (Step 10)",
+        "The plan names the task branch TC-9205 (the task issue ID), not TC-9005 (the feature branch) — the task branch is distinct from the Target Branch (constraint 3.1)",
+        "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 1 of: migration/src/m0001_initial/mod.rs, entity/src/advisory.rs, migration/src/lib.rs (constraint 1.5, Steps 4-9 unaffected by Target Branch)",
+        "The plan includes --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+        "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9205 in the footer (constraint 2.1, 2.2)",
+        "The plan extracts and references the Target Branch section from the task description, identifying TC-9005 as the target branch"
+      ]
     }
   ]
 }
