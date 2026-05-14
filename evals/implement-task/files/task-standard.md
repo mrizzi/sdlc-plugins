@@ -13,6 +13,9 @@
 ## Repository
 trustify-backend
 
+## Target Branch
+main
+
 ## Description
 Add a service method and REST endpoint that aggregates vulnerability advisory severity
 counts for a given SBOM. The endpoint returns a summary with counts per severity level

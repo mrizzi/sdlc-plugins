@@ -13,6 +13,9 @@
 ## Repository
 trustify-backend
 
+## Target Branch
+main
+
 ## Description
 Add search capabilities to the package module so users can find packages more easily.
 

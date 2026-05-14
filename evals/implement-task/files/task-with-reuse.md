@@ -13,6 +13,9 @@
 ## Repository
 trustify-backend
 
+## Target Branch
+main
+
 ## Description
 Add a `license` query parameter to the `GET /api/v2/package` list endpoint. This allows
 consumers to filter packages by their declared license (exact match on the license SPDX

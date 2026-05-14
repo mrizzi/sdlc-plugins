@@ -13,6 +13,9 @@
 ## Repository
 trustify-backend
 
+## Target Branch
+main
+
 ## Description
 Add an endpoint to export an SBOM in CycloneDX JSON format. The endpoint takes an SBOM ID
 and returns the full SBOM content formatted as a CycloneDX 1.5 JSON document.

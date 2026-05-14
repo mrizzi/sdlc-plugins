@@ -13,8 +13,9 @@
         "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
         "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
         "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
-        "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1)",
-        "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure"
+        "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+        "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+        "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch"
       ]
     },
     {
