@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md Step 6 File 2 states: 'use apply_filter from common/src/db/query.rs to parse the comma-separated value and generate a SQL IN clause' with code example 'query = apply_filter(query, package_license::Column::License, license_value)?;'. reuse-analysis.md Reuse Candidate 1 explicitly covers apply_filter for 'Parsing a comma-separated string into individual values (e.g., \"MIT,Apache-2.0\" -> [\"MIT\", \"Apache-2.0\"])' and states 'Zero new code: No new parsing or SQL generation logic needs to be written.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md Step 4 Code Inspection Plan item 3: 'modules/fundamental/src/advisory/endpoints/list.rs (sibling/reuse) — the advisory list endpoint with the existing severity filter. This is the structural template for the license filter implementation.' plan.md Step 6 File 1: 'This follows the same pattern as the severity field in the advisory list endpoint's Query struct.' reuse-analysis.md Reuse Candidate 2 provides a detailed table mapping advisory pattern elements to package implementation: 'severity: Option<String> in Query struct' -> 'license: Option<String> in Query struct', etc."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md Step 6 File 2 shows 'use entity::package_license;' and 'query = query.join(JoinType::InnerJoin, package::Relation::PackageLicense.def());' using the existing entity. reuse-analysis.md Reuse Candidate 3 explicitly covers entity/src/package_license.rs stating: 'Existing schema mapping: The entity already maps to the database table — no raw SQL, no manual column references, no risk of column name typos.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three dedicated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 11-59), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs (severity filter pattern)' (lines 63-115), and 'Reuse Candidate 3: entity/src/package_license.rs' (lines 119-168). Each section includes 'What it provides', 'How it will be used' with code examples, 'Why reuse over writing new code', and 'Validation needed' subsections."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": false,
+      "evidence": "plan.md Files Summary table lists 4 files: 'modules/fundamental/src/package/endpoints/list.rs' (MODIFY), 'modules/fundamental/src/package/service/mod.rs' (MODIFY), 'tests/api/package_license_filter.rs' (CREATE), and 'docs/api.md' (MODIFY). The task's parsed sections in Step 1 show Files to Modify as 'modules/fundamental/src/package/endpoints/list.rs, modules/fundamental/src/package/service/mod.rs' and Files to Create as 'tests/api/package_license_filter.rs'. The plan also proposes modifying 'docs/api.md' which is not listed in the task's Files to Modify section. Additionally, Step 6 mentions potentially modifying 'tests/Cargo.toml' for module registration ('The new test file ... needs to be registered in tests/Cargo.toml'), which is also outside the defined scope."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan consistently uses apply_filter directly rather than creating new utilities. plan.md Step 6 File 2 calls apply_filter directly. reuse-analysis.md Reuse Summary states: 'no new utility or helper code needs to be created' and 'The only net-new code is: 1. One new field in the Query struct, 2. One new parameter threaded through the handler to the service, 3. A conditional JOIN + filter call in the service method, 4. Input validation for the license parameter, 5. Integration tests.' No new parsing or filter utility functions are proposed anywhere in either output file."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  }
+}

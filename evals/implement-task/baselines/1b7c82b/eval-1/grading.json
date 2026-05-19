@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The plan and file descriptions reference inspecting existing code: file-2-description.md states 'Pattern match: Follows the exact pattern observed in endpoints/get.rs' and 'Error handling: Uses Result<T, AppError> with .context() wrapping, matching the established convention from common/src/error.rs'. file-4-description.md says 'Method signature follows existing fetch/list pattern' referencing advisory/service/advisory.rs. The conventions.md references model patterns from 'summary.rs, details.rs' (advisory/model/summary.rs). At least 3 of the 4 listed files are explicitly referenced as having been inspected."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan in plan.md lists exactly 3 files to create (severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs test) and 3 files to modify (advisory/service/advisory.rs, advisory/endpoints/mod.rs, advisory/model/mod.rs). The plan also explicitly states under 'Files Not Modified': 'server/src/main.rs -- routes auto-mount via module registration, no changes needed'. No unrelated files are listed for creation or modification."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md 'Files to Create' table lists: (1) modules/fundamental/src/advisory/model/severity_summary.rs, (2) modules/fundamental/src/advisory/endpoints/severity_summary.rs, (3) tests/api/advisory_summary.rs. Corresponding file descriptions (file-1-description.md, file-2-description.md, file-3-description.md) all have 'Action: CREATE'."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md 'Files to Modify' table lists: (4) modules/fundamental/src/advisory/service/advisory.rs, (5) modules/fundamental/src/advisory/endpoints/mod.rs, (6) modules/fundamental/src/advisory/model/mod.rs. Corresponding file descriptions (file-4-description.md, file-5-description.md, file-6-description.md) all have 'Action: MODIFY'."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md contains a commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format (type=feat, scope=advisory, description). The footer contains 'Implements TC-9201' which references the ticket number."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "plan.md line 78 states: 'With trailer: `--trailer=\"Assisted-by: Claude Code\"`'"
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "plan.md lines 9-10 state: 'Branch name: `TC-9201`' and 'Base branch: `main`'. This matches both the branch naming convention (using the ticket ID) and identifies the target/base branch as 'main'."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md explicitly identifies both patterns: (1) Under 'Error Handling': 'All endpoint handlers return Result<T, AppError> where AppError is defined in common/src/error.rs' and 'Errors are wrapped using .context() for contextual error messages'. (2) Under 'Module Structure': 'Every domain module follows the model/ + service/ + endpoints/ structure under modules/fundamental/src/<domain>/'. Additionally identifies many more patterns including endpoint patterns, service patterns, naming conventions, and test conventions."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "plan.md line 10 states: 'Base branch: `main`'. This is presented in the Branch section alongside the branch name, indicating it was extracted from the task description's Target Branch section."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

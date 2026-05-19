@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact map (impact-map.md) explicitly flags 7 ambiguities labeled A1 through A7. Critical ambiguities: A1 ('Search should be faster' -- no quantitative target), A2 ('Results should be more relevant' -- no definition of relevance), A3 ('Add filters' -- which filters?), A4 (Searchable entity scope undefined). Non-critical: A5 (no NFR target), A6 (no regression scope), A7 (full-text vs. structured search). This far exceeds the minimum of 3."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "The impact map has an 'Excluded Requirements' section stating: '\"Better UI\" (non-MVP) | No frontend repository is available in the project configuration. No Figma mockups or design specifications exist. UI improvements cannot be planned without a frontend codebase and visual designs. This requirement should be revisited when a frontend repository is onboarded and design mockups are provided.' The feature summary also notes: 'A fourth requirement (\"Better UI\") is excluded from this plan.'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All three task files follow the template format with the required sections: Repository, Target Branch, Description, Files to Modify, Files to Create (task 1), API Changes (tasks 2 and 3), Implementation Notes, Reuse Candidates, Acceptance Criteria, Test Requirements, Verification Commands, and Dependencies. The structure matches the template defined in task-description-template.md."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Task 1 states: 'Assumption (pending clarification -- see A1, A4 in impact map): All three entity types (SBOM, advisory, package) are in scope...' Task 2 states: 'Assumption (pending clarification -- see A2, A7 in impact map): \"More relevant\" is interpreted as PostgreSQL full-text ranking via ts_rank...' Task 3 states: 'Assumption (pending clarification -- see A3 in impact map): The feature description says \"some kind of filtering capability\" without specifying which filters. This task assumes the following filter set...' and 'These filter fields are assumptions. The exact set of filters should be confirmed with the product owner before implementation begins.'"
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "Task 1 line 1-2: '## Repository\\ntrustify-backend'. Task 2 line 1-2: '## Repository\\ntrustify-backend'. Task 3 line 1-2: '## Repository\\ntrustify-backend'. Each task has exactly one repository name."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "Task 1 contains: '## Target Branch' (line 4), '## Description' (line 7), '## Acceptance Criteria' (line 39), '## Test Requirements' (line 49). Task 2 contains: '## Target Branch' (line 4), '## Description' (line 7), '## Acceptance Criteria' (line 39), '## Test Requirements' (line 49). Task 3 contains: '## Target Branch' (line 4), '## Description' (line 7), '## Acceptance Criteria' (line 48), '## Test Requirements' (line 58)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Task 1 Files to Modify: entity/src/sbom.rs (repo-backend.md line 98), entity/src/advisory.rs (line 99), entity/src/package.rs (line 101), common/src/db/query.rs (line 27). Task 1 Files to Create: migration/src/m0002_fulltext_search/mod.rs -- follows the pattern of migration/src/m0001_initial/mod.rs (line 19). Task 2 Files to Modify: modules/search/src/service/mod.rs (line 91), modules/search/src/endpoints/mod.rs (line 93), tests/api/search.rs (line 113). Task 3 Files to Modify: modules/search/src/endpoints/mod.rs (line 93), modules/search/src/service/mod.rs (line 91), common/src/db/query.rs (line 27), tests/api/search.rs (line 113). All paths exist in the repo-backend.md manifest."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference: 'migration/src/m0001_initial/mod.rs' for migration patterns, 'migration/src/lib.rs' for registration, 'common/src/db/query.rs' for helper function placement, 'AppError' for error handling. Task 2 references: 'modules/search/src/service/mod.rs' for query rewrite, 'common/src/db/query.rs' helpers from Task 1, 'modules/fundamental/src/advisory/endpoints/list.rs' for query parameter patterns, 'common/src/model/paginated.rs' for PaginatedResults<T>. Task 3 references: 'common/src/db/query.rs' for existing filter patterns, 'modules/search/src/endpoints/mod.rs' for SearchFilters struct, 'modules/fundamental/src/advisory/endpoints/list.rs' for query parameter patterns, 'entity/src/advisory.rs' and 'modules/fundamental/src/advisory/model/summary.rs' for severity field, 'common/src/error.rs::AppError' for validation errors."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "Task 1 lines 4-5: '## Target Branch\\nmain'. Task 2 lines 4-5: '## Target Branch\\nmain'. Task 3 lines 4-5: '## Target Branch\\nmain'. All three tasks have Target Branch set to 'main'."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

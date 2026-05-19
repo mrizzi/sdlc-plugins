@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 3: \"Please run `/setup` to initialize the Project Configuration section in your CLAUDE.md before using this skill.\""
+    },
+    {
+      "text": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 1: \"The project's CLAUDE.md is missing the required **Project Configuration** section\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "Glob of outputs directory returned only response.md; preview.md does not exist."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "Glob of outputs directory returned only response.md; jira-create.md does not exist."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "Glob of outputs directory returned only response.md; jira-comment.md does not exist."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "response.md is 3 lines long and contains only a stop message and setup instructions. None of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, Non-Functional Requirements, Use Cases, Customer Considerations, Customer Information/Supportability, Documentation Considerations) appear in the file."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 25: 'Implementation Notes | **Missing** | No Implementation Notes section. This is critical — the task does not reference any existing code patterns, reusable utilities...' and lines 42-48 under '2. Missing: Implementation Notes section' detail the gap. Line 84 in the Clarification Needed section asks: 'Implementation Notes: Should this use the existing SearchService from modules/search/, or implement search directly in the package service?'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Line 26: 'Acceptance Criteria | Present but **vague** | All three criteria are non-specific and not verifiable: ... \"Search results are relevant\" (by what measure?), \"Performance is acceptable\" (what threshold?)'. Lines 49-53 under '3. Vague: Acceptance Criteria' further elaborate: '\"Search results are relevant\" — needs a definition of relevance (e.g., exact match ranked higher than partial match, results sorted by relevance score)' and '\"Performance is acceptable\" — needs a measurable threshold (e.g., < 200ms for 10,000 packages)'."
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Line 27: 'Test Requirements | Present but **vague** | \"Test that search works correctly\" — does not specify what test scenarios to cover (e.g., search by name, search with no results, pagination, empty query, special characters, performance).' Lines 54-61 under '4. Vague: Test Requirements' expand on this with specific examples of missing test case definitions."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "Lines 67-77 explicitly cite the implement-task rules about stopping execution, stating 'I am stopping execution and requesting clarification on TC-9202.' Lines 79-89 present a 'Clarification Needed' section with 5 specific questions. Line 89 confirms: 'No branches have been created. No code changes have been made. No Jira transitions have been performed.' No implementation plan is present in the output."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The Clarification Needed section (lines 81-88) asks 5 questions. Specifically: (1) Question 2 asks 'Which PackageSummary fields should be searchable?' — addressing which fields to search. (2) Line 52 identifies the relevance gap: '\"Search results are relevant\" — needs a definition of relevance (e.g., exact match ranked higher than partial match, results sorted by relevance score)' and question 3 asks 'Please provide specific, testable criteria with measurable outcomes' which covers relevance ranking. (3) Line 53 identifies the performance gap: '\"Performance is acceptable\" — needs a measurable threshold (e.g., < 200ms for 10,000 packages)' and question 3 also addresses this by requesting measurable outcomes for acceptance criteria."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
