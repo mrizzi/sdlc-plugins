@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md and reuse-analysis.md both explicitly reference calling apply_filter from common/src/db/query.rs. plan.md states 'Call apply_filter with the license string value. This function already handles parsing comma-separated values and generating the appropriate SQL IN clause. Do NOT write custom parsing or filtering logic.' reuse-analysis.md states 'No custom parsing or SQL generation code is written — apply_filter handles the full pipeline.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md states 'Follow the exact pattern used in modules/fundamental/src/advisory/endpoints/list.rs where the severity field is declared as an Option<String> in the advisory Query struct.' reuse-analysis.md: 'The advisory severity filter and the package license filter are structurally identical — both are optional string query parameters that filter a list endpoint using comma-separated values processed by apply_filter.'"
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md states 'The filter should target the license column via a JOIN to the package_license entity table (entity/src/package_license.rs). Use the existing SeaORM/entity relationship defined in package_license.rs to perform the join rather than writing raw SQL.' reuse-analysis.md confirms: 'the service JOINs through the package_license entity... no raw SQL is written and no new entity is created.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md has dedicated sections for all 3: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter', 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs', and 'Reuse Candidate 3: entity/src/package_license.rs'. Each includes what it provides, how it is reused, why reuse is appropriate, and where it is used."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "plan.md lists exactly: Modify list.rs and service/mod.rs; Create tests/api/package_license_filter.rs. The 'Scope Boundary' section states 'No other files are modified. The changes are strictly limited to the files listed in the task\\'s Files to Modify and Files to Create sections.'"
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md Scope Boundary: 'No new utility functions are created — all filtering logic is delegated to the existing apply_filter function.' reuse-analysis.md 'What is NOT created' section: 'No new query parameter parsing utilities (would duplicate apply_filter).'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

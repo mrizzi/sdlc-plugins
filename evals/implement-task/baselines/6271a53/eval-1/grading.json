@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The plan's 'Existing Code Inspection' section explicitly lists all 4 files as inspected: (1) advisory/endpoints/get.rs for endpoint pattern, (2) advisory/service/advisory.rs for service method structure, (3) advisory/model/summary.rs for model pattern, and (4) common/src/error.rs for AppError and .context() usage."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan lists exactly 3 files to create (severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs test) and 3 files to modify (advisory/service/advisory.rs, advisory/endpoints/mod.rs, advisory/model/mod.rs). A 'Files NOT Modified' section explicitly excludes server/src/main.rs."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md 'Files to Create' section lists: (1) modules/fundamental/src/advisory/model/severity_summary.rs, (2) modules/fundamental/src/advisory/endpoints/severity_summary.rs, (3) tests/api/advisory_summary.rs. Corresponding file descriptions (file-1 through file-3) all detail CREATE actions."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md 'Files to Modify' section lists: (4) advisory/service/advisory.rs, (5) advisory/endpoints/mod.rs, (6) advisory/model/mod.rs. Corresponding file descriptions (file-4 through file-6) detail MODIFY actions."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md commit message: 'feat(advisory): add severity aggregation service and endpoint' (Conventional Commits format). Footer includes 'Refs: TC-9201'."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "plan.md commit strategy section includes '--trailer=\"Assisted-by: Claude Code\"' in the commit command."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "plan.md header states 'Branch: TC-9201 (based on main)'. The branch name matches the Jira issue ID and the base branch matches the Target Branch section."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md identifies 9 conventions including: (1) 'Error Handling: Result<T, AppError> with .context() Wrapping' and (2) 'Module Structure: model/ + service/ + endpoints/ Pattern'. Also identifies naming conventions, endpoint handler patterns, route registration, service method patterns, model struct patterns, test patterns, and module registration."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "plan.md header: 'Branch: TC-9201 (based on main)'. The value 'main' is extracted from the Target Branch section of the task description."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

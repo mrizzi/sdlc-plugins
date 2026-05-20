@@ -1,0 +1,37 @@
+{
+  "assertions": [
+    {
+      "assertion": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "Line 1: 'Please run /setup first to configure your project' and Line 9: 'The /setup skill will walk you through adding the necessary configuration.'"
+    },
+    {
+      "assertion": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "Line 3: 'The CLAUDE.md file is missing the required \"Project Configuration\" section'"
+    },
+    {
+      "assertion": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "File listing of eval-3/outputs/ shows only response.md; preview.md does not exist."
+    },
+    {
+      "assertion": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "File listing of eval-3/outputs/ shows only response.md; jira-create.md does not exist."
+    },
+    {
+      "assertion": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "File listing of eval-3/outputs/ shows only response.md; jira-comment.md does not exist."
+    },
+    {
+      "assertion": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "response.md contains only error/guidance text about missing Project Configuration. None of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, Non-Functional Requirements, Use Cases, Customer Considerations, Customer Information/Supportability, Documentation Considerations) appear as headings in the file. The section names appear only in a bullet list describing what is missing from CLAUDE.md configuration."
+    }
+  ],
+  "passed": 6,
+  "failed": 0,
+  "pass_rate": 1.0
+}

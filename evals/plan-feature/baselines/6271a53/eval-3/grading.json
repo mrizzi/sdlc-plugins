@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "Tasks target both 'trustify-backend' and 'trustify-ui' repositories with at least one task per repo",
+      "passed": true,
+      "evidence": "Backend tasks: Task 1 (Repository: trustify-backend), Task 2 (Repository: trustify-backend), Task 3 (Repository: trustify-backend), Task 4 (Repository: trustify-backend), Task 8 (Repository: trustify-backend). Frontend tasks: Task 5 (Repository: trustify-ui), Task 6 (Repository: trustify-ui), Task 7 (Repository: trustify-ui). Both repositories are targeted with multiple tasks each."
+    },
+    {
+      "text": "Backend tasks have lower task numbers than the frontend tasks that depend on them",
+      "passed": true,
+      "evidence": "Backend implementation tasks are numbered 2, 3, 4. Frontend tasks are numbered 5, 6, 7. The dependency chain flows: Task 5 (frontend) depends on Task 1 (branch creation), Task 6 depends on Task 5, Task 7 depends on Task 6. All backend implementation tasks (2-4) have lower numbers than all frontend tasks (5-7), and the feature-branch workflow means frontend tasks implicitly depend on backend tasks being completed first via the branch."
+    },
+    {
+      "text": "Frontend tasks reference Figma design context mentioning specific PatternFly components and visual specifications",
+      "passed": true,
+      "evidence": "Task 6 (task-6-frontend-comparison-page.md) extensively references Figma design with specific PatternFly components: 'PatternFly Select with typeahead enabled', 'PatternFly Button variant=\"primary\"', 'PatternFly Dropdown with two items \"Export JSON\" and \"Export CSV\"', 'PatternFly ExpandableSection', 'PatternFly composable Table with sortable columns', 'Badge' with specific colors per section (green, red, blue, yellow), 'SeverityBadge', 'EmptyState' with 'CodeBranchIcon', 'Skeleton' placeholders, and 'Critical vulnerability rows have highlighted background'. Task 7 references 'PatternFly composable Table select pattern' and 'PatternFly Button variant=\"secondary\"'."
+    },
+    {
+      "text": "At least one frontend task explicitly depends on a backend task in its Dependencies section",
+      "passed": false,
+      "evidence": "Task 5 (trustify-ui) Dependencies: 'Depends on: Task 1 — Create feature branch TC-9003 from main' (Task 1 is a bookend branch creation task, not a backend implementation task). Task 6 Dependencies: 'Depends on: Task 5 — Add API types and client function for SBOM comparison' (another frontend task). Task 7 Dependencies: 'Depends on: Task 6 — Create SBOM comparison page with diff sections' (another frontend task). No frontend task (5, 6, or 7) has an explicit dependency on backend tasks 2, 3, or 4 in its Dependencies section."
+    },
+    {
+      "text": "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+      "passed": true,
+      "evidence": "Backend tasks reference paths from repo-backend.md: Task 2 references 'modules/fundamental/src/sbom/model/mod.rs', 'modules/fundamental/src/sbom/model/summary.rs', 'modules/fundamental/src/sbom/model/details.rs'. Task 3 references 'modules/fundamental/src/sbom/service/sbom.rs', 'entity/src/sbom_package.rs', 'entity/src/sbom_advisory.rs', 'common/src/error.rs'. Task 4 references 'modules/fundamental/src/sbom/endpoints/mod.rs', 'modules/fundamental/src/sbom/endpoints/get.rs', 'modules/fundamental/src/sbom/endpoints/list.rs'. Frontend tasks reference paths from repo-frontend.md: Task 5 references 'src/api/models.ts', 'src/api/rest.ts', 'src/hooks/useSboms.ts', 'src/api/client.ts'. Task 6 references 'src/pages/SbomDetailPage/SbomDetailPage.tsx', 'src/components/SeverityBadge.tsx', 'src/components/FilterToolbar.tsx', 'src/routes.tsx'. Task 7 references 'src/pages/SbomListPage/SbomListPage.tsx'."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 8 tasks have a '## Repository' section with a single repository name: Task 1: 'trustify-backend', Task 2: 'trustify-backend', Task 3: 'trustify-backend', Task 4: 'trustify-backend', Task 5: 'trustify-ui', Task 6: 'trustify-ui', Task 7: 'trustify-ui', Task 8: 'trustify-backend'. No task lists multiple repositories in its Repository section."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 8 tasks contain the required sections: Task 1 has '## Target Branch' (main), '## Description', '## Acceptance Criteria', '## Test Requirements'. Task 2 has '## Target Branch' (TC-9003), '## Description', '## Acceptance Criteria', '## Test Requirements'. Task 3 has all four sections. Task 4 has all four sections. Task 5 has all four sections. Task 6 has all four sections. Task 7 has all four sections. Task 8 has all four sections."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": true,
+      "evidence": "All file paths verified against manifests. Backend: Task 2 modifies 'modules/fundamental/src/sbom/model/mod.rs' (in repo-backend.md), creates 'modules/fundamental/src/sbom/model/comparison.rs' (parent dir in manifest). Task 3 modifies 'modules/fundamental/src/sbom/service/sbom.rs' (in manifest). Task 4 creates 'modules/fundamental/src/sbom/endpoints/compare.rs' (parent dir in manifest), modifies 'modules/fundamental/src/sbom/endpoints/mod.rs' (in manifest). Frontend: Task 5 modifies 'src/api/models.ts' and 'src/api/rest.ts' (both in repo-frontend.md), creates 'src/hooks/useSbomComparison.ts' (parent dir in manifest). Task 6 creates files under 'src/pages/SbomComparePage/' (follows manifest page pattern), modifies 'src/routes.tsx' (in manifest). Task 7 modifies 'src/pages/SbomListPage/SbomListPage.tsx' (in manifest). No invented paths found."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": false,
+      "evidence": "Task 1 (task-1-create-feature-branch.md) does not contain an Implementation Notes section at all. Task 8 (task-8-merge-feature-branch.md) also does not contain an Implementation Notes section. While these are bookend tasks where the template allows omitting inapplicable sections, the assertion states 'every task' must have Implementation Notes with specific file paths. Two of eight tasks lack this section entirely."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": false,
+      "evidence": "Only Tasks 1 and 8 have Target Branch set to 'main'. Tasks 2-7 all have Target Branch set to 'TC-9003': Task 2 '## Target Branch\\nTC-9003', Task 3 '## Target Branch\\nTC-9003', Task 4 '## Target Branch\\nTC-9003', Task 5 '## Target Branch\\nTC-9003', Task 6 '## Target Branch\\nTC-9003', Task 7 '## Target Branch\\nTC-9003'. Six of eight tasks do not have Target Branch set to 'main'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 3,
+    "total": 10,
+    "pass_rate": 0.7
+  }
+}

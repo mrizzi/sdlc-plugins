@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "All 5 task files contain every required section. Task 1: Repository (line 3), Target Branch (line 6), Description (line 9), Files to Create (line 13), Files to Modify (line 16), Implementation Notes (line 19), Acceptance Criteria (line 29), Test Requirements (line 34). Task 2: Repository (line 3), Target Branch (line 6), Description (line 9), Files to Modify (line 13), Implementation Notes (line 19), Acceptance Criteria (line 36), Test Requirements (line 43). Task 3: Repository (line 3), Target Branch (line 6), Description (line 9), Files to Create (line 13), Files to Modify (line 16), Implementation Notes (line 23), Acceptance Criteria (line 39), Test Requirements (line 46). Task 4: Repository (line 3), Target Branch (line 6), Description (line 9), Files to Modify (line 13), Implementation Notes (line 17), Acceptance Criteria (line 32), Test Requirements (line 37). Task 5: Repository (line 3), Target Branch (line 6), Description (line 9), Files to Create (line 13), Files to Modify (line 16), Implementation Notes (line 19), Acceptance Criteria (line 43), Test Requirements (line 49)."
+    },
+    {
+      "text": "Task count is between 3 and 10 inclusive",
+      "passed": true,
+      "evidence": "There are exactly 5 task files: task-1-advisory-severity-summary-model.md, task-2-sbom-service-severity-aggregation.md, task-3-advisory-summary-endpoint.md, task-4-cache-invalidation.md, task-5-integration-tests.md. 5 is between 3 and 10 inclusive."
+    },
+    {
+      "text": "All tasks reference repository 'trustify-backend'",
+      "passed": true,
+      "evidence": "Each task file's Repository section contains exactly 'trustify-backend': Task 1 line 3, Task 2 line 3, Task 3 line 3, Task 4 line 3, Task 5 line 3."
+    },
+    {
+      "text": "Task dependencies form a DAG with no circular dependencies",
+      "passed": true,
+      "evidence": "Dependency graph: Task 1 has no dependencies, Task 2 depends on Task 1, Task 3 depends on Task 2, Task 4 depends on Task 3, Task 5 depends on Task 3. This forms a tree: 1->2->3->4 and 3->5. No cycles exist."
+    },
+    {
+      "text": "Every task's Files to Modify and Files to Create reference paths plausible within the repo-backend.md structure",
+      "passed": true,
+      "evidence": "Files to Modify all exist in repo-backend.md manifest: modules/fundamental/src/sbom/model/mod.rs (Task 1), modules/fundamental/src/sbom/service/sbom.rs (Task 2), modules/fundamental/src/sbom/endpoints/mod.rs (Tasks 3, 4), modules/ingestor/src/graph/advisory/mod.rs (Task 4), tests/Cargo.toml (Task 5). Files to Create are new files in existing directory paths: modules/fundamental/src/sbom/model/advisory_summary.rs (Task 1, sibling to existing summary.rs and details.rs), modules/fundamental/src/sbom/endpoints/advisory_summary.rs (Task 3, sibling to existing list.rs and get.rs), tests/api/advisory_summary.rs (Task 5, sibling to existing sbom.rs and advisory.rs). All new files follow the module pattern of existing siblings in the manifest."
+    },
+    {
+      "text": "Impact map lists concrete, specific changes (not vague or abstract descriptions)",
+      "passed": true,
+      "evidence": "The impact-map.md lists 8 specific changes with concrete details: 'Add AdvisorySeveritySummary response model struct with fields critical, high, medium, low, total in the SBOM model module', 'Add service method on SbomService to query the sbom_advisory join table, join with advisory to read severity, deduplicate by advisory ID, and aggregate counts per severity level', 'Add GET /api/v2/sbom/{id}/advisory-summary endpoint handler', 'Register the new route in the SBOM endpoints module with 5-minute tower-http cache configuration', 'Add cache invalidation hook in the advisory ingestion pipeline', 'Add optional ?threshold query parameter support', 'Add integration tests for the new endpoint covering: success case, 404 for missing SBOM, cached response, and threshold filtering', 'Update API documentation to include the new endpoint path, parameters, and response shape'. Each change specifies concrete artifacts, field names, API paths, and technical details."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "Each task has a Repository section with exactly one repository name 'trustify-backend': Task 1 (line 3), Task 2 (line 3), Task 3 (line 3), Task 4 (line 3), Task 5 (line 3). No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 tasks contain all four required sections. Target Branch: Task 1 line 5, Task 2 line 5, Task 3 line 5, Task 4 line 5, Task 5 line 5. Description: Task 1 line 9, Task 2 line 9, Task 3 line 9, Task 4 line 9, Task 5 line 9. Acceptance Criteria: Task 1 line 28, Task 2 line 35, Task 3 line 38, Task 4 line 31, Task 5 line 42. Test Requirements: Task 1 line 33, Task 2 line 42, Task 3 line 45, Task 4 line 36, Task 5 line 48."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All Files to Modify paths exist verbatim in repo-backend.md: modules/fundamental/src/sbom/model/mod.rs (line 41), modules/fundamental/src/sbom/service/sbom.rs (line 46), modules/fundamental/src/sbom/endpoints/mod.rs (line 48), modules/ingestor/src/graph/advisory/mod.rs (line 83), tests/Cargo.toml (line 114). Files to Create are new files placed in directories that exist in the manifest: modules/fundamental/src/sbom/model/ (contains summary.rs, details.rs per lines 42-43), modules/fundamental/src/sbom/endpoints/ (contains list.rs, get.rs per lines 49-50), tests/api/ (contains sbom.rs, advisory.rs per lines 111-113). The new file names (advisory_summary.rs) follow the existing naming pattern of sibling files."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 Implementation Notes reference: 'modules/fundamental/src/sbom/model/summary.rs (SbomSummary)', 'modules/fundamental/src/sbom/model/details.rs (SbomDetails)', specific derive macros and serde attributes. Task 2 references: 'modules/fundamental/src/sbom/service/sbom.rs' for query patterns, 'entity/src/sbom_advisory.rs' and 'entity/src/advisory.rs' for join entities, 'common/src/db/query.rs' for query helpers, 'common/src/error.rs' for AppError, 'modules/fundamental/src/advisory/model/summary.rs' for severity modeling. Task 3 references: 'modules/fundamental/src/sbom/endpoints/get.rs' for handler patterns, 'modules/fundamental/src/sbom/endpoints/mod.rs' for route registration, Axum Query extractor, tower-http caching. Task 4 references: 'modules/ingestor/src/graph/advisory/mod.rs' for advisory ingestion flow, 'modules/ingestor/src/service/mod.rs' for IngestorService patterns, 'modules/fundamental/src/sbom/endpoints/mod.rs' for cache configuration. Task 5 references: 'tests/api/sbom.rs' and 'tests/api/advisory.rs' for test patterns, 'assert_eq!(resp.status(), StatusCode::OK)' assertion pattern, specific test fixture setup steps."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 5 tasks have Target Branch set to 'main': Task 1 line 6 'main', Task 2 line 6 'main', Task 3 line 6 'main', Task 4 line 6 'main', Task 5 line 6 'main'."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

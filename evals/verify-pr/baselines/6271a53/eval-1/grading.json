@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "report.md line 12: '| Acceptance Criteria | PASS | 5 of 5 criteria met (from Correctness) |'. All 5 criterion files (criterion-1.md through criterion-5.md) each contain '## Verdict: PASS'. Criterion 1 covers single license filter, criterion 2 covers comma-separated filter, criterion 3 covers 400 validation, criterion 4 covers pagination integration, and criterion 5 covers unchanged response shape."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "report.md line 7: '| Scope Containment | PASS | All 3 PR files match the task specification exactly (from Intent Alignment) |'. Detailed findings in report.md lines 31-35: 'Task \"Files to Modify\": modules/fundamental/src/package/endpoints/list.rs, modules/fundamental/src/package/service/mod.rs -- both present in the diff' and 'Task \"Files to Create\": tests/api/package.rs -- present in the diff as a new file' and 'Out-of-scope files: none' and 'Unimplemented files: none'."
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "report.md line 5: '| Review Feedback | N/A | No review comments |'. report.md line 6: '| Root-Cause Investigation | N/A | No sub-tasks created |'. No mention of sub-task creation anywhere in any output file."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All output files are report/analysis files (report.md, criterion-1.md through criterion-5.md). None of the outputs contain evidence of code file modifications. The report only reads the diff, analyzes it, and presents findings. No code edits, patches, or file write operations to source code are mentioned anywhere in the outputs."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'All checks pass. The implementation satisfies all 5 acceptance criteria, introduces no security concerns, and the change scope matches the task specification exactly.' No merge action is taken. The report presents findings and verdicts only. No 'gh pr merge', auto-merge, or approval action is mentioned anywhere in the outputs."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "report.md line 10: '| Sensitive Patterns | PASS | No secrets, credentials, or sensitive patterns detected in added lines (from Security) |'. Detailed findings in report.md lines 75-79: 'Scanned all added lines (+prefix) in the diff', 'No hardcoded passwords, API keys, tokens, private keys, cloud credentials, or database credentials found', 'No .env files added', 'The code uses spdx::Expression for parsing... all are framework/library calls with no sensitive data', 'Test file uses TestContext fixture with test seed data (\"MIT\", \"Apache-2.0\", etc.) -- no real credentials'."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | ADDITIVE | tests/api/package.rs is a new file with 4 new test functions (from Style/Conventions) |'. Detailed findings in report.md lines 162-167: 'tests/api/package.rs is a new file (not present on the base branch). It adds 4 new test functions with a total of approximately 80 lines of test code. New test files are inherently additive' and 'Semantic assessment: Pure coverage addition. No existing test files were modified or deleted.'"
+    },
+    {
+      "text": "The verification report assembles verdicts from all four domain sub-agents: Scope Containment, Diff Size, and Commit Traceability from Intent Alignment; Sensitive Patterns from Security; CI Status, Acceptance Criteria, and Verification Commands from Correctness; Test Quality and Test Change Classification from Style/Conventions",
+      "passed": true,
+      "evidence": "report.md summary table annotates each check with its domain: lines 7-8 '(from Intent Alignment)' for Scope Containment and Diff Size; line 9 '(from Intent Alignment)' for Commit Traceability; line 10 '(from Security)' for Sensitive Patterns; line 11 '(from Correctness)' for CI Status; line 12 '(from Correctness)' for Acceptance Criteria; line 13 '(from Style/Conventions)' for Test Quality; line 14 '(from Style/Conventions)' for Test Change Classification; line 15 '(from Correctness)' for Verification Commands. All four domains are represented. Line 173 confirms: 'Intent Alignment covers Scope Containment, Diff Size, and Commit Traceability. Security covers Sensitive Patterns. Correctness covers CI Status, Acceptance Criteria, and Verification Commands. Style/Conventions covers Test Quality... and Test Change Classification.'"
+    },
+    {
+      "text": "The report includes detailed findings with specific evidence for each domain — file-by-file scope comparison (Intent Alignment), line-level pattern scanning results (Security), per-criterion code-level verification (Correctness), and test quality assessment (Style/Conventions) — not just pass/fail verdicts in the summary table",
+      "passed": true,
+      "evidence": "report.md contains a 'Domain Sub-Agent Findings' section (line 23) with detailed subsections: Intent Alignment (lines 27-63) includes file-by-file scope comparison listing each file from task spec vs diff, line counts per file, and commit SHA details. Security (lines 67-81) includes line-level scanning results specifying what was scanned ('+' prefix lines), listing specific pattern categories checked (passwords, API keys, tokens, private keys, cloud credentials, database credentials), and noting framework calls and test data are clean. Correctness (lines 85-122) references 5 individual criterion files with per-criterion code-level verification including code snippets and specific function/method references. Style/Conventions (lines 126-169) includes per-test-function analysis for repetitive test detection, doc comment verification with exact comment text quoted, and structural summary with counts (+4 test functions, +8 assertions, +0 skip annotations, +0 mocks broadened)."
+    },
+    {
+      "text": "Review Feedback and Root-Cause Investigation verdicts are determined by the orchestrator independently from domain analysis — Review Feedback is N/A because no review comments exist, Root-Cause Investigation is N/A because no sub-tasks were created",
+      "passed": true,
+      "evidence": "report.md lines 5-6: '| Review Feedback | N/A | No review comments |' and '| Root-Cause Investigation | N/A | No sub-tasks created |'. These two rows appear in the summary table without domain attribution (no '(from ...)' suffix), unlike all other checks which are attributed to specific domains. This indicates they are determined by the orchestrator independently. The reasons match: Review Feedback is N/A because no review comments exist, and Root-Cause Investigation is N/A because no sub-tasks were created."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

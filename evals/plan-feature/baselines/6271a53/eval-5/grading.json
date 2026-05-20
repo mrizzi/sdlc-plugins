@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md line 20-22: 'Selected mode: feature-branch' with rationale citing 'Coordinated schema migrations', 'Cross-cutting refactors', and 'Tightly coupled feature components' -- all atomicity-based reasoning."
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Bookend Type\\ncreate-branch' (lines 7-8) and it is the first task (task-1)."
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-9-merge-feature-branch.md contains '## Bookend Type\\nmerge-branch' (lines 7-8) and it is the last task (task-9 of 9)."
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "Tasks 2-8 all have '## Target Branch\\nTC-9005': task-2 line 5-6, task-3 line 5-6, task-4 line 5-6, task-5 line 5-6, task-6 line 5-6, task-7 line 5-6, task-8 line 5-6."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md lines 4-5: '## Target Branch\\nmain'."
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-9-merge-feature-branch.md lines 4-5: '## Target Branch\\nmain'."
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-8) list Task 1 as a dependency: task-2 line 48 'Depends on: Task 1', task-3 lines 44-45 'Depends on: Task 1', task-4 line 42 'Depends on: Task 1', task-5 line 44 'Depends on: Task 1', task-6 line 45 'Depends on: Task 1', task-7 line 44 'Depends on: Task 1', task-8 lines 44-45 'Depends on: Task 1'."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-9-merge-feature-branch.md lines 25-31 lists dependencies on Tasks 2, 3, 4, 5, 6, 7, and 8 -- all seven intermediate tasks."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": false,
+      "evidence": "Task 1 (create-branch bookend) is missing Files to Modify, Files to Create, and Implementation Notes sections. Task 9 (merge-branch bookend) is also missing Files to Modify, Files to Create, and Implementation Notes sections. While bookend tasks may not need these sections, the assertion requires 'each task file' to contain them. Intermediate tasks 2-8 all have the required sections."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": false,
+      "evidence": "No mention of a 'workflow:feature-branch' label appears anywhere in the output files. The impact-map.md discusses the feature-branch workflow mode selection but does not reference applying a label to the feature issue. Searched all 10 output files and found no reference to 'label' or 'workflow:feature-branch'."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 2,
+    "total": 10,
+    "pass_rate": 0.8
+  }
+}

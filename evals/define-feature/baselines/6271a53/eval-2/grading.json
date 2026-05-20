@@ -1,0 +1,62 @@
+{
+  "assertions": [
+    {
+      "assertion": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "Line 3: '## Feature Overview' is present in preview.md"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "Line 11: '## Requirements' is present in preview.md"
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "The string '## Background and Strategic Fit' does not appear anywhere in preview.md. The file only contains Feature Overview and Requirements sections."
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '## Goals'",
+      "passed": true,
+      "evidence": "The string '## Goals' does not appear anywhere in preview.md."
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "The string '## Non-Functional Requirements' does not appear anywhere in preview.md."
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '## Use Cases'",
+      "passed": true,
+      "evidence": "The string '## Use Cases' does not appear anywhere in preview.md."
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "The string '## Customer Considerations' does not appear anywhere in preview.md."
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "The string '## Customer Information/Supportability' does not appear anywhere in preview.md."
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "The string '## Documentation Considerations' does not appear anywhere in preview.md."
+    },
+    {
+      "assertion": "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'",
+      "passed": true,
+      "evidence": "Line 15: '- **Assignee**: unassigned' in jira-create.md"
+    },
+    {
+      "assertion": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "Line 14: '- **Labels**: [\"ai-generated-jira\"]' in jira-create.md"
+    }
+  ],
+  "passed": 11,
+  "failed": 0,
+  "pass_rate": 1.0
+}
