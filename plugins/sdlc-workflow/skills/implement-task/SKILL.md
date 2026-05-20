@@ -253,9 +253,13 @@ Goals:
 
 ### CONVENTIONS.md lookup
 
-Check for a `CONVENTIONS.md` file at the repository root (using `list_dir`, `search_for_pattern`,
-or Glob). If present, read it and follow its conventions throughout implementation. This includes
-naming rules, directory structure for new files, code patterns, and test conventions.
+Look up the task's target repository in the **Repository Registry** (CLAUDE.md) and use
+the **Path** column to locate the repository root. Check for a `CONVENTIONS.md` file at
+that root using the Serena instance for the repository (`list_dir`, `search_for_pattern`).
+If no Serena instance is available, use Read or Glob with the absolute path from the
+Registry (e.g., `<Path>/CONVENTIONS.md`). If present, read it and follow its conventions
+throughout implementation. This includes naming rules, directory structure for new files,
+code patterns, and test conventions.
 
 This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
 

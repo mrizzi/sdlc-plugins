@@ -224,9 +224,12 @@ auditable that all threads were considered.
 Before classifying feedback, load the project's established conventions so they can
 inform classification decisions.
 
-1. **CONVENTIONS.md:** Check for a `CONVENTIONS.md` file at the repository root (using
-   `search_for_pattern`, Grep, or Glob). If present, read its contents. This provides
-   explicit, documented project conventions.
+1. **CONVENTIONS.md:** Look up the task's target repository in the **Repository Registry**
+   (CLAUDE.md) and use the **Path** column to locate the repository root. Check for a
+   `CONVENTIONS.md` file at that root using the Serena instance for the repository
+   (`search_for_pattern`). If no Serena instance is available, use Grep, Glob, or Read
+   with the absolute path from the Registry (e.g., `<Path>/CONVENTIONS.md`). If present,
+   read its contents. This provides explicit, documented project conventions.
 
 2. **Codebase convention cache:** This step does not perform exhaustive codebase analysis
    yet — that happens in the Style/Conventions sub-agent. The goal here is only to load

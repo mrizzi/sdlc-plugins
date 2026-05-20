@@ -321,10 +321,13 @@ use Explore agents with Glob, Grep, and Read tools.
 
 ### CONVENTIONS.md lookup
 
-For each target repository, check for a `CONVENTIONS.md` file at the repository root
-(using `list_dir` or Glob). If present, read it and use its conventions — naming rules,
-directory structure, code patterns, test conventions — to inform the **Implementation Notes**
-in generated task descriptions. Reference specific conventions by name when they apply to a task.
+For each target repository, look up its **Path** in the **Repository Registry** (CLAUDE.md)
+to locate the repository root. Check for a `CONVENTIONS.md` file at that root using the
+Serena instance for the repository (`list_dir`). If no Serena instance is available, use
+Glob or Read with the absolute path from the Registry (e.g., `<Path>/CONVENTIONS.md`).
+If present, read it and use its conventions — naming rules, directory structure, code
+patterns, test conventions — to inform the **Implementation Notes** in generated task
+descriptions. Reference specific conventions by name when they apply to a task.
 
 This step is optional — if `CONVENTIONS.md` does not exist, proceed normally.
 
