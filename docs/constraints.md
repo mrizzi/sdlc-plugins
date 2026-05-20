@@ -46,6 +46,19 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.34 | `implement-task` MUST verify the description digest before proceeding and pause if a mismatch is detected. | `implement-task/SKILL.md` — Step 1.5 |
 | 1.35 | `implement-task` MUST skip digest verification with a warning when no digest comment exists (backward compatibility). | `implement-task/SKILL.md` — Step 1.5 |
 | 1.36 | `verify-pr` convention upgrade MUST validate convention file-type applicability per `shared/convention-applicability-rules.md` before upgrading a suggestion. | `verify-pr/style-conventions.md` — Check 1 |
+| 1.37 | `triage-security` MUST NOT modify, create, or delete any source code files — read-only source access only. | `triage-security/SKILL.md` — Guardrails |
+| 1.38 | `triage-security` MUST NOT perform any Jira mutation without explicit engineer confirmation. | `triage-security/SKILL.md` — Guardrails, Important Rules §11 |
+| 1.39 | `triage-security` MUST check ALL supported versions in the security-matrix.md, not just the version named in the issue. | `triage-security/SKILL.md` — Important Rules §4 |
+| 1.40 | `triage-security` MUST NOT assume PSIRT-assigned Affects Versions are correct — must verify against lock file evidence. | `triage-security/SKILL.md` — Important Rules §3 |
+| 1.41 | `triage-security` MUST use `git show` against pinned commits from security-matrix.md, not HEAD or branch tips, for released versions. | `triage-security/SKILL.md` — Important Rules §13 |
+| 1.42 | `triage-security` MUST detect and analyze the current development stream (unreleased Jira versions). | `triage-security/SKILL.md` — Step 2.2, Important Rules §10 |
+| 1.43 | `triage-security` MUST NOT create Vulnerability issues — PSIRT owns Vulnerability creation. The skill only creates remediation Tasks. Cross-stream impact is reported via comment. | `triage-security/SKILL.md` — Important Rules §7, Step 7 |
+| 1.44 | `triage-security` MUST present version impact table to engineer before making triage decisions. | `triage-security/SKILL.md` — Step 2.4 |
+| 1.45 | `triage-security` MUST skip retag versions (identical digest) and note them in the impact table. | `triage-security/SKILL.md` — Important Rules §5 |
+| 1.46 | `triage-security` remediation tasks MUST follow the task-description-template.md format. | `triage-security/SKILL.md` — Important Rules §9, Remediation Task Creation |
+| 1.47 | `triage-security` output goes to Jira only, with one exception: it may write to `security-matrix.md` in Konflux release repos for supportability matrix population. | `triage-security/SKILL.md` — Guardrails, Step 2.1 |
+| 1.48 | `triage-security` MUST read ecosystems, lock file paths, and check commands from security-matrix.md Ecosystem Mappings — MUST NOT hardcode language-specific logic. | `triage-security/SKILL.md` — Step 1 (Ecosystem detection), Step 2.3 |
+| 1.49 | `triage-security` MUST read the Component label pattern from Security Configuration — MUST NOT hardcode label prefixes. | `triage-security/SKILL.md` — Step 0, Step 1 (Data Extraction) |
 
 ### Prior Art — Cross-phase integrity (§1.33–1.35)
 
@@ -137,4 +150,5 @@ Each constraint above references its source. The full source files are:
 - `plugins/sdlc-workflow/skills/verify-pr/correctness.md` — Constraints (§1.11, §1.22, §1.23), Output Format (§1.24)
 - `plugins/sdlc-workflow/skills/verify-pr/style-conventions.md` — Check 1 Convention applicability (§1.36), Check 2 (§1.16), Check 3 (§1.17), Check 4 (§1.18, §1.19, §1.20, §1.21), Check 5 (§1.30), Constraints (§1.11, §1.22, §1.23), Output Format (§1.24)
 - `plugins/sdlc-workflow/skills/define-feature/SKILL.md` — Guardrails (§1.7–1.8), Important Rules (§1.9)
+- `plugins/sdlc-workflow/skills/triage-security/SKILL.md` — Guardrails (§1.28, §1.29, §1.38), Step 0 (§1.40), Step 1 Ecosystem detection (§1.39, §1.40), Step 2.2 (§1.33), Step 2.3 (§1.39), Step 2.4 (§1.35), Important Rules (§1.29–§1.34, §1.36, §1.37), Remediation Task Creation (§1.37)
 - `docs/methodology.md` — Core Principles (§2.1, §3.2, §5.5)
