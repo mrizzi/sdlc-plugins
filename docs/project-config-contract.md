@@ -38,9 +38,9 @@ Serena MCP server instance name, and local filesystem path.
 
 | Column | Description |
 |---|---|
-| Repository | Short name of the repository (e.g., `trustify`) |
+| Repository | Short name of the repository (e.g., `backend`) |
 | Role | Brief description: language and purpose (e.g., "Rust backend") |
-| Serena Instance | The MCP server instance name (e.g., `serena-trustify`) |
+| Serena Instance | The MCP server instance name (e.g., `serena-backend`) |
 | Path | Absolute local path to the repository clone |
 
 #### Structure
@@ -73,16 +73,16 @@ that skills need to create issues, query tasks, and update fields.
 
 | Field | Description | Example |
 |---|---|---|
-| Project key | The Jira project key used in issue IDs | `TC` |
-| Cloud ID | The Jira instance URL or cloud UUID | `https://issues.redhat.com` |
-| Feature issue type ID | Numeric ID for the Feature issue type | `10142` |
+| Project key | The Jira project key used in issue IDs | `PROJ` |
+| Cloud ID | The Jira instance URL or cloud UUID | `https://mycompany.atlassian.net` |
+| Feature issue type ID | Numeric ID for the Feature issue type | `10001` |
 
 #### Optional fields
 
 | Field | Description | Example |
 |---|---|---|
-| Git Pull Request custom field | Custom field ID for storing PR URLs (requires ADF format) | `customfield_10875` |
-| GitHub Issue custom field | Custom field ID containing a GitHub issue URL (plain string or ADF) | `customfield_10747` |
+| Git Pull Request custom field | Custom field ID for storing PR URLs (requires ADF format) | `customfield_10001` |
+| GitHub Issue custom field | Custom field ID containing a GitHub issue URL (plain string or ADF) | `customfield_10002` |
 | Default labels | Labels to apply to AI-generated issues | `ai-generated-jira` |
 
 #### Optional subsection: REST API Credentials (MCP Fallback)
@@ -91,8 +91,8 @@ When Atlassian MCP is unavailable due to organizational policies, skills can fal
 
 | Field | Description | Example |
 |---|---|---|
-| Server URL | JIRA Cloud instance URL | `https://redhat.atlassian.net` |
-| Email | Atlassian account email | `user@redhat.com` |
+| Server URL | JIRA Cloud instance URL | `https://mycompany.atlassian.net` |
+| Email | Atlassian account email | `user@example.com` |
 | API Token | API token or environment variable reference | `$JIRA_API_TOKEN` (recommended) or actual token |
 
 **Storage modes:**
@@ -106,15 +106,15 @@ When Atlassian MCP is unavailable due to organizational policies, skills can fal
 ```markdown
 ## Jira Configuration
 
-- Project key: TC
-- Cloud ID: https://issues.redhat.com
-- Feature issue type ID: 10142
-- Git Pull Request custom field: customfield_10875
-- GitHub Issue custom field: customfield_10747
+- Project key: PROJ
+- Cloud ID: https://mycompany.atlassian.net
+- Feature issue type ID: 10001
+- Git Pull Request custom field: customfield_10001
+- GitHub Issue custom field: customfield_10002
 
 ### REST API Credentials (MCP Fallback)
-- Server URL: https://redhat.atlassian.net
-- Email: user@redhat.com
+- Server URL: https://mycompany.atlassian.net
+- Email: user@example.com
 - API Token: $JIRA_API_TOKEN
 ```
 
@@ -139,8 +139,8 @@ per-instance limitations.
 
 1. **Tool naming convention**: Explain that Serena tools are prefixed by
    instance name: `mcp__<instance>__<tool>`. For example, if the Serena
-   instance is `serena-trustify`, the `find_symbol` tool is called as
-   `mcp__serena-trustify__find_symbol`.
+   instance is `serena-backend`, the `find_symbol` tool is called as
+   `mcp__serena-backend__find_symbol`.
 
 2. **Per-instance limitations**: List any known limitations for specific
    Serena instances. This allows skills to adapt their behavior without
@@ -176,10 +176,103 @@ is `serena-example`:
 
 ---
 
+## Optional Sections
+
+### 4. Security Configuration
+
+The Security Configuration section is under the heading
+`## Security Configuration`. It provides the project-specific settings
+that the `triage-security` skill needs to perform CVE triage across
+supported product versions. This section is scaffolded by the `setup`
+skill's optional Security Configuration step.
+
+#### Required subsections
+
+**`### Product Lifecycle`**
+
+| Field | Required | Description | Example |
+|---|---|---|---|
+| Product pages URL | Yes | Product lifecycle page for EOL/support status checks | `https://lifecycle.example.com/products/myproduct` |
+| Jira version prefix | Yes | Filters Jira versions to this product | `MYPRODUCT` |
+| Vulnerability issue type ID | Yes | Jira issue type ID for Vulnerability issues | `10001` |
+| Component label pattern | Yes | Label prefix used by PSIRT to identify affected components | `pscomponent:` |
+| VEX Justification custom field | No | Custom field ID for VEX justification on not-affected closures | `customfield_00000` |
+
+**`### Version Streams`**
+
+A table mapping each supported version stream to its Konflux release repo
+and security matrix file path.
+
+| Column | Description | Example |
+|---|---|---|
+| Stream | Version stream label | `2.2.x` |
+| Konflux Release Repo | Git repository URL (used in Forward Pointers) | `git.downstream.example.com/.../product-release.0.4.z` |
+| Local Path | User's local clone path | `/path/to/product-release.0.4.z` |
+| Security Matrix Path | Path to security-matrix.md within the repo | `docs/security-matrix.md` |
+
+At least one row is required.
+
+**`### Source Repositories`**
+
+A table listing each source repository whose dependencies are tracked
+for CVE analysis.
+
+| Column | Description | Example |
+|---|---|---|
+| Repository | Short name of the source repo | `backend` |
+| URL | Repository URL | `https://github.com/my-org/backend` |
+
+At least one row is required. Each source repository generates a
+corresponding commit column in the Supportability Matrix within
+`security-matrix.md` — the column names are dynamic, matching the
+repository names listed here.
+
+#### Structure
+
+```markdown
+## Security Configuration
+
+### Product Lifecycle
+
+- Product pages URL: https://lifecycle.example.com/products/myproduct
+- Jira version prefix: MYPRODUCT
+- Vulnerability issue type ID: 10001
+- Component label pattern: pscomponent:
+- VEX Justification custom field: customfield_00000
+
+### Version Streams
+
+| Stream | Konflux Release Repo | Local Path | Security Matrix Path |
+|---|---|---|---|
+| 2.1.x | git.downstream.example.com/.../product-release.0.3.z | /path/to/product-release.0.3.z | docs/security-matrix.md |
+| 2.2.x | git.downstream.example.com/.../product-release.0.4.z | /path/to/product-release.0.4.z | docs/security-matrix.md |
+
+### Source Repositories
+
+| Repository | URL |
+|---|---|
+| backend | https://github.com/my-org/backend |
+| frontend-ui | https://github.com/my-org/frontend-ui |
+```
+
+#### How skills use it
+
+- "`triage-security` reads Product Lifecycle fields to filter Jira
+  versions and identify PSIRT component labels."
+- "`triage-security` follows Version Streams to load security-matrix.md
+  from each Konflux release repo and chain across streams via forward
+  pointers."
+- "`triage-security` uses Source Repositories to identify which repos'
+  lock files to inspect for dependency versions."
+- "`setup` scaffolds this section interactively using
+  `security-config.template.md`."
+
+---
+
 ## Extensibility
 
 Projects may add optional sections to `# Project Configuration` beyond
-the three required ones. Common examples:
+the required and optional ones documented above. Common examples:
 
 - **Figma Configuration** — Figma file IDs, team/project context for design extraction
 - **Deployment Configuration** — environment names, deployment targets
@@ -215,3 +308,6 @@ the contract:
 - [ ] `## Code Intelligence` documents the `mcp__<instance>__<tool>` naming convention
 - [ ] `## Code Intelligence` lists any per-instance limitations under a `### Limitations` subheading
 - [ ] All Serena instance names in the Registry match those referenced in Code Intelligence limitations
+- [ ] (If present) `## Security Configuration` contains `### Product Lifecycle` with all four required fields (VEX Justification is optional)
+- [ ] (If present) `## Security Configuration` contains `### Version Streams` with at least one row
+- [ ] (If present) `## Security Configuration` contains `### Source Repositories` with at least one row
