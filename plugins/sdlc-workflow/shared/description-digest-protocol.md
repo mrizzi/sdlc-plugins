@@ -112,3 +112,21 @@ When the consumer finds no comment matching the marker string:
 - Consumers should check digest comment `created` vs `updated` timestamps when
   available, and warn if the comment was edited — but proceed regardless
 - The marker string is fixed — do not vary it per skill or per invocation
+
+## Common Mistakes — Do NOT
+
+The following mistakes have been observed in practice and must be avoided:
+
+- **Do NOT use placeholder text.** The `<hex-digest>` in the marker template is a
+  placeholder — replace it with the actual computed hash. Never post a comment
+  containing the literal string `<hex-digest>`, `<hex>`, `sha256:placeholder`, or
+  any other stand-in text.
+- **Do NOT use abbreviated hashes.** A SHA-256 digest is exactly 64 lowercase
+  hexadecimal characters. Values like `sha256:a1b2c3d4e5f6` (12 chars) or
+  `sha256:abc123` (6 chars) are wrong. Always output the full 64-character digest.
+- **Do NOT use example or hardcoded hashes.** Every digest must be freshly computed
+  from the actual description content. Never copy a hash from documentation,
+  examples, or a previous task.
+- **Do NOT add extra text to the marker line.** The comment body must be exactly
+  one line: `[sdlc-workflow] Description digest: sha256:<64-char-hex>`. Do not
+  append explanations, timestamps, or metadata after the hash.

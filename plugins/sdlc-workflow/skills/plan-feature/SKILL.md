@@ -667,9 +667,11 @@ Immediately after creating each task (before creating issue links or other comme
 }
 ```
 
-Replace `<hex-digest>` with the lowercase 64-character SHA-256 hex digest. Strip leading/trailing whitespace from the description before hashing. Do not append the Comment Footnote to this comment — it must be a standalone comment separate from any other comments.
+Replace `<hex-digest>` with the actual computed lowercase 64-character SHA-256 hex digest of the description content. You **must** compute the real hash — never use a placeholder (`<hex-digest>`, `<hex>`), an abbreviated hash (fewer than 64 characters), an example hash copied from documentation, or any hardcoded value. The digest must be exactly 64 lowercase hexadecimal characters derived from the description you just wrote.
 
-See `shared/description-digest-protocol.md` for the full protocol specification including consumer verification behavior.
+Strip leading/trailing whitespace from the description before hashing. Do not append the Comment Footnote to this comment — it must be a standalone comment separate from any other comments.
+
+See `shared/description-digest-protocol.md` for the full protocol specification including consumer verification behavior and common mistakes to avoid.
 
 ### 6b – Create issue links
 
