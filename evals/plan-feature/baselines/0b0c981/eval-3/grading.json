@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "Tasks target both 'trustify-backend' and 'trustify-ui' repositories with at least one task per repo",
+      "passed": true,
+      "evidence": "Backend tasks: task-1, task-3, task-4, task-9 all have '## Repository\\ntrustify-backend'. Frontend tasks: task-2, task-5, task-6, task-7, task-8, task-10 all have '## Repository\\ntrustify-ui'. Both repositories are targeted with multiple tasks each."
+    },
+    {
+      "text": "Backend tasks have lower task numbers than the frontend tasks that depend on them",
+      "passed": true,
+      "evidence": "Backend implementation tasks are task-3 (comparison model/service) and task-4 (comparison endpoint). The first frontend task that depends on a backend task is task-5 (API types/client), which states 'Depends on: Task 4 — Add SBOM comparison endpoint (trustify-backend)'. Task numbers 3,4 < 5,6,7,8, maintaining correct ordering."
+    },
+    {
+      "text": "UI-facing frontend tasks (pages, components) reference Figma design context mentioning specific PatternFly components and visual specifications — API-layer frontend tasks (API types, client functions, hooks) are exempt from this requirement",
+      "passed": true,
+      "evidence": "Task-7 (SbomComparePage) extensively references Figma design: PatternFly Select (single, typeahead), ExpandableSection, Badge (with color specs: green/red/blue/yellow), composable Table, EmptyState with CodeBranchIcon, Skeleton, Button, Dropdown. Task-8 (SbomListPage selection) references 'Figma design reference' section with PatternFly Table select pattern and Button variant secondary. API-layer tasks task-5 (API types/client) and task-6 (React Query hook) are exempt and correctly omit Figma references."
+    },
+    {
+      "text": "Cross-repo dependency ordering is enforced: either at least one frontend task explicitly depends on a backend task in its Dependencies section, or all tasks target a shared feature branch where backend tasks have lower task numbers than frontend tasks (implicit ordering via feature-branch workflow)",
+      "passed": true,
+      "evidence": "Task-5 (trustify-ui) explicitly states 'Depends on: Task 4 — Add SBOM comparison endpoint (trustify-backend)' in its Dependencies section, establishing a direct cross-repo dependency from a frontend task to a backend task. Additionally, all tasks use a shared feature branch TC-9003 with backend tasks (3,4) having lower numbers than frontend tasks (5,6,7,8)."
+    },
+    {
+      "text": "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+      "passed": true,
+      "evidence": "Backend task-3 references paths from repo-backend.md: modules/fundamental/src/sbom/model/mod.rs, modules/fundamental/src/sbom/service/sbom.rs, entity/src/sbom_package.rs, entity/src/sbom_advisory.rs, entity/src/package_license.rs, common/src/error.rs. Backend task-4 references: modules/fundamental/src/sbom/endpoints/mod.rs, modules/fundamental/src/sbom/endpoints/get.rs. Frontend task-5 references paths from repo-frontend.md: src/api/models.ts, src/api/rest.ts, src/api/client.ts. Task-6: src/hooks/useSboms.ts, src/hooks/useSbomById.ts. Task-7: src/pages/SbomDetailPage/, src/components/SeverityBadge.tsx, src/components/EmptyStateCard.tsx, src/routes.tsx. Task-8: src/pages/SbomListPage/SbomListPage.tsx, src/components/FilterToolbar.tsx. All paths correspond to entries in the respective repository structure manifests."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 10 tasks have exactly one repository in their Repository section: task-1 (trustify-backend), task-2 (trustify-ui), task-3 (trustify-backend), task-4 (trustify-backend), task-5 (trustify-ui), task-6 (trustify-ui), task-7 (trustify-ui), task-8 (trustify-ui), task-9 (trustify-backend), task-10 (trustify-ui). Each contains '## Repository' followed by a single repository name on the next line."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 10 tasks contain the four required sections: '## Target Branch' (task-1: main, task-3: TC-9003, etc.), '## Description' (present in all), '## Acceptance Criteria' (present in all with checkbox items), '## Test Requirements' (present in all with checkbox items). Verified across task-1 through task-10."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": true,
+      "evidence": "Task-3 Files to Modify: modules/fundamental/src/sbom/model/mod.rs (in repo-backend.md line 41), modules/fundamental/src/sbom/service/sbom.rs (line 46). Files to Create: modules/fundamental/src/sbom/model/comparison.rs (new file under existing model/ directory at line 40-43). Task-4 Files to Create: modules/fundamental/src/sbom/endpoints/compare.rs (under existing endpoints/ at line 47-50). Files to Modify: modules/fundamental/src/sbom/endpoints/mod.rs (line 48). Task-5 Files to Modify: src/api/models.ts (repo-frontend.md line 24), src/api/rest.ts (line 25). Task-6 Files to Create: src/hooks/useSbomComparison.ts (under existing hooks/ at line 27). Task-7 Files to Create: src/pages/SbomComparePage/ files (following existing SbomDetailPage pattern at line 36-42). Files to Modify: src/routes.tsx (line 53). Task-8 Files to Modify: src/pages/SbomListPage/SbomListPage.tsx (line 33). All paths are either exact matches to manifest entries or new files under existing manifest directories."
+    },
+    {
+      "text": "Implementation Notes in every non-bookend task reference specific file paths and code patterns from the repository, not abstract or generic guidance — bookend tasks (create-branch, merge-branch) are exempt as they omit Implementation Notes by design",
+      "passed": true,
+      "evidence": "Task-3 Implementation Notes: references modules/fundamental/src/sbom/model/summary.rs, modules/fundamental/src/sbom/service/sbom.rs, entity/src/sbom_package.rs, entity/src/sbom_advisory.rs, entity/src/package_license.rs, modules/fundamental/src/advisory/model/summary.rs, modules/fundamental/src/package/model/summary.rs, common/src/error.rs with specific struct/method names (SbomSummary, AppError, .context()). Task-4: references modules/fundamental/src/sbom/endpoints/get.rs and list.rs with specific patterns (.route, get(compare::handler)). Task-5: references src/api/models.ts (SbomSummary, AdvisorySummary), src/api/rest.ts (fetchSboms()), src/api/client.ts. Task-6: references src/hooks/useSboms.ts, src/hooks/useSbomById.ts with specific code (enabled: !!leftId && !!rightId, query key pattern). Task-7: references src/pages/SbomDetailPage/, src/components/SeverityBadge.tsx, src/hooks/useSboms.ts, src/routes.tsx, useSearchParams. Task-8: references src/pages/SbomListPage/SbomListPage.tsx, src/components/FilterToolbar.tsx with specific patterns (useState, useNavigate). Bookend tasks (1, 2, 9, 10) correctly omit Implementation Notes."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section — either all set to 'main' (direct-to-main workflow) or bookend tasks set to 'main' with intermediate tasks set to the feature issue ID (feature-branch workflow)",
+      "passed": true,
+      "evidence": "Feature-branch workflow is used. Bookend tasks have Target Branch 'main': task-1 (create-branch backend, main), task-2 (create-branch frontend, main), task-9 (merge-branch backend, main), task-10 (merge-branch frontend, main). All intermediate implementation tasks have Target Branch 'TC-9003': task-3, task-4, task-5, task-6, task-7, task-8. This matches the feature-branch workflow pattern exactly."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted following the protocol in shared/description-digest-protocol.md (marker: '[sdlc-workflow] Description digest: sha256:<hex>')",
+      "passed": true,
+      "evidence": "All 10 tasks contain the digest marker. Task-1: sha256:1a3f97024cd59ee325ad75d848e7d53faae79df810566a98684d9527ee0fdfdb. Task-2: sha256:bcb3a3c5bf05342c77fad5b3a0f2321d8d8b6c1e21645b84f489d18d092a2b13. Task-3: sha256:39ba327039d11fda1bfb05ff2396a265c113a8b1fc367177b3bf85031fe63a3e. Task-4: sha256:c6cf5efe9551661abdc1d6a8aa47891bf1fba0bf5ec94b154c312684be755492. Task-5: sha256:38b271fef003fed048e44766f10db8560fb14c62f252174849e3738ae4bec246. Task-6: sha256:4a583821e5583237e402308a474143f2b9aefb5b326fb17c63c24ad8ac9cb4ed. Task-7: sha256:717b1b487470fda5d3138ecc84e1bf0f0102897f8b27e41d8f1c1d5d75038760. Task-8: sha256:9f961f938631491874d4970f9e0d7adafa31d20849d0b909f30c5079cf316403. Task-9: sha256:7078fe4e053f8c2da6b47994eb83b0e56cab6894597e0195b6e0f93f2e9d74d6. Task-10: sha256:82a7833f039cbb3d375bdc8defddb5789bd83cbb6bf9c0c05202962784f966b4. All follow the exact marker format '[sdlc-workflow] Description digest: sha256:<64-char-hex>'."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The conventions.md explicitly references analysis of sibling code files: 'Endpoint Pattern (from `endpoints/get.rs` siblings)', 'Service Pattern (from `service/advisory.rs`)', and 'AppError is defined in `common/src/error.rs`'. This demonstrates that at least 3 of the listed files were inspected. However, the plan.md itself does not explicitly state 'read' or 'inspect' these files as a step — the evidence of inspection is in the conventions document rather than the plan proper."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan lists 3 new files (severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs test) and 3 modified files (advisory/model/mod.rs, advisory/service/advisory.rs, advisory/endpoints/mod.rs). All files are within the advisory module or test directory, directly related to the task. No unrelated files are included."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "The plan lists under 'Files to Create': (1) modules/fundamental/src/advisory/model/severity_summary.rs, (2) modules/fundamental/src/advisory/endpoints/severity_summary.rs, (3) tests/api/advisory_summary.rs. All three are present."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "The plan lists under 'Files to Modify': (4) modules/fundamental/src/advisory/model/mod.rs — add pub mod severity_summary, (5) modules/fundamental/src/advisory/service/advisory.rs — add severity_summary method, (6) modules/fundamental/src/advisory/endpoints/mod.rs — register new route. All three are present."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "The commit message is 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format with type 'feat', scope 'advisory', and a description. The footer includes 'Ref: TC-9201'."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": false,
+      "evidence": "The plan includes 'Assisted-by: Claude Code' as a line in the commit message body, but does not mention using the --trailer flag specifically. The trailer text is embedded directly in the commit message template rather than referencing the --trailer='Assisted-by: Claude Code' git commit flag."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "The plan has a 'Branch' section stating 'Base: main' and 'Branch name: TC-9201'. This covers both the branch naming convention (using the Jira ticket ID) and the target/base branch (main)."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "The conventions.md identifies both patterns: (1) 'Error Handling Convention' section describes 'All fallible operations return Result<T, AppError>' and 'Errors are wrapped with .context() for descriptive messages'; (2) 'Module Structure Convention' section describes 'Each domain module (advisory, sbom, package) follows a consistent three-directory structure: model/, service/, endpoints/'."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "The plan's Branch section states 'Base: main', identifying main as the target/base branch for the feature branch TC-9201."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 1,
+    "total": 9,
+    "pass_rate": 0.89
+  }
+}

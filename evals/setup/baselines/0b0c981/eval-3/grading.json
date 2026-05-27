@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with the table headers (Repository, Role, Serena Instance, Path) but no data rows, or explicitly notes that no repositories are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 22-23 contain '## Repository Registry' with table headers '| Repository | Role | Serena Instance | Path |' followed by the separator '|---|---|---|---|' and no data rows."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with Project key (MYPROJ), Cloud ID (abc123), and Feature issue type ID (10001)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 25-29 contain '## Jira Configuration' with '- Project key: MYPROJ', '- Cloud ID: abc123', and '- Feature issue type ID: 10001'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that indicates no Serena instances are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 31-37 contain '## Code Intelligence' followed by 'No Serena MCP servers are configured. Code intelligence is not available.' and a Limitations subsection stating 'No limitations known — no Serena instances configured.'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Serena MCP tools were discovered among the available tools",
+      "passed": true,
+      "evidence": "discovery-log.md Step 2 (lines 14-23) states: 'Searched for Serena naming pattern (mcp__<instance>__find_symbol, mcp__<instance>__get_symbols_overview, etc.)' and 'Result: No Serena instances discovered'."
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Atlassian MCP tools were discovered and Jira fields were provided via manual entry",
+      "passed": true,
+      "evidence": "discovery-log.md Step 3.1 (lines 28-30) states: 'Searched for Atlassian MCP tools (prefix mcp__atlassian__)' and 'Result: No Atlassian MCP tools available'. Step 3.2 (lines 33-35) states: 'No Atlassian MCP available — skipping MCP approach entirely' and 'User chose option 2: manual entry (skip auto-discovery)'. Step 3.4 (lines 37-44) lists the manually provided values."
+    },
+    {
+      "text": "The output or discovery log mentions prompting the user about continuing without code intelligence (the skill should ask whether to continue or set up Serena first)",
+      "passed": true,
+      "evidence": "discovery-log.md Step 2 line 22 states: 'User chose to continue without code intelligence'. This indicates the user was prompted about continuing without code intelligence and chose to proceed."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

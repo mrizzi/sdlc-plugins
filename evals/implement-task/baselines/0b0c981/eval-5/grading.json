@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references checking out TC-9005 (the Target Branch) before creating the task branch — includes git checkout TC-9005 or equivalent, not git checkout main (constraint 3.1, Step 5)",
+      "passed": true,
+      "evidence": "The plan explicitly shows 'git checkout TC-9005' and 'git pull' as the first step under Branch Operations, followed by creating the task branch from it. It does not use 'git checkout main'."
+    },
+    {
+      "text": "The plan specifies opening a PR with --base TC-9005 targeting the feature branch, not --base main (Step 10)",
+      "passed": true,
+      "evidence": "The plan includes 'gh pr create --base TC-9005 --title \"feat(migration): add migration to drop advisory status column\" --body \"...\"' and explicitly states 'The PR must target the feature branch TC-9005 (not main)'."
+    },
+    {
+      "text": "The plan names the task branch TC-9205 (the task issue ID), not TC-9005 (the feature branch) — the task branch is distinct from the Target Branch (constraint 3.1)",
+      "passed": true,
+      "evidence": "The plan shows 'git checkout -b TC-9205' and explicitly notes 'The task branch is named after the Jira issue ID (TC-9205) per convention (constraint 3.1), not the target branch name (TC-9005).'"
+    },
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 1 of: migration/src/m0001_initial/mod.rs, entity/src/advisory.rs, migration/src/lib.rs (constraint 1.5, Steps 4-9 unaffected by Target Branch)",
+      "passed": true,
+      "evidence": "The Pre-Implementation Inspection section lists all three files: 'migration/src/m0001_initial/mod.rs — existing migration pattern', 'migration/src/lib.rs — migration registration', and 'entity/src/advisory.rs — verify no status column reference'."
+    },
+    {
+      "text": "The plan includes --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "The plan states 'The commit would include --trailer=\"Assisted-by: Claude Code\" per constraint 2.3'."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9205 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "The commit message uses 'feat(migration): add migration to drop advisory status column' which follows Conventional Commits format, and includes 'Implements TC-9205' in the footer referencing the task issue ID."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying TC-9005 as the target branch",
+      "passed": true,
+      "evidence": "The plan explicitly identifies TC-9005 as the 'target branch' and 'feature branch' throughout. Under Branch Operations step 1 it says 'Check out the target branch (feature branch TC-9005)' and under PR targeting it says 'The PR must target the feature branch TC-9005 (not main)'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

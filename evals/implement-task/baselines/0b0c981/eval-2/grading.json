@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response has a dedicated section '2. Implementation Notes (missing entirely)' under 'Missing Required Sections' that explicitly states: 'The task description does not include an **Implementation Notes** section. This section is required and must specify: Patterns and code references to follow...' It is clearly flagged as a blocker requiring clarification before proceeding."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Section '5. Acceptance Criteria (too vague)' explicitly calls out both phrases: '\"Search results are relevant\" -- what defines relevance? Ordering criteria?' and '\"Performance is acceptable\" -- what is the performance target?' Both are identified as not actionable."
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Section '6. Test Requirements (too vague)' states: '\"Test that search works correctly\" is a single generic bullet. The test requirements should specify: Specific test scenarios, Whether integration tests against a test database are expected, Performance/load test expectations.' The vagueness of the requirement is clearly identified."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response is titled 'Clarification Needed', has status 'BLOCKED -- Incomplete Task Description', includes a 'Questions for the Task Author' section with 6 specific questions, and concludes with 'I will resume implementation once these gaps are addressed.' No implementation plan, branching, or code changes are attempted."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The 'Questions for the Task Author' section includes: Q3 'Searchable fields: Which package attributes should be searchable?' (fields to search), Q4 'Search behavior: Exact match, substring, full-text, or fuzzy matching?' (relevance/ranking approach), and Q6 'Performance targets: What specific performance criteria define \"acceptable\"?' (performance threshold). All three required topics are covered among the 6 total questions asked."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
