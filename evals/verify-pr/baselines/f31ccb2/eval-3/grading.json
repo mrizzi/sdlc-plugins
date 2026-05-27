@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states 'Classification: Code Change Request' and 'Action: Create sub-task (subtask-30001.md)'. The file subtask-30001.md exists and was created."
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md states 'Classification: Code Change Request' and notes convention upgrade eligibility. subtask-30002.md was created for adding a partial index."
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states 'Classification: Nit' and 'Action: No sub-task created. Nits are non-blocking feedback.' No subtask-30003.md file exists."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md states 'Classification: Question' and 'Action: No sub-task created.' No subtask-30004.md file exists."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "Both subtask-30001.md and subtask-30002.md contain sections: Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "Both subtask-30001.md and subtask-30002.md contain 'Target PR' section with 'https://github.com/trustify/trustify-backend/pull/744'."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-30001.md contains 'Review Context' with original comment about transaction wrapping. subtask-30002.md contains 'Review Context' with original comment about adding an index."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "Output files consist only of report.md, review-30001.md through review-30004.md, and subtask-30001.md and subtask-30002.md. All are analysis/reporting files."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001-30004) have corresponding review-*.md files. Report's Review Feedback table lists all four with classifications."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "Report shows 'Overall: WARN' with outstanding review feedback. No mention of merging or any merge action."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md contains 'Test Change Classification | ADDITIVE | tests/api/sbom_delete.rs is a new file'."
+    },
+    {
+      "text": "Convention upgrade eligibility is evaluated for review comment 30002 (index suggestion) — the review classification output (review-30002.md) or the report's Style/Conventions analysis explains whether the suggestion matches a documented or demonstrated project convention",
+      "passed": true,
+      "evidence": "review-30002.md contains detailed 'Convention Upgrade Eligibility' section. report.md's Style/Conventions section contains 'Convention Upgrade Evaluation' for comment 30002 with analysis of project patterns."
+    },
+    {
+      "text": "Review comment 30002 (index suggestion) results in a sub-task regardless of classification path — whether classified directly as code change request based on reviewer language, or upgraded from suggestion via convention analysis",
+      "passed": true,
+      "evidence": "review-30002.md classifies directly as 'Code Change Request' and additionally states convention upgrade eligibility. subtask-30002.md was created with full implementation details."
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "failed": 0,
+    "total": 13,
+    "pass_rate": 1.0
+  }
+}

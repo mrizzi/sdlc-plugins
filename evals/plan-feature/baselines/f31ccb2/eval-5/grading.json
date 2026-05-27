@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md explicitly states 'Mode: feature-branch' with rationale citing two atomicity indicators: (1) 'Coordinated schema migration' noting 'Merging the migration without the code changes would break all advisory queries' and (2) 'Cross-cutting refactor' noting 'Partial delivery would leave the codebase in an inconsistent state.' These map directly to the feature description's non-functional requirement: 'All changes must land together.'"
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Bookend Type\\ncreate-branch' and is the first task (Task 1). The plan summary in jira-comment-plan-summary.md confirms: '| Task 1 | Create feature branch TC-9005 from main | Bookend (create-branch) |'"
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md contains '## Bookend Type\\nmerge-branch' and is the last task (Task 7). The plan summary confirms: '| Task 7 | Merge feature branch TC-9005 to main | Bookend (merge-branch) |'"
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All five intermediate tasks have '## Target Branch\\nTC-9005': task-2-migration-enum-column.md (line 5), task-3-update-entity-definitions.md (line 5), task-4-update-advisory-service-and-endpoints.md (line 5), task-5-update-ingestion-pipeline.md (line 5), task-6-update-integration-tests.md (line 5)."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md line 5: '## Target Branch\\nmain'"
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md line 5: '## Target Branch\\nmain'"
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All five intermediate tasks list Task 1 as a dependency: task-2 ('Depends on: Task 1'), task-3 ('Depends on: Task 1'), task-4 ('Depends on: Task 1'), task-5 ('Depends on: Task 1'), task-6 ('Depends on: Task 1')."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md Dependencies section lists all five intermediate tasks: 'Depends on: Task 2', 'Depends on: Task 3', 'Depends on: Task 4', 'Depends on: Task 5', 'Depends on: Task 6'."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "Bookend tasks (task-1, task-7): Both contain Repository, Target Branch, Bookend Type, Description, Acceptance Criteria, Test Requirements (bookend tasks intentionally omit Files to Modify/Create and Implementation Notes per grading rules). Intermediate tasks: task-2 has Repository, Target Branch, Description, Files to Create, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. task-3 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. task-4 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. task-5 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. task-6 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. All intermediate tasks have at least one of Files to Modify or Files to Create."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": false,
+      "evidence": "No mention of a 'workflow:feature-branch' label was found in any output file. The impact-map.md and jira-comment-impact-map.md describe the workflow mode as 'feature-branch' but do not mention applying a label to the Jira issue. Searched all output files for 'label' - only match was an unrelated SQL 'enumlabel' reference in task-2."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a real computed SHA-256 hash — exactly 64 lowercase hex characters, not a placeholder (<hex-digest>, <hex>), abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256:<64-char-hex>'",
+      "passed": true,
+      "evidence": "jira-digest-comments.md contains digest comments for all 7 tasks, each using the exact marker format '[sdlc-workflow] Description digest: sha256:<hash>'. All 7 hashes are exactly 64 lowercase hex characters: Task 1: 79ed9b1fb9ba7240b74848887430243f9340c1026f33bf7d38785ae09406348c, Task 2: 100590d776460b6e10b1e8a910db69fd032b5253be0b958108b85873a6ebc96b, Task 3: cce930acc2fbbca21b7b41a2cf4c71010e49f6c384c34635d074cd1ae6d69448, Task 4: 9a488a5196226c50330be85d2ea967a2e5faeb4f2072215ebd47418fedede08a, Task 5: 847f468d10a179eaeff301d7d70c33a8d342f2f43512c38bcae516b97ad52d39, Task 6: 921aba800493d161082def5ab7ea10097b4e56dc68b9083da60e567a98280f49, Task 7: c674bf021bd12dcce8fc7c9f6bb4b63c723dc763f832775d09a64be24b00ed94. None are placeholders or abbreviated."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No convention applicability rationales were found in any task file. Searched all task files for 'CONVENTIONS', 'convention', and 'Applies:' patterns. The only matches were generic references like 'Follow the existing migration pattern... for structure and naming conventions' (task-2) and 'per the project's error handling convention' (task-4). No task contains the prescribed 'Applies: task modifies <file> matching the convention's <scope>' format. There is no evidence that CONVENTIONS.md conventions were validated for file-type applicability and enriched into Implementation Notes per the convention-applicability-rules.md specification."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 2,
+    "total": 12,
+    "pass_rate": 0.8333333333333334
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The conventions.md references analysis of all 4 listed files: 'advisory/endpoints/get.rs' (endpoint handler pattern), 'advisory/service/advisory.rs' (service method pattern), 'advisory/model/summary.rs' (AdvisorySummary struct with severity field), and 'common/src/error.rs' (AppError enum and IntoResponse implementation). All 4 are explicitly listed in the 'Source Files Inspected' section."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan lists 3 new files (severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs tests) and 3 modified files (model/mod.rs, service/advisory.rs, endpoints/mod.rs). All match the task description's Files to Modify and Files to Create sections. server/src/main.rs is explicitly listed as 'Unchanged'."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "Files to Create table lists: (1) modules/fundamental/src/advisory/model/severity_summary.rs — SeveritySummary response struct, (2) modules/fundamental/src/advisory/endpoints/severity_summary.rs — GET handler, (3) tests/api/advisory_summary.rs — Integration tests. All three are present."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "Files to Modify table lists: (4) modules/fundamental/src/advisory/model/mod.rs — register new module, (5) modules/fundamental/src/advisory/service/advisory.rs — add severity_summary method, (6) modules/fundamental/src/advisory/endpoints/mod.rs — register new route. All three are present."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "The commit message is 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format with type 'feat', scope 'advisory', and a description. The footer includes 'TC-9201'."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "The plan explicitly states '--trailer=Assisted-by: Claude Code' in the Branch Information section as 'Commit trailer' and again at the bottom: 'Note: Commit with --trailer=Assisted-by: Claude Code'."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "The plan's Branch Information section states 'Feature branch: feat/TC-9201-advisory-severity-summary' which references TC-9201, and 'Base branch: main' which correctly identifies the target branch from the task description."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md Section 1 (Module Structure Convention): 'Each domain concept follows a three-directory pattern: model/, service/, endpoints/'. Section 7 (Error Handling Pattern): 'AppError is an enum implementing IntoResponse' with 'Service methods use .context(\"message\") from anyhow-style error chaining' and 'Endpoints return Result<T, AppError>'."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "The plan's Branch Information section states 'Base branch: main', identifying main as the target/base branch."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

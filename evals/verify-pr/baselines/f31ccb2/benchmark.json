@@ -1,0 +1,16 @@
+{
+  "run_summary": {
+    "pass_rate": {
+      "mean": 0.98,
+      "stddev": 0.04
+    },
+    "time_seconds": {
+      "mean": 193.37,
+      "stddev": 44.98
+    },
+    "tokens": {
+      "mean": 30102.6,
+      "stddev": 3542.7
+    }
+  }
+}

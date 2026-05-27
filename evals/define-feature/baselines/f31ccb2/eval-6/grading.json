@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/api-claim-verification.md exists",
+      "passed": true,
+      "evidence": "api-claim-verification.md exists at eval-6/outputs/api-claim-verification.md"
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')",
+      "passed": true,
+      "evidence": "api-claim-verification.md line 7: 'PR reviews cannot be updated after initial submission so always create a new review -- The GitHub API does not support modifying a submitted review'"
+    },
+    {
+      "text": "outputs/api-claim-verification.md indicates the claim could not be verified (e.g., 'unverified', 'unavailable', 'cannot verify', or 'web tools unavailable')",
+      "passed": true,
+      "evidence": "api-claim-verification.md line 10: 'Verification Status: UNVERIFIED' and line 12: 'web tools (WebSearch, WebFetch) are unavailable'"
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains a prompt or indication that the user was asked to decide (e.g., 'proceed as-is', 'verify manually', or 'Would you like to')",
+      "passed": true,
+      "evidence": "api-claim-verification.md line 18: 'Would you like to proceed as-is, or verify it manually before continuing?'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 19: '## Requirements'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "jira-comment.md line 44: 'sdlc-workflow/define-feature' with link to https://github.com/mrizzi/sdlc-plugins"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

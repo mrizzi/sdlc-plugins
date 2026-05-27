@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "report.md Acceptance Criteria row shows 'PASS | 5 of 5 criteria met'. Each criterion file (criterion-1.md through criterion-5.md) has 'Verdict: PASS'. Detailed findings enumerate all 5 criteria with code references."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "report.md Scope Containment row shows 'PASS | All 3 files match the task specification exactly'. File-by-file table shows list.rs (Modified, MATCH), mod.rs (Modified, MATCH), package.rs (New file, MATCH)."
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "report.md shows 'Review Feedback | N/A | No review comments on the PR' and 'Root-Cause Investigation | N/A | No sub-tasks created'. No subtask files exist in outputs directory."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All output files are report/documentation files: report.md and criterion-1.md through criterion-5.md. No code files appear in the outputs directory."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "Report concludes with 'Overall: PASS' and presents detailed findings. No merge action or merge command appears in any output."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "report.md Sensitive Patterns row shows 'PASS | No passwords, API keys, secrets, or credentials in added lines'. Security section confirms scanning all pattern categories with no matches."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md Test Change Classification row shows 'ADDITIVE | New test file tests/api/package.rs with 4 new integration tests'."
+    },
+    {
+      "text": "The verification report assembles verdicts from all four domain sub-agents: Scope Containment, Diff Size, and Commit Traceability from Intent Alignment; Sensitive Patterns from Security; CI Status, Acceptance Criteria, and Verification Commands from Correctness; Test Quality and Test Change Classification from Style/Conventions",
+      "passed": true,
+      "evidence": "report.md contains clearly labeled sections: Intent Alignment (Scope Containment, Diff Size, Commit Traceability), Security (Sensitive Pattern Scan), Correctness (CI Status, Acceptance Criteria, Verification Commands), and Style/Conventions (Convention Upgrade, Repetitive Test Detection, Test Documentation, Test Change Classification)."
+    },
+    {
+      "text": "The report includes detailed findings with specific evidence for each domain — file-by-file scope comparison (Intent Alignment), line-level pattern scanning results (Security), per-criterion code-level verification (Correctness), and test quality assessment (Style/Conventions) — not just pass/fail verdicts in the summary table",
+      "passed": true,
+      "evidence": "Intent Alignment includes file-by-file comparison table. Security lists specific pattern categories scanned. Correctness provides per-criterion analysis with code references (is_in, Condition::any, Expression::parse). Style/Conventions describes test function analysis."
+    },
+    {
+      "text": "Review Feedback and Root-Cause Investigation verdicts are determined by the orchestrator independently from domain analysis — Review Feedback is N/A because no review comments exist, Root-Cause Investigation is N/A because no sub-tasks were created",
+      "passed": true,
+      "evidence": "report.md shows Review Feedback and Root-Cause Investigation as top-level rows separate from domain-specific verdicts. They appear before domain verdicts and have no subsection under any of the four domains."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

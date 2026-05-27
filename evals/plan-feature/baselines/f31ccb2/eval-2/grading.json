@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": false,
+      "evidence": "No ambiguities are explicitly flagged in the impact-map.md or any of the 5 task description files. The only mention of 'ambiguous' is in jira-operations.md line 11 ('Ambiguous feature — \"Make the search better\" with vague requirements'), which is a summary label in the fetch step, not an explicit enumeration of ambiguities. The feature has many ambiguities (what 'faster' means quantitatively, what 'relevant' means, what filters are needed, what 'better UI' entails, what 'fast enough' means as NFR, etc.) but none are explicitly called out in the outputs."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": false,
+      "evidence": "Searched all output files for 'Better UI', 'non-MVP', 'out of scope', 'excluded', 'mockup', 'design mock', 'frontend repo', and 'scope'. No results found. The 'Better UI' non-MVP requirement from the feature is never mentioned or addressed in any output file. The plan silently omits it without any explicit acknowledgment or rationale."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 5 task files follow the template structure from task-description-template.md. Each contains: ## Repository, ## Target Branch, ## Description, ## Files to Modify, ## Implementation Notes, ## Acceptance Criteria, ## Test Requirements, ## Dependencies. Optional sections (Files to Create, API Changes, Reuse Candidates, Verification Commands) are included where relevant and omitted where not applicable, consistent with the template rules."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": false,
+      "evidence": "No task file contains the word 'assumption' or any section labeled 'Assumptions'. The tasks make numerous implicit assumptions (e.g., Task 1 assumes tsvector/GIN approach for 'faster' search, Task 2 assumes ts_rank for 'relevance', Task 3 assumes entity_type/date_range/severity as the filter parameters for the vague 'some kind of filtering capability', Task 4 assumes 500ms threshold for 'fast enough') but none of these are documented as assumptions pending clarification."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 tasks contain '## Repository' followed by 'trustify-backend' as a single repository name. Task 1 line 1-2, Task 2 line 1-2, Task 3 line 1-2, Task 4 line 1-2, Task 5 line 1-2."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 tasks contain all four required sections: Task 1 has ## Target Branch (line 4), ## Description (line 7), ## Acceptance Criteria (line 27), ## Test Requirements (line 33). Task 2 has these at lines 4, 7, 36, 42. Task 3 at lines 4, 7, 35, 42. Task 4 at lines 4, 7, 28, 35. Task 5 at lines 4, 7, 33, 42."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All Files to Modify paths exist in repo-backend.md: migration/src/lib.rs, modules/search/src/service/mod.rs, modules/search/src/lib.rs, modules/search/src/endpoints/mod.rs, common/src/db/query.rs, common/src/db/limiter.rs, tests/api/search.rs. Files to Create paths follow established patterns: migration/src/m0002_fulltext_search/mod.rs follows m0001_initial/mod.rs pattern, modules/search/src/model/mod.rs and modules/search/src/model/filter.rs follow the model/ submodule pattern used by other domain modules (sbom, advisory, package)."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1: references 'migration/src/m0001_initial/mod.rs' and specific SeaORM traits. Task 2: references 'modules/search/src/service/mod.rs', 'modules/fundamental/src/sbom/service/sbom.rs', 'common/src/model/paginated.rs', 'common/src/db/query.rs' with specific types (PaginatedResults<T>, AppError, .context()). Task 3: references 'modules/fundamental/src/sbom/endpoints/list.rs', 'common/src/db/query.rs', 'modules/fundamental/src/advisory/model/summary.rs' with specific patterns (Axum Query<T>, AdvisorySummary). Task 4: references 'common/src/db/query.rs', 'common/src/db/limiter.rs', 'common/src/error.rs' with specific patterns (LIMIT pushdown, tower-http CacheControl). Task 5: references 'tests/api/search.rs', 'tests/api/sbom.rs', 'tests/api/advisory.rs', 'common/src/model/paginated.rs' with specific patterns (assert_eq!(resp.status(), StatusCode::OK))."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 5 tasks have '## Target Branch' followed by 'main': Task 1 lines 4-5, Task 2 lines 4-5, Task 3 lines 4-5, Task 4 lines 4-5, Task 5 lines 4-5."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a real computed SHA-256 hash — exactly 64 lowercase hex characters, not a placeholder (<hex-digest>, <hex>), abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256:<64-char-hex>'",
+      "passed": true,
+      "evidence": "jira-operations.md contains 5 digest comments matching the required format. All hashes are exactly 64 lowercase hex characters: TC-9010: sha256:25a4dbe5ba6b48d49f403379a77637519442d236126cf0d055a2bdb11515d758, TC-9011: sha256:1ea5fb18ddccb1f929e292dca944e2d059da3bb1b53ba4c241d63532ea23344a, TC-9012: sha256:b8d8db4ee1af3b84ea6f06f2fea279c255fb5ee7d20c09f1274685a13177196b, TC-9013: sha256:938e50bde630f4210f14004b8f63abadbc8f45c34ef03f4ca2bf165cbf30f75a, TC-9014: sha256:db2d417311e8efe21942576f5d309344f219ca5b9bc5537247668e07902f8fcd. All use the exact marker format '[sdlc-workflow] Description digest: sha256:<64-char-hex>'."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No convention-applicability rationale appears in any task's Implementation Notes. Searched all 5 task files for 'Applies:', 'Per CONVENTIONS', and 'Not applicable' — no matches found. The repo-backend.md structure lists a CONVENTIONS.md file at the root of trustify-backend, suggesting conventions should have been evaluated and either included with rationale or excluded. Task 4 references 'the caching pattern documented in the project's Key Conventions' in free-form prose rather than the prescribed 'Per CONVENTIONS.md §... / Applies: ...' format. No evidence that convention-aware enrichment with proper applicability validation was performed."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 4,
+    "total": 11,
+    "pass_rate": 0.636
+  }
+}
