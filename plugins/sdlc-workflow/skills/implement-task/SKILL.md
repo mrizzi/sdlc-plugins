@@ -688,6 +688,43 @@ If a doc file describes behavior that was changed and was not already updated in
 Step 6, update it now. This check is lightweight — only flag docs that directly
 describe the modified behavior.
 
+### Documentation scope preservation
+
+When a documentation file is modified, verify that the replacement text still
+covers all use cases, input types, or scenarios that the original text described.
+This catches edits that inadvertently narrow the scope of what was previously
+documented.
+
+1. **Identify modified documentation sections**: for each documentation file in
+   the `git diff`, extract the changed hunks. Focus on sections where existing
+   text was replaced (not purely additive changes).
+2. **Extract described use cases**: from the **removed** lines (`-` prefix in the
+   diff), identify distinct use cases, input types, supported formats, or
+   scenarios that the original text described. Look for enumerations (e.g.,
+   "X or Y"), conditional branches (e.g., "when using MCP" / "when using REST
+   API"), and listed alternatives.
+3. **Verify preservation**: for each use case identified in the removed text,
+   check whether the **added** lines (`+` prefix) still address it — either
+   explicitly, via a replacement mechanism, or by deliberate removal with
+   justification in the task description.
+4. **Flag scope narrowing**: if any use case from the original text is absent
+   from the replacement and the task description does not justify its removal,
+   list the missing use case and ask the user to confirm whether the omission
+   is intentional. Do **not** proceed to commit until the user confirms or the
+   missing use case is restored.
+
+> **Example:**
+>
+> Original text: "Normalize the input by stripping leading/trailing whitespace."
+> (applies to both JSON and raw text)
+>
+> Replacement text: "Normalize the input by parsing as JSON and re-serializing."
+> (applies only to JSON — raw text would fail)
+>
+> **Flag:** "Raw text input" use case was covered by the original normalization
+> but is not addressed by the replacement. Confirm this is intentional or update
+> the text to handle both cases.
+
 ### Eval coverage currency
 
 If any modified file is a skill's `SKILL.md`, check whether corresponding eval
