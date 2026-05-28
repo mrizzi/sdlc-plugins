@@ -47,11 +47,12 @@ construction.
 ## Hashing
 
 - **Algorithm:** SHA-256
-- **Input:** The full Jira description field text as returned by the API (ADF JSON
-  string when using MCP, or the raw text when using REST API). Normalize the input
-  by parsing it as JSON and re-serializing with compact separators
-  (`json.dumps(parsed, separators=(',', ':'))`). This ensures consistent hashing
-  regardless of input formatting.
+- **Input:** The full Jira description field text as returned by the API.
+  Normalization depends on the input format:
+  - **ADF JSON** (MCP path): parse as JSON and re-serialize with compact separators
+    (`json.dumps(parsed, separators=(',', ':'))`). This ensures consistent hashing
+    regardless of whitespace or key formatting in the original JSON.
+  - **Raw text** (REST API path): strip leading and trailing whitespace only.
 - **Output:** Lowercase hexadecimal digest (64 characters)
 
 The producer computes the hash from the description content it wrote to the issue,
