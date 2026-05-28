@@ -306,6 +306,9 @@ jobs:
             } else if (gateResult === 'failure') {
               state = 'failure';
               description = 'Approval was rejected in eval-protected environment';
+            } else if (evalsResult === 'skipped') {
+              state = 'success';
+              description = 'No evals to run for changed files';
             } else {
               state = 'failure';
               description = 'Eval run failed — check workflow logs';
