@@ -652,72 +652,52 @@ jira.edit_issue(
 Preserve any existing labels on the feature issue — append `workflow:feature-branch` to
 the current label list rather than replacing it.
 
-Immediately after creating each task (before creating issue links or other comments), you **must** produce a description digest for the task. The digest is a SHA-256 hash of the description content you wrote.
+Immediately after creating each task (before creating issue links or other comments),
+you **must** post a description digest comment on the created issue. Follow these steps
+exactly:
 
-**Digest computation steps:**
+#### Digest computation steps
 
-1. **Save the description content to a temp file.** Use the Write tool to save the
-   task description content to a temporary file (e.g., `/tmp/desc-<issue-key>.json`).
-   Save whatever form of the description you have — ADF JSON if you posted to Jira,
-   or the raw markdown text if you wrote to a file.
+1. **Capture the description text.** Take the full description string you passed to
+   `create_issue`. Strip leading and trailing whitespace — the result is the hash input.
 
-2. **Compute the hash via Bash.** Use the digest script if available, or an inline
-   Python command as fallback. Both produce identical results for JSON input.
+2. **Compute SHA-256.** Hash the stripped description text using SHA-256. The output must
+   be the lowercase hexadecimal representation of the hash — exactly 64 characters, every
+   character in `[0-9a-f]`.
 
-   **Primary — digest script:**
+3. **Self-verify before posting.** Before constructing the comment, check your computed
+   digest against these rules. If any check fails, recompute — do not post until all pass:
+   - Length is exactly 64 characters
+   - Every character is a lowercase hex digit (`0-9`, `a-f`)
+   - The value is not a placeholder (e.g., `<hex-digest>`, `<hex>`, `placeholder`)
+   - The value is not copied from documentation, examples, or a previous task
+   - The value is not an abbreviated or truncated hash (e.g., 12-character snippet)
+
+4. **Post the digest comment.** Post a standalone ADF comment on the created issue:
+
+   ```json
+   {
+     "type": "doc",
+     "version": 1,
+     "content": [
+       {
+         "type": "paragraph",
+         "content": [
+           {
+             "type": "text",
+             "text": "[sdlc-workflow] Description digest: sha256:<64-char-hex>"
+           }
+         ]
+       }
+     ]
+   }
    ```
-   python3 scripts/sha256-digest.py /tmp/desc-<issue-key>.json
-   ```
 
-   **Fallback — inline Python** (if the script is not available):
-   ```
-   python3 -c "
-   import hashlib, json, sys
-   raw = open(sys.argv[1]).read().strip()
-   try:
-       d = json.loads(raw)
-       normalized = json.dumps(d, separators=(',', ':'))
-   except json.JSONDecodeError:
-       normalized = raw
-   print(hashlib.sha256(normalized.encode('utf-8')).hexdigest())
-   " /tmp/desc-<issue-key>.json
-   ```
+   Replace `<64-char-hex>` with the verified digest from step 3. Do not append the
+   Comment Footnote — this must be a standalone comment separate from any other comments.
 
-   Both output only the 64-character lowercase hex digest to stdout. Do **not**
-   compute SHA-256 yourself — always use Bash to run one of the commands above.
-
-3. **Post the digest comment.** Use the hash output as `<hex-digest>` in this ADF comment:
-
-```json
-{
-  "type": "doc",
-  "version": 1,
-  "content": [
-    {
-      "type": "paragraph",
-      "content": [
-        {
-          "type": "text",
-          "text": "[sdlc-workflow] Description digest: sha256:<hex-digest>"
-        }
-      ]
-    }
-  ]
-}
-```
-
-Replace `<hex-digest>` with the exact Bash output. Do not append the Comment Footnote
-to this comment — it must be a standalone comment separate from any other comments.
-
-If posting to Jira is not available (e.g., in eval or dry-run mode), append the
-digest line directly to the task output file instead:
-```
-[sdlc-workflow] Description digest: sha256:<hex-digest>
-```
-
-4. **Clean up.** Delete the temp file after posting the comment.
-
-See `shared/description-digest-protocol.md` for the full protocol specification including consumer verification behavior and common mistakes to avoid.
+See `shared/description-digest-protocol.md` for the full protocol specification
+including consumer verification behavior and common mistakes to avoid.
 
 ### 6b – Create issue links
 
