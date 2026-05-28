@@ -652,7 +652,19 @@ jira.edit_issue(
 Preserve any existing labels on the feature issue — append `workflow:feature-branch` to
 the current label list rather than replacing it.
 
-Immediately after creating each task (before creating issue links or other comments), you **must** post a description digest comment on the created issue. Compute a SHA-256 hash of the description you wrote, then post a standalone ADF comment with this exact format:
+Immediately after creating each task (before creating issue links or other comments), you **must** post a description digest comment on the created issue. Compute the SHA-256 hash using the `scripts/sha256-digest.py` script — do **not** compute the hash yourself.
+
+**Digest computation steps:**
+
+1. **Write the description JSON to a temp file.** Use the Write tool to save the exact ADF JSON description you passed to `jira.create_issue` (the `description` field value) to a temporary file (e.g., `/tmp/desc-<issue-key>.json`).
+
+2. **Run the digest script.** Invoke the script via Bash and capture its output:
+   ```
+   python3 scripts/sha256-digest.py /tmp/desc-<issue-key>.json
+   ```
+   The script outputs only the 64-character lowercase hex digest to stdout — no labels, no prefixes. If the script exits non-zero, report the error and stop.
+
+3. **Post the digest comment.** Use the script's output as the `<hex-digest>` value in this ADF comment:
 
 ```json
 {
@@ -672,9 +684,9 @@ Immediately after creating each task (before creating issue links or other comme
 }
 ```
 
-Replace `<hex-digest>` with the actual computed lowercase 64-character SHA-256 hex digest of the description content. You **must** compute the real hash — never use a placeholder (`<hex-digest>`, `<hex>`), an abbreviated hash (fewer than 64 characters), an example hash copied from documentation, or any hardcoded value. The digest must be exactly 64 lowercase hexadecimal characters derived from the description you just wrote.
+Replace `<hex-digest>` with the exact output from the script. Do not append the Comment Footnote to this comment — it must be a standalone comment separate from any other comments.
 
-Strip leading/trailing whitespace from the description before hashing. Do not append the Comment Footnote to this comment — it must be a standalone comment separate from any other comments.
+4. **Clean up.** Delete the temp file after posting the comment.
 
 See `shared/description-digest-protocol.md` for the full protocol specification including consumer verification behavior and common mistakes to avoid.
 

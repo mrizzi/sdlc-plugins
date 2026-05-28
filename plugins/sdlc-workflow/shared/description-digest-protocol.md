@@ -20,17 +20,46 @@ The full comment body is a single line:
 [sdlc-workflow] Description digest: sha256:<hex-digest>
 ```
 
+## Tool-Based Computation (Preferred)
+
+Use the `scripts/sha256-digest.py` script to compute the digest. The script reads
+ADF JSON from a file path argument or stdin, normalizes it with compact JSON
+separators, computes SHA-256, and prints the 64-character lowercase hex digest to
+stdout.
+
+**Usage:**
+
+```bash
+# From a file
+python3 scripts/sha256-digest.py /tmp/desc.json
+
+# From stdin
+cat /tmp/desc.json | python3 scripts/sha256-digest.py
+```
+
+The script exits non-zero with an error message on stderr if the input is not valid
+JSON or is empty. Always check the exit code before using the output.
+
+This is the preferred method because it eliminates LLM hashing errors (placeholders,
+abbreviated hashes, incorrect computation). The script output is correct by
+construction.
+
 ## Hashing
 
 - **Algorithm:** SHA-256
 - **Input:** The full Jira description field text as returned by the API (ADF JSON
   string when using MCP, or the raw text when using REST API). Normalize the input
-  by stripping leading/trailing whitespace before hashing.
+  by parsing it as JSON and re-serializing with compact separators
+  (`json.dumps(parsed, separators=(',', ':'))`). This ensures consistent hashing
+  regardless of input formatting.
 - **Output:** Lowercase hexadecimal digest (64 characters)
 
 The producer computes the hash from the description content it wrote to the issue,
 immediately after creating it. This ensures the digest reflects exactly what was
 persisted.
+
+When the `scripts/sha256-digest.py` script is available, use it instead of manual
+computation — see **Tool-Based Computation** above.
 
 ## Jira Comment Format
 
