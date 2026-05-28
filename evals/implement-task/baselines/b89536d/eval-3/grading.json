@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md Step 4.3 states: 'common/src/db/query.rs -- would use mcp__serena_backend__find_symbol on apply_filter with include_body=true to understand: Its function signature, How it parses comma-separated values, How it generates SQL IN clauses'. File 2 changes state: 'Apply the license filter using apply_filter from common/src/db/query.rs. This is the core reuse point. The apply_filter function already handles: Parsing comma-separated values (e.g., \"MIT,Apache-2.0\" becomes [\"MIT\", \"Apache-2.0\"]), Generating a SQL IN clause for multi-value filters'. The duplication check in Step 9 confirms: 'The apply_filter function is reused, not duplicated. No new comma-separated parsing logic written.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md Step 4.2 is titled 'Inspect the advisory severity filter (structural template)' and states: 'modules/fundamental/src/advisory/endpoints/list.rs -- this is the structural template cited in Implementation Notes.' File 1 changes state: 'Following the pattern from advisory's list.rs, add an optional license field of type Option<String> to the existing query struct'. reuse-analysis.md Reuse Candidate 2 is explicitly about 'modules/fundamental/src/advisory/endpoints/list.rs (severity filter pattern)' and describes it as 'A structural template for adding an optional filter query parameter to a list endpoint'."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md Step 4.4 states: 'entity/src/package_license.rs -- would use mcp__serena_backend__get_symbols_overview to see the SeaORM entity definition'. File 2 changes state: 'Join through package_license entity. Use the package_license SeaORM entity (from entity/src/package_license.rs) to join the package table to the package_license table.' The reuse section confirms: 'The package_license entity is reused for the join -- no raw SQL.' reuse-analysis.md Reuse Candidate 3 explicitly covers this: 'This eliminates the need to: Write raw SQL JOIN statements, Hardcode table or column names as strings, Define new entity or model types for the join table.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three numbered reuse candidate sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' with detailed explanation of how it would be called in PackageService::list(); 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs (severity filter pattern)' with 3-step structural replication plan; 'Reuse Candidate 3: entity/src/package_license.rs' with JOIN construction and column reference details. Each section includes 'How it would be reused' with specific application details."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": false,
+      "evidence": "The plan lists modifications to: modules/fundamental/src/package/endpoints/list.rs (in Files to Modify), modules/fundamental/src/package/service/mod.rs (in Files to Modify), tests/api/package_license_filter.rs (in Files to Create). However, the plan also proposes modifying docs/api.md in Step 6 'Documentation impact': 'docs/api.md -- would update the GET /api/v2/package section to document the new optional license query parameter'. Step 9 acknowledges: 'docs/api.md is out-of-scope but justified by documentation impact; would ask user approval'. This file is outside the scope defined by the task's Files to Modify and Files to Create sections, violating constraint 5.1. While the plan notes it would ask for approval, the assertion requires ALL files to be within scope."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md File 2 changes explicitly state apply_filter is reused directly: 'Call apply_filter with the license parameter value and the package_license entity column.' The duplication check in Step 9 confirms: 'The apply_filter function is reused, not duplicated. No new comma-separated parsing logic written. No new SQL generation logic written.' No new utility functions for parsing or filtering are proposed anywhere in the plan. reuse-analysis.md Reuse Candidate 1 states: 'Reuse type: Direct invocation (no modification to apply_filter needed)' and 'This eliminates the need to: Write custom comma-separated string parsing logic, Manually construct SQL IN clauses or WHERE conditions.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333333333333334
+  }
+}

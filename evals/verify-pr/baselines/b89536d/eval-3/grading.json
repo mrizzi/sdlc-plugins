@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "The review comment about transaction wrapping (id 30001) is classified as a code change request and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30001.md states '## Classification: code change request' and '## Action: Create sub-task to address this feedback.' subtask-1.md exists with Review Context referencing Comment ID 30001. report.md confirms: 'Comment 30001 (code change request): The soft_delete method must wrap its three UPDATE statements in a database transaction...Sub-task created.'"
+    },
+    {
+      "text": "The review comment about adding an index (id 30002) is classified as a code change request (or upgraded suggestion) and triggers sub-task creation",
+      "passed": true,
+      "evidence": "review-30002.md states '## Classification: code change request' and '## Action: Create sub-task to address this feedback.' subtask-2.md exists with Review Context referencing Comment ID 30002. report.md confirms: 'Comment 30002 (code change request): The migration should add a partial index...Sub-task created.'"
+    },
+    {
+      "text": "The nit comment about context message (id 30003) is classified as nit and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30003.md states '## Classification: nit' and '## Action: No sub-task created. Nit-level feedback does not warrant tracked work.' No subtask file references comment 30003. report.md lists comment 30003 under 'Comments Not Requiring Sub-Tasks' with classification 'nit'."
+    },
+    {
+      "text": "The question comment about GET behavior (id 30004) is classified as question and does NOT trigger sub-task creation",
+      "passed": true,
+      "evidence": "review-30004.md states '## Classification: question' and '## Action: No sub-task created. This is a question requiring author clarification, not a code change request.' No subtask file references comment 30004. report.md lists comment 30004 under 'Comments Not Requiring Sub-Tasks' with classification 'question'."
+    },
+    {
+      "text": "Each sub-task description follows the task-description-template.md format: contains Repository, Description, Files to Modify, Implementation Notes, and Acceptance Criteria sections (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-1.md contains all required sections: '## Repository' (trustify-backend), '## Description' (Wrap the three UPDATE statements...), '## Files to Modify' (modules/fundamental/src/sbom/service/sbom.rs), '## Implementation Notes' (Use SeaORM's transaction API...), '## Acceptance Criteria' (4 checklist items). subtask-2.md contains all required sections: '## Repository' (trustify-backend), '## Description' (Add a partial index...), '## Files to Modify' (migration/src/m0042_sbom_soft_delete/mod.rs), '## Implementation Notes' (Add the index after the alter_table call...), '## Acceptance Criteria' (4 checklist items)."
+    },
+    {
+      "text": "Each sub-task description includes a Target PR section with the PR URL https://github.com/trustify/trustify-backend/pull/744 (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-1.md line 29: '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'. subtask-2.md line 29: '## Target PR' followed by 'https://github.com/trustify/trustify-backend/pull/744'."
+    },
+    {
+      "text": "Each sub-task description includes a Review Context section with the original review comment text (constraint 1.12)",
+      "passed": true,
+      "evidence": "subtask-1.md has '## Review Context' section (lines 31-37) with Comment ID 30001, Author reviewer-a, file/line reference, and the full original comment text: 'The soft_delete method should run all three UPDATE statements inside a single database transaction...' subtask-2.md has '## Review Context' section (lines 31-40) with Comment ID 30002, Author reviewer-a, file/line reference, and the full original comment text including the SQL snippet."
+    },
+    {
+      "text": "The skill does NOT modify any code files -- it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only classification files (review-30001.md through review-30004.md), sub-task descriptions (subtask-1.md, subtask-2.md), and a report (report.md). No source code files (.rs, .toml, .sql, etc.) appear in the outputs. The report describes reading and verifying code but no modifications. The sub-tasks describe work to be done but do not contain patches or modified code."
+    },
+    {
+      "text": "The skill reads and processes all PR review comments before generating findings (constraint 1.10)",
+      "passed": true,
+      "evidence": "All four review comments (30001, 30002, 30003, 30004) have individual classification files (review-30001.md through review-30004.md). The report.md references all four comments in the 'Review Feedback' section and lists all four in the summary tables: two under 'Sub-Tasks Created' (30001, 30002) and two under 'Comments Not Requiring Sub-Tasks' (30003, 30004)."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report.md contains no mention of merging, auto-merge, or any merge action. The overall result is 'WARN' with issues requiring attention. The report identifies sub-tasks that need to be addressed, which is incompatible with auto-merging. No merge commands or merge status changes appear anywhere in the outputs."
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE -- only new test files were added (tests/api/sbom_delete.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 99: '| Test Change Classification | ADDITIVE | tests/api/sbom_delete.rs is a new file adding 5 test functions with comprehensive assertions |'. The detailed section (lines 99-101) further explains: 'tests/api/sbom_delete.rs is a new file (does not exist on the base branch). It adds 5 test functions covering all specified test requirements. New test files are inherently additive. No modified or deleted test files exist in the PR.'"
+    },
+    {
+      "text": "Convention upgrade eligibility is evaluated for review comment 30002 (index suggestion) -- the review classification output (review-30002.md) or the report's Style/Conventions analysis explains whether the suggestion matches a documented or demonstrated project convention",
+      "passed": true,
+      "evidence": "review-30002.md (lines 19-23) explicitly evaluates convention upgrade eligibility: 'Additionally, this comment is eligible for convention upgrade evaluation. Adding indexes for frequently-queried columns in migrations is a common database convention. The repository's migration structure (migration/src/) and the use of SeaORM suggest established patterns for migration authoring.' report.md lines 82-84 under 'Style/Conventions > Convention Upgrade -- WARN': 'Comment 30002 (index addition) was evaluated for convention upgrade eligibility. The suggestion to add a partial index on deleted_at aligns with standard database migration practices. While CONVENTIONS.md content was not available for this eval, adding indexes for frequently-queried filter columns is a well-established database convention.'"
+    },
+    {
+      "text": "Review comment 30002 (index suggestion) results in a sub-task regardless of classification path -- whether classified directly as code change request based on reviewer language, or upgraded from suggestion via convention analysis",
+      "passed": true,
+      "evidence": "review-30002.md classifies 30002 as 'code change request' with action 'Create sub-task to address this feedback.' subtask-2.md exists and is the sub-task for comment 30002, containing the full task description for adding the partial index. report.md Sub-Tasks Created table includes: '| 2 | Add partial index on sbom.deleted_at in migration | 30002 | code change request |'. The classification was direct ('code change request' based on directive language 'should also add') rather than via upgrade, and the sub-task was created."
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "failed": 0,
+    "total": 13,
+    "pass_rate": 1.0
+  }
+}
