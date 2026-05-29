@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 3: \"Please run /setup first to generate the Project Configuration section in your CLAUDE.md, then re-run /define-feature.\""
+    },
+    {
+      "text": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 1: \"Project Configuration section is missing from CLAUDE.md.\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/define-feature-eval-baseline/eval-3/outputs/preview.md — file does not exist. Only response.md is present in the outputs directory."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/define-feature-eval-baseline/eval-3/outputs/jira-create.md — file does not exist. Only response.md is present in the outputs directory."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/define-feature-eval-baseline/eval-3/outputs/jira-comment.md — file does not exist. Only response.md is present in the outputs directory."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "Full content of response.md is 3 lines about missing Project Configuration and recommending /setup. None of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, User Stories, Acceptance Criteria, Technical Considerations, Dependencies, Open Questions) appear anywhere in the file."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

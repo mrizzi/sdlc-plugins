@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 24-25: 'call `common/src/db/query.rs::apply_filter` to parse the parameter value (which handles both single-value like `MIT` and comma-separated multi-value like `MIT,Apache-2.0`)'. Also line 38: 'Directly reuse `apply_filter` from `common/src/db/query.rs` for comma-separated parameter parsing — do NOT write new parsing logic.' The constraint against new parsing logic is explicitly stated."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 22: '(following the same pattern as the `severity` field in `modules/fundamental/src/advisory/endpoints/list.rs`)'. Also line 35-36: 'Follow the structural pattern from `modules/fundamental/src/advisory/endpoints/list.rs` (the severity filter) as a template for how to wire the query parameter into the handler and pass it to the service layer.' Additionally, implementation step 1 (line 111-113) explicitly says 'Inspect the advisory filter pattern: Read the severity filter implementation in `modules/fundamental/src/advisory/endpoints/list.rs`'."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md lines 48-50: 'add a JOIN to the `package_license` table using the SeaORM entity defined in `entity/src/package_license.rs`. This entity already maps packages to licenses — use it for the JOIN rather than writing raw SQL.' Also lines 55-57: 'Use `entity/src/package_license.rs` (the existing SeaORM entity for the package-license join table) to build the JOIN query. Do NOT write raw SQL or create a new entity for this relationship.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md explicitly covers all three: (1) 'Reuse Candidate 1: `common/src/db/query.rs::apply_filter`' (lines 8-29), (2) 'Reuse Candidate 2: `modules/fundamental/src/advisory/endpoints/list.rs`' (lines 31-59), (3) 'Reuse Candidate 3: `entity/src/package_license.rs`' (lines 61-88). Each section quotes the task description and explains how the candidate is applied in detail. The summary table on lines 93-98 also confirms all three are covered."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "plan.md lists two Files to Modify: `modules/fundamental/src/package/endpoints/list.rs` and `modules/fundamental/src/package/service/mod.rs`. One File to Create: `tests/api/package_license_filter.rs`. The 'Files NOT Modified' section (lines 94-103) explicitly calls out files like `entity/src/package_license.rs` and `common/src/db/query.rs` as out of scope and notes they are used as-is without modification. No files outside the task's scope are proposed for modification or creation."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan and reuse analysis both explicitly state no new utility functions are created. reuse-analysis.md line 28: 'No new utility functions are created that would duplicate `apply_filter` functionality.' reuse-analysis.md line 100-101: 'No new utility functions or entities are created that would duplicate existing functionality.' The plan consistently directs to call `apply_filter` directly rather than wrapping it or reimplementing it."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

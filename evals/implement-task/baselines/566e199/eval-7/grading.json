@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "Section '2. Locate the Digest Comment' explicitly states: 'Search the returned comments for any whose body starts with the marker string defined in `shared/description-digest-protocol.md`: `[sdlc-workflow] Description digest:`'. The marker string is quoted exactly and the protocol file is cited."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed SHA-256 hash of the current description",
+      "passed": true,
+      "evidence": "Section '6. Compare Digests — MISMATCH Detected' states: 'The expected digest (from the comment) and the actual digest (computed from the current description) do NOT match' and shows Expected: sha256:000...000 vs Actual: sha256:<computed-64-char-hex-digest>. Section 5 also describes computing 'the SHA-256 hash of the current description field text' using scripts/sha256-digest.py."
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "Section '7. Alert the User' shows a warning block: 'Warning: Task description modified after planning — The description of TC-9201 has been modified since plan-feature created this task.' It displays '- **Expected digest** (recorded by plan-feature): `sha256:0000000000000000000000000000000000000000000000000000000000000000`' and '- **Actual digest** (computed from current description): `sha256:<computed-64-char-hex-digest>`'."
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "Section '7. Alert the User' presents exactly two options: '1. **Proceed** — Continue implementing with the current (modified) description as-is' and '2. **Stop** — Abort implementation so you can re-run plan-feature to regenerate tasks from the updated feature description', followed by 'Choose (1/2):'."
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "Section '8. STOP Execution' explicitly lists: 'Step 2 (Verify Dependencies) is NOT executed. Step 3 (Transition to In Progress) is NOT executed. Step 4 (Understand the Code) is NOT executed. Step 5 (Create Branch) is NOT executed. No implementation planning, code changes, branching, or Jira transitions occur.' and 'The skill waits for the user to respond with their choice before taking any further action.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

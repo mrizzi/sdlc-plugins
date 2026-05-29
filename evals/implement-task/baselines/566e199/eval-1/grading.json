@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "plan.md Step 4 explicitly lists inspection of: (1) 'modules/fundamental/src/advisory/service/advisory.rs' — calls mcp__serena_backend__get_symbols_overview and find_symbol to see methods fetch, list, search; (2) 'modules/fundamental/src/advisory/model/summary.rs' — find_symbol('AdvisorySummary', include_body=true) to see the severity field; (3) 'common/src/error.rs' — find_symbol('AppError', include_body=true). Also Step 4 reads get.rs via mcp__serena_backend__get_symbols_overview for endpoint siblings. That covers all 4 files."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "plan.md Step 9 scope containment check lists exactly: modules/fundamental/src/advisory/model/severity_summary.rs (create), modules/fundamental/src/advisory/endpoints/severity_summary.rs (create), tests/api/advisory_summary.rs (create), modules/fundamental/src/advisory/service/advisory.rs (modify), modules/fundamental/src/advisory/endpoints/mod.rs (modify), modules/fundamental/src/advisory/model/mod.rs (modify). Step 6 lists the same 6 files. The plan explicitly notes 'server/src/main.rs' is out of scope and flags docs/api.md as potentially needing user approval if touched."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md Step 6 'Files to Create' explicitly lists: (1) 'modules/fundamental/src/advisory/model/severity_summary.rs -- SeveritySummary response struct', (2) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs -- GET handler', (3) 'tests/api/advisory_summary.rs -- Integration tests'. Corresponding file-1-description.md, file-3-description.md, and file-6-description.md detail each of these files."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md Step 6 'Files to Modify' lists: (1) 'modules/fundamental/src/advisory/service/advisory.rs -- add severity_summary method', (2) 'modules/fundamental/src/advisory/endpoints/mod.rs -- register new route', (3) 'modules/fundamental/src/advisory/model/mod.rs -- add pub mod severity_summary;'. Also confirmed in file-2-description.md, file-4-description.md, and file-5-description.md."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md Step 10 shows commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' — this follows type(scope): description format. The footer contains 'Implements TC-9201' which references the Jira issue. The git commit command also uses this same message."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "plan.md Step 10 commit command explicitly includes: `git commit --trailer=\"Assisted-by: Claude Code\" -m \"feat(advisory): ...`"
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "plan.md Step 5 states: 'git checkout -b TC-9201' and 'Branch named TC-9201 after the Jira issue ID, checked out from main (the Target Branch).' Step 1 also states 'Target Branch: main' and 'Extracted: main'. The PR command in Step 10 uses '--base main' explicitly."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md 'Error handling' section states: 'All handlers in modules/fundamental/src/*/endpoints/ return Result<T, AppError>' and 'Error wrapping uses .context(\"descriptive message\")'. The 'Module structure' section states: 'Each domain module follows the three-part pattern: model/ + service/ + endpoints/'. Both patterns are clearly identified."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "plan.md Step 1 explicitly shows: '- **Target Branch**: `main`' and under 'Target Branch extraction': 'Extracted: main. This will be used as --base main for the PR in Step 10.' Step 10 PR command also uses '--base main'."
+    },
+    {
+      "text": "The plan mentions checking for a description digest comment (Step 1.5) and notes that when no digest is found, it proceeds with a warning rather than blocking execution (backward compatibility per shared/description-digest-protocol.md)",
+      "passed": true,
+      "evidence": "plan.md Step 1.5 'Verify Description Integrity' explicitly describes searching for comments starting with '[sdlc-workflow] Description digest:'. It states: 'If no digest comment found: Log warning and proceed: \"No description digest found -- skipping integrity check. This task may have been created before digest tracking was introduced.\"' The final paragraph confirms: 'Since this is a synthetic test task, no digest comment exists. We would log the backward-compatibility warning and proceed.'"
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}
