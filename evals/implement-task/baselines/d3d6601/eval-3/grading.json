@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 46-48: 'Call apply_filter from common/src/db/query.rs directly -- this function already handles comma-separated multi-value query parameter parsing and SQL IN clause generation'. Also lines 42-43: 'use apply_filter from common/src/db/query.rs to parse the comma-separated values and generate a SQL IN clause'. reuse-analysis.md Reuse Candidate 1 section extensively describes using apply_filter for comma-separated parsing: 'Given a string like \"MIT,Apache-2.0\", it splits on commas, trims whitespace, and produces a SeaORM condition'."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 29: 'Add an optional license field to the query parameters struct (following the same pattern as the severity field in modules/fundamental/src/advisory/endpoints/list.rs)'. plan.md line 34: 'Follow the exact Query struct pattern from the advisory list endpoint'. reuse-analysis.md Reuse Candidate 2 section: 'The advisory list endpoint serves as the structural template for the package list endpoint changes.'"
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md line 43-44: 'Join through the package_license entity (entity/src/package_license.rs) to filter packages by their associated license SPDX identifiers'. plan.md line 49: 'Use entity::package_license for the join table entity rather than writing raw SQL'. reuse-analysis.md Reuse Candidate 3: 'Instead of writing raw SQL like JOIN package_license ON... the implementation will use SeaORM's relation-based join with the package_license entity'."
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three fully detailed sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 7-17), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs (filter pattern)' (lines 19-35), and 'Reuse Candidate 3: entity/src/package_license.rs' (lines 37-55). Each includes 'How it will be reused' and 'Why reuse instead of reimplementing/this pattern/this entity' subsections with concrete application details."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "plan.md Scope Containment section (lines 98-103) explicitly states: 'All changes are strictly within the files listed in Files to Modify and Files to Create: modules/fundamental/src/package/endpoints/list.rs (modify), modules/fundamental/src/package/service/mod.rs (modify), tests/api/package_license_filter.rs (create). No out-of-scope files will be modified.' The plan body only details changes to these three files. The mention of tests/api/mod.rs for module registration is a minimal, necessary addition to wire in the new test file, not a substantive out-of-scope modification."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 46-48: 'Call apply_filter from common/src/db/query.rs directly'. reuse-analysis.md Duplication Avoidance section: 'No custom query parameter parsing is written -- apply_filter handles it'. The plan consistently describes calling apply_filter directly and never proposes creating any new parsing or filter utility functions. reuse-analysis.md line 13: 'This is a direct reuse -- no wrapping, no adaptation, no duplication.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "All 5 task files contain: Repository ('trustify-backend'), Target Branch ('main'), Description (detailed paragraphs), at least one of Files to Modify or Files to Create (Task 1 has both, Tasks 2/4/5 have Files to Modify, Task 3 has both), Implementation Notes (multi-bullet guidance), Acceptance Criteria (checkbox lists), and Test Requirements (checkbox lists). Verified by reading each file in full."
+    },
+    {
+      "text": "Task count is between 3 and 10 inclusive",
+      "passed": true,
+      "evidence": "There are exactly 5 task files: task-1-add-advisory-severity-summary-model.md, task-2-add-severity-aggregation-service-method.md, task-3-add-advisory-summary-endpoint.md, task-4-add-threshold-query-parameter.md, task-5-add-cache-invalidation-for-advisory-summary.md. 5 is between 3 and 10 inclusive."
+    },
+    {
+      "text": "All tasks reference repository 'trustify-backend'",
+      "passed": true,
+      "evidence": "Every task file begins with '## Repository\\ntrustify-backend': Task 1 line 1-2, Task 2 line 1-2, Task 3 line 1-2, Task 4 line 1-2, Task 5 line 1-2."
+    },
+    {
+      "text": "Task dependencies form a DAG with no circular dependencies",
+      "passed": true,
+      "evidence": "Task 1: no dependencies. Task 2: depends on Task 1. Task 3: depends on Task 1 and Task 2. Task 4: depends on Task 3. Task 5: depends on Task 3. This forms a DAG: 1 -> 2 -> 3 -> {4, 5}. No cycles exist."
+    },
+    {
+      "text": "Every task's Files to Modify and Files to Create reference paths plausible within the repo-backend.md structure",
+      "passed": true,
+      "evidence": "Task 1 creates 'modules/fundamental/src/sbom/model/advisory_severity_summary.rs' (new file in existing model/ dir) and modifies 'modules/fundamental/src/sbom/model/mod.rs' (exists in manifest). Task 2 modifies 'modules/fundamental/src/sbom/service/sbom.rs' (exists in manifest). Task 3 creates 'modules/fundamental/src/sbom/endpoints/advisory_summary.rs' (new file in existing endpoints/ dir) and modifies 'modules/fundamental/src/sbom/endpoints/mod.rs' (exists in manifest). Task 4 modifies 'modules/fundamental/src/sbom/endpoints/advisory_summary.rs' (created by Task 3) and 'modules/fundamental/src/sbom/service/sbom.rs' (exists). Task 5 modifies 'modules/ingestor/src/graph/advisory/mod.rs' (exists in manifest). All paths are consistent with the repo-backend.md directory tree."
+    },
+    {
+      "text": "Impact map lists concrete, specific changes (not vague or abstract descriptions)",
+      "passed": true,
+      "evidence": "The impact map lists 7 specific changes including: 'Add AdvisorySeveritySummary response model struct in the SBOM model module', 'Add service method on SbomService to aggregate advisory severity counts for a given SBOM using the sbom_advisory join table', 'Add GET /api/v2/sbom/{id}/advisory-summary endpoint with 5-minute cache and route registration', 'Add optional ?threshold query parameter to filter severity counts above a given level', 'Add cache invalidation for advisory-summary in the advisory ingestion pipeline'. Each item names specific structs, services, endpoints, or components."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 tasks have '## Repository' followed by exactly one repository name 'trustify-backend' on the next line. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 tasks contain: '## Target Branch' (set to 'main'), '## Description' (detailed paragraphs), '## Acceptance Criteria' (checkbox lists with 4-6 items each), '## Test Requirements' (checkbox lists with 2-4 items each). Verified in each file."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All modified files exist in the manifest: modules/fundamental/src/sbom/model/mod.rs (manifest line 41), modules/fundamental/src/sbom/service/sbom.rs (manifest line 46), modules/fundamental/src/sbom/endpoints/mod.rs (manifest line 48), modules/ingestor/src/graph/advisory/mod.rs (manifest line 83). Created files are new files in existing directories from the manifest: modules/fundamental/src/sbom/model/advisory_severity_summary.rs (in model/ dir, manifest lines 40-44), modules/fundamental/src/sbom/endpoints/advisory_summary.rs (in endpoints/ dir, manifest lines 47-50). No paths reference directories or structures absent from the manifest."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references 'modules/fundamental/src/sbom/model/summary.rs (SbomSummary)', 'modules/fundamental/src/sbom/model/details.rs (SbomDetails)', 'modules/fundamental/src/advisory/model/summary.rs (AdvisorySummary)', entity/src/. Task 2 references 'modules/fundamental/src/sbom/service/sbom.rs', 'entity/src/sbom_advisory.rs', 'entity/src/advisory.rs', 'common/src/error.rs', 'common/src/db/query.rs', specific methods like 'fetch' and 'list'. Task 3 references 'modules/fundamental/src/sbom/endpoints/get.rs', 'modules/fundamental/src/sbom/endpoints/mod.rs', 'common/src/error.rs', patterns like 'Result<Json<AdvisorySeveritySummary>, AppError>'. Task 4 references 'common/src/error.rs', 'common/src/db/query.rs', Axum's 'Query<T>' extractor. Task 5 references 'modules/ingestor/src/graph/advisory/mod.rs', 'modules/ingestor/src/service/mod.rs (IngestorService)'. All tasks cite specific file paths and code symbols."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 5 tasks contain '## Target Branch\\nmain': Task 1 lines 4-5, Task 2 lines 4-5, Task 3 lines 4-5, Task 4 lines 4-5, Task 5 lines 4-5."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a real computed SHA-256 hash — exactly 64 lowercase hex characters, not a placeholder (<hex-digest>, <hex>), abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256:<64-char-hex>'",
+      "passed": false,
+      "evidence": "No output file contains the string 'Description digest' or '[sdlc-workflow]' or 'sha256:'. The task files contain only the task descriptions themselves with no digest comments. The outputs directory contains only impact-map.md and 5 task files, none of which include a description digest comment."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No task file contains any convention applicability rationale in the prescribed format 'Applies: task modifies <file> matching the convention's <scope>'. No task references CONVENTIONS.md sections with the 'Per CONVENTIONS.md' pattern. The Implementation Notes sections contain implementation guidance but no convention-aware enrichment with applicability rationales as required by convention-applicability-rules.md."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 2,
+    "total": 13,
+    "pass_rate": 0.846
+  }
+}

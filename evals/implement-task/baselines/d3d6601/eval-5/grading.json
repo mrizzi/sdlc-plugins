@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references checking out TC-9005 (the Target Branch) before creating the task branch — includes git checkout TC-9005 or equivalent, not git checkout main (constraint 3.1, Step 5)",
+      "passed": true,
+      "evidence": "plan.md lines 23-24 show: 'git checkout TC-9005' followed by 'git pull'. The plan explicitly states at line 14: 'Checkout the target branch first: git checkout TC-9005 && git pull to get the latest state of the feature branch.' No reference to checking out main."
+    },
+    {
+      "text": "The plan specifies opening a PR with --base TC-9005 targeting the feature branch, not --base main (Step 10)",
+      "passed": true,
+      "evidence": "plan.md line 97 shows: 'gh pr create --base TC-9005 --title \"feat(migration): drop deprecated status column from advisory table\"'. Line 108 reiterates: 'PR base is TC-9005 (the target branch from the task description), not main'."
+    },
+    {
+      "text": "The plan names the task branch TC-9205 (the task issue ID), not TC-9005 (the feature branch) — the task branch is distinct from the Target Branch (constraint 3.1)",
+      "passed": true,
+      "evidence": "plan.md line 17 states: 'Create the task branch from TC-9005: git checkout -b TC-9205 — the new branch is named after this task's Jira issue ID (TC-9205), NOT the parent feature branch (TC-9005).' Line 28 shows the command: 'git checkout -b TC-9205'. Line 107 reiterates: 'Branch name is TC-9205 (this task's ID), not TC-9005 (the parent feature branch)'."
+    },
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 1 of: migration/src/m0001_initial/mod.rs, entity/src/advisory.rs, migration/src/lib.rs (constraint 1.5, Steps 4-9 unaffected by Target Branch)",
+      "passed": true,
+      "evidence": "plan.md lines 35-43 under 'Code Inspection (Step 4)' explicitly reference all three files: (1) 'Inspect migration/src/lib.rs' (line 35), (2) 'Inspect migration/src/m0001_initial/mod.rs' (line 37), and (3) 'Inspect entity/src/advisory.rs' (line 39). Each includes specific instructions to read/analyze the file using Serena tools before making changes."
+    },
+    {
+      "text": "The plan includes --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "plan.md line 78 shows: 'git commit --trailer=\"Assisted-by: Claude Code\" -m \"feat(migration): drop deprecated status column from advisory table'. The trailer is explicitly included in the commit command."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9205 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md line 63 shows the commit message starting with 'feat(migration): drop deprecated status column from advisory table' which follows Conventional Commits format (type=feat, scope=migration). Line 72 shows 'Implements TC-9205' in the footer. The full git commit command on lines 78-87 confirms both the format and TC-9205 reference."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying TC-9005 as the target branch",
+      "passed": true,
+      "evidence": "plan.md line 8 states 'Target Branch: TC-9005'. Lines 12-18 under 'Target Branch Handling' explicitly discuss extracting the target branch: 'The task specifies Target Branch: TC-9005, which is a feature branch (not main).' The section then explains all three consequences of this target branch identification."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

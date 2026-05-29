@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md states 'Selected mode: feature-branch' with detailed rationale citing two atomicity indicators: (1) 'Coordinated schema migration' — migration creates enum type, adds column, backfills data, drops FK column and lookup table, and code changes depend on migration having completed; (2) 'Breaking API changes' — entity definition changes consumed by service layer and endpoints. Concludes 'All intermediate tasks must land on feature branch TC-9005 and be merged to main atomically.'"
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Bookend Type\\ncreate-branch' and is the first task (task-1). Description: 'Create and push the feature branch TC-9005 from the latest main.'"
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-5-merge-feature-branch.md contains '## Bookend Type\\nmerge-branch' and is the last task (task-5). Description: 'Create a PR to merge feature branch TC-9005 into main.'"
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All three intermediate tasks have '## Target Branch\\nTC-9005': task-2-create-enum-migration.md (line 5), task-3-update-entity-definitions.md (line 5), task-4-update-service-endpoints-ingestion.md (line 5)."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Target Branch\\nmain' (lines 5-6)."
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-5-merge-feature-branch.md contains '## Target Branch\\nmain' (lines 5-6)."
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All three intermediate tasks list Task 1 as a dependency: task-2 has 'Depends on: Task 1 — Create feature branch TC-9005 from main' (line 53); task-3 has 'Depends on: Task 1 — Create feature branch TC-9005 from main' (line 47); task-4 has 'Depends on: Task 1 — Create feature branch TC-9005 from main' (line 61)."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-5-merge-feature-branch.md lists all three intermediate tasks: 'Depends on: Task 2 — Create database migration for advisory status enum', 'Depends on: Task 3 — Update SeaORM entity definitions', 'Depends on: Task 4 — Update advisory service, endpoints, and ingestion pipeline' (lines 23-25)."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": false,
+      "evidence": "Bookend tasks are missing required sections. task-1-create-feature-branch.md lacks: Files to Modify, Files to Create, and Implementation Notes sections. task-5-merge-feature-branch.md also lacks: Files to Modify, Files to Create, and Implementation Notes sections. Intermediate tasks (2, 3, 4) all contain the required sections: Repository, Target Branch, Description, Files to Modify and/or Files to Create, Implementation Notes, Acceptance Criteria, and Test Requirements."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": true,
+      "evidence": "impact-map.md contains 'Labels: `workflow:feature-branch`' at the end of the Workflow Mode Decision section (line 37)."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a real computed SHA-256 hash — exactly 64 lowercase hex characters, not a placeholder (<hex-digest>, <hex>), abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256:<64-char-hex>'",
+      "passed": true,
+      "evidence": "All 5 task files contain valid digest comments with 64 lowercase hex character SHA-256 hashes: task-1: 'sha256:639e29bd757b4576d19610c3bd875e9bc54536a44c42ddd4e80d457d90ab4c29'; task-2: 'sha256:7f98f6fde1923a5a128d67e57eb27d69f9a0b6867051fe9d764607e3edde446e'; task-3: 'sha256:3b8f9eca1600729c54294c04234795411d42af92086742efd1ce728a4f5c2cc8'; task-4: 'sha256:92d6cb294f487fc5b2e0f475f0cd961dc104200d0c384e683e79da338bbd1456'; task-5: 'sha256:7e365551e2e8cc91b8a078561ebc46f0f6deb242ce7209c816fbdcbb9bff5261'. All use the correct marker format '[sdlc-workflow] Description digest: sha256:<hash>' and contain real hex values (no placeholders, abbreviations, or example strings)."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No convention references or applicability rationales appear anywhere in the task files. None of the Implementation Notes sections in tasks 2, 3, or 4 contain 'Per CONVENTIONS.md' references or 'Applies:' rationale lines as prescribed by convention-applicability-rules.md. The repo structure manifest (repo-backend.md) shows a CONVENTIONS.md file exists in the repository root, yet no evidence of convention-aware enrichment processing is present in any output file. Without any evidence that conventions were evaluated for applicability, the assertion cannot be marked as PASS."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 2,
+    "total": 12,
+    "pass_rate": 0.8333333333333334
+  }
+}

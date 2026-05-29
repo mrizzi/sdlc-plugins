@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | MIXED | Both additive and reductive signals detected across modified and new test files |' — the table row explicitly states MIXED with both additive and reductive signals."
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md line 23: '-1 test function (`test_recommend_purls_with_qualifiers` removed entirely)' in the Structural Summary. Also report.md line 50: 'Removed test function `test_recommend_purls_with_qualifiers`' in Reductive Findings section 1."
+    },
+    {
+      "text": "The structural summary or reductive findings identify the relaxed assertion in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers",
+      "passed": true,
+      "evidence": "report.md lines 24-25: '-1 assertion relaxed: in `test_recommend_purls_basic`, the PURL assertion changed from checking a fully qualified PURL with qualifiers (`\"pkg:maven/org.apache/commons-lang3@3.12?repository_url=https://repo1.maven.org&type=jar\"`) to checking a versioned PURL without qualifiers (`\"pkg:maven/org.apache/commons-lang3@3.12\"`).' Also Reductive Findings section 2 (lines 52-63) elaborates with the before/after code snippets."
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md lines 28-30: 'New file: `tests/api/purl_simplify.rs` — +3 test functions (`test_simplified_purl_no_version`, `test_simplified_purl_mixed_types`, `test_simplified_purl_ordering_preserved`) — Purely additive; new file with new tests covering edge cases for the simplified response format — Signal: **ADDITIVE**'"
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md line 22: '+1 test function (`test_recommend_purls_dedup` added)' in the Structural Summary for the modified file. Also line 36 in the per-file signal tally: 'Additive Signals: +1 function (`test_recommend_purls_dedup`)'."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only read-only report files: report.md, criterion-1.md through criterion-5.md. No code files were modified. The report itself only describes findings and does not indicate any code modifications were made."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'Overall: PASS' and presents findings including the MIXED test change classification as informational. No merge action is taken or recommended. The report is purely informational, presenting findings for human review."
+    },
+    {
+      "text": "The test change classification is produced by the Style/Conventions sub-agent (which spawns a test classification sub-agent for modified files) — the classification verdict is attributed to the Style/Conventions domain in the report",
+      "passed": true,
+      "evidence": "report.md lines 93-102: The 'Style/Conventions' section contains 'Test Change Classification — MIXED: Both additive and reductive signals present. See detailed analysis above.' The test change classification verdict is explicitly listed under the Style/Conventions heading in the Findings Detail section."
+    },
+    {
+      "text": "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)",
+      "passed": true,
+      "evidence": "The Structural Summary (lines 20-38) analyzes concrete file-level changes: function additions/removals, assertion changes with specific code snippets. The Reductive Findings (lines 48-63) reference 'Base-branch version tested: qualifier variants returned as distinct entries' and show before/after assertion code. The Semantic Assessment (lines 40-46) references test behavior changes. The analysis is grounded in comparing base-branch and PR-branch file content (function counts, assertion text), not acceptance criteria."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — the 3-criteria detection (author github-actions[bot], marker ## Eval Results, footer sdlc-workflow/run-evals) found no matches, so Eval Quality does not affect the Test Quality combination",
+      "passed": false,
+      "evidence": "report.md line 13: 'Test Quality | PASS | All test functions have doc comments; no repetitive test patterns detected; Eval Quality N/A (no eval result reviews)' — Eval Quality is N/A and does not affect Test Quality. report.md line 100: 'Eval Quality — N/A: No eval result reviews found on the PR.' However, the report does NOT mention the specific 3-criteria detection mechanism (author github-actions[bot], marker ## Eval Results, footer sdlc-workflow/run-evals). The assertion requires that the 3-criteria detection is referenced. The report only states 'No eval result reviews found on the PR' without specifying the detection criteria used."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 1,
+    "total": 10,
+    "pass_rate": 0.9
+  }
+}

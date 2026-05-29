@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "report.md line 53: 'Acceptance Criteria | FAIL | 3 of 6 criteria met'. Three criteria are marked FAIL: Criterion 1 (threshold filtering logic inverted), Criterion 3 (invalid threshold silently accepted via unwrap_or(0)), and Criterion 5 (threshold_applied field missing). Each failure includes specific code-level evidence from the diff."
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "report.md lines 79-89: Criterion 3 states 'The code uses `.unwrap_or(0)` when looking up the threshold value... No 400 Bad Request error is returned.' and quotes the evidence '.unwrap_or(0);' with explanation 'This silently accepts any invalid threshold value instead of returning Err(AppError::BadRequest(...))'. criterion-3.md provides the same analysis with additional detail."
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "report.md lines 94-108: Criterion 5 states 'The `threshold_applied` boolean field is entirely absent from the implementation' and provides evidence showing the AdvisorySummary struct contains only critical, high, medium, low, and total fields. criterion-5.md confirms 'No boolean field related to threshold status appears anywhere in the diff.'"
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md lines 22-38: Scope Containment section states 'Missing required file: tests/api/advisory_summary.rs' and 'The test file tests/api/advisory_summary.rs is entirely absent from the PR diff. The task explicitly requires this file to be created with integration tests for threshold filtering (6 test cases specified in Test Requirements).'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report files (report.md, criterion-1.md through criterion-6.md). All files are verification analysis documents. No code files were created or modified — the outputs consist entirely of verification reports and per-criterion analysis."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'Overall: FAIL' and a 'Summary of Failures' section listing 3 categories of issues. No merge action is taken or suggested. The report presents findings for review without any auto-merge behavior."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md line 17: '### Overall: FAIL' and line 19: 'This PR fails verification due to multiple issues across scope and correctness.'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | N/A | No test files in diff |'"
+    },
+    {
+      "text": "The report includes detailed findings for each failing check with specific evidence from the diff — Scope Containment identifies the missing test file by comparing PR files against the task specification, Acceptance Criteria provides per-criterion analysis explaining each gap",
+      "passed": true,
+      "evidence": "report.md Scope Containment section (lines 22-38) lists all 3 expected files, marks which are present/missing, and specifically identifies 'tests/api/advisory_summary.rs -- MISSING from diff'. Acceptance Criteria section (lines 53-139) provides per-criterion analysis for all 6 criteria with code-level evidence: Criterion 1 quotes the inverted condition code, Criterion 3 quotes '.unwrap_or(0)', Criterion 5 quotes the AdvisorySummary struct construction showing the missing field."
+    },
+    {
+      "text": "Acceptance criteria verification produces per-criterion PASS/FAIL analysis with code-level evidence — each criterion-N.md output file contains detailed reasoning about what was checked and what gap was found",
+      "passed": true,
+      "evidence": "All 6 criterion files exist with detailed analysis. criterion-1.md: FAIL verdict with code analysis of inverted filtering logic quoting the conditions. criterion-2.md: PASS with analysis of None => summary branch. criterion-3.md: FAIL with .unwrap_or(0) evidence and explanation of what should have been implemented. criterion-4.md: PASS with severity_order array analysis. criterion-5.md: FAIL with evidence that AdvisorySummary construction lacks threshold_applied field. criterion-6.md: PASS with analysis of preserved SBOM fetch logic."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — the 3-criteria detection (author github-actions[bot], marker ## Eval Results, footer sdlc-workflow/run-evals) found no matches, so Eval Quality does not affect the Test Quality combination",
+      "passed": false,
+      "evidence": "The report.md does not contain an 'Eval Quality' row in the verification table. The table has 'Test Quality | N/A | No test files in diff' and 'Test Change Classification | N/A | No test files in diff' but no separate Eval Quality line. The 3-criteria detection mechanism (author github-actions[bot], marker ## Eval Results, footer sdlc-workflow/run-evals) is not mentioned anywhere in the outputs. There is no evidence that Eval Quality was assessed or reported as N/A."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 1,
+    "total": 11,
+    "pass_rate": 0.91
+  }
+}
