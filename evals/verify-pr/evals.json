@@ -98,6 +98,24 @@
         "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)",
         "Eval Quality is N/A because no eval result reviews exist in the PR — the 3-criteria detection (author github-actions[bot], marker ## Eval Results, footer sdlc-workflow/run-evals) found no matches, so Eval Quality does not affect the Test Quality combination"
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "Verify PR #747 for task TC-9106. The task description is in task-with-eval-results.md, the PR diff is in pr-diff-with-eval-results.md, and the PR reviews (including an eval result review from CI) are in pr-reviews-with-evals.md. All CI checks pass. Write your verification report to outputs/report.md. For each acceptance criterion, write your detailed reasoning to outputs/criterion-N.md (where N is the criterion number). For each review comment, write your classification reasoning to outputs/review-N.md (where N is the comment id). For each sub-task that would be created, write its full description to outputs/subtask-N.md following the task-description-template.md format.",
+      "expected_output": "A verification report where acceptance criteria are evaluated against the diff, the eval result review from github-actions[bot] is detected via the 3-criteria heuristic and produces Eval Quality WARN (eval-3 has 2 failing assertions at 85% pass rate), Test Quality is WARN due to the Eval Quality WARN, eval failure sub-tasks are created for eval-3, and the human reviewer comment is processed normally without being misidentified as an eval result.",
+      "files": ["files/task-with-eval-results.md", "files/pr-diff-with-eval-results.md", "files/pr-reviews-with-evals.md"],
+      "assertions": [
+        "Test Quality verdict is WARN (not N/A or PASS) — the Eval Quality component is WARN because eval-3 has 2 failing assertions, and WARN in any component produces WARN in the combined Test Quality verdict",
+        "The eval result review from github-actions[bot] (review id 40001) is correctly identified as an eval result using the 3-criteria detection: author is github-actions[bot], body contains the marker ## Eval Results, and body contains the footer pattern sdlc-workflow/run-evals",
+        "The human reviewer comment from reviewer-b (review id 40002) is NOT misidentified as an eval result — it fails the 3-criteria detection (author is not github-actions[bot], body does not contain ## Eval Results marker, body does not contain sdlc-workflow/run-evals footer) and is processed as a normal review comment",
+        "Eval pass rate and failing assertion details appear in the verification report's Test Quality row — the report includes the overall 91% pass rate and references eval-3's 2 failing assertions about convention upgrade eligibility and sub-task creation",
+        "Sub-tasks are created for failing eval-3 with labels [\"ai-generated-jira\", \"eval-failure\"] — the sub-task description (outputs/subtask-1.md) targets eval-3 assertion failures and includes the eval-failure label alongside ai-generated-jira",
+        "Sub-task descriptions include Review Context with the failing assertion text and evidence from the eval review — the Review Context section quotes the two failing assertions about convention upgrade eligibility and sub-task creation, including the evidence text explaining what was missing",
+        "Sub-task descriptions include a Target PR section pointing to the PR URL https://github.com/mrizzi/sdlc-plugins/pull/747 so that implement-task adds commits to the existing PR branch",
+        "Root-cause investigation runs on the created eval failure sub-tasks — the report includes a Root-Cause Investigation verdict that is not N/A, indicating the investigation pipeline processed the eval failure sub-tasks",
+        "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+        "Non-eval checks (Scope Containment, Sensitive Patterns, Acceptance Criteria) are unaffected by eval processing — Scope Containment compares the diff files against the task's Files to Modify, Sensitive Patterns scans the diff for secrets, and Acceptance Criteria evaluates each criterion against the diff content independently of the eval results"
+      ]
     }
   ]
 }
