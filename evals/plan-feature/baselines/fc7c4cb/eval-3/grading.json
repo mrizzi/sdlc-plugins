@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "Tasks target both 'trustify-backend' and 'trustify-ui' repositories with at least one task per repo",
+      "passed": true,
+      "evidence": "Backend tasks: task-1 (Repository: trustify-backend), task-2 (Repository: trustify-backend), task-3 (Repository: trustify-backend), task-4 (Repository: trustify-backend), task-8 (Repository: trustify-backend). Frontend tasks: task-5 (Repository: trustify-ui), task-6 (Repository: trustify-ui), task-7 (Repository: trustify-ui). Both repos have multiple tasks."
+    },
+    {
+      "text": "Backend tasks have lower task numbers than the frontend tasks that depend on them",
+      "passed": true,
+      "evidence": "Backend tasks are numbered 1-4, frontend tasks are numbered 5-7. Task 5 (frontend) depends on Task 4 (backend). Task 6 (frontend) depends on Task 5 (frontend). Task 7 (frontend) depends on Task 6 (frontend). All backend tasks that frontend tasks depend on have lower numbers."
+    },
+    {
+      "text": "UI-facing frontend tasks (pages, components) reference Figma design context mentioning specific PatternFly components and visual specifications — API-layer frontend tasks (API types, client functions, hooks) are exempt from this requirement",
+      "passed": true,
+      "evidence": "Task 5 (API types and hook) is an API-layer task and is exempt. Task 6 (SbomComparePage) extensively references Figma design: 'Figma design mapping — PatternFly components: SBOM selectors: use PatternFly Select component with single selection and typeahead', 'Diff sections: use PatternFly ExpandableSection component', 'Count badge colors: Added Packages = green...', 'Data tables: use PatternFly composable Table component', 'Severity indicators: use the existing SeverityBadge component', 'Empty state: use PatternFly EmptyState component with CodeBranchIcon', 'Loading state: use PatternFly Skeleton placeholders', 'Export dropdown: use PatternFly Dropdown component'. Task 7 (SbomListPage compare action) references: 'PatternFly Table composable table's built-in select functionality', 'styled as a secondary PatternFly Button'. All UI-facing tasks reference specific PatternFly components."
+    },
+    {
+      "text": "Cross-repo dependency ordering is enforced: either at least one frontend task explicitly depends on a backend task in its Dependencies section, or all tasks target a shared feature branch where backend tasks have lower task numbers than frontend tasks (implicit ordering via feature-branch workflow)",
+      "passed": true,
+      "evidence": "Task 5 (trustify-ui) explicitly depends on Task 4 (trustify-backend): 'Depends on: Task 4 — Add SBOM comparison endpoint (backend API must exist for contract verification)'. Additionally, all intermediate tasks target the shared feature branch TC-9003, and backend tasks (2-4) have lower numbers than frontend tasks (5-7)."
+    },
+    {
+      "text": "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+      "passed": true,
+      "evidence": "Backend task 2 references paths from repo-backend.md: modules/fundamental/src/sbom/model/comparison.rs (new, follows pattern), modules/fundamental/src/sbom/model/mod.rs, modules/fundamental/src/sbom/model/summary.rs, modules/fundamental/src/sbom/model/details.rs, modules/fundamental/src/package/model/summary.rs, modules/fundamental/src/advisory/model/summary.rs. Backend task 3 references: modules/fundamental/src/sbom/service/sbom.rs, modules/fundamental/src/package/service/mod.rs, modules/fundamental/src/advisory/service/advisory.rs, common/src/db/query.rs, entity/src/sbom_package.rs, entity/src/sbom_advisory.rs, entity/src/package_license.rs, common/src/error.rs. Backend task 4 references: modules/fundamental/src/sbom/endpoints/compare.rs (new), modules/fundamental/src/sbom/endpoints/mod.rs, modules/fundamental/src/sbom/endpoints/get.rs, modules/fundamental/src/sbom/endpoints/list.rs, tests/api/sbom.rs. Frontend task 5 references: src/api/models.ts, src/api/rest.ts, src/hooks/useSbomComparison.ts (new), src/hooks/useSboms.ts, src/hooks/useSbomById.ts, src/api/client.ts. Frontend task 6 references: src/pages/SbomComparePage/ (new, follows page structure pattern), src/routes.tsx, src/hooks/useSboms.ts, src/components/SeverityBadge.tsx, src/components/FilterToolbar.tsx, src/components/EmptyStateCard.tsx, src/components/LoadingSpinner.tsx, src/pages/SbomListPage/SbomListPage.tsx, src/pages/SbomDetailPage/components/PackageTable.tsx, src/utils/severityUtils.ts, tests/mocks/handlers.ts. Frontend task 7 references: src/pages/SbomListPage/SbomListPage.tsx, src/components/FilterToolbar.tsx. All paths align with their respective repo manifests."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "Task 1: '## Repository\\ntrustify-backend'. Task 2: '## Repository\\ntrustify-backend'. Task 3: '## Repository\\ntrustify-backend'. Task 4: '## Repository\\ntrustify-backend'. Task 5: '## Repository\\ntrustify-ui'. Task 6: '## Repository\\ntrustify-ui'. Task 7: '## Repository\\ntrustify-ui'. Task 8: '## Repository\\ntrustify-backend'. Each task has exactly one repository name."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 8 tasks contain: ## Target Branch (task 1: main, tasks 2-7: TC-9003, task 8: main), ## Description (present in all), ## Acceptance Criteria (present in all with checkbox items), ## Test Requirements (present in all with checkbox items). Verified in every task file."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": true,
+      "evidence": "Backend task 2: Creates modules/fundamental/src/sbom/model/comparison.rs (new file in existing model/ directory per repo-backend.md), modifies modules/fundamental/src/sbom/model/mod.rs (exists in repo-backend.md). Backend task 3: modifies modules/fundamental/src/sbom/service/sbom.rs (exists in repo-backend.md). Backend task 4: creates modules/fundamental/src/sbom/endpoints/compare.rs (new file in existing endpoints/ directory), modifies modules/fundamental/src/sbom/endpoints/mod.rs (exists in repo-backend.md). Frontend task 5: modifies src/api/models.ts (exists in repo-frontend.md), modifies src/api/rest.ts (exists in repo-frontend.md), creates src/hooks/useSbomComparison.ts (new file in existing hooks/ directory per repo-frontend.md). Frontend task 6: creates src/pages/SbomComparePage/ files (new directory following existing page pattern per repo-frontend.md), modifies src/routes.tsx (exists in repo-frontend.md). Frontend task 7: modifies src/pages/SbomListPage/SbomListPage.tsx (exists in repo-frontend.md). All existing paths match repo manifests; new files are in existing directories following established patterns."
+    },
+    {
+      "text": "Implementation Notes in every non-bookend task reference specific file paths and code patterns from the repository, not abstract or generic guidance — bookend tasks (create-branch, merge-branch) are exempt as they omit Implementation Notes by design",
+      "passed": true,
+      "evidence": "Bookend tasks 1 (create-branch) and 8 (merge-branch) have no Implementation Notes section — exempt. Task 2: references modules/fundamental/src/sbom/model/summary.rs, modules/fundamental/src/sbom/model/details.rs, modules/fundamental/src/package/model/summary.rs, modules/fundamental/src/advisory/model/summary.rs with specific patterns (derives Serialize, Deserialize, Clone, Debug). Task 3: references modules/fundamental/src/sbom/service/sbom.rs pattern, modules/fundamental/src/package/service/mod.rs, modules/fundamental/src/advisory/service/advisory.rs, common/src/db/query.rs, entity/src/sbom_package.rs, entity/src/sbom_advisory.rs, entity/src/package_license.rs, common/src/error.rs with specific patterns (Result<T, AppError>, .context()). Task 4: references modules/fundamental/src/sbom/endpoints/get.rs, list.rs, mod.rs with specific patterns (async functions, Axum extractors, Query extractor). Task 5: references src/api/models.ts, src/api/rest.ts, src/api/client.ts, src/hooks/useSboms.ts, src/hooks/useSbomById.ts with specific patterns (PascalCase interfaces, Axios instance, useQuery). Task 6: references PatternFly components, src/hooks/useSboms.ts, src/components/SeverityBadge.tsx, src/components/LoadingSpinner.tsx, src/components/EmptyStateCard.tsx, src/pages/SbomListPage/SbomListPage.tsx, src/routes.tsx with specific UI patterns. Task 7: references src/pages/SbomListPage/SbomListPage.tsx, src/components/FilterToolbar.tsx with specific patterns (PatternFly Table select, onSelect handler, useState)."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section — either all set to 'main' (direct-to-main workflow) or bookend tasks set to 'main' with intermediate tasks set to the feature issue ID (feature-branch workflow)",
+      "passed": true,
+      "evidence": "Feature-branch workflow is used. Bookend tasks: Task 1 (create-branch) Target Branch: main, Task 8 (merge-branch) Target Branch: main. Intermediate tasks: Task 2 Target Branch: TC-9003, Task 3 Target Branch: TC-9003, Task 4 Target Branch: TC-9003, Task 5 Target Branch: TC-9003, Task 6 Target Branch: TC-9003, Task 7 Target Branch: TC-9003. Pattern matches feature-branch workflow: bookends target main, intermediates target TC-9003."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a real computed SHA-256 hash — exactly 64 lowercase hex characters, not a placeholder (<hex-digest>, <hex>), abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256:<64-char-hex>'",
+      "passed": true,
+      "evidence": "All 8 tasks have valid SHA-256 digest lines: Task 1: sha256:6283c9732d39505c01448b34492368f034dbebdfa91c6823c85cb7480279b57f (64 hex chars). Task 2: sha256:15f385a2f4aa536a06d21b363451a11db296c20fce4bdd1b8eb61ac10d313366 (64 hex chars). Task 3: sha256:b95bededd002039e67e82d6c455f35f6142464080e3db26917c9358ac9b4abe4 (64 hex chars). Task 4: sha256:551daf929d7b6d55b16f52e7128c8c892aae27653b434613bb24f98521a9e3c5 (64 hex chars). Task 5: sha256:d58c2e8e454bbd259bf076290c94c6592852b867a1c9aff5ed6b6644c2db7282 (64 hex chars). Task 6: sha256:1111e133d5c563b4c920cf26188faa5b3e0476890a59ecc31ed397b8e190e2b2 (64 hex chars). Task 7: sha256:b6b2651519f4051096bc2fee8f173b5d9e20e6eeb6af1d122dc25a58774ea324 (64 hex chars). Task 8: sha256:e2a2deafb7774b9174b8e2c3ee22805e059e532cc00469bd0d90862ccf351aba (64 hex chars). All follow the format '[sdlc-workflow] Description digest: sha256:<64-char-hex>', all are 64 lowercase hex characters, none are placeholders."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "None of the task files (tasks 2-7) contain any convention applicability rationale in the prescribed format 'Applies: task modifies <file> matching the convention's <scope>'. Searching all task files for 'Applies:' or 'Per CONVENTIONS.md' or 'convention' yields no matches. While no inapplicable conventions are listed (which is good), the repo manifests mention CONVENTIONS.md files exist in both repos (repo-backend.md line 16: CONVENTIONS.md, repo-frontend.md line 7: CONVENTIONS.md). If conventions existed and were applicable, they should have been included with proper rationale. If conventions were checked and found inapplicable, the output is correct. However, the assertion requires that 'applicable ones include a rationale in the prescribed format' — given that both repos have CONVENTIONS.md files and the tasks modify files in those repos, the absence of any convention processing evidence means we cannot confirm the enrichment validation occurred. The output lacks any evidence of convention-aware enrichment being performed."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 1,
+    "total": 12,
+    "pass_rate": 0.917
+  }
+}

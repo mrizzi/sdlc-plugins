@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response explicitly identifies this in the parsed sections table ('Implementation Notes | **MISSING** | No Implementation Notes section provided') and in Gap #1: 'The task description contains **no Implementation Notes section**. This is a critical gap. Implementation Notes are expected to reference real code patterns, existing utilities, structs, service methods, and sibling implementations that should be followed.' Clarifying question #6 also asks: 'Please provide Implementation Notes referencing the specific patterns, structs, service methods, and sibling code to follow.'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Gap #3 ('VAGUE: Acceptance Criteria') explicitly calls out both: '\"Search results are relevant\" -- \"Relevant\" is undefined. Does this mean exact match? Substring match? Full-text search with ranking?' and '\"Performance is acceptable\" -- \"Acceptable\" is undefined. What is the target response time? (e.g., < 200ms for 95th percentile?) What is the expected dataset size?'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Gap #4 ('VAGUE: Test Requirements') states: '\"Test that search works correctly\" -- \"Correctly\" is not defined. Without knowing what fields are searchable, what relevance means, and what edge cases matter, it is impossible to write meaningful tests.' It then lists specific missing information: inputs to test, outputs to assert on, error cases to cover, and whether integration tests are expected."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response explicitly halts execution under 'Execution Halted -- Clarification Required', quoting the rule: 'If the structured description is incomplete, ask the user for clarification and **stop execution immediately**. Do not draft an implementation plan, create branches, or proceed with any subsequent steps.' It concludes: 'I will not proceed with branching, implementation planning, code changes, or any subsequent steps until these questions are answered.' No implementation plan, branch creation, or code changes are present."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks 6 clarifying questions, including the three required topics: (1) 'Which fields should be searchable? ... Which fields should the search cover -- package name only, or also version, license... pURL, description, or other fields?' (2) 'What does \"relevant\" mean for search results, and how should results be ranked? Should this be a simple SQL LIKE/ILIKE substring match, or a PostgreSQL full-text search using tsvector/tsquery with relevance ranking?' (3) 'What is the specific performance threshold? What response time is considered \"acceptable\"? What is the expected scale of the package table (number of rows)?'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
