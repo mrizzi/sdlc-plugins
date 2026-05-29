@@ -66,6 +66,12 @@ request**. Record the evidence:
 - `"Matches documented convention: [CONVENTIONS.md section or quote]"`
 - `"Matches codebase convention: [N occurrences of pattern in similar files]"`
 
+Do **NOT** upgrade based on general industry best practices, framework
+documentation, or inferred patterns that are not demonstrated by the specific
+project's code or documentation. The upgrade evidence must cite a concrete
+CONVENTIONS.md section or a counted codebase pattern — general knowledge
+(e.g., "indexes are a database best practice") is not sufficient.
+
 Suggestions that do not match any documented or demonstrated convention remain
 classified as **suggestion**.
 
