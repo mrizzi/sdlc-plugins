@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "The plan's 'Pre-Implementation Analysis (Sibling Code Inspection)' section explicitly lists all 4 files: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, and common/src/error.rs — each with a detailed rationale for reading them before making changes."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan's 'Scope Verification' section confirms all 6 files (3 modified, 3 created) fall within task scope. The plan also explicitly notes that server/src/main.rs requires no changes and is excluded. No unrelated files appear in the git add command or elsewhere."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "The plan lists all 3 files under 'Files to Create': advisory/model/severity_summary.rs (item 4), advisory/endpoints/severity_summary.rs (item 5), and tests/api/advisory_summary.rs (item 6), each with detailed implementation notes."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "The plan's 'Files to Modify' section includes all 3 files: advisory/service/advisory.rs (item 1), advisory/endpoints/mod.rs (item 2), and advisory/model/mod.rs (item 3), with specific changes described for each."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "The commit message is 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format (type(scope): description). The footer contains 'Refs: TC-9201' referencing the Jira ticket."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "The git commit command in the 'Commit Plan' section includes --trailer='Assisted-by: Claude Code' as a flag appended to the commit command."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "The 'Branch Strategy' section states 'Create branch TC-9201 from the target branch main' and includes the git commands: 'git checkout main && git pull origin main' followed by 'git checkout -b TC-9201'. Both the branch name (TC-9201) and target branch (main) are explicitly referenced."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md explicitly identifies both required patterns: Section 1 ('Error Handling: Result<T, AppError> with .context()') describes AppError and context usage with specific file references; Section 2 ('Module Structure: model/ + service/ + endpoints/') describes the three-directory structure with mod.rs declarations."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "The plan's Task Summary section lists 'Target Branch: main', and the Branch Strategy section confirms branching from 'the target branch main' with explicit git commands starting from 'git checkout main'."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

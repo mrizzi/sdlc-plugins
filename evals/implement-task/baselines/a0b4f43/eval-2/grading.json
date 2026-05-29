@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Gap #1 explicitly states: 'The task description lacks an Implementation Notes section. This section is a required part of the expected Jira task structure.' The response also explicitly cites constraint 1.6 in the opening paragraph explaining why execution is halted."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Gap #2 explicitly calls out both 'Search results are relevant' (noting it is 'subjective and undefined', not pass/fail testable) and 'Performance is acceptable' (noting it is 'entirely subjective' with no quantitative threshold defined)."
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Gap #3 directly quotes 'Test that search works correctly' and states: 'This does not define what \"correctly\" means. It does not specify which scenarios to test.'"
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response explicitly states 'Execution is stopped' and 'I will not proceed until clarification is provided.' It poses clarifying questions (Q1-Q4) and defers implementation planning to after answers are received. No implementation plan or code is drafted."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "Q1 asks which fields should be searchable (name, version, license, all fields). Q2 asks what 'relevant' means in terms of matching strategy and ranking (exact, ILIKE, full-text, existing SearchService). Q3 asks for a concrete performance threshold (response time, dataset size, indexing, caching). All three specific topics are covered by distinct questions."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

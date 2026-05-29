@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md contains 5 explicitly labeled ambiguities: (1) 'Search should be faster' — no performance targets defined, (2) 'Results should be more relevant' — no relevance criteria defined, (3) 'Add filters' — no filter specifications, (4) 'Better UI' — no design mockups/frontend repo, (5) Non-functional requirements are vague. This exceeds the minimum of 3."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "Impact-map.md Ambiguity 4 states: '\"Better UI\" requirement is marked as non-MVP. Additionally, there are no Figma mockups linked to this feature, no frontend repository is listed in the Repository Registry, and the only target repository is trustify-backend (a Rust backend service). This requirement is excluded from scope entirely — it cannot be planned without design mockups and a frontend repository.' No task descriptions cover UI work."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All four task files (task-1 through task-4) follow the template structure with sections: Repository, Target Branch, Description, Files to Modify/Create, Implementation Notes, Reuse Candidates, Acceptance Criteria, Test Requirements, Verification Commands, and Dependencies where applicable. Optional sections are omitted per template rules (e.g., Documentation Updates omitted when not needed)."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Task 1 Description: '**Assumption (pending clarification):** The specific fields to index are assumed based on the existing entity models.' Task 2 Description: '**Assumption (pending clarification):** Relevance is defined as weighted full-text match scoring. The product owner should confirm whether certain entity types should be prioritized...' Task 3 Description: '**Assumption (pending clarification):** The specific filters (entity type, severity, date range) are assumed based on the existing data model.' The impact-map.md also labels each ambiguity's assumption with '**Assumption (pending clarification):**'."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All four tasks contain '## Repository\\ntrustify-backend' with exactly one repository name. Task 1 line 1-2, Task 2 line 1-2, Task 3 line 1-2, Task 4 line 1-2."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All four tasks contain: '## Target Branch' (set to 'main'), '## Description' (multi-line descriptions), '## Acceptance Criteria' (with checkbox items), and '## Test Requirements' (with checkbox items). Verified in task-1-search-index-migration.md, task-2-search-service-ranking.md, task-3-search-filters.md, and task-4-search-integration-tests.md."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Files to Modify all reference paths in the manifest: migration/src/lib.rs (manifest line 19), modules/search/src/service/mod.rs (line 91), modules/search/src/lib.rs (line 89), modules/search/src/endpoints/mod.rs (line 93), tests/api/search.rs (line 113). Files to Create follow established patterns: migration/src/m0002_search_indexes/mod.rs follows the m0001_initial/mod.rs pattern (line 20), modules/search/src/model/mod.rs and modules/search/src/model/filters.rs follow the model/ subdirectory pattern used by other modules (e.g., modules/fundamental/src/sbom/model/). No invented paths detected."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1: references 'migration/src/m0001_initial/mod.rs' for migration pattern, 'common/src/db/' for existing utilities. Task 2: references 'modules/fundamental/src/sbom/service/sbom.rs' for service pattern, 'common/src/error.rs' for AppError, 'common/src/model/paginated.rs' for PaginatedResults, 'common/src/db/query.rs' for query helpers. Task 3: references 'modules/fundamental/src/sbom/endpoints/list.rs' for endpoint pattern, 'common/src/db/query.rs' for filter helpers. Task 4: references 'tests/api/sbom.rs' and 'tests/api/advisory.rs' for test patterns, specifies 'assert_eq!(resp.status(), StatusCode::OK)' pattern. All paths correspond to real files in repo-backend.md."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All four tasks contain '## Target Branch\\nmain': task-1-search-index-migration.md line 4-5, task-2-search-service-ranking.md line 4-5, task-3-search-filters.md line 4-5, task-4-search-integration-tests.md line 4-5."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a real computed SHA-256 hash — exactly 64 lowercase hex characters, not a placeholder (<hex-digest>, <hex>), abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256:<64-char-hex>'",
+      "passed": true,
+      "evidence": "Four digest files exist with valid SHA-256 hashes: task-1-digest.txt: '[sdlc-workflow] Description digest: sha256:a62ba24b6718659054ba0ee660126fe305201b9c725e1fc87f109dc33c72d4f5' (64 hex chars), task-2-digest.txt: 'sha256:e885efe864030982b2367df473c86c8377564066cd8266abc59a11f02f93095e' (64 hex chars), task-3-digest.txt: 'sha256:6bd3b5e9892ac0a46f07b8dbd79c29857bf7dc05c9b6cfaae4b6b9f4932558da' (64 hex chars), task-4-digest.txt: 'sha256:e2335a0608e253c2126c5dfad4896bbd55e33fa2a890efadc694ec7287fe185e' (64 hex chars). All follow the required marker format, all are 64 lowercase hex characters, none are placeholders."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No task Implementation Notes contain CONVENTIONS.md references with the prescribed applicability rationale format 'Applies: task modifies <file> matching the convention's <scope>'. The tasks reference docs/constraints.md sections (e.g., 'Per docs/constraints.md §5.4:', 'Per docs/constraints.md §2.1-2.3:') but these do not use the convention-applicability-rules.md prescribed format. The repo-backend.md fixture lists a CONVENTIONS.md file in the repository root, so convention-aware enrichment should have been performed. No evidence of the required 'Applies:' rationale lines anywhere in the outputs."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 1,
+    "total": 11,
+    "pass_rate": 0.91
+  }
+}
