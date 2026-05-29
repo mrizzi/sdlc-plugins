@@ -88,14 +88,14 @@
       "assertions": [
         "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
         "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
-        "The structural summary or reductive findings identify the relaxed assertion in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers",
+        "The structural summary or reductive findings note the assertion change in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers, which the semantic assessment may identify as a relaxation contributing to the MIXED classification",
         "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
         "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
         "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
         "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
-        "The test change classification is produced by the Style/Conventions sub-agent (which spawns a test classification sub-agent for modified files) — the classification verdict is attributed to the Style/Conventions domain in the report",
+        "The test change classification verdict appears in the verification report summary table and is accompanied by a detailed analysis section explaining the structural and semantic assessment",
         "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)",
-        "Eval Quality is N/A because no eval result reviews exist in the PR — the 3-criteria detection (author github-actions[bot], marker ## Eval Results, footer sdlc-workflow/run-evals) found no matches, so Eval Quality does not affect the Test Quality combination"
+        "Eval Quality is N/A because no eval result reviews exist in the PR — no reviews match the eval result detection criteria, so Eval Quality does not affect the Test Quality combination"
       ]
     },
     {
