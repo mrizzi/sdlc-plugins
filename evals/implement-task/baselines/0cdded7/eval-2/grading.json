@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Section '1. Implementation Notes (missing entirely)' states: 'The task description does not include an Implementation Notes section. This section is required by the template.' It is listed under 'Missing Required Sections' as a gap requiring clarification."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific",
+      "passed": true,
+      "evidence": "Section '3. Acceptance Criteria (vague and unmeasurable)' explicitly calls out: '\"Search results are relevant\" -- This is undefined. What does \"relevant\" mean in this context?' and '\"Performance is acceptable\" -- What is the specific performance threshold?'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Section '4. Test Requirements (vague and undefined)' states: 'The single test requirement -- \"Test that search works correctly\" -- does not define what \"correctly\" means.'"
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response is titled 'Status: BLOCKED -- Incomplete Task Description' and concludes with 'I will resume implementation once these gaps are addressed and the task description is updated with the missing sections.' No implementation plan, branch creation, or code changes are attempted. The opening paragraph states: 'Per the implement-task skill rules, I must stop execution immediately and request clarification before proceeding with any subsequent steps (branching, implementation planning, code changes).'"
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The 'Questions Requiring Answers Before Proceeding' section contains 7 numbered questions. Question 1: 'Which fields should be searchable?' Question 3: 'What does \"relevant\" mean for result ranking?' Question 4: 'What is the specific performance requirement?' All three required topics are covered, plus additional questions about search mechanism, API contract, test scenarios, and service/model scope."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

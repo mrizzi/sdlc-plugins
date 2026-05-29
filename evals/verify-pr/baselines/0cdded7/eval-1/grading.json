@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "report.md lines 12 and 23-31: The summary table shows 'Acceptance Criteria | PASS | 5 of 5 criteria met'. The detailed table lists all 5 criteria with PASS: (1) single license filter, (2) comma-separated union, (3) 400 for invalid license, (4) pagination integration, (5) unchanged response shape PaginatedResults<PackageSummary>. Each criterion-N.md file also individually confirms PASS."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "report.md line 7: 'Scope Containment | PASS | PR modifies exactly the files specified in the task: `list.rs`, `service/mod.rs` (modified), `tests/api/package.rs` (created)'"
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "report.md line 5: 'Review Feedback | N/A | No reviews or comments exist on this PR'. Line 6: 'Root-Cause Investigation | N/A | No sub-tasks created; nothing to investigate'. No sub-task creation is mentioned anywhere in any output file."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All output files are report/analysis files (report.md, criterion-1.md through criterion-5.md). None of the outputs contain evidence of file modifications, git commits, or code changes. The outputs consist entirely of verification analysis and verdicts."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'Overall: PASS' and detailed findings. There is no merge action, no gh pr merge command, and no indication of auto-merging. The report presents analysis for human decision-making."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "report.md line 10: 'Sensitive Patterns | PASS | No secrets, credentials, API keys, or sensitive patterns detected in added lines'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14: 'Test Change Classification | ADDITIVE | All test files are newly created; no existing tests modified or deleted'"
+    },
+    {
+      "text": "The verification report assembles verdicts from all four domain sub-agents: Scope Containment, Diff Size, and Commit Traceability from Intent Alignment; Sensitive Patterns from Security; CI Status, Acceptance Criteria, and Verification Commands from Correctness; Test Quality (combining Repetitive Test Detection, Test Documentation, and Eval Quality) and Test Change Classification from Style/Conventions",
+      "passed": true,
+      "evidence": "report.md summary table contains all expected verdicts: Intent Alignment domain: Scope Containment (PASS, line 7), Diff Size (PASS, line 8), Commit Traceability (N/A, line 9). Security domain: Sensitive Patterns (PASS, line 10). Correctness domain: CI Status (PASS, line 11), Acceptance Criteria (PASS, line 12), Verification Commands (N/A, line 15). Style/Conventions domain: Test Quality (PASS, line 13 — '4 integration tests with doc comments; no repetitive parameterization candidates; no eval results to assess' combines Repetitive Test Detection, Test Documentation, and Eval Quality), Test Change Classification (ADDITIVE, line 14). Also includes orchestrator-level verdicts Review Feedback (N/A) and Root-Cause Investigation (N/A)."
+    },
+    {
+      "text": "The report includes detailed findings with specific evidence for each domain — file-by-file scope comparison (Intent Alignment), line-level pattern scanning results (Security), per-criterion code-level verification (Correctness), and test quality assessment (Style/Conventions) — not just pass/fail verdicts in the summary table",
+      "passed": true,
+      "evidence": "Intent Alignment: report.md line 7 lists specific files 'list.rs, service/mod.rs (modified), tests/api/package.rs (created)' and line 8 gives '~80 lines added across 3 files'. Security: line 10 specifies 'No secrets, credentials, API keys, or sensitive patterns detected in added lines'. Correctness: Lines 23-31 provide a detailed per-criterion table with specific code-level evidence (e.g., 'validate_license_param parses single license; is_in filter on package_license::Column::License', 'spdx::Expression::parse() rejects invalid identifiers; AppError::BadRequest'). Additionally, criterion-1.md through criterion-5.md provide extensive per-criterion analysis with implementation evidence, test evidence, and conclusions. Style/Conventions: Line 13 describes '4 integration tests with doc comments; no repetitive parameterization candidates; no eval results to assess'. Lines 33-40 provide test requirements coverage table. Lines 42-49 detail implementation pattern adherence."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — the 3-criteria detection (author github-actions[bot], marker ## Eval Results, footer sdlc-workflow/run-evals) found no matches, so Eval Quality does not affect the Test Quality combination",
+      "passed": false,
+      "evidence": "report.md line 13 states 'Test Quality | PASS | 4 integration tests with doc comments; no repetitive parameterization candidates; no eval results to assess'. While 'no eval results to assess' implies Eval Quality is effectively N/A, the report does NOT explicitly show Eval Quality as a separate N/A verdict nor does it mention the 3-criteria detection mechanism (author github-actions[bot], marker ## Eval Results, footer sdlc-workflow/run-evals). The assertion requires that the report show this specific detection logic and its N/A outcome; the report only has a brief parenthetical reference within the combined Test Quality row."
+    },
+    {
+      "text": "Review Feedback and Root-Cause Investigation verdicts are determined by the orchestrator independently from domain analysis — Review Feedback is N/A because no review comments exist, Root-Cause Investigation is N/A because no sub-tasks were created",
+      "passed": true,
+      "evidence": "report.md lines 5-6: 'Review Feedback | N/A | No reviews or comments exist on this PR' and 'Root-Cause Investigation | N/A | No sub-tasks created; nothing to investigate'. These appear as the first two rows of the summary table (lines 5-6), before the domain-specific verdicts (lines 7-15), indicating they are determined independently at the orchestrator level rather than within any domain sub-agent analysis."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 1,
+    "total": 11,
+    "pass_rate": 0.91
+  }
+}

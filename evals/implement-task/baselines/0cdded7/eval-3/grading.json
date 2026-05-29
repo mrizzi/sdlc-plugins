@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md section 2 (package/service/mod.rs) states: 'Apply the filter using common/src/db/query.rs::apply_filter: Call apply_filter with the license parameter value. apply_filter already handles: Splitting comma-separated values (e.g., \"MIT,Apache-2.0\" becomes [\"MIT\", \"Apache-2.0\"]), Generating the appropriate SQL IN clause for multi-value filters'. reuse-analysis.md Reuse Candidate 1 confirms: 'apply_filter is called directly with the raw license string' and 'No new utility function, helper, or custom parsing logic is written for splitting comma-separated values or building SQL filter conditions.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md section 1 (package/endpoints/list.rs) states: 'Following the pattern in modules/fundamental/src/advisory/endpoints/list.rs where the advisory list endpoint defines a Query struct with optional filter fields (e.g., severity), add an Option<String> field named license'. reuse-analysis.md Reuse Candidate 2 details: 'The advisory list endpoint (GET /api/v2/advisory) implements a severity query parameter using a Query struct pattern... The implementation in modules/fundamental/src/package/endpoints/list.rs follows the identical structural pattern.'"
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md section 2 states: 'Use entity::package_license (from entity/src/package_license.rs) to construct a SeaORM JOIN between the package table and the package_license table. This is the existing entity for the package-license relationship -- no raw SQL or new entity is needed.' reuse-analysis.md Reuse Candidate 3 confirms: 'No raw SQL queries are written for the JOIN operation' and 'No new entity is created.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter', 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs', and 'Reuse Candidate 3: entity/src/package_license.rs'. Each section includes 'What it provides', 'How it is reused', and 'What is NOT done' subsections explaining how the candidate is applied."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "The plan lists 2 files to modify (modules/fundamental/src/package/endpoints/list.rs, modules/fundamental/src/package/service/mod.rs) and 1 file to create (tests/api/package_license_filter.rs). The plan explicitly includes a 'Files NOT modified' section listing entity/src/package_license.rs, common/src/db/query.rs, and others as out of scope. All planned changes align with the task's scope."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "reuse-analysis.md Reuse Candidate 1 explicitly states: 'No new utility function, helper, or custom parsing logic is written for splitting comma-separated values or building SQL filter conditions. The apply_filter function is the single source of truth for this behavior across the codebase.' The Summary confirms: 'No new utility functions, entities, or parsing logic are introduced that would duplicate existing functionality.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md contains 'Selected mode: feature-branch' under 'Workflow Mode' section, with rationale citing 'Coordinated schema migration (indicator 1)' and 'All-or-nothing requirement (from non-functional requirements)' as atomicity indicators. It explicitly states 'no subset can be merged to main independently without breaking the application.'"
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md is the first task and contains '## Bookend Type\ncreate-branch' at line 10."
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md is the last task (Task 7 of 7) and contains '## Bookend Type\nmerge-branch' at line 10."
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-6) have '## Target Branch\nTC-9005': task-2-create-enum-migration.md line 8, task-3-update-entity-definitions.md line 8, task-4-update-advisory-service-and-endpoints.md line 8, task-5-update-ingestion-pipeline.md line 8, task-6-update-integration-tests.md line 8."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md line 8: '## Target Branch\nmain'"
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md line 8: '## Target Branch\nmain'"
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All intermediate tasks list Task 1 as a dependency: task-2 line 52: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; task-3 line 62: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; task-4 line 57: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; task-5 line 47: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; task-6 line 49: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md lines 27-31 list dependencies on all intermediate tasks: Task 2, Task 3, Task 4, Task 5, and Task 6. All five intermediate tasks are covered."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": false,
+      "evidence": "Task 1 (create-branch bookend) is missing Files to Modify, Files to Create, and Implementation Notes sections. Task 7 (merge-branch bookend) is missing Files to Modify, Files to Create, and Implementation Notes sections. The assertion requires ALL task files to contain these sections. While bookend tasks may reasonably omit file lists and implementation notes, the assertion requires 'each task file' to have 'at least one of Files to Modify or Files to Create' and 'Implementation Notes', which tasks 1 and 7 do not."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": false,
+      "evidence": "Searched all output files for 'label' and 'workflow:feature-branch' references. The impact-map.md mentions 'Selected mode: feature-branch' but does not mention applying a 'workflow:feature-branch' label to the feature issue. No output file contains any reference to a label or labeling decision."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a real computed SHA-256 hash -- exactly 64 lowercase hex characters, not a placeholder (<hex-digest>, <hex>), abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256:<64-char-hex>'",
+      "passed": true,
+      "evidence": "All 7 task files end with a description digest in the correct marker format with 64 lowercase hex character hashes: task-1: 'sha256:3c55a97d8829eca8ec24cacf20feeb8cfe74c37a2aa6355c673608c95e21f015'; task-2: 'sha256:dc259ec7727ccdf27046d9ca26b7f4fd02fc6706fc6a501c7133c837743ef1b5'; task-3: 'sha256:c6e572811f581b2e254012ab68ca402d5e4bd00791afbf6bcfad950658812768'; task-4: 'sha256:c15c4bbb4e737bfec2a0af450aded66bbfee93cb453cbc57b4c60b9800ad8389'; task-5: 'sha256:8858f90da309874576cd18c6a414f13aaf90410dc0d9af0bea4a2e52397faafe'; task-6: 'sha256:5aa71f7c08d07927c09c1721b8ade9bcfc9d5fbc14c5bf507d4bae957be72a93'; task-7: 'sha256:30b3708b8f61d0b89112184ed5320c7dbabdbab2c1d2de40dbfd5af40f052903'. All are exactly 64 lowercase hex characters."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention -- inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "Reviewing all task Implementation Notes sections: Tasks 2-6 reference 'Per docs/constraints.md' rules (e.g., SS2, SS5.4, SS5.11, SS5.12) but none include the prescribed applicability rationale format 'Applies: task modifies <file> matching the convention's <scope>'. No task contains any 'Applies:' rationale line in the format specified by convention-applicability-rules.md. The convention references use free-form prose like 'Per docs/constraints.md SS2 (Commit Rules): commit message must follow Conventional Commits format and reference TC-9005' without the required applicability rationale."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 3,
+    "total": 12,
+    "pass_rate": 0.75
+  }
+}
