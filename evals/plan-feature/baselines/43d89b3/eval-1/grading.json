@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "All 5 task files (task-1 through task-5) contain: '## Repository' (e.g., 'trustify-backend'), '## Target Branch' ('main'), '## Description', at least one of '## Files to Modify' or '## Files to Create' (task-1 has both, task-2 has Files to Modify only, task-3 has both, task-4 has Files to Modify only, task-5 has both), '## Implementation Notes', '## Acceptance Criteria', and '## Test Requirements'."
+    },
+    {
+      "text": "Task count is between 3 and 10 inclusive",
+      "passed": true,
+      "evidence": "There are exactly 5 task files: task-1-severity-summary-model.md, task-2-severity-aggregation-service.md, task-3-advisory-summary-endpoint.md, task-4-cache-invalidation.md, task-5-integration-tests.md. 5 is between 3 and 10 inclusive."
+    },
+    {
+      "text": "All tasks reference repository 'trustify-backend'",
+      "passed": true,
+      "evidence": "All 5 task files have '## Repository' followed by 'trustify-backend': task-1 line 2, task-2 line 2, task-3 line 2, task-4 line 2, task-5 line 2."
+    },
+    {
+      "text": "Task dependencies form a DAG with no circular dependencies",
+      "passed": true,
+      "evidence": "Task 1 has no dependencies. Task 2 depends on Task 1. Task 3 depends on Task 2. Task 4 depends on Task 3. Task 5 depends on Task 3. This forms the DAG: 1 <- 2 <- 3 <- 4, and 3 <- 5. No cycles exist."
+    },
+    {
+      "text": "Every task's Files to Modify and Files to Create reference paths plausible within the repo-backend.md structure",
+      "passed": true,
+      "evidence": "Files to Modify paths that exist in repo-backend.md: modules/fundamental/src/sbom/model/mod.rs, modules/fundamental/src/sbom/service/sbom.rs, modules/fundamental/src/sbom/endpoints/mod.rs, modules/ingestor/src/graph/advisory/mod.rs, tests/Cargo.toml. Files to Create are new files in existing directories from repo-backend.md: modules/fundamental/src/sbom/model/severity_summary.rs (in existing model/ dir), modules/fundamental/src/sbom/endpoints/advisory_summary.rs (in existing endpoints/ dir), tests/api/advisory_summary.rs (in existing tests/api/ dir). All paths are plausible."
+    },
+    {
+      "text": "Impact map lists concrete, specific changes (not vague or abstract descriptions)",
+      "passed": true,
+      "evidence": "The impact-map.md lists 5 specific changes: 'Add SeveritySummary model struct to the SBOM model module', 'Add severity aggregation query method to SbomService using existing sbom_advisory join table', 'Add GET /api/v2/sbom/{id}/advisory-summary endpoint with 5-minute cache TTL', 'Add cache invalidation for advisory summaries in the advisory ingestion pipeline', 'Add integration tests for the advisory-summary endpoint covering success, 404, deduplication, and threshold filter scenarios'. Each names specific modules, endpoints, or behaviors."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 tasks have '## Repository' followed by exactly one repository name: 'trustify-backend'. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 task files contain '## Target Branch' (set to 'main'), '## Description' (with substantive content), '## Acceptance Criteria' (with checkbox items), and '## Test Requirements' (with checkbox items)."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Files to Modify paths all appear in repo-backend.md: modules/fundamental/src/sbom/model/mod.rs (line 42), modules/fundamental/src/sbom/service/sbom.rs (line 46), modules/fundamental/src/sbom/endpoints/mod.rs (line 49), modules/ingestor/src/graph/advisory/mod.rs (line 83), tests/Cargo.toml (line 114). Files to Create are new files placed in existing directories from repo-backend.md (model/, endpoints/, tests/api/), which is the expected behavior for new file creation."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references modules/fundamental/src/sbom/model/summary.rs and details.rs with struct names SbomSummary and SbomDetails. Task 2 references modules/fundamental/src/sbom/service/sbom.rs, common/src/db/query.rs, entity/src/sbom_advisory.rs, entity/src/advisory.rs, and modules/fundamental/src/advisory/model/summary.rs::AdvisorySummary. Task 3 references modules/fundamental/src/sbom/endpoints/get.rs, list.rs, and mod.rs with specific patterns. Task 4 references modules/ingestor/src/graph/advisory/mod.rs and sbom/mod.rs. Task 5 references tests/api/sbom.rs and tests/api/advisory.rs with specific test patterns."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 5 task files have '## Target Branch' followed by 'main': task-1 line 5, task-2 line 5, task-3 line 5, task-4 line 5, task-5 line 5."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": true,
+      "evidence": "All 5 digest files exist and match the required format. task-1-digest.txt: '[sdlc-workflow] Description digest: sha256-md:d197e1d3fe4ee82bb8ac52365cabb8fd5d1b6cdfb4720752377cd1955cb5f7f3'. task-2-digest.txt: sha256-md:e0dae2c0606a7540fbac17b64f397701347287f9abef060e6fbbbe8b42815f53. task-3-digest.txt: sha256-md:b77d30866cd1d2913a3f62d21ebbaf7c102808d5da66f89d5fd9a9301c595b36. task-4-digest.txt: sha256-md:51e1088f61dd3b836b97c566fa04515c7ec11eb2bff351e473ee9eff3831ee5c. task-5-digest.txt: sha256-md:1dacf635abccbb74f8cf7d7baa1ed831e5e5a52cd1a6ad1b38a7b37e82bf608e. All have exactly 64 lowercase hex characters after the 'sha256-md:' prefix."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All convention rationales follow the prescribed format. Examples: task-1 'Applies: task creates `modules/fundamental/src/sbom/model/severity_summary.rs` matching the convention's Rust module file scope.' task-2 'Applies: task modifies `modules/fundamental/src/sbom/service/sbom.rs` matching the convention's Rust file scope.' task-3 'Applies: task modifies `modules/fundamental/src/sbom/endpoints/mod.rs` matching the convention's Rust endpoint file scope.' task-4 'Applies: task modifies `modules/ingestor/src/graph/advisory/mod.rs` matching the convention's Rust file scope.' task-5 'Applies: task creates `tests/api/advisory_summary.rs` matching the convention's integration test file scope.' No 'Not applicable' annotations found. No free-form prose rationales found. All rationales name specific files from the task's Files to Modify/Create sections."
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "failed": 0,
+    "total": 13,
+    "pass_rate": 1.0
+  }
+}

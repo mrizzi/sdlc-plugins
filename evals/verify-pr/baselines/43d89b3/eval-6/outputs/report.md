@@ -1,0 +1,74 @@
+## Verification Report for TC-9106
+
+### Summary
+
+PR #747 adds a Documentation Coverage check (Check 6) to the Style/Conventions sub-agent in verify-pr. The implementation correctly adds the check definition with symbol identification, language-specific doc comment verification, and a three-way verdict (PASS/WARN/N/A). The output format is updated to include a sixth row, and the Step 6a verdict mapping in SKILL.md is updated to include Documentation Coverage.
+
+All seven acceptance criteria are met. However, verification identified two issues requiring sub-tasks: (1) a reviewer code change request to add Markdown-specific documentation coverage rules instead of blanket-skipping Markdown files, (2) a consistency gap where the Step 6a verdict mapping introduces a "Style Quality" report row that does not appear in the Step 8 report template. Additionally, eval-3 has 2 failing assertions that require a sub-task.
+
+| Check | Result | Details |
+|-------|--------|---------|
+| Review Feedback | WARN | 1 code change request from reviewer-b; sub-task created |
+| Root-Cause Investigation | N/A | Reviewer feedback is a feature enhancement request, not a defect from a prior workflow phase |
+| Scope Containment | PASS | Changes scoped to the two files specified in the task (style-conventions.md and SKILL.md) |
+| Diff Size | PASS | Small diff -- 48 lines added to style-conventions.md, 1 line added to SKILL.md |
+| Commit Traceability | PASS | Single commit addressing a single task |
+| Sensitive Patterns | PASS | No secrets, credentials, or sensitive data in diff |
+| CI Status | PASS | All CI checks pass |
+| Acceptance Criteria | PASS | 7/7 criteria met |
+| Test Quality | WARN | Eval Quality: WARN -- eval-3 has 2 failing assertions (85% pass rate). Overall eval pass rate: 91%. Repetitive Test Detection: N/A, Test Documentation: N/A (no test files in diff) |
+| Test Change Classification | N/A | No test files modified in this PR |
+| Verification Commands | N/A | No verification commands specified in the task |
+
+### Overall: WARN
+
+Issues requiring attention:
+
+1. **Review feedback (sub-task 1):** Reviewer reviewer-b requests adding Markdown-specific documentation coverage rules to Check 6 instead of blanket-skipping Markdown files. This is a valid concern for a documentation-heavy repository where skills are defined in Markdown. A sub-task has been created.
+
+2. **Eval failures (sub-task 2):** Eval-3 has 2 failing assertions related to convention upgrade eligibility evaluation for review comment 30002 (index suggestion). The assertions expect that convention upgrade eligibility is evaluated and documented in the classification reasoning, and that a sub-task is created for convention-backed suggestions. A sub-task has been created.
+
+3. **Missing report row (sub-task 3):** The Step 6a verdict mapping in SKILL.md adds Documentation Coverage mapped to "Style Quality *(new)*", but the Step 8 report template does not include a corresponding Style Quality row. This means the Documentation Coverage verdict would have no place in the final verification report output. A sub-task has been created.
+
+### Acceptance Criteria Detail
+
+| # | Criterion | Result |
+|---|-----------|--------|
+| 1 | Check 6 scans the PR diff for new public symbol definitions | PASS |
+| 2 | Check 6 verifies each new symbol has a documentation comment using the language's convention | PASS |
+| 3 | Check 6 produces PASS when all new symbols are documented | PASS |
+| 4 | Check 6 produces WARN when any new symbol lacks documentation | PASS |
+| 5 | Check 6 produces N/A when no new symbols are introduced in the PR | PASS |
+| 6 | The Output Format includes a sixth verdict row for Documentation Coverage | PASS |
+| 7 | Step 6a verdict mapping includes Documentation Coverage | PASS |
+
+### Review Comment Classification
+
+| Comment ID | Author | Classification | Action |
+|------------|--------|----------------|--------|
+| 50001 | reviewer-b | Code change request | Sub-task created |
+
+### Eval Results
+
+| Eval | Passed | Failed | Pass Rate |
+|------|--------|--------|-----------|
+| eval-1 | 12/12 | 0 | 100% |
+| eval-2 | 11/11 | 0 | 100% |
+| eval-3 | 11/13 | 2 | 85% |
+| eval-4 | 10/10 | 0 | 100% |
+| eval-5 | 10/10 | 0 | 100% |
+
+**Overall eval pass rate: 91%**
+
+Eval-3 failing assertions:
+- Convention upgrade eligibility not evaluated for review comment 30002
+- No sub-task created for review comment 30002
+
+### Sub-Tasks Created
+
+1. **Sub-task 1 (review feedback):** Add Markdown-specific documentation coverage rule to Check 6 -- replace blanket Markdown exclusion with a rule checking that new headings have introductory text
+2. **Sub-task 2 (eval failure):** Fix eval-3 assertion failures related to convention upgrade eligibility evaluation and sub-task creation for suggestion-classified comments
+3. **Sub-task 3 (consistency gap):** Add Style Quality row to Step 8 report template and verdict source mapping in SKILL.md
+
+---
+*This report was AI-generated by [sdlc-workflow/verify-pr](https://github.com/mrizzi/sdlc-plugins).*

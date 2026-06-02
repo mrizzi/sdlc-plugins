@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "In plan.md Step 4 ('Understand the Code'), the plan explicitly references inspecting all 4 files: (1) 'get handler in modules/fundamental/src/advisory/endpoints/get.rs -- understand endpoint handler pattern', (2) 'advisory/service/advisory.rs -- inspect AdvisoryService methods (fetch, list, search) and their signatures', (3) 'AdvisorySummary in modules/fundamental/src/advisory/model/summary.rs -- understand the severity field type and values', (4) 'AppError in common/src/error.rs -- understand error handling pattern'. This satisfies the requirement of at least 2."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The plan lists exactly 6 files: 3 to modify (advisory/model/mod.rs, advisory/service/advisory.rs, advisory/endpoints/mod.rs) and 3 to create (advisory/model/severity_summary.rs, advisory/endpoints/severity_summary.rs, tests/api/advisory_summary.rs). These match the Files to Modify and Files to Create from the parsed task in Step 1. Step 9 mentions 'git diff --name-only must list only the 6 files above plus tests/api/mod.rs if it needs a mod advisory_summary; declaration' and notes that tests/api/mod.rs would be 'an out-of-scope file flagged during Step 9's scope containment check and approved by the user before committing' (file-6-description.md line 116). No unrelated files are modified."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "Plan.md section 'Files to Create' lists: (4) 'modules/fundamental/src/advisory/model/severity_summary.rs' (the model), (5) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs' (the endpoint handler), (6) 'tests/api/advisory_summary.rs' (the test file). All three are present with detailed descriptions in file-2-description.md, file-5-description.md, and file-6-description.md respectively."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "Plan.md section 'Files to Modify' lists: (1) 'modules/fundamental/src/advisory/model/mod.rs', (2) 'modules/fundamental/src/advisory/service/advisory.rs', (3) 'modules/fundamental/src/advisory/endpoints/mod.rs'. All three are present with detailed modification descriptions in file-1-description.md, file-3-description.md, and file-4-description.md respectively."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "Plan.md Step 10 shows the commit message: 'feat(api): add advisory severity aggregation endpoint' which follows Conventional Commits format (type=feat, scope=api, description). The footer includes 'Implements TC-9201' which references TC-9201."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "Plan.md Step 10 shows: 'git commit --trailer='Assisted-by: Claude Code' -m \"feat(api): add advisory severity aggregation endpoint...\"'. The --trailer flag is explicitly present."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "Plan.md Step 5 shows: 'git checkout -b TC-9201' and 'Target branch is main (from task description)'. The branch name TC-9201 matches the task ID. The target branch 'main' is explicitly referenced. Step 10 also confirms: 'git push -u origin TC-9201' and 'gh pr create --base main'."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md explicitly documents both patterns: (1) Under 'Error handling': 'All handlers return Result<T, AppError> where AppError is defined in common/src/error.rs' and 'Error wrapping uses .context(\"descriptive message\") from the anyhow/error chain pattern.' (2) Under 'Module structure': 'Each domain module follows the model/ + service/ + endpoints/ directory structure.' with detailed sub-patterns for each."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "Plan.md Step 1 explicitly parses the task and identifies: 'Target Branch: main'. Step 5 reiterates: 'Target branch is main (from task description). No Target PR, no Bookend Type -- use default flow.' Step 10 uses '--base main' in the PR create command."
+    },
+    {
+      "text": "The plan mentions checking for a description digest comment (Step 1.5) and notes that when no digest is found, it proceeds with a warning rather than blocking execution (backward compatibility per shared/description-digest-protocol.md)",
+      "passed": true,
+      "evidence": "Plan.md Step 1.5 is titled 'Verify Description Integrity' and explicitly addresses the digest check. It states: 'If no digest comment is found: Log warning and proceed normally -- \"No description digest found -- skipping integrity check. This task may have been created before digest tracking was introduced.\" This is the backward-compatible behavior for tasks created before the digest protocol was introduced.' This matches the requirement of proceeding with a warning rather than blocking."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

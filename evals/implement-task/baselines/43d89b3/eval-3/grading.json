@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md lines 25-28: 'Use `common/src/db/query.rs::apply_filter` to parse the comma-separated string into individual values and generate the appropriate SQL `IN` clause condition. Do NOT write a custom comma-splitting or filter-building function -- `apply_filter` already handles both single and multi-value cases.' Also reiterated in Code Reuse Strategy (lines 105-108) and reuse-analysis.md Reuse Candidate 1 section (lines 6-29)."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md lines 18-22: 'Following the pattern in `modules/fundamental/src/advisory/endpoints/list.rs`, add an optional `license: Option<String>` field to the existing query parameter struct used by the list handler. The advisory endpoint’s `severity` field in its Query struct is the structural template for this addition.' Also in Code Reuse Strategy lines 110-113 and reuse-analysis.md Reuse Candidate 2 section (lines 31-59)."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md lines 30-35: 'Use the SeaORM entity defined in `entity/src/package_license.rs` to construct a JOIN from the `package` table to the `package_license` table... This follows the same entity-based JOIN approach used elsewhere in the codebase rather than writing raw SQL.' Also in Code Reuse Strategy lines 115-117 and reuse-analysis.md Reuse Candidate 3 section (lines 61-88)."
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three dedicated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 6-29), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs' (lines 31-59), 'Reuse Candidate 3: entity/src/package_license.rs' (lines 61-88). Each includes 'What it provides', 'How it would be used', 'Why reuse over reimplementation', and 'Integration point' subsections explaining application in detail."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "Task description (task-with-reuse.md) specifies Files to Modify: modules/fundamental/src/package/endpoints/list.rs, modules/fundamental/src/package/service/mod.rs; Files to Create: tests/api/package_license_filter.rs. The plan lists exactly these same files: 'Files to Modify' section lists list.rs (line 11) and service/mod.rs (line 44); 'Files to Create' section lists tests/api/package_license_filter.rs (line 66). No additional files are proposed. 'Out of Scope' section (lines 130-136) explicitly excludes changes to other files."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 27-28: 'Do NOT write a custom comma-splitting or filter-building function -- `apply_filter` already handles both single and multi-value cases.' Line 134: 'No new utility functions that duplicate `apply_filter` functionality' listed under Out of Scope. reuse-analysis.md lines 98-99: 'No new utility functions are needed. All comma-separated parsing and filter generation is handled by the existing `apply_filter` function.' No section of the plan proposes creating any new utility function."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}
