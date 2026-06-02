@@ -690,22 +690,30 @@ exactly:
 
 #### Digest computation steps
 
-1. **Capture the description text.** Take the full description string you passed to
-   `create_issue`. Strip leading and trailing whitespace — the result is the hash input.
+1. **Re-fetch the description as ADF JSON.** After creating the task, fetch the issue
+   back from Jira to get the description in ADF format (the canonical format for
+   digest computation). Do not hash the markdown string you submitted — Jira
+   normalizes content during storage, so the submitted text differs from what the
+   API returns.
 
-2. **Compute SHA-256.** Hash the stripped description text using SHA-256. The output must
-   be the lowercase hexadecimal representation of the hash — exactly 64 characters, every
-   character in `[0-9a-f]`.
+   ```
+   jira.get_issue(<created-task-key>)
+   ```
 
-3. **Self-verify before posting.** Before constructing the comment, check your computed
-   digest against these rules. If any check fails, recompute — do not post until all pass:
-   - Length is exactly 64 characters
-   - Every character is a lowercase hex digit (`0-9`, `a-f`)
-   - The value is not a placeholder (e.g., `<hex-digest>`, `<hex>`, `placeholder`)
-   - The value is not copied from documentation, examples, or a previous task
-   - The value is not an abbreviated or truncated hash (e.g., 12-character snippet)
+   Extract the `description` field from the response. This is the ADF JSON object
+   that Jira persisted.
 
-4. **Post the digest comment.** Post a standalone ADF comment on the created issue:
+2. **Compute SHA-256 using the script.** Write the ADF JSON description to a temp
+   file and run the digest script:
+
+   ```bash
+   python3 scripts/sha256-digest.py /tmp/desc-<task-key>.json
+   ```
+
+   The script outputs the 64-character lowercase hex digest to stdout. If the
+   script exits non-zero, report the error and do not post a digest comment.
+
+3. **Post the digest comment.** Post a standalone ADF comment on the created issue:
 
    ```json
    {
@@ -725,7 +733,7 @@ exactly:
    }
    ```
 
-   Replace `<64-char-hex>` with the verified digest from step 3. Do not append the
+   Replace `<64-char-hex>` with the digest output from step 2. Do not append the
    Comment Footnote — this must be a standalone comment separate from any other comments.
 
 See `shared/description-digest-protocol.md` for the full protocol specification

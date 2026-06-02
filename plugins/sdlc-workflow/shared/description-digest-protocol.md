@@ -47,20 +47,21 @@ construction.
 ## Hashing
 
 - **Algorithm:** SHA-256
-- **Input:** The full Jira description field text as returned by the API.
-  Normalization depends on the input format:
-  - **ADF JSON** (MCP path): parse as JSON and re-serialize with compact separators
-    (`json.dumps(parsed, separators=(',', ':'))`). This ensures consistent hashing
-    regardless of whitespace or key formatting in the original JSON.
-  - **Raw text** (REST API path): strip leading and trailing whitespace only.
+- **Canonical format:** ADF JSON — the native Jira storage format. Both producers
+  and consumers must fetch the description as ADF JSON from the Jira API before
+  hashing. Do not hash markdown, raw text, or the description string passed to
+  `create_issue` — Jira normalizes content during storage, so the submitted text
+  is never byte-identical to what the API returns.
+- **Normalization:** Parse the ADF JSON and re-serialize with compact separators
+  (`json.dumps(parsed, separators=(',', ':'))`). This ensures consistent hashing
+  regardless of whitespace or key formatting in the original JSON.
 - **Output:** Lowercase hexadecimal digest (64 characters)
+- **Computation:** Always use `scripts/sha256-digest.py` — see **Tool-Based
+  Computation** above. Do not compute SHA-256 manually.
 
-The producer computes the hash from the description content it wrote to the issue,
-immediately after creating it. This ensures the digest reflects exactly what was
-persisted.
-
-When the `scripts/sha256-digest.py` script is available, use it instead of manual
-computation — see **Tool-Based Computation** above.
+The producer computes the hash by re-fetching the description in ADF format from
+the Jira API immediately after creating the issue. This ensures the digest
+reflects exactly what Jira persisted, not what was submitted.
 
 ## Jira Comment Format
 
@@ -104,7 +105,8 @@ scenarios.
 If found:
 
 1. Extract the `sha256:<hex-digest>` value
-2. Compute SHA-256 of the current description field (same normalization as producer)
+2. Fetch the current description as ADF JSON (the default format from `jira.get_issue`),
+   write it to a temp file, and compute the digest using `scripts/sha256-digest.py`
 3. Compare digests
 
 **Match:** Proceed normally — description is unmodified since planning.

@@ -209,10 +209,16 @@ plan-feature created it. This uses the digest protocol defined in
       are not available in the API response, skip this check silently.
    b. **Extract the stored digest**: parse the `sha256:<hex-digest>` value from the
       comment body.
-   c. **Compute the current digest**: hash the current description field text using
-      SHA-256, following the same normalization as the protocol (strip
-      leading/trailing whitespace before hashing). Output a lowercase 64-character
-      hexadecimal digest.
+   c. **Compute the current digest**: extract the description field from the issue
+      response (ADF JSON — the default format from `jira.get_issue`). Write it to a
+      temp file and compute the digest using the script:
+
+      ```bash
+      python3 scripts/sha256-digest.py /tmp/desc-<task-key>.json
+      ```
+
+      The script outputs a lowercase 64-character hexadecimal digest. If the script
+      exits non-zero, warn and skip the integrity check — do not block execution.
    d. **Compare digests**:
       - **Match**: proceed silently — no additional user prompt, no added latency.
       - **Mismatch**: alert the user that the task description was modified after
