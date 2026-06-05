@@ -1,0 +1,10 @@
+.git
+.github
+.claude
+.idea
+.local
+.superpowers
+docs
+evals
+*.md
+!plugins/sdlc-workflow/**
