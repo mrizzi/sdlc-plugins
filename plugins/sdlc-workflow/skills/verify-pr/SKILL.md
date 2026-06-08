@@ -183,41 +183,70 @@ gh api repos/<owner/repo>/pulls/<pr-number>/reviews
 gh api repos/<owner/repo>/pulls/<pr-number>/comments
 ```
 
-Group comments into threads using the `in_reply_to_id` field. Each top-level comment
-(no `in_reply_to_id`) starts a thread; replies are grouped under their parent.
+Group inline comments into threads using the `in_reply_to_id` field. Each top-level
+comment (no `in_reply_to_id`) starts a thread; replies are grouped under their parent.
 
-If no reviews or comments exist, set the classified comment list to empty and
-proceed directly to Step 5 (Dispatch) with an empty Classified Review Comments
-section. Steps 4b–4c are skipped.
+#### Review body extraction
 
-#### Mandatory thread enumeration
+After fetching reviews, extract **review body items** — reviews whose `body` field
+contains non-empty, substantive feedback (not just approval/request-changes status
+text). Exclude eval result reviews detected in Step 4a.1.
 
-After grouping, **enumerate every top-level comment thread** — this enumeration must
-run on every invocation, regardless of whether previous runs have already processed
-some threads. Do **not** short-circuit this step based on the presence of prior
-classification replies; the enumeration itself is what discovers new threads that
-arrived between runs (e.g., a bot posting a review after a fix commit was pushed).
+For each qualifying review body, create a classifiable item with:
+- **Synthetic identifier:** `review-body-<review-id>` (since review bodies lack a
+  `comment_id`, this synthetic ID is used throughout the classification pipeline)
+- **Author:** the review's `user.login`
+- **Content:** the review's `body` text
+- **Source:** `"review-body"` (to distinguish from inline comment threads in
+  downstream steps)
 
-For each top-level thread, check whether any reply in the thread contains the text
-`"[sdlc-workflow/verify-pr] Classified as"`. Partition all threads into two lists:
+These review body items are included alongside inline comment threads in the
+mandatory enumeration and classification pipeline below.
 
-1. **Unclassified threads** — no reply contains `"[sdlc-workflow/verify-pr] Classified as"`.
-   These are new or previously missed threads. Forward them to Steps 4b–4c for
-   classification.
-2. **Already-classified threads** — at least one reply contains
-   `"[sdlc-workflow/verify-pr] Classified as"`.
-   These were processed by a prior run. Skip them for classification (do not
-   re-classify), but include them in the Classified Review Comments sent to
-   sub-agents so they have full context.
+#### Early exit
+
+If no inline comments exist **and** no review body items were extracted, set the
+classified comment list to empty and proceed directly to Step 5 (Dispatch) with an
+empty Classified Review Comments section. Steps 4b–4c are skipped.
+
+#### Mandatory enumeration
+
+After grouping inline threads and extracting review body items, **enumerate every
+classifiable item** (both inline comment threads and review body items) — this
+enumeration must run on every invocation, regardless of whether previous runs have
+already processed some items. Do **not** short-circuit this step based on the
+presence of prior classification replies; the enumeration itself is what discovers
+new items that arrived between runs.
+
+For each item, check whether a classification reply already exists:
+
+- **Inline comment threads:** check whether any reply in the thread contains
+  `"[sdlc-workflow/verify-pr] Classified as"`.
+- **Review body items:** check whether a standalone PR comment exists matching
+  `"[sdlc-workflow/verify-pr] Re: @<reviewer> review"` where `<reviewer>` is the
+  review author. Fetch existing PR comments:
+  ```
+  gh api repos/<owner/repo>/issues/<pr-number>/comments
+  ```
+
+Partition all items into two lists:
+
+1. **Unclassified items** — no classification reply exists. Forward them to
+   Steps 4b–4c for classification.
+2. **Already-classified items** — a classification reply exists. Skip them for
+   classification (do not re-classify), but include them in the Classified Review
+   Comments sent to sub-agents so they have full context.
 
 Log both lists so the run output shows the full enumeration result, making it
-auditable that all threads were considered.
+auditable that all items were considered.
 
 > **Why this matters:** Without mandatory enumeration, a re-run can check only for
 > existing classification replies and conclude "nothing to do" — completely missing
-> new top-level comments that arrived after the previous run. This caused a real
-> failure where a bot review comment posted after `/implement-task` pushed a fix
-> commit was missed by the subsequent `/verify-pr` re-run.
+> new items that arrived after the previous run. This caused a real failure where a
+> bot review comment posted after `/implement-task` pushed a fix commit was missed
+> by the subsequent `/verify-pr` re-run. The same gap allowed review body
+> suggestions (e.g., from sourcery-ai) to be silently skipped because only inline
+> comments were enumerated.
 
 ### Step 4a.1 – Detect Eval Result Reviews
 
@@ -256,13 +285,19 @@ will check for implicit conventions demonstrated by codebase usage patterns.
 
 ### Step 4c – Classify Feedback
 
-For each **unclassified** review comment thread (from Step 4a's enumeration),
-classify based on the reviewer's language:
+For each **unclassified** item — both inline comment threads and review body
+items — from Step 4a's enumeration, classify based on the reviewer's language:
 
 - **Code change request** — the reviewer asks for a code modification (e.g., "this should validate input", "add error handling here")
 - **Suggestion** — the reviewer proposes an alternative approach but does not require it
 - **Question** — the reviewer asks for clarification
 - **Nit** — minor style or formatting feedback
+
+A single review body may contain multiple distinct suggestions or requests. When
+this occurs, classify each suggestion separately and assign sub-identifiers
+(e.g., `review-body-<review-id>-1`, `review-body-<review-id>-2`). Each
+sub-identifier follows the same classification and downstream processing pipeline
+as a standalone item.
 
 Record all classifications. Only **code change requests** trigger sub-task creation
 in Step 6. Convention upgrades from Step 6b may later elevate suggestions to code
@@ -561,35 +596,75 @@ Example replies:
 - `"[sdlc-workflow/verify-pr] Classified as **question** — this asks for clarification; no code change needed. No sub-task created."`
 - `"[sdlc-workflow/verify-pr] Classified as **nit** — minor style feedback that does not affect correctness. No sub-task created."`
 
+#### Review body items
+
+Review body items (identified by `review-body-*` synthetic IDs) lack a `comment_id`
+and cannot receive threaded replies. Instead, post a **standalone PR comment** using
+the issues API:
+
+```
+gh api repos/<owner/repo>/issues/<pr-number>/comments -f body="[sdlc-workflow/verify-pr] Re: @<reviewer> review — Classified as **<classification>** — <reasoning>. <action taken or 'No sub-task created.'>"
+```
+
+**For code change requests that resulted in a sub-task:**
+
+```
+gh api repos/<owner/repo>/issues/<pr-number>/comments -f body="[sdlc-workflow/verify-pr] Re: @<reviewer> review — Classified as **code change request** — sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
+```
+
+**For suggestions upgraded via convention check (Step 6b):**
+
+```
+gh api repos/<owner/repo>/issues/<pr-number>/comments -f body="[sdlc-workflow/verify-pr] Re: @<reviewer> review — Classified as **code change request** (upgraded from suggestion) — this matches project convention: <evidence>. Sub-task [<SUB-TASK-KEY>](<sub-task-webUrl>) created to address this feedback."
+```
+
+**For all other classifications:**
+
+```
+gh api repos/<owner/repo>/issues/<pr-number>/comments -f body="[sdlc-workflow/verify-pr] Re: @<reviewer> review — Classified as **<classification>** — <reasoning>. No sub-task created."
+```
+
+When a review body contains multiple classified suggestions (sub-identifiers), post
+a single standalone comment that lists all classifications together rather than one
+comment per sub-identifier.
+
 ### Step 6f – Idempotency Guarantees
 
-Idempotency is enforced **within** Step 4a's mandatory thread enumeration, not as a
-separate gate before Steps 6d/6e. The enumeration in Step 4a partitions threads into
-unclassified and already-classified lists — only unclassified threads proceed to
-Steps 4b–4c for classification and then to Steps 6c–6e for side effects. This design
-ensures that:
+Idempotency is enforced **within** Step 4a's mandatory enumeration, not as a
+separate gate before Steps 6d/6e. The enumeration in Step 4a partitions all
+classifiable items (inline comment threads and review body items) into unclassified
+and already-classified lists — only unclassified items proceed to Steps 4b–4c for
+classification and then to Steps 6c–6e for side effects. This design ensures that:
 
-- Every top-level thread is always discovered (enumeration cannot be bypassed).
-- Already-processed threads are filtered out per-thread (no duplicate replies or
+- Every classifiable item is always discovered (enumeration cannot be bypassed).
+- Already-processed items are filtered out per-item (no duplicate replies or
   sub-tasks).
-- New threads arriving between runs (e.g., from a bot re-analyzing code after a
-  fix commit) are always detected because the enumeration is unconditional.
+- New items arriving between runs (e.g., from a bot re-analyzing code after a
+  fix commit, or a reviewer adding a new review) are always detected because the
+  enumeration is unconditional.
+
+**Idempotency detection per item type:**
+- **Inline comment threads:** a reply containing `"[sdlc-workflow/verify-pr] Classified as"`
+  in the thread indicates prior processing.
+- **Review body items:** a standalone PR comment matching
+  `"[sdlc-workflow/verify-pr] Re: @<reviewer> review"` indicates prior processing.
 
 **Additional sub-task deduplication:** Before creating a sub-task in Step 6d, also
 check the parent task's issue links for existing sub-tasks whose descriptions
-reference the same review comment. If a matching sub-task already exists, skip
-creation. This guards against edge cases where a classification reply was not
-posted (e.g., due to a network error) but the sub-task was created.
+reference the same review comment or review body. If a matching sub-task already
+exists, skip creation. This guards against edge cases where a classification reply
+was not posted (e.g., due to a network error) but the sub-task was created.
 
-Do **not** interpret this step as a top-level decision that can skip thread
+Do **not** interpret this step as a top-level decision that can skip item
 enumeration. The enumeration in Step 4a is always mandatory; this step only
 documents the idempotency mechanisms embedded within that enumeration.
 
 ### Step 6g – Record Result
 
 Record the Review Feedback check result:
-- **N/A** — no reviews or comments exist on the PR
-- **PASS** — reviews exist but contain no code change requests
+- **N/A** — no review feedback exists on the PR (no inline comments and no review
+  body items)
+- **PASS** — review feedback exists but contains no code change requests
 - **WARN** — code change requests exist; sub-tasks were created
 - **FAIL** — code change requests exist but sub-task creation failed
 
