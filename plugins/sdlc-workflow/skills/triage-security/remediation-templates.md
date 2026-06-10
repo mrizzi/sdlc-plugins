@@ -186,3 +186,68 @@ Remediate CVE-YYYY-XXXXX: update [package-name] to [fixed-version].
 **Omitted sections**: Files to Modify and Files to Create are intentionally omitted.
 These depend on repository structure that the triage skill does not have context for —
 `implement-task` discovers them via code analysis.
+
+## Jira Issue Creation
+
+### Source dependency ecosystems — create two tasks:
+
+```
+# 1. Upstream backport task
+upstream_task = jira.create_issue(
+  projectKey: "<project-key>",
+  issueTypeName: "Task",
+  summary: "Remediate CVE-YYYY-XXXXX: bump [library] to [fixed-version] ([stream])",
+  description: <upstream-task-description>,
+  labels: ["ai-generated-jira", "Security", "<CVE-ID>"]
+)
+
+# 2. Downstream propagation subtask
+downstream_task = jira.create_issue(
+  projectKey: "<project-key>",
+  issueTypeName: "Task",
+  summary: "Propagate CVE-YYYY-XXXXX fix: update [source-repo] ref in [konflux-repo] ([stream])",
+  description: <downstream-task-description>,
+  labels: ["ai-generated-jira", "Security", "<CVE-ID>"]
+)
+```
+
+### System package ecosystems — create one task:
+
+```
+task = jira.create_issue(
+  projectKey: "<project-key>",
+  issueTypeName: "Task",
+  summary: "Remediate CVE-YYYY-XXXXX: update [package-name] to [fixed-version] ([stream])",
+  description: <system-package-task-description>,
+  labels: ["ai-generated-jira", "Security", "<CVE-ID>"]
+)
+```
+
+## Jira Linkage
+
+After creating remediation tasks:
+
+1. **Link** each task to the Vulnerability issue:
+   ```
+   jira.create_link(
+     inwardIssue: <vulnerability-key>,
+     outwardIssue: <task-key>,
+     type: "Depend"
+   )
+   ```
+2. **For source dependency ecosystems**, link the downstream subtask as blocked
+   by the upstream task:
+   ```
+   jira.create_link(
+     inwardIssue: <upstream-task-key>,
+     outwardIssue: <downstream-task-key>,
+     type: "Blocks"
+   )
+   ```
+3. **Transition** the Vulnerability to In Progress (if not already).
+4. **Assign** the Vulnerability to the current user (if not already assigned).
+5. **Add comment** to the Vulnerability listing all created tasks:
+   - Source dependency: "Remediation tasks created: [upstream-task-key] (upstream
+     backport), [downstream-task-key] (downstream propagation, blocked by
+     [upstream-task-key])"
+   - System package: "Remediation task created: [task-key]"
