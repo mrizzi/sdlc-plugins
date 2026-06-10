@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 36-58 contain the full Security Configuration section with all three subsections intact: Product Lifecycle (lines 38-44) with all 5 fields matching reference values (Product pages URL, Jira version prefix MYPRODUCT, Vulnerability issue type ID 10200, Component label pattern pscomponent:, VEX Justification customfield_12345); Version Streams (lines 46-50) with the 2.1.x stream entry matching reference; Source Repositories (lines 52-58) with backend and frontend-ui URLs matching reference."
+    },
+    {
+      "text": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "passed": true,
+      "evidence": "discovery-log.md lines 39-64 cover Security Configuration with three subsections each stating 'Status: **Already fully configured -- no changes needed.**' (lines 49, 56, 64). The summary on line 68 states: 'All sections of the Project Configuration are fully populated and up to date. No modifications required.'"
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "passed": true,
+      "evidence": "changes-log.md lines 14-16 show all three Security Configuration subsections with Status 'Preserved' and Changes 'None': 'Security Configuration > Product Lifecycle | Preserved | None -- all 5 fields retained unchanged', 'Security Configuration > Version Streams | Preserved | None -- 1 stream retained unchanged', 'Security Configuration > Source Repositories | Preserved | None -- 2 repositories retained unchanged'."
+    },
+    {
+      "text": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "passed": true,
+      "evidence": "discovery-log.md line 68: 'Security Configuration opt-in skipped -- section already exists and is complete (idempotency).' changes-log.md line 20: 'Security Configuration opt-in was not triggered because the section already exists and is fully populated (idempotency skip).' Line 21: 'No user prompts were required -- all configuration data was already present.' No evidence in any log that the opt-in prompt was offered."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 5-8 show the Repository Registry table with both entries exactly matching reference: '| backend | Rust backend service | serena_backend | /home/user/backend |' and '| frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui |'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 12-16 contain all 5 Jira fields matching reference exactly: Project key TC, Cloud ID 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID 10142, Git Pull Request custom field customfield_10875, GitHub Issue custom field customfield_10747."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

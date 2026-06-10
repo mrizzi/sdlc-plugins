@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
+      "passed": true,
+      "evidence": "version-impact.md: All 7 versions show 'No' — 2.1.0 (1.0.137), 2.1.1 (1.0.137), 2.2.0 (1.0.138), 2.2.1 (1.0.138), 2.2.2 (1.0.138 retag), 2.2.3 (1.0.139), 2.2.4 (1.0.139). All >= 1.0.135 fix threshold."
+    },
+    {
+      "text": "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 7 Case C)",
+      "passed": true,
+      "evidence": "triage-outcome.md: 'Decision: Close as Not a Bug' with 'Resolution: Not a Bug' and 'Status: Closed'"
+    },
+    {
+      "text": "The close recommendation includes a comment documenting the version impact evidence — listing each version and its dependency version as proof of non-impact",
+      "passed": true,
+      "evidence": "triage-outcome.md: Proposed comment contains full version impact evidence table listing all 7 versions with their serde_json versions and 'Not affected' status for each"
+    },
+    {
+      "text": "VEX Justification is set to 'Component not Present' or appropriate value when the VEX field is configured (Step 7 VEX Justification)",
+      "passed": true,
+      "evidence": "triage-outcome.md: 'Field: customfield_12345 (VEX Justification), Proposed value: Component not Present'"
+    },
+    {
+      "text": "The analysis does NOT create any remediation tasks — no upstream backport, no downstream propagation (Step 7 Case C closes the issue)",
+      "passed": true,
+      "evidence": "triage-outcome.md: 'No upstream backport task created: No fix is needed because all versions already ship the patched dependency.' and 'No downstream propagation task created: No remediation is required in any stream.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction correctly identifies CVE-2026-31812, library quinn-proto, affected range < 0.11.14, and fixed version 0.11.14 from the Vulnerability issue (Step 1)",
+      "passed": true,
+      "evidence": "data-extraction.md: CVE ID = CVE-2026-31812, Vulnerable library = quinn-proto, Affected version range = 'versions before 0.11.14', Fixed version = 0.11.14"
+    },
+    {
+      "text": "Data extraction identifies the ecosystem as Cargo based on the library name and component context (Step 1 Ecosystem detection)",
+      "passed": true,
+      "evidence": "data-extraction.md: 'The ecosystem is **Cargo**, confirmed by the Ecosystem Mappings tables in both streams which list Cargo with Cargo.lock as the lock file'"
+    },
+    {
+      "text": "Version impact table includes ALL versions from the security-matrix.md supportability matrix — no versions are skipped (Important Rule 4)",
+      "passed": true,
+      "evidence": "version-impact.md lists all 7 versions: RHTPA 2.1.0, 2.1.1 (2.1.x stream) and RHTPA 2.2.0, 2.2.1, 2.2.2, 2.2.3, 2.2.4 (2.2.x stream)"
+    },
+    {
+      "text": "Version impact analysis uses pinned commit tags from the supportability matrix for each version, not branch HEAD (Important Rule 13)",
+      "passed": true,
+      "evidence": "version-impact.md: Each version references specific pinned tags (v0.3.8, v0.3.12, v0.4.5, v0.4.8, v0.4.9, v0.4.11, v0.4.12) from the supportability matrix"
+    },
+    {
+      "text": "Version impact table identifies retag versions and carries forward the affected status from the original version (Important Rule 5)",
+      "passed": true,
+      "evidence": "version-impact.md: 'RHTPA 2.2.2 | 2.2.x | v0.4.9 | -- | YES | retag of 2.2.1 (same as RHTPA 2.2.1; carries forward 0.11.12)'"
+    },
+    {
+      "text": "Affects Versions correction proposes replacing PSIRT-assigned versions with lock-file-verified versions, showing the diff (Step 3.2)",
+      "passed": true,
+      "evidence": "affects-versions.md: 'Current: [RHTPA 2.0.0] Proposed: [RHTPA 2.2.0, RHTPA 2.2.1, RHTPA 2.2.2]' with full rationale and evidence table"
+    },
+    {
+      "text": "Affects Versions correction references version names from the supportability matrix rather than hardcoded Jira version IDs (Important Rule 6)",
+      "passed": true,
+      "evidence": "affects-versions.md uses version names (RHTPA 2.2.0, RHTPA 2.2.1, RHTPA 2.2.2) and states 'Version IDs would be discovered dynamically via getJiraIssueTypeMetaWithFields at runtime (Important Rule 6)'"
+    },
+    {
+      "text": "Remediation tasks include Repository, Target Branch, acceptance criteria, and dependency linkage between upstream and downstream tasks (Important Rule 9)",
+      "passed": true,
+      "evidence": "remediation.md: Task 1 has '## Repository' (backend), '## Target Branch' (release/0.4.z), '## Acceptance Criteria' (3 items), '## Dependencies'. Task 2 has matching sections. Blocks linkage defined between upstream and downstream tasks."
+    },
+    {
+      "text": "For Cargo ecosystem, remediation creates two tasks: upstream backport task and downstream propagation subtask with Blocks dependency (Important Rule 8)",
+      "passed": true,
+      "evidence": "remediation.md: Task 1 is 'Upstream Backport (2.2.x stream)' and Task 2 is 'Downstream Propagation Subtask (2.2.x stream)'. Jira Linkage section defines 'type: Blocks' between upstream and downstream tasks."
+    },
+    {
+      "text": "The analysis presents triage recommendations as proposed actions — framing Affects Versions changes, label additions, and status transitions as proposals rather than executed mutations (Guardrails)",
+      "passed": true,
+      "evidence": "All mutations prefixed with 'PROPOSAL:' throughout affects-versions.md and remediation.md. e.g., 'PROPOSAL: Update Affects Versions on TC-8001', 'PROPOSAL: Create upstream backport task', 'PROPOSAL: jira.create_link(...)'"
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

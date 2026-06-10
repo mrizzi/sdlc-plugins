@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md Step 6, File 2 states: \"Build the filter query using apply_filter: When the license parameter is present, call common::db::query::apply_filter to parse the comma-separated string and generate the SQL IN clause. This function already handles both single-value and multi-value cases.\" The plan also explicitly says \"do NOT reimplement this logic\" and reuse-analysis.md confirms: \"Instead of writing custom comma-splitting or SQL filter logic, it calls apply_filter directly.\""
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md Step 4 lists advisory/endpoints/list.rs as a reuse candidate, stating: \"Use get_symbols_overview to see the advisory Query struct with the severity field\" and \"Use find_symbol on the Query struct and handler to understand the filter pattern.\" Step 6, File 1 says: \"Follow the exact same pattern as the severity field in modules/fundamental/src/advisory/endpoints/list.rs.\" reuse-analysis.md Reuse Candidate 2 describes it as \"the structural template\" and details three specific ways the pattern is followed: Query struct pattern, Handler extraction pattern, and Service integration pattern."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md Step 4 lists entity/src/package_license.rs as a reuse candidate: \"Use get_symbols_overview to understand the entity's fields and relations.\" Step 6, File 2 states: \"JOIN through package_license entity: Use the entity::package_license SeaORM entity to join the package table to the package_license table... rather than writing raw SQL.\" reuse-analysis.md Reuse Candidate 3 confirms usage: \"the license filter query uses the package_license entity to perform the JOIN\" and \"Writing raw SQL JOINs would bypass SeaORM's relation system.\""
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md opens with: \"The task description lists three Reuse Candidates. All three are used in this implementation.\" It then has three detailed sections: (1) common/src/db/query.rs::apply_filter - explains comma-separated parsing reuse, (2) modules/fundamental/src/advisory/endpoints/list.rs - explains structural template reuse for Query struct, handler, and service integration, (3) entity/src/package_license.rs - explains JOIN entity reuse. Each section includes 'What it provides', 'How it is reused', and 'Why reuse over reimplementation' subsections with concrete details."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "plan.md Summary of Files table lists: (1) modules/fundamental/src/package/endpoints/list.rs - MODIFY, (2) modules/fundamental/src/package/service/mod.rs - MODIFY, (3) tests/api/package_license_filter.rs - CREATE, (4) docs/api.md - MODIFY (if exists). The first three align with expected task scope. The docs/api.md entry is conditional ('if exists') and is a documentation update. However, since I do not have the original task description to verify the exact Files to Modify and Files to Create sections, I must evaluate based on the plan's internal consistency. The plan's Step 9 Scope containment check lists the same files and notes docs/api.md as a conditional addition. The plan does not propose files outside what it identifies as the task scope. Without the original task description, I cannot definitively verify scope compliance but the plan explicitly performs scope containment checks in Step 9 listing only these files. Given the plan references the task's Files to Modify and Files to Create sections in Step 1 and the Summary of Files matches what the plan describes as being within scope, this passes."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md Step 6, File 1 explicitly states: \"Do NOT duplicate any comma-splitting or filter-building logic here -- that belongs in the service/query layer via apply_filter.\" File 2 states: \"Call apply_filter from common/src/db/query.rs for comma-separated parsing and SQL IN clause generation -- do NOT reimplement this logic.\" Step 9 includes a duplication check: \"Verify no duplication of apply_filter logic. Confirm the comma-splitting and IN-clause generation is delegated to the shared utility, not reimplemented in the endpoint or service.\" reuse-analysis.md concludes: \"No new utility code was written. All filtering logic delegates to existing shared infrastructure (apply_filter).\""
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}
