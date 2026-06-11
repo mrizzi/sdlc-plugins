@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Duplicate check searches for sibling issues using JQL with the CVE label and excludes the current issue key (Step 4)",
+      "passed": true,
+      "evidence": "duplicate-check.md lines 5-9 show the JQL query: `project = TC AND labels = 'CVE-2026-31812' AND issuetype = 10024 AND key != TC-8003`. This searches for sibling issues using the CVE label (CVE-2026-31812) and explicitly excludes the current issue key (TC-8003) with `key != TC-8003`. The section is titled 'Step 4 -- Duplicate and Sibling Check'."
+    },
+    {
+      "text": "Duplicate check correctly classifies TC-7999 as a same-stream sibling (both have stream suffix [rhtpa-2.2]) and identifies it as a duplicate (Step 4.1)",
+      "passed": true,
+      "evidence": "duplicate-check.md lines 20-28 perform stream classification: 'TC-8003 stream suffix: [rhtpa-2.2] -> stream 2.2.x' and 'TC-7999 stream suffix: [rhtpa-2.2] -> stream 2.2.x', concluding 'Both issues have the same stream suffix [rhtpa-2.2]'. Lines 26-28 state: 'Per Step 4.1 of the triage procedure, TC-7999 is a same-stream sibling of TC-8003. Both track CVE-2026-31812 for the same stream (2.2.x / [rhtpa-2.2]).' The section is titled 'Classification: DUPLICATE'."
+    },
+    {
+      "text": "Triage outcome recommends closing TC-8003 as Duplicate with resolution 'Duplicate', referencing TC-7999 as the original (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md line 3: 'Decision: Close as Duplicate'. Lines 23-25 under 'Transition TC-8003 to Closed': 'Resolution: Duplicate' and 'TC-7999 is the original issue that remains open and is being actively worked.' The summary table at line 50 confirms 'Triage Outcome | Close as Duplicate' and 'Duplicate of | TC-7999'."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting why it is a duplicate — same CVE tracked for the same stream (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md lines 15-17 show the proposed comment: 'Duplicate of TC-7999 -- same CVE (CVE-2026-31812) tracked for the same stream (2.2.x / [rhtpa-2.2]). TC-7999 is already In Progress with Affects Versions [RHTPA 2.2.0, RHTPA 2.2.1]. Version impact analysis confirms overlap. Closing as Duplicate.' This explicitly documents why it is a duplicate (same CVE tracked for the same stream)."
+    },
+    {
+      "text": "The analysis does NOT proceed to remediation task creation — duplicate detection short-circuits the triage flow",
+      "passed": true,
+      "evidence": "duplicate-check.md line 39: 'Same-stream sibling detected. TC-8003 should be closed as a Duplicate of TC-7999. This short-circuits the triage flow -- no further steps (version lifecycle check, already-fixed check, remediation task creation) are needed.' triage-outcome.md line 7: 'Duplicate detection short-circuits the triage flow. No remediation tasks are created, and Steps 5-7 (version lifecycle check, already-fixed check, remediation) are skipped.' Summary table line 51: 'Remediation Tasks | None (short-circuited by duplicate detection)'. No remediation task files exist in the outputs directory (only data-extraction.md, duplicate-check.md, and triage-outcome.md)."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

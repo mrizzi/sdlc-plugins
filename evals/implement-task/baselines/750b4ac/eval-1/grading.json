@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "In plan.md Step 4 (Code Understanding), the plan explicitly lists inspecting all 4 of these files: (1) 'mcp__serena_backend__get_symbols_overview on advisory/endpoints/get.rs to understand the endpoint handler pattern', (2) 'mcp__serena_backend__find_symbol with include_body=true on fetch and list methods' on advisory/service/advisory.rs, (3) 'mcp__serena_backend__find_symbol on AdvisorySummary in advisory/model/summary.rs to see the severity field type', (4) 'Read common/src/error.rs to understand AppError and .context() usage'."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": false,
+      "evidence": "In plan.md line 140 (Documentation currency section), the plan states: 'The new API endpoint GET /api/v2/sbom/{id}/advisory-summary should be documented in docs/api.md if it exists and covers endpoint listings. A lightweight addition describing the new endpoint would be made.' This indicates modifying docs/api.md, which is not listed in the task's Files to Modify or Files to Create sections. Additionally, line 91 lists 'docs/api.md -- REST API reference (may need update with new endpoint)' under Documentation Files Identified. This contradicts the self-verification at line 131-132 which claims 'Files modified/created match exactly the Files to Modify and Files to Create sections. No out-of-scope changes.' Per grading rule 6, contradictory evidence means FAIL."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "In plan.md lines 62-65, the Files to Create section lists exactly 3 files: (1) 'modules/fundamental/src/advisory/model/severity_summary.rs -- SeveritySummary response struct', (2) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs -- GET handler for /api/v2/sbom/{id}/advisory-summary', (3) 'tests/api/advisory_summary.rs -- integration tests for the new endpoint'. Corresponding detailed descriptions are provided in file-1-description.md (model), file-4-description.md (endpoint handler), and file-6-description.md (test file)."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "In plan.md lines 56-58, the Files to Modify section lists: (1) 'modules/fundamental/src/advisory/service/advisory.rs -- add severity_summary method to AdvisoryService', (2) 'modules/fundamental/src/advisory/endpoints/mod.rs -- register the new /api/v2/sbom/{id}/advisory-summary route', (3) 'modules/fundamental/src/advisory/model/mod.rs -- add pub mod severity_summary; to register the new model module'. Detailed changes are provided in file-3-description.md (service), file-5-description.md (endpoints/mod.rs), and file-2-description.md (model/mod.rs)."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "In plan.md lines 157-166, the commit message is: 'feat(api): add advisory severity aggregation endpoint' (type=feat, scope=api, description follows) with footer 'Implements TC-9201'. This follows Conventional Commits format with type(scope): description and includes the Jira reference TC-9201 in the footer."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "In plan.md line 168, immediately after the commit message block: 'With `--trailer=\"Assisted-by: Claude Code\"`.' This explicitly states the trailer will be used."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "In plan.md lines 99-101 (Step 5 -- Create Branch): 'git checkout main', 'git pull', 'git checkout -b TC-9201'. The branch name TC-9201 matches the Jira key. The Target Branch 'main' is referenced in the Task Summary section (line 8: 'Target Branch: main') and in the git checkout command (line 99: 'git checkout main') and in the PR creation command (line 174: 'gh pr create --base main')."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "In conventions.md: (1) Error handling pattern is identified multiple times -- line 3 under CONVENTIONS.md lookup: 'Error handling: All handlers return Result<T, AppError> with .context() wrapping', and in Endpoint conventions: 'Error wrapping: errors are wrapped with .context(\"descriptive message\") before propagating', and in Service conventions: 'Error handling: service methods return Result<T, anyhow::Error> or Result<T, AppError> with .context() wrapping'. (2) Module structure is identified under CONVENTIONS.md lookup: 'Module pattern: Each domain module follows model/ + service/ + endpoints/ structure', and in File organization conventions: 'New endpoint files: placed in modules/fundamental/src/<domain>/endpoints/<feature>.rs', 'New model files: placed in modules/fundamental/src/<domain>/model/<feature>.rs'."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "In plan.md line 8: 'Target Branch: main' is listed in the Task Summary section. It is also referenced in the branch creation step (line 99: 'git checkout main') and in the PR creation command (line 174: 'gh pr create --base main'). The target branch 'main' is clearly identified and used throughout the plan."
+    },
+    {
+      "text": "The plan mentions checking for a description digest comment (Step 1.5) and notes that when no digest is found, it proceeds with a warning rather than blocking execution (backward compatibility per shared/description-digest-protocol.md)",
+      "passed": true,
+      "evidence": "In plan.md lines 15-17 (Description Digest Verification section): 'Would fetch issue comments and search for `[sdlc-workflow] Description digest:` marker. If found, compute digest of the current description using `python3 scripts/sha256-digest.py` and compare tags and hex values. If no digest comment found, log warning and proceed.' This explicitly describes checking for the digest comment and proceeding with a warning when none is found."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 1,
+    "total": 10,
+    "pass_rate": 0.9
+  }
+}

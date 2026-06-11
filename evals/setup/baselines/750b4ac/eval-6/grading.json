@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "passed": true,
+      "evidence": "The Security Configuration section in claude-md-result.md (lines 36-58) exactly matches the reference file. diff of the two Security Configuration sections produces no differences. Product Lifecycle has all 5 fields (Product pages URL, Jira version prefix, Vulnerability issue type ID, Component label pattern, VEX Justification custom field), Version Streams has the 2.1.x stream row, and Source Repositories has backend and frontend-ui entries — all identical to the reference."
+    },
+    {
+      "text": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "passed": true,
+      "evidence": "discovery-log.md Step 8 (lines 57-74) explicitly states: 'Result: **Security Configuration is up to date** — no changes needed.' It details all subsections as 'fully populated' with 'No {{placeholder}} markers found.'"
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "passed": true,
+      "evidence": "changes-log.md states in the overview (line 5): 'Project Configuration is up to date — no changes needed.' The section-by-section table (line 16) shows 'Security Configuration | Preserved | No modifications — all subsections fully populated, retained as-is'. The Detail section (lines 37-39) confirms each subsection was preserved. Line 43: 'None. No files were modified during this run.'"
+    },
+    {
+      "text": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "passed": true,
+      "evidence": "discovery-log.md line 72 explicitly states: 'Security Configuration opt-in prompt not shown (section already exists and is fully populated).' The changes-log.md shows no modifications were made and no opt-in interaction occurred. The discovery log summary (line 78) confirms: 'The setup skill is idempotent — running it on an already-configured project produces no changes.'"
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 5-8 show the Repository Registry table with both entries exactly matching the reference: 'backend | Rust backend service | serena_backend | /home/user/backend' and 'frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui'. diff of the Repository Registry sections between output and reference produces no differences."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 10-16 show all 5 Jira Configuration fields exactly matching the reference: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747. diff of the Jira Configuration sections between output and reference produces no differences."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md lines 19-25 explicitly describe searching comments for the marker string '[sdlc-workflow] Description digest:' and line 6 references 'shared/description-digest-protocol.md'. plan.md line 62 confirms: 'Locate digest comment: find comment starting with [sdlc-workflow] Description digest:'"
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md lines 69-81 describe computing the current digest via 'python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt' and lines 86-106 describe comparing format tags and hex digests with the stored values. plan.md line 67 confirms the same script invocation and lines 68-69 confirm comparison of format tags and hex digests."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user -- no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md lines 105-106: '**Result**: The digests match. Proceed silently -- no additional user prompt, no added latency, no warning.' Lines 131-132: 'Hex digests match -- description is unmodified since planning' and '**Outcome: proceed silently to Step 2**'. plan.md line 70: '**Outcome**: proceed silently to Step 2'."
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check -- it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md line 105-106 states 'Proceed silently -- no additional user prompt, no added latency, no warning.' The outcome table on line 119 shows 'Proceed silently (this scenario)' for the matching-digests case. plan.md proceeds directly from Step 1.5 (digest check, line 70: 'proceed silently to Step 2') to Step 2 ('Verify Dependencies', line 73) with no user interaction or alerting."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

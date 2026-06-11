@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
+      "passed": true,
+      "evidence": "In version-impact.md, the table lists 7 versions (2.1.0, 2.1.1, 2.2.0, 2.2.1, 2.2.2, 2.2.3, 2.2.4) and every row shows 'NO' in the 'Affected?' column. Each version ships serde_json >= 1.0.137 (or is a retag of one that does), which is outside the CVE's affected range of < 1.0.135. The summary states: 'No supported versions are affected. Every version across both streams ships serde_json >= 1.0.137, which is outside the affected range (< 1.0.135).'"
+    },
+    {
+      "text": "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 7 Case C)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, the heading reads '## Step 7 -- Remediation Decision: Case C (No Supported Versions Affected)' with subheading '### Recommendation: Close as Not a Bug'. The proposed transition (section 2) states: 'Transition TC-8002 to Closed with resolution Not a Bug.' The text explicitly states 'No remediation tasks should be created.' and under 'Actions NOT Taken': 'No remediation Tasks created (no versions are affected)'."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting the version impact evidence — listing each version and its dependency version as proof of non-impact",
+      "passed": true,
+      "evidence": "In triage-outcome.md, section '1. Proposed comment on TC-8002' contains a full version impact table listing all 7 versions with their stream and serde_json version. For example: '| 2.1.0 | 2.1.x | 1.0.137 | NO |', '| 2.2.0 | 2.2.x | 1.0.138 | NO |', etc. The comment concludes: 'All supported versions ship serde_json >= 1.0.137, which is outside the affected range (< 1.0.135). The vulnerable version was never included in any shipped product version.'"
+    },
+    {
+      "text": "VEX Justification is set to 'Component not Present' or appropriate value when the VEX field is configured (Step 7 VEX Justification)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, section '3. Proposed VEX Justification' states: 'Set VEX Justification custom field (customfield_12345) to Component not Present.' with rationale: 'the vulnerable version of serde_json (< 1.0.135) is not shipped in any supported product version. All versions ship serde_json >= 1.0.137, which includes the fix. The vulnerable component version is not present in any shipped artifact.'"
+    },
+    {
+      "text": "The analysis does NOT create any remediation tasks — no upstream backport, no downstream propagation (Step 7 Case C closes the issue)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, the text states: 'No remediation tasks should be created. There is no upstream backport task and no downstream propagation task, because there is nothing to fix.' The 'Actions NOT Taken' section explicitly lists: 'No remediation Tasks created (no versions are affected)', 'No upstream backport task (no fix needed)', 'No downstream propagation task (no fix needed)'. No output files contain any task creation actions."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

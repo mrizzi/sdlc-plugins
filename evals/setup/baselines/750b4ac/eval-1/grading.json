@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with a table listing both 'trustify-backend' (serena_backend) and 'trustify-ui' (serena_ui) as entries",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 3-8: '## Repository Registry' section contains a table with two rows: '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' and '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with all 5 fields: Project key (TC), Cloud ID, Feature issue type ID (10142), Git Pull Request custom field (customfield_10875), GitHub Issue custom field (customfield_10747)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 10-16: '## Jira Configuration' section lists all 5 fields: 'Project key: TC', 'Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432', 'Feature issue type ID: 10142', 'Git Pull Request custom field: customfield_10875', 'GitHub Issue custom field: customfield_10747'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that documents the mcp__<instance>__<tool> naming convention",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 18-20: '## Code Intelligence' section states 'Tools are prefixed by Serena instance name: `mcp__<instance>__<tool>`.' and provides a concrete example using mcp__serena_backend__find_symbol"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Limitations' subheading under Code Intelligence",
+      "passed": true,
+      "evidence": "claude-md-result.md line 31: '### Limitations' subheading appears under the '## Code Intelligence' section (line 18), followed by 'No limitations known -- both Serena instances (serena_backend, serena_ui) are fully functional.'"
+    },
+    {
+      "text": "outputs/discovery-log.md mentions discovering 2 Serena instances (serena_backend and serena_ui) from the MCP tool listing",
+      "passed": true,
+      "evidence": "discovery-log.md lines 9-14: 'Step 2 -- Discover Serena Instances' section states 'Discovered instances: 1. **serena_backend** -- identified from tools: mcp__serena_backend__find_symbol...' and '2. **serena_ui** -- identified from tools: mcp__serena_ui__find_symbol...' with source listed as 'MCP tool listing'"
+    },
+    {
+      "text": "outputs/changes-log.md indicates all sections were newly added (no preserved entries since this is a greenfield setup)",
+      "passed": true,
+      "evidence": "changes-log.md lines 5-6: 'The existing CLAUDE.md had no Project Configuration section. A complete Project Configuration was generated from scratch.' All subsections are marked '(new)': '## Repository Registry (new)', '## Jira Configuration (new)', '## Code Intelligence (new)'. The 'Preserved' section (lines 39-41) only mentions preserving existing non-configuration content, not any pre-existing configuration entries."
+    },
+    {
+      "text": "The Repository Registry table contains columns: Repository, Role, Serena Instance, Path — matching project-config.template.md structure",
+      "passed": true,
+      "evidence": "claude-md-result.md line 5: '| Repository | Role | Serena Instance | Path |' — exact column headers match the required structure"
+    },
+    {
+      "text": "The skill offers to enable security triage for the project (Step 8 opt-in prompt) and respects the user's decline — outputs/claude-md-result.md does NOT contain a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "discovery-log.md lines 39-41: 'Step 8 -- Security Configuration: User was asked whether to enable security triage for this project. User declined -- Security Configuration section was not created.' claude-md-result.md contains no '## Security Configuration' section (file ends after '### Limitations' content at line 33). changes-log.md lines 46: 'Security Configuration: User declined to enable security triage. No ## Security Configuration section was added.'"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}
