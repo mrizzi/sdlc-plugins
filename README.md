@@ -31,6 +31,13 @@ implementing tasks, and verifying pull requests:
 - **verify-pr** — Verify a PR against its Jira task's acceptance criteria and
   deterministic guardrails.
 
+- **triage-security** — Triage PSIRT-created Vulnerability issues (CVEs) with
+  version-aware impact analysis across supported product versions. Includes a
+  discovery mode for listing untriaged vulnerabilities.
+
+- **run-evals** — Run structured eval suites against skills to measure output
+  quality and catch regressions.
+
 ## Installation
 
 ### 1. Add the marketplace
@@ -73,10 +80,18 @@ the full specification and a complete example.
 
 ## Evaluations
 
-The plan-feature skill has a structured eval framework for measuring output
-quality and catching regressions. See
-[evals/plan-feature/README.md](evals/plan-feature/README.md) for usage
-instructions, test case documentation, and the iteration workflow.
+Several skills have structured eval suites for measuring output quality and
+catching regressions. See the eval directories for each skill:
+
+- [evals/plan-feature/](evals/plan-feature/) — Plan-feature eval cases
+- [evals/define-feature/](evals/define-feature/) — Define-feature eval cases
+- [evals/implement-task/](evals/implement-task/) — Implement-task eval cases
+- [evals/verify-pr/](evals/verify-pr/) — Verify-pr eval cases
+- [evals/triage-security/](evals/triage-security/) — Triage-security eval cases
+- [evals/setup/](evals/setup/) — Setup eval cases
+
+See [evals/README.md](evals/README.md) for usage instructions and the iteration
+workflow.
 
 ## Documentation
 
