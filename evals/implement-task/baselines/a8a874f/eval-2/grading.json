@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "In the parsing table (line 25): '**Implementation Notes** | **MISSING** | No code patterns, references to existing implementations, or architectural guidance'. In the Gaps Identified section (lines 42-47): '2. **Implementation Notes (MISSING):** There is no guidance on the implementation approach.' followed by multiple specific questions about the missing implementation notes."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "In the parsing table (line 28): 'Acceptance Criteria | Present but vague | Criteria are not measurable: \"Users can search for packages\" (how?), \"Search results are relevant\" (by what measure?), \"Performance is acceptable\" (what threshold?)'. In the Gaps section (lines 49-52): '3. **Acceptance Criteria (VAGUE):** The current criteria are not verifiable. They need to specify: What \"relevant\" means in concrete terms... What \"acceptable performance\" means...'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "In the parsing table (line 29): 'Test Requirements | Present but vague | \"Test that search works correctly\" — no specific test scenarios, edge cases, or expected behaviors'. In the Gaps section (lines 54-58): '4. **Test Requirements (VAGUE):** \"Test that search works correctly\" needs to specify: Specific test scenarios (e.g., search with matching results, search with no results, search with special characters, pagination of search results)...'"
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response explicitly stops execution at line 61: '**I am stopping execution and will not proceed with any subsequent steps (Steps 2-11) until the missing information is provided.**' Line 65: 'Please update the task description for TC-9202 with the missing sections (API Changes, Implementation Notes) and clarify the vague sections (Acceptance Criteria, Test Requirements), then re-run `/implement-task TC-9202`.' No implementation plan, branching, or code changes were produced."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks well more than 3 specific clarifying questions covering all three topics: (1) Which fields to search — line 47: 'What fields on `PackageSummary` are searchable?'; line 39: 'What query parameters does it accept? (e.g., `q`, `name`, `namespace`, `type`, `purl`?)'. (2) What relevance ranking means — line 51: 'What \"relevant\" means in concrete terms (e.g., \"exact name matches rank higher than partial matches\")'. (3) What performance threshold is required — line 52: 'What \"acceptable performance\" means (e.g., \"search responds within 500ms for datasets under 10k packages\")'."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

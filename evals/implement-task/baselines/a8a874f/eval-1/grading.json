@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "In plan.md Step 4 ('Understand the Code'), the plan explicitly lists using mcp__serena_backend__get_symbols_overview on: 'modules/fundamental/src/advisory/service/advisory.rs -- understand AdvisoryService methods', 'modules/fundamental/src/advisory/endpoints/get.rs -- reference endpoint pattern', 'modules/fundamental/src/advisory/model/summary.rs -- understand AdvisorySummary struct and severity field'. This covers 3 of the 4 listed files (advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs)."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": false,
+      "evidence": "The plan includes file-7-description.md which describes modifying 'tests/Cargo.toml'. This file is not listed in the task's Files to Modify section (which only includes advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs). While the plan does note it as 'potentially out-of-scope' in file-7-description.md ('Per the skill's Step 9 (Scope Containment), if this file is not listed in Files to Modify, I would flag it to the user for approval before modifying it'), it is still listed in the plan's 'Files to Modify' table (row 7) as a file to modify, and the modification is described as 'conditional'. This is an unrelated file outside the defined scope."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "In plan.md 'Files to Create' table, three files are listed: (1) 'modules/fundamental/src/advisory/model/severity_summary.rs' (file-1-description.md, Action: CREATE), (2) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs' (file-2-description.md, Action: CREATE), (3) 'tests/api/advisory_summary.rs' (file-3-description.md, Action: CREATE). All three match the required files."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "In plan.md 'Files to Modify' table, three matching files are listed: (4) 'modules/fundamental/src/advisory/service/advisory.rs' (file-4-description.md, Action: MODIFY), (5) 'modules/fundamental/src/advisory/endpoints/mod.rs' (file-5-description.md, Action: MODIFY), (6) 'modules/fundamental/src/advisory/model/mod.rs' (file-6-description.md, Action: MODIFY). All three required files are present."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "In plan.md under 'Commit Message', the message is: 'feat(api): add advisory severity aggregation endpoint' (type=feat, scope=api, description follows) with footer 'Implements TC-9201'. This follows Conventional Commits format with type(scope): description and references TC-9201 in the footer."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "In plan.md under 'Commit Message', the plan states: 'Commit flags: `--trailer=\"Assisted-by: Claude Code\"`'"
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "In plan.md Step 5 ('Create Branch'), the plan shows: 'git checkout main', 'git pull', 'git checkout -b TC-9201'. This creates a branch named TC-9201. The PR Details section also lists 'Base branch: main' and 'Head branch: TC-9201'. The Target Branch 'main' is extracted from the task in Step 1: 'Target Branch: main'."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "In conventions.md under 'Repository-Level Conventions': 'Error handling: All handlers return Result<T, AppError> with .context() wrapping' and 'Module pattern: Each domain module follows model/ + service/ + endpoints/ structure'. Additionally under 'Production Code Conventions': 'Error handling strategy: Use AppError with .context() wrapping from common/src/error.rs'. Both patterns are clearly identified."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "In plan.md Step 1 ('Fetch and Parse Jira Task'), the plan lists 'Target Branch: main'. In Step 5 it uses 'git checkout main' as the starting point. In PR Details it lists 'Base branch: main'."
+    },
+    {
+      "text": "The plan mentions checking for a description digest comment (Step 1.5) and notes that when no digest is found, it proceeds with a warning rather than blocking execution (backward compatibility per shared/description-digest-protocol.md)",
+      "passed": false,
+      "evidence": "In plan.md Step 1.5 ('Description Integrity'), the plan states: 'Would verify description digest via Jira comments. No digest comment expected for eval -- proceed.' While this does mention checking for a description digest, it does not explicitly note backward compatibility behavior or that execution proceeds with a warning rather than blocking. It simply says 'No digest comment expected for eval -- proceed' which frames it as an eval-specific exception rather than documenting the general backward-compatible behavior of proceeding with a warning when no digest is found."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 2,
+    "total": 10,
+    "pass_rate": 0.8
+  }
+}

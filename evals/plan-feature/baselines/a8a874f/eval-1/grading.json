@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "All 6 task files contain every required section. Task 1: Repository (line 3), Target Branch (line 7), Description (line 11), Files to Create (line 15), Files to Modify (line 19), Implementation Notes (line 23), Acceptance Criteria (line 36), Test Requirements (line 42). Tasks 2-6 similarly contain all required sections. Verified by reading each file in full."
+    },
+    {
+      "text": "Task count is between 3 and 10 inclusive",
+      "passed": true,
+      "evidence": "6 task files found in outputs directory: task-1-advisory-severity-model.md, task-2-severity-aggregation-query.md, task-3-advisory-summary-endpoint.md, task-4-threshold-query-param.md, task-5-cache-invalidation.md, task-6-integration-tests.md. 6 is within [3, 10]."
+    },
+    {
+      "text": "All tasks reference repository 'trustify-backend'",
+      "passed": true,
+      "evidence": "Every task file has '## Repository' followed by 'trustify-backend': task-1 line 5, task-2 line 5, task-3 line 5, task-4 line 5, task-5 line 5, task-6 line 5."
+    },
+    {
+      "text": "Task dependencies form a DAG with no circular dependencies",
+      "passed": true,
+      "evidence": "Dependency graph from task files and impact map: Task 1 has no dependencies. Task 2 depends on Task 1. Task 3 depends on Task 2. Task 4 depends on Task 3. Task 5 depends on Task 3. Task 6 depends on Tasks 3, 4, and 5. This forms a tree/DAG: 1->2->3->{4,5}->6. No circular dependencies exist."
+    },
+    {
+      "text": "Every task's Files to Modify and Files to Create reference paths plausible within the repo-backend.md structure",
+      "passed": true,
+      "evidence": "All modified files exist in repo-backend.md manifest: modules/fundamental/src/sbom/model/mod.rs, modules/fundamental/src/sbom/service/sbom.rs, modules/fundamental/src/sbom/endpoints/mod.rs, modules/ingestor/src/graph/advisory/mod.rs, tests/api/sbom.rs. New files are created in existing directories: modules/fundamental/src/sbom/model/advisory_severity_summary.rs (model/ directory exists), modules/fundamental/src/sbom/endpoints/advisory_summary.rs (endpoints/ directory exists)."
+    },
+    {
+      "text": "Impact map lists concrete, specific changes (not vague or abstract descriptions)",
+      "passed": true,
+      "evidence": "Impact map Modified Files table contains specific changes: 'Add pub mod advisory_severity_summary and re-export AdvisorySeveritySummary' (for model/mod.rs), 'Add advisory_severity_summary() method: query sbom_advisory joined with advisory, group by severity, count distinct advisory IDs, return AdvisorySeveritySummary' (for service/sbom.rs), 'Register GET /api/v2/sbom/{id}/advisory-summary route with 5-minute cache-control' (for endpoints/mod.rs), 'Add cache invalidation call after advisory-to-SBOM correlation commits' (for ingestor), 'Add 8 integration tests: severity counting, deduplication, 404 handling, threshold filtering, cache headers' (for tests). All describe concrete operations with specific method names, endpoints, and count details."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 6 tasks have '## Repository' containing only 'trustify-backend' -- a single repository name. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 6 tasks contain: '## Target Branch' (set to 'main'), '## Description' (with substantive content), '## Acceptance Criteria' (with checkbox items), '## Test Requirements' (with checkbox items). Verified in every task file."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Cross-referencing all file paths against repo-backend.md directory tree: modules/fundamental/src/sbom/model/mod.rs (line 41 of manifest), modules/fundamental/src/sbom/service/sbom.rs (line 46), modules/fundamental/src/sbom/endpoints/mod.rs (line 48), modules/ingestor/src/graph/advisory/mod.rs (line 83), tests/api/sbom.rs (line 111). New files created in existing directories that appear in the manifest: sbom/model/ and sbom/endpoints/."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references modules/fundamental/src/sbom/model/summary.rs, modules/fundamental/src/sbom/model/mod.rs, modules/fundamental/src/advisory/model/summary.rs and patterns 'Serialize, Debug, Clone'. Task 2 references modules/fundamental/src/sbom/service/sbom.rs, entity/src/sbom_advisory.rs, entity/src/advisory.rs, common/src/error.rs, common/src/db/query.rs and patterns like 'Result<T, AppError>'. Task 3 references modules/fundamental/src/sbom/endpoints/get.rs and specific handler signature. Task 4 references modules/fundamental/src/sbom/endpoints/list.rs for query param patterns. Task 5 references modules/ingestor/src/graph/advisory/mod.rs, entity/src/sbom_advisory.rs, modules/ingestor/src/service/mod.rs. Task 6 references tests/api/sbom.rs, tests/api/advisory.rs, entity/src/sbom.rs, entity/src/advisory.rs, entity/src/sbom_advisory.rs, tests/Cargo.toml and specific assertion patterns."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 6 tasks have '## Target Branch' followed by 'main': task-1 line 9, task-2 line 9, task-3 line 9, task-4 line 9, task-5 line 9, task-6 line 9."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash -- exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": false,
+      "evidence": "The digest lines in all task files are placeholders, not actual posted comments. Task 1 ends with: '[Description digest: sha256-md:a3f7b2c91d4e8f0a56b3c2d1e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1f0 would be posted as a comment]'. Problems: (1) The format does not match the required marker '[sdlc-workflow] Description digest: sha256-md:<hash>' -- it uses '[Description digest:' and appends 'would be posted as a comment]'. (2) The hashes are fabricated example strings with obvious sequential patterns (a3f7b2c9..., b4e8c3d2..., c5f9d4e3..., d6a0e5f4..., e7b1f6a5..., f8c2a7b6...) rather than actual SHA-256 computations. (3) The phrase 'would be posted as a comment' explicitly indicates these are hypothetical, not actual posted digest comments. All 6 tasks exhibit this same issue."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention -- inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All 6 tasks include an '### Applicable Conventions' subsection within Implementation Notes. Each convention listed includes a rationale in the prescribed format: Task 1: 'Applies: task creates advisory_severity_summary.rs matching the convention's model directory scope'. Task 2: 'Applies: task modifies sbom.rs matching the convention's Rust service file scope'. Task 3: 'Applies: task creates advisory_summary.rs and modifies mod.rs matching the convention's endpoints directory scope'. Task 4: 'Applies: task modifies advisory_summary.rs matching the convention's Rust handler scope'. Task 5: 'Applies: task modifies mod.rs in the ingestor graph module matching the convention's Rust source file scope'. Task 6: 'Applies: task modifies tests/api/sbom.rs matching the convention's integration test file scope'. No inapplicable conventions are listed with 'Not applicable' annotations anywhere in the outputs. All rationales name specific files and scopes rather than using free-form prose."
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 1,
+    "total": 13,
+    "pass_rate": 0.923
+  }
+}

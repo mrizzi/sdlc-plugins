@@ -1,0 +1,55 @@
+{
+  "assertions": [
+    {
+      "id": 1,
+      "assertion": "outputs/claude-md-result.md contains a '## Repository Registry' section with a table listing both 'trustify-backend' (serena_backend) and 'trustify-ui' (serena_ui) as entries",
+      "pass": true,
+      "evidence": "Lines 3-8: '## Repository Registry' section with table rows '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' and '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |'"
+    },
+    {
+      "id": 2,
+      "assertion": "outputs/claude-md-result.md contains a '## Jira Configuration' section with all 5 fields: Project key (TC), Cloud ID, Feature issue type ID (10142), Git Pull Request custom field (customfield_10875), GitHub Issue custom field (customfield_10747)",
+      "pass": true,
+      "evidence": "Lines 10-16: All 5 fields present — Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747"
+    },
+    {
+      "id": 3,
+      "assertion": "outputs/claude-md-result.md contains a '## Code Intelligence' section that documents the mcp__<instance>__<tool> naming convention",
+      "pass": true,
+      "evidence": "Line 20: 'Tools are prefixed by Serena instance name: `mcp__<instance>__<tool>`.'"
+    },
+    {
+      "id": 4,
+      "assertion": "outputs/claude-md-result.md contains a '### Limitations' subheading under Code Intelligence",
+      "pass": true,
+      "evidence": "Line 31: '### Limitations' appears after '## Code Intelligence' (line 18)"
+    },
+    {
+      "id": 5,
+      "assertion": "outputs/discovery-log.md mentions discovering 2 Serena instances (serena_backend and serena_ui) from the MCP tool listing",
+      "pass": true,
+      "evidence": "Lines 9-15: '1. **serena_backend** — Serena code intelligence server' and '2. **serena_ui** — Serena code intelligence server' under '## MCP Tool Discovery'"
+    },
+    {
+      "id": 6,
+      "assertion": "outputs/changes-log.md indicates all sections were newly added (no preserved entries since this is a greenfield setup)",
+      "pass": true,
+      "evidence": "Line 5: 'Greenfield setup — all sections are newly added. No existing Project Configuration was present in CLAUDE.md.'"
+    },
+    {
+      "id": 7,
+      "assertion": "The Repository Registry table contains columns: Repository, Role, Serena Instance, Path — matching project-config.template.md structure",
+      "pass": true,
+      "evidence": "Line 5: '| Repository | Role | Serena Instance | Path |' — exact column match"
+    },
+    {
+      "id": 8,
+      "assertion": "The skill offers to enable security triage for the project (Step 8 opt-in prompt) and respects the user's decline — outputs/claude-md-result.md does NOT contain a '## Security Configuration' section",
+      "pass": true,
+      "evidence": "changes-log.md line 33: 'Security Configuration was offered at Step 8 but the user declined. Section was not included.' claude-md-result.md contains no '## Security Configuration' section."
+    }
+  ],
+  "pass_rate": 1.0,
+  "total_pass": 8,
+  "total_fail": 0
+}

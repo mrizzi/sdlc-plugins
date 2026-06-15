@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction correctly identifies CVE-2026-31812, library quinn-proto, affected range < 0.11.14, and fixed version 0.11.14 from the Vulnerability issue (Step 1)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 7-12: CVE ID = CVE-2026-31812, Vulnerable Library = quinn-proto (Rust crate), Affected Version Range = 'versions before 0.11.14 (< 0.11.14)', Fixed Version = 0.11.14. All four fields correctly extracted."
+    },
+    {
+      "text": "Data extraction identifies the ecosystem as Cargo based on the library name and component context (Step 1 Ecosystem detection)",
+      "passed": true,
+      "evidence": "data-extraction.md line 14: 'Ecosystem | Cargo'. Lines 22: 'The vulnerable library quinn-proto is a Rust crate. This maps to the Cargo ecosystem as confirmed by the Ecosystem Mappings tables in the security-matrix, which list Cargo with lock file Cargo.lock and check command git show <tag>:Cargo.lock'."
+    },
+    {
+      "text": "Version impact table includes ALL versions from the security-matrix.md supportability matrix — no versions are skipped (Important Rule 4). The matrix has 7 versions total: 2.1.0, 2.1.1, 2.2.0, 2.2.1, 2.2.2, 2.2.3, 2.2.4",
+      "passed": true,
+      "evidence": "version-impact.md lines 9-15 list all 7 versions: 2.1.0 (v0.3.8), 2.1.1 (v0.3.12), 2.2.0 (v0.4.5), 2.2.1 (v0.4.8), 2.2.2 (v0.4.9), 2.2.3 (v0.4.11), 2.2.4 (v0.4.12). No versions skipped. Summary on line 25 confirms '5 of 7 versions' affected and '2 of 7 versions' not affected."
+    },
+    {
+      "text": "Version impact analysis uses pinned commit tags from the supportability matrix for each version, not branch HEAD (Important Rule 13). Tags should be: v0.3.8, v0.3.12, v0.4.5, v0.4.8, v0.4.9, v0.4.11, v0.4.12",
+      "passed": true,
+      "evidence": "version-impact.md 'Build Tag' column shows: v0.3.8 (line 9), v0.3.12 (line 10), v0.4.5 (line 11), v0.4.8 (line 12), v0.4.9 (line 13), v0.4.11 (line 14), v0.4.12 (line 15). All 7 expected tags match exactly. Methodology on line 19 confirms: 'quinn-proto versions were extracted using git show <tag>:Cargo.lock for each pinned build tag in the supportability matrix'."
+    },
+    {
+      "text": "Version impact table identifies retag versions and carries forward the affected status from the original version (Important Rule 5). Version 2.2.2 (v0.4.9) is a retag of 2.2.1 (v0.4.8) — should note this and carry forward YES",
+      "passed": true,
+      "evidence": "version-impact.md line 13: '2.2.2 | 2.2.x | v0.4.9 | 0.11.12 | YES | retag of 2.2.1 (same as v0.4.8)'. Affected status YES is carried forward from 2.2.1. Line 20 elaborates: 'Version 2.2.2 (build 0.4.9) is a retag of 2.2.1 (build 0.4.8) with no backend source change. The quinn-proto version 0.11.12 is carried forward from 2.2.1.'"
+    },
+    {
+      "text": "Affects Versions correction proposes replacing PSIRT-assigned versions with lock-file-verified versions, showing the diff (Step 3.2). Should show Current: [RHTPA 2.0.0] → Proposed: [affected 2.2.x versions]",
+      "passed": true,
+      "evidence": "affects-versions.md lines 5-8 show a clear diff table: Current (PSIRT-assigned) = 'RHTPA 2.0.0', Proposed (lock-file-verified) = 'RHTPA 2.2.0, RHTPA 2.2.1, RHTPA 2.2.2'. Lines 12-15 explain the rationale: RHTPA 2.0.0 is incorrect (not in the matrix), stream scoping limits to 2.2.x, and 2.2.3/2.2.4 are excluded as they ship the fixed version."
+    },
+    {
+      "text": "Affects Versions correction references version names from the supportability matrix rather than hardcoded Jira version IDs (Important Rule 6). Should use RHTPA X.Y.Z names, not numeric IDs",
+      "passed": true,
+      "evidence": "affects-versions.md consistently uses named versions: 'RHTPA 2.2.0', 'RHTPA 2.2.1', 'RHTPA 2.2.2' (lines 8, 27-29). Jira version IDs are explicitly marked as placeholders '<RHTPA-2.2.0-jira-id>' etc. (lines 27-29) with line 33 noting they 'would be discovered dynamically at execution time by calling getJiraIssueTypeMetaWithFields to retrieve the list of available Jira versions and matching them by name'. No hardcoded numeric IDs used."
+    },
+    {
+      "text": "Remediation tasks include Repository, Target Branch, acceptance criteria, and dependency linkage between upstream and downstream tasks (Important Rule 9)",
+      "passed": true,
+      "evidence": "Task 1 (lines 19-24): Repository = backend, Target Branch = release/0.4.z. Acceptance Criteria lines 40-44 with 4 checkboxes. Task 2 (lines 49-58): Repository = rhtpa-release.0.4.z, Target Branch = main. Acceptance Criteria lines 71-73 with 3 checkboxes. Dependency linkage lines 79-87: Task 1 depends on TC-8001, Task 2 depends on TC-8001, and Task 1 blocks Task 2 via 'Blocks' link type."
+    },
+    {
+      "text": "For Cargo ecosystem, remediation creates two tasks: upstream backport task and downstream propagation subtask with Blocks dependency (Important Rule 8)",
+      "passed": true,
+      "evidence": "remediation.md line 10: 'Two tasks are proposed: an upstream backport task to bump the dependency, and a downstream propagation subtask to update the release repo reference.' Task 1 = 'Upstream Backport Task (2.2.x stream)' (line 14), Task 2 = 'Downstream Propagation Subtask (2.2.x stream)' (line 47). Line 86: 'Create \"Blocks\" link type where Task 1 blocks Task 2 (downstream propagation cannot proceed until upstream backport is merged)'."
+    },
+    {
+      "text": "The analysis presents triage recommendations as proposed actions — framing Affects Versions changes, label additions, and status transitions as proposals rather than executed mutations (Guardrails). Look for language like 'would execute', 'proposed', 'after confirmation' etc.",
+      "passed": true,
+      "evidence": "Multiple instances of proposal framing: affects-versions.md line 19: 'The following mutation would be executed after engineer confirmation'; line 37: 'This is a **proposal only**. The Affects Versions update would be executed after engineer confirmation via the Jira API'; remediation.md line 90: 'All task creation and Jira linkage operations described above are **proposals only**. They would be executed after engineer confirmation via the Jira API'; line 91: 'Task transitions and status updates would similarly require engineer approval before execution'."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

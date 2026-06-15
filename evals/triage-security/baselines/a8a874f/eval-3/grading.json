@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Duplicate check searches for sibling issues using JQL with the CVE label and excludes the current issue key (Step 4) — JQL should include labels = 'CVE-2026-31812' AND key != TC-8003",
+      "passed": true,
+      "evidence": "In duplicate-check.md, the JQL query is: \"project = TC AND labels = 'CVE-2026-31812' AND issuetype = 10024 AND key != TC-8003\". This includes both required clauses: labels = 'CVE-2026-31812' AND key != TC-8003."
+    },
+    {
+      "text": "Duplicate check correctly classifies TC-7999 as a same-stream sibling (both have stream suffix [rhtpa-2.2]) and identifies it as a duplicate (Step 4.1)",
+      "passed": true,
+      "evidence": "In duplicate-check.md, Classification section states: \"Same-stream sibling — both TC-8003 and TC-7999 have the stream suffix [rhtpa-2.2], meaning they track the same CVE (CVE-2026-31812) for the same product version stream (2.2.x).\" The Recommendation section states: \"TC-8003 is a duplicate of TC-7999 (Step 4.1).\""
+    },
+    {
+      "text": "Triage outcome recommends closing TC-8003 as Duplicate with resolution 'Duplicate', referencing TC-7999 as the original (Step 4.1)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, the Decision section states: \"TC-8003 is a duplicate of TC-7999.\" Proposed Actions item 2 states: \"Transition TC-8003 to Closed with resolution 'Duplicate'\". TC-7999 is explicitly referenced as the primary tracker."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting why it is a duplicate — same CVE tracked for the same stream (Step 4.1)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, Proposed Actions item 1 states: \"Add comment to TC-8003: 'Duplicate of TC-7999 -- same CVE tracked for the same stream [rhtpa-2.2]. Version impact analysis confirms overlap.'\" This documents both the same CVE and same stream rationale."
+    },
+    {
+      "text": "The analysis does NOT proceed to remediation task creation — duplicate detection short-circuits the triage flow. There should be no remediation tasks in any output file",
+      "passed": true,
+      "evidence": "In triage-outcome.md, the Short-Circuit section explicitly states: \"Duplicate detection short-circuits the triage flow at Step 4.1. The following steps are explicitly skipped: Do NOT proceed to remediation task creation, Do NOT create any remediation tasks, Do NOT perform version impact analysis for remediation purposes.\" No output file contains any remediation task definitions. There is no remediation-tasks output file."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

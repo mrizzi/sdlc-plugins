@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Sub-step 2 (lines 21-29) explicitly states: 'Search all returned comments for bodies starting with `[sdlc-workflow] Description digest:`. In this scenario, exactly one comment matches.' It also references the protocol's 'Multiple Digest Comments' rule for tiebreaking."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Sub-step 7 (lines 72-77) explicitly compares expected vs actual hex digests and states: 'The hex digests do NOT match. This means the task description was modified after plan-feature originally created it.' Sub-steps 4-6 detail the full process of extracting the stored digest, computing the current digest via scripts/sha256-digest.py, and comparing format tags before the hex comparison."
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "Lines 83-96 show the alert message: 'The task description for TC-9201 was modified after plan-feature created it.' with explicit expected and actual digests displayed: 'Expected digest (from plan-feature comment): sha256-md:0000000000000000000000000000000000000000000000000000000000000000' and 'Actual digest (computed from current description): sha256-md:e4a3b7c1d9f2a5b8c3d6e7f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0'."
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "Lines 92-95 present two explicit options: '1. **Proceed** -- continue implementing with the current (modified) description as-is' and '2. **Stop** -- abort implementation so you can re-run plan-feature to regenerate tasks with a fresh digest'."
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "Line 97 states: '**Execution stops immediately.** The skill does not proceed with any subsequent steps (Step 2 -- Verify Dependencies, Step 3 -- Transition to In Progress, Step 4 -- Understand the Code, or any later step) until the user responds.' The document also states on line 101: 'The user is given explicit control... The skill never silently continues past a confirmed mismatch.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

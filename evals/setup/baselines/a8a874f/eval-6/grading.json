@@ -1,0 +1,43 @@
+{
+  "assertions": [
+    {
+      "id": 1,
+      "assertion": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "pass": true,
+      "evidence": "Security Configuration section present at lines 42-63 with all three subsections intact: Product Lifecycle (product pages URL, Jira version prefix, vulnerability issue type ID, component label pattern, VEX justification custom field), Version Streams (2.1.x stream), and Source Repositories (backend, frontend-ui)."
+    },
+    {
+      "id": 2,
+      "assertion": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "pass": true,
+      "evidence": "Discovery log states: 'Already fully configured with all subsections' and lists all three subsections as populated. Concludes with 'No opt-in prompt required. Security Configuration is already present and fully populated.'"
+    },
+    {
+      "id": 3,
+      "assertion": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "pass": true,
+      "evidence": "Changes log table shows Security Configuration status as 'Up to date' with action 'Preserved unchanged'. Details section states: 'All subsections (Product Lifecycle, Version Streams, Source Repositories) already fully populated. Preserved as-is with no modifications.'"
+    },
+    {
+      "id": 4,
+      "assertion": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "pass": true,
+      "evidence": "Discovery log explicitly states 'No opt-in prompt required. Security Configuration is already present and fully populated.' No evidence of an opt-in prompt being offered in either the discovery-log or changes-log."
+    },
+    {
+      "id": 5,
+      "assertion": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "pass": true,
+      "evidence": "Repository Registry table at lines 12-14 contains both original entries: 'backend | Rust backend service | serena_backend | /home/user/backend' and 'frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui'."
+    },
+    {
+      "id": 6,
+      "assertion": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "pass": true,
+      "evidence": "Jira Configuration at lines 18-22 preserves all five fields: Project key TC, Cloud ID 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID 10142, Git Pull Request custom field customfield_10875, GitHub Issue custom field customfield_10747."
+    }
+  ],
+  "pass_rate": 1.0,
+  "total_pass": 6,
+  "total_fail": 0
+}

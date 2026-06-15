@@ -1,0 +1,49 @@
+{
+  "assertions": [
+    {
+      "id": 1,
+      "assertion": "outputs/claude-md-result.md contains a '## Security Configuration' section",
+      "pass": true,
+      "evidence": "Line 39: '## Security Configuration' heading is present"
+    },
+    {
+      "id": 2,
+      "assertion": "outputs/claude-md-result.md contains a '### Product Lifecycle' subsection with all 5 fields",
+      "pass": true,
+      "evidence": "Lines 41-47: '### Product Lifecycle' subsection present with all 5 fields: Product pages URL (https://access.example.com/product-lifecycle), Jira version prefix (MYPRODUCT), Vulnerability issue type ID (10200), Component label pattern (pscomponent:), VEX Justification custom field (customfield_12345)"
+    },
+    {
+      "id": 3,
+      "assertion": "outputs/claude-md-result.md contains a '### Version Streams' subsection with a table containing at least one row for stream 2.1.x with the Konflux release repo URL",
+      "pass": true,
+      "evidence": "Lines 49-53: '### Version Streams' subsection with table containing row for stream 2.1.x with Konflux release repo 'git.downstream.example.com/my-org/product-release.2.1.z'"
+    },
+    {
+      "id": 4,
+      "assertion": "outputs/claude-md-result.md contains a '### Source Repositories' subsection with a table containing entries for backend and frontend-ui with their GitHub URLs",
+      "pass": true,
+      "evidence": "Lines 56-60: '### Source Repositories' subsection with table listing backend (https://github.com/example/backend) and frontend-ui (https://github.com/example/frontend-ui)"
+    },
+    {
+      "id": 5,
+      "assertion": "outputs/claude-md-result.md also contains the standard Project Configuration sections: Repository Registry, Jira Configuration, and Code Intelligence with Limitations",
+      "pass": true,
+      "evidence": "Line 6: '## Repository Registry' with table, Line 14: '## Jira Configuration' with 5 fields, Line 22: '## Code Intelligence' with example and Line 34: '### Limitations' subsection"
+    },
+    {
+      "id": 6,
+      "assertion": "outputs/discovery-log.md mentions Security Configuration being opted in by the user and fields being collected",
+      "pass": true,
+      "evidence": "Line 35: 'Security triage was offered and the user accepted. All Security Configuration fields were collected:' followed by all field details on lines 37-53"
+    },
+    {
+      "id": 7,
+      "assertion": "outputs/changes-log.md indicates Security Configuration was newly added along with the other Project Configuration sections",
+      "pass": true,
+      "evidence": "Line 5: 'All sections were newly added' and Line 31: '### 5. `## Security Configuration` (new)' with subsections described, alongside other sections (Repository Registry, Jira Configuration, Code Intelligence) also listed as new"
+    }
+  ],
+  "pass_rate": 1.0,
+  "total_pass": 7,
+  "total_fail": 0
+}

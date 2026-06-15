@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md lines 21-23: 'Search through all returned comments for those whose body starts with the marker string `[sdlc-workflow] Description digest:`.' Also plan.md lines 58-59: 'locate the digest comment with marker `[sdlc-workflow] Description digest:`.' The exact marker string from the protocol is explicitly named and used."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md lines 62-66: 'Extract the description field from the TC-9201 issue response, write it to a temp file, and compute the digest: python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt'. Lines 89-94 show explicit comparison: 'Stored: a1b2c3d4...', 'Computed: a1b2c3d4...'. plan.md line 62 also references 'python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt'."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md line 96: 'Result: MATCH. The digests are identical, confirming that the task description has not been modified since plan-feature created it.' Lines 100-102: 'When the digests match, the skill proceeds silently -- no user prompt, no warning, no added latency. This is the happy path. The implementation continues directly to Step 2 (Verify Dependencies).' plan.md line 64: 'Proceed silently -- no user prompt needed.'"
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md lines 100-102: 'the skill proceeds silently -- no user prompt, no warning, no added latency... The implementation continues directly to Step 2 (Verify Dependencies).' plan.md line 64: 'Proceed silently -- no user prompt needed.' The plan then immediately continues to 'Step 2 -- Verify Dependencies' (line 67) with no alert or pause between steps. The mismatch branch (lines 105-110 of digest-match.md) is described only as a hypothetical that did not occur."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

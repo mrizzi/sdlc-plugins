@@ -1,0 +1,49 @@
+{
+  "assertions": [
+    {
+      "id": 1,
+      "assertion": "outputs/claude-md-result.md contains a '## Repository Registry' section with the table headers (Repository, Role, Serena Instance, Path) but no data rows",
+      "pass": true,
+      "evidence": "Lines 6-9 show '## Repository Registry' with headers '| Repository | Role | Serena Instance | Path |' and separator row but no data rows."
+    },
+    {
+      "id": 2,
+      "assertion": "outputs/claude-md-result.md contains a '## Jira Configuration' section with Project key (MYPROJ), Cloud ID (abc123), and Feature issue type ID (10001)",
+      "pass": true,
+      "evidence": "Lines 11-15 show '## Jira Configuration' with '- Project key: MYPROJ', '- Cloud ID: abc123', '- Feature issue type ID: 10001'."
+    },
+    {
+      "id": 3,
+      "assertion": "outputs/claude-md-result.md contains a '## Code Intelligence' section that indicates no Serena instances are configured",
+      "pass": true,
+      "evidence": "Lines 17-23 show '## Code Intelligence' with 'No Serena MCP servers are configured. Code intelligence is not available.' and '### Limitations' subsection."
+    },
+    {
+      "id": 4,
+      "assertion": "outputs/discovery-log.md documents that no Serena MCP tools were discovered among the available tools",
+      "pass": true,
+      "evidence": "Line 5: 'Scanned available MCP tools for Serena instances: **none found**'."
+    },
+    {
+      "id": 5,
+      "assertion": "outputs/discovery-log.md documents that no Atlassian MCP tools were discovered and Jira fields were provided via manual entry",
+      "pass": true,
+      "evidence": "Line 6: 'Scanned available MCP tools for Atlassian (Jira/Confluence) instances: **none found**'. Line 17: 'Jira fields provided via **manual entry**'."
+    },
+    {
+      "id": 6,
+      "assertion": "The output or discovery log mentions prompting the user about continuing without code intelligence",
+      "pass": true,
+      "evidence": "Discovery log line 12: 'User was prompted about continuing without code intelligence and chose to **continue**'."
+    },
+    {
+      "id": 7,
+      "assertion": "The skill offers Security Configuration opt-in and respects the user's decline — outputs/claude-md-result.md does NOT contain a '## Security Configuration' section",
+      "pass": true,
+      "evidence": "Discovery log lines 26-27 show 'User was prompted about enabling Security Configuration at Step 8' and 'User **declined** — section not added'. claude-md-result.md contains no '## Security Configuration' section."
+    }
+  ],
+  "pass_rate": 1.0,
+  "total_pass": 7,
+  "total_fail": 0
+}
