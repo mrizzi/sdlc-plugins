@@ -5,6 +5,27 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-06-15
+
+### Added
+
+- `triage-security` skill for version-aware CVE triage with Jira sub-task creation and security matrix integration
+- Security Configuration step in `setup` skill for local security-matrix scaffolding
+- Security matrix template (`security-matrix.md`) for Konflux repositories
+- Triage-security architectural constraints and guardrails
+- Eval infrastructure for `triage-security` with discovery mode and RPM ecosystem test cases
+
+### Changed
+
+- `triage-security` Step 2.1 matrix loading now prefers local files with Konflux API fallback
+- Applied progressive disclosure to `triage-security` SKILL.md for improved readability
+
+### Fixed
+
+- `verify-pr` now classifies review body suggestions alongside inline comments
+- Corrected traceability index constraint references in `triage-security`
+- Aligned Vulnerability issue type ID field name with project config contract in `triage-security`
+
 ## [0.9.2] - 2026-06-03
 
 ### Added
