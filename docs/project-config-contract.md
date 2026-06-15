@@ -206,9 +206,9 @@ and security matrix file path.
 | Column | Description | Example |
 |---|---|---|
 | Stream | Version stream label | `2.2.x` |
-| Konflux Release Repo | Git repository URL (used in Forward Pointers) | `git.downstream.example.com/.../product-release.0.4.z` |
+| Konflux Release Repo | Git repository URL (used for lock file inspection and fallback matrix reads via `git show`) | `git.downstream.example.com/.../product-release.0.4.z` |
 | Local Path | User's local clone path | `/path/to/product-release.0.4.z` |
-| Security Matrix Path | Path to security-matrix.md within the repo | `docs/security-matrix.md` |
+| Security Matrix Path | Path to security-matrix.md relative to the project working directory | `docs/security-matrix-2.2.x.md` |
 
 At least one row is required.
 
@@ -244,8 +244,8 @@ repository names listed here.
 
 | Stream | Konflux Release Repo | Local Path | Security Matrix Path |
 |---|---|---|---|
-| 2.1.x | git.downstream.example.com/.../product-release.0.3.z | /path/to/product-release.0.3.z | docs/security-matrix.md |
-| 2.2.x | git.downstream.example.com/.../product-release.0.4.z | /path/to/product-release.0.4.z | docs/security-matrix.md |
+| 2.1.x | git.downstream.example.com/.../product-release.0.3.z | /path/to/product-release.0.3.z | docs/security-matrix-2.1.x.md |
+| 2.2.x | git.downstream.example.com/.../product-release.0.4.z | /path/to/product-release.0.4.z | docs/security-matrix-2.2.x.md |
 
 ### Source Repositories
 
@@ -259,9 +259,10 @@ repository names listed here.
 
 - "`triage-security` reads Product Lifecycle fields to filter Jira
   versions and identify PSIRT component labels."
-- "`triage-security` follows Version Streams to load security-matrix.md
-  from each Konflux release repo and chain across streams via forward
-  pointers."
+- "`triage-security` reads security-matrix.md from local files at the
+  Security Matrix Path relative to the project working directory, falling
+  back to Konflux release repos via `git show` when local files don't
+  exist."
 - "`triage-security` uses Source Repositories to identify which repos'
   lock files to inspect for dependency versions."
 - "`setup` scaffolds this section interactively using

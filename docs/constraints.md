@@ -56,7 +56,7 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.44 | `triage-security` MUST present version impact table to engineer before making triage decisions. | `triage-security/SKILL.md` — Step 2.4 |
 | 1.45 | `triage-security` MUST skip retag versions (identical digest) and note them in the impact table. | `triage-security/SKILL.md` — Important Rules §5 |
 | 1.46 | `triage-security` remediation tasks MUST follow the task-description-template.md format. | `triage-security/SKILL.md` — Important Rules §9, Remediation Task Creation |
-| 1.47 | `triage-security` output goes to Jira only, with one exception: it may write to `security-matrix.md` in Konflux release repos for supportability matrix population. | `triage-security/SKILL.md` — Guardrails, Step 2.1 |
+| 1.47 | `triage-security` output goes to Jira only, with one exception: it may write to local `security-matrix.md` files in the project working directory for supportability matrix population. | `triage-security/SKILL.md` — Guardrails, Step 2.1 |
 | 1.48 | `triage-security` MUST read ecosystems, lock file paths, and check commands from security-matrix.md Ecosystem Mappings — MUST NOT hardcode language-specific logic. | `triage-security/SKILL.md` — Step 1 (Ecosystem detection), Step 2.3 |
 | 1.49 | `triage-security` MUST read the Component label pattern from Security Configuration — MUST NOT hardcode label prefixes. | `triage-security/SKILL.md` — Step 0, Step 1 (Data Extraction) |
 
