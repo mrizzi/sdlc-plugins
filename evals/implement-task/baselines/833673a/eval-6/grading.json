@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md lines 19-22: \"Search through the returned comments for any whose body starts with the marker string `[sdlc-workflow] Description digest:`. This marker is defined in `shared/description-digest-protocol.md` and is the fixed identifier used by all producer and consumer skills.\""
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md lines 57-60: \"Extract the description field from the Jira issue response... Write it to a temporary file and compute the digest using the project script: python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt\". Lines 89-93 compare the hex digests: \"Stored hex digest: a1b2c3d4... Computed hex digest: a1b2c3d4... The hex digests match.\""
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md lines 96-100: \"The description has not been modified since plan-feature created the task. The digests match, so execution proceeds silently -- no user prompt, no additional latency, no warning message. The workflow continues directly to Step 2 (Verify Dependencies) without any interruption.\""
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md lines 96-100 confirm silent execution with no alerts. plan.md lines 66-68 confirm: \"Result: Proceed silently -- no user prompt, no interruption\". The plan then continues directly to Step 2 (Verify Dependencies) on line 72 with no intervening user interaction."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

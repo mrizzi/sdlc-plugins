@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows mixed results: 2.1.x versions marked YES (affected) and 2.2.x versions marked NO (not affected) based on lock file evidence",
+      "passed": true,
+      "evidence": "version-impact.md contains a table with 2.1.0 (h2 0.4.5, YES), 2.1.1 (h2 0.4.5, YES), 2.2.0 (h2 0.4.8, NO), 2.2.1 (h2 0.4.8, NO), 2.2.2 (retag, NO), 2.2.3 (h2 0.4.9, NO), 2.2.4 (h2 0.4.9, NO). Summary states: 'This is a mixed impact scenario: the vulnerability affects the 2.1.x stream but not the 2.2.x stream.'"
+    },
+    {
+      "text": "Affects Versions correction includes only the actually affected versions (2.1.x versions), not the unaffected 2.2.x versions (Step 3.2)",
+      "passed": true,
+      "evidence": "affects-versions.md proposes: 'Proposed (lock file evidence) | RHTPA 2.1.0, RHTPA 2.1.1'. RHTPA 2.2.0 is explicitly removed ('Remove RHTPA 2.2.0 -- not affected. Lock file at tag v0.4.5 shows h2 0.4.8'). The Jira mutation sets versions to only [{\"name\": \"RHTPA 2.1.0\"}, {\"name\": \"RHTPA 2.1.1\"}]."
+    },
+    {
+      "text": "Remediation tasks are created only for the affected stream (2.1.x), not for 2.2.x which already ships the patched version (Step 7 Case A scoping)",
+      "passed": true,
+      "evidence": "remediation.md states: 'only the 2.1.x stream is affected. The 2.2.x stream ships h2 >= 0.4.8 (the fixed version) in all releases and requires no remediation.' Two tasks are created, both targeting 2.1.x: Task 1 targets 'release/0.3.z' (upstream backport for 2.1.x), Task 2 targets 'rhtpa-release.0.3.z' (downstream propagation for 2.1.x). No tasks reference 2.2.x or release/0.4.z."
+    },
+    {
+      "text": "The analysis treats the issue as unscoped (no stream suffix) and checks ALL versions across all streams (Step 1 Stream scope resolution, unscoped path)",
+      "passed": true,
+      "evidence": "data-extraction.md states: 'The issue summary... contains no stream suffix in brackets. Therefore this issue is unscoped and covers all configured version streams.' It lists both streams: '2.1.x -- Konflux release repo rhtpa-release.0.3.z' and '2.2.x -- Konflux release repo rhtpa-release.0.4.z'. The version-impact.md table analyzes all 7 versions across both streams (2.1.0, 2.1.1, 2.2.0, 2.2.1, 2.2.2, 2.2.3, 2.2.4)."
+    },
+    {
+      "text": "Cross-stream impact notice is NOT generated because the issue is unscoped — it covers all streams by definition (Step 7 Case B applies only to scoped issues)",
+      "passed": true,
+      "evidence": "remediation.md explicitly states: 'No cross-stream impact notice is generated because the issue is unscoped (it covers all streams by definition, so there is no \"other stream outside this issue's scope\").' No cross-stream impact notice appears anywhere in any output file."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

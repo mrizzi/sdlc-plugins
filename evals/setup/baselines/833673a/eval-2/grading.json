@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing trustify-backend entry in the Repository Registry unchanged (same Role, Serena Instance, Path values as in claude-md-configured.md)",
+      "passed": true,
+      "evidence": "claude-md-result.md line 7: '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' — matches claude-md-configured.md line 16 exactly."
+    },
+    {
+      "text": "outputs/claude-md-result.md adds a new trustify-ui entry to the Repository Registry with serena_ui as the Serena Instance",
+      "passed": true,
+      "evidence": "claude-md-result.md line 8: '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |' — new row with serena_ui as the Serena Instance."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged — Project key remains TC, Cloud ID, Feature issue type ID remain as in claude-md-configured.md",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 12-17 contain all five Jira fields identical to claude-md-configured.md lines 19-24: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747."
+    },
+    {
+      "text": "outputs/changes-log.md explicitly identifies which entries were preserved (existing) and which were added (new)",
+      "passed": true,
+      "evidence": "changes-log.md has a '## Preserved (existing, unchanged)' section listing trustify-backend, all Jira fields, and Code Intelligence content; and a '## Added (new)' section listing the trustify-ui row and serena_ui limitation entry. Clear separation of preserved vs. added."
+    },
+    {
+      "text": "outputs/discovery-log.md notes that serena_backend was already configured and serena_ui is newly discovered",
+      "passed": true,
+      "evidence": "discovery-log.md: serena_backend section states 'Status: Already configured' and 'Action: Preserved existing entry unchanged'. serena_ui section states 'Status: Newly discovered' and 'Action: Prompted user for repository details'."
+    },
+    {
+      "text": "The existing Code Intelligence section content (naming convention, example, serena_backend limitations) is preserved — only new serena_ui content is added",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-31 preserve the naming convention text ('Tools are prefixed by Serena instance name: `mcp__<instance>__<tool>`.'), the mcp__serena_backend__find_symbol example (lines 25-29), and the serena_backend limitation (line 33: '`serena_backend`: rust-analyzer may take 30-60 seconds to index on first use'). Only line 34 ('`serena_ui`: No known limitations') is new. All existing content matches claude-md-configured.md lines 28-41."
+    },
+    {
+      "text": "The skill offers Security Configuration opt-in since the existing CLAUDE.md has no '## Security Configuration' section, and respects the user's decline — no Security Configuration section appears in the output",
+      "passed": true,
+      "evidence": "claude-md-result.md contains no '## Security Configuration' section (verified: file is 34 lines, no such heading exists). discovery-log.md lines 30-34 confirm: 'Status: Not present in existing CLAUDE.md', 'Action: Offered opt-in to user; user declined', 'Result: No Security Configuration section added'. changes-log.md lines 29-30 also confirms: 'User declined opt-in; section omitted from output'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

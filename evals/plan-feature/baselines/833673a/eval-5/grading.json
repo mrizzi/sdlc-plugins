@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md line 5: 'Selected mode: `feature-branch`'. Rationale cites three atomicity indicators: coordinated schema migrations, breaking API changes, and cross-cutting refactors (lines 7-15)."
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md (lowest numbered task) has '## Bookend Type' section with value 'create-branch' on lines 7-8."
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md (highest numbered task) has '## Bookend Type' section with value 'merge-branch' on lines 7-8."
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-6) have '## Target Branch' set to 'TC-9005': task-2 line 5, task-3 line 5, task-4 line 5, task-5 line 5, task-6 line 5."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md line 5: '## Target Branch' value is 'main'."
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md line 5: '## Target Branch' value is 'main'."
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-6) list Task 1 in Dependencies: task-2 line 43 'Depends on: Task 1', task-3 line 44, task-4 line 50, task-5 line 41, task-6 line 43."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md lines 20-25 lists all five intermediate tasks: 'Depends on: Task 2', 'Depends on: Task 3', 'Depends on: Task 4', 'Depends on: Task 5', 'Depends on: Task 6'."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-6) contain: Repository, Target Branch, Description, Files to Modify/Create, Implementation Notes, Acceptance Criteria, Test Requirements. Bookend tasks (1 and 7) contain: Repository, Target Branch, Description, Acceptance Criteria, Test Requirements (bookends are exempt from Files to Modify/Create and Implementation Notes)."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": true,
+      "evidence": "impact-map.md line 17: 'Label decision: Apply `workflow:feature-branch` label to feature issue TC-9005.'"
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf).",
+      "passed": true,
+      "evidence": "All 7 task files contain properly formatted digest comments. Examples: task-1 line 22 'sha256-md:8d40b8bbe6b451de6d09dad5897ddd6a1f5411622164efffd946928755a14f37' (64 hex chars), task-2 line 45 'sha256-md:bacc8db974365723a8dfae8108e21546e463ff2352898c28e57c2ed318b0c6bb', task-7 line 26 'sha256-md:38027929db8f90cab60724249dfadf1c40e892d7b4345aed70b5c2a1f2d1b9d4'. All use the '[sdlc-workflow] Description digest: sha256-md:' marker format with exactly 64 lowercase hex characters."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No convention-related content appears anywhere in the output files. None of the intermediate task Implementation Notes sections contain any 'Per CONVENTIONS.md' references or 'Applies:' rationale lines. There is zero evidence that convention-aware enrichment was performed. Burden of proof is on PASS and no evidence of convention processing exists."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 1,
+    "total": 12,
+    "pass_rate": 0.92
+  }
+}

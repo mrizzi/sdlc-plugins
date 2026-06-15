@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
+      "passed": true,
+      "evidence": "version-impact.md contains two stream tables (2.1.x and 2.2.x). Every row in both tables shows 'No (>= 1.0.135)' in the 'Vulnerable?' column. Stream 2.1.x ships serde_json 1.0.137, stream 2.2.x ships 1.0.138-1.0.139 — all above the fix threshold of 1.0.135. The summary table lists both streams as 'Not affected' and the overall finding states: 'CVE-2026-28940 does NOT affect any shipped version across any supported stream.'"
+    },
+    {
+      "text": "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 7 Case C)",
+      "passed": true,
+      "evidence": "triage-outcome.md section 'Decision: Close as Not Affected' with proposed Jira actions: 'Transition TC-8002 from \"New\" to \"Closed\"' and 'Set Resolution to \"Not a Bug\" / \"Won't Fix\" (the product was never affected)'. The final section is titled 'No Remediation Required' and states: 'Since no shipped version is vulnerable, no patch, rebuild, or advisory is needed.'"
+    },
+    {
+      "text": "The close recommendation includes a comment documenting the version impact evidence — listing each version and its dependency version as proof of non-impact",
+      "passed": true,
+      "evidence": "triage-outcome.md proposed Jira action #4 includes a comment with a table listing each stream and its earliest serde_json version: '2.1.x | 1.0.137 | 1.0.135' and '2.2.x | 1.0.138 | 1.0.135', along with the statement 'All shipped builds across both supported version streams (2.1.x and 2.2.x) include serde_json >= 1.0.137, which already contains the fix.'"
+    },
+    {
+      "text": "VEX Justification is set to 'Component not Present' or appropriate value when the VEX field is configured (Step 7 VEX Justification)",
+      "passed": true,
+      "evidence": "triage-outcome.md sets VEX Justification to 'vulnerable_code_not_present' with explanation: 'The vulnerable version of serde_json (< 1.0.135) was never included in any shipped product build.' Proposed Jira action #3: 'Set VEX Justification field (customfield_12345) to: vulnerable_code_not_present'. This is an appropriate VEX justification value — 'vulnerable_code_not_present' is a standard CSAF/VEX justification indicating the vulnerable code is not present in the product."
+    },
+    {
+      "text": "The analysis does NOT create any remediation tasks — no upstream backport, no downstream propagation (Step 7 Case C closes the issue)",
+      "passed": true,
+      "evidence": "triage-outcome.md final section 'No Remediation Required' explicitly states: 'Since no shipped version is vulnerable, no patch, rebuild, or advisory is needed. No downstream consumers need to take action.' No remediation tasks, upstream backports, or downstream propagation tasks are mentioned anywhere in any of the three output files. The only proposed Jira actions are to close TC-8002, set resolution, set VEX justification, add a comment, and remove the affects version."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 37: 'When the license parameter is Some, call apply_filter to handle comma-separated multi-value parsing and SQL IN clause generation. This is the same utility used throughout the codebase for query parameter filtering -- reuse it directly rather than writing custom parsing or SQL logic.' Also plan.md line 79: 'common/src/db/query.rs::apply_filter -- Called directly in PackageService::list() to parse comma-separated license values and generate the SQL IN clause. No new parsing or SQL generation code is written.'"
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 23: 'Following the pattern established in modules/fundamental/src/advisory/endpoints/list.rs (the severity filter Query struct), add an Option<String> field named license to the existing query parameters struct. This mirrors how the advisory endpoint's severity optional field is declared.' Also plan.md line 82: 'modules/fundamental/src/advisory/endpoints/list.rs -- The severity filter pattern (optional field in the Query struct, passed to the service layer) is followed structurally for the license filter.'"
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md line 39: 'Join through entity/src/package_license.rs: Use the existing package_license SeaORM entity to join the package table to the package_license table. This entity already maps packages to their declared licenses. Apply the filter condition on the license column of the joined package_license table.' Also plan.md line 83: 'entity/src/package_license.rs -- The existing SeaORM entity is used for the JOIN query in the service layer, rather than writing raw SQL or creating a new entity.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three dedicated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 7-18), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs' (lines 20-32), and 'Reuse Candidate 3: entity/src/package_license.rs' (lines 34-43). Each section has 'What it provides', 'How it is reused', and 'Why ... reuse is correct' subsections explaining application. The summary table at lines 47-51 confirms all 3 are covered."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "The plan's 'Files to Modify' section lists: (1) modules/fundamental/src/package/endpoints/list.rs, (2) modules/fundamental/src/package/service/mod.rs. The plan's 'Files to Create' section lists: (1) tests/api/package_license_filter.rs. No other files are listed for modification or creation. The plan explicitly states 'No dependency changes needed' (line 73) and 'No new route registration needed' (line 71), confirming no out-of-scope files are touched."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 37 explicitly states 'reuse it directly rather than writing custom parsing or SQL logic.' plan.md line 79 states 'No new parsing or SQL generation code is written.' reuse-analysis.md line 18: 'No wrapper or adapter needed: apply_filter is called directly -- no intermediate utility function, wrapper, or adapter is created.' reuse-analysis.md line 53: 'No new utility functions, helpers, or abstractions were created. All filtering logic leverages existing code.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

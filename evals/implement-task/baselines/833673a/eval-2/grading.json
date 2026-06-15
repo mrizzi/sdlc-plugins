@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "In the parsed table, the response marks Implementation Notes as '**Missing** | No patterns, code references, or guidance on how to implement the search'. In the 'Gaps Identified' section, gap #1 states: 'Missing Implementation Notes section: The task provides no guidance on which existing patterns to follow, no references to existing code... Per constraint 4.7, Implementation Notes must reference existing patterns found in the code.' The response also explicitly references constraint 1.6 in the 'Clarifying Questions' section: 'Per constraint 1.6, I am stopping execution and asking for clarification before proceeding.'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "In the parsed table, Acceptance Criteria is marked 'Present but vague' with note: 'All three criteria are non-verifiable: \"can search\", \"results are relevant\", \"performance is acceptable\" -- none have measurable, pass/fail thresholds'. In Gaps Identified #3, the response explicitly calls out: '\"Search results are relevant\" -- what defines relevance? Exact match? Substring? Fuzzy? Ranked?' and '\"Performance is acceptable\" -- what is the threshold? Response time under 200ms? Under 1s? For what data volume?'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "In the parsed table, Test Requirements is marked 'Present but vague' with note: 'Single item: \"Test that search works correctly\" -- no specific test scenarios, edge cases, or assertions described'. In Gaps Identified #4: '\"Test that search works correctly\" is a single non-specific item. It provides no test scenarios (e.g., search with exact match, partial match, no results, special characters, empty query, pagination of results) and no assertion guidance.'"
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response title is 'Execution Halted: Incomplete Task Description'. The Clarifying Questions section begins with 'Per constraint 1.6, I am stopping execution and asking for clarification before proceeding.' The response ends with '**Execution stopped.** Please provide the missing information so I can proceed with implementation planning and coding. Do not proceed with branching, code inspection, or implementation until these gaps are resolved.' No implementation plan, code, or branch creation is present in the output."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks 6 numbered clarifying questions. Question 1: 'Which fields should the search operate on? Should users be able to search by package name, PURL (Package URL), license, version, or some combination of these?' Question 4: 'What defines \"relevant\" search results? Is there a ranking or scoring requirement? Should results be ordered by relevance score, or is simple filtering (match/no-match) sufficient?' Question 5: 'What are the performance thresholds? What response time is considered \"acceptable\"? Is there a target dataset size (e.g., must handle 10K packages under 500ms)?' All three required topics are covered with specific detail."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
