@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md states 'Workflow mode: feature-branch' with rationale: 'The migration and code changes have strict atomicity constraints — merging the migration without the code changes would break all advisory queries (they still join the now-dropped table), and merging the code changes without the migration would reference a column that does not exist. All changes must land together in a single atomic merge to main.'"
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Bookend Type\ncreate-branch' and is the first task (task-1)."
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md contains '## Bookend Type\nmerge-branch' and is the last task (task-7 of 7)."
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All intermediate tasks (task-2 through task-6) have '## Target Branch\nTC-9005': task-2-database-migration.md, task-3-update-seaorm-entities.md, task-4-update-advisory-service-and-endpoints.md, task-5-update-ingestion-pipeline.md, task-6-integration-tests.md."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Target Branch\nmain'."
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md contains '## Target Branch\nmain'."
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All intermediate tasks list Task 1 as a dependency: task-2 'Depends on: Task 1', task-3 'Depends on: Task 1', task-4 'Depends on: Task 1', task-5 'Depends on: Task 1', task-6 'Depends on: Task 1'."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md Dependencies section lists: 'Depends on: Task 2', 'Depends on: Task 3', 'Depends on: Task 4', 'Depends on: Task 5', 'Depends on: Task 6' — all five intermediate tasks."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "Bookend tasks (task-1, task-7) are exempt from Files to Modify/Create and Implementation Notes per grading rules. They both have Repository, Target Branch, Bookend Type, Description, Acceptance Criteria, Test Requirements, and Dependencies. Intermediate tasks: task-2 has Repository, Target Branch, Description, Files to Create, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. task-3 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. task-4 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. task-5 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. task-6 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": true,
+      "evidence": "impact-map.md states 'Label: workflow:feature-branch (to be applied to TC-9005)'."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": true,
+      "evidence": "All 7 task files contain digest comments in the correct format '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>'. Each hash is exactly 64 lowercase hex characters: task-1: 82166bf667cbc803483eb2e5291a4f908ef26a1754a3e55ea1f15b9daa416d8e, task-2: 3862f59f55b7614f922f9ba28a7283fbdce615ece62081bf7c08c246b6114c83, task-3: 64e9a166e6fcdc2bd0aa8efb617ba3cea249bf7c417d24990b2742e80747ab4b, task-4: 57673b5191a7064632aa6530e2b213250c4208abf23c246775d3e5e08d03ace5, task-5: 92a744e4bb91a07fac11d96fd51e76d51af7f8daddb3962505d77f6ee34954eb, task-6: 13937b71e02f78209a93e70964cc53148f8da88bf8c71df634c0795abecbadf6, task-7: 2d17ab6e5d02414a1b7ae4ef0eebda8d463279d842dd5af8a85725c6ee9cb48d. All are distinct, real hashes, not placeholders."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No convention-related content found in any output file. Grep for 'convention' across all outputs returned no results. No 'Applies:' rationale statements or convention references appear in any task file. Convention-aware enrichment was not performed."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 1,
+    "total": 12,
+    "pass_rate": 0.92
+  }
+}

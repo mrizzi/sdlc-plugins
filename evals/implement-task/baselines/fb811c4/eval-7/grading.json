@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Section '2. Locate the digest comment' (lines 27-35) states: 'Search returned comments for bodies starting with the marker string `[sdlc-workflow] Description digest:`. One matching comment is found with body: `[sdlc-workflow] Description digest: sha256-md:0000000000000000000000000000000000000000000000000000000000000000`'. The file also references 'the digest protocol defined in `shared/description-digest-protocol.md`' on line 13."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Section '7. Compare hex digests' (lines 80-86) explicitly states: 'Expected (from digest comment): sha256-md:0000000000000000000000000000000000000000000000000000000000000000' and 'Actual (computed from current description): sha256-md:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855' followed by 'MISMATCH. The hex digests differ. The task description was modified after plan-feature created it.'"
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, lines 95-104 show the alert: 'Warning: Task description was modified after plan-feature created it.' and 'The description integrity check detected that the task description for TC-9201 has been changed since plan-feature originally generated it.' It displays 'Expected digest (recorded by plan-feature): sha256-md:0000000000000000000000000000000000000000000000000000000000000000' and 'Actual digest (computed from current description): sha256-md:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'."
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, lines 109-115 present: 'How would you like to proceed?' with two options: '1. Proceed — implement using the current (modified) description as-is' and '2. Stop — abort so you can re-run plan-feature to regenerate tasks with a fresh plan that matches the updated description' followed by 'Please choose (1 or 2):'."
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, lines 119-121 explicitly state: 'Execution is halted. No subsequent steps (Step 2 — Verify Dependencies, Step 3 — Transition to In Progress, Step 4 — Understand the Code, etc.) are executed until the user responds.' The output ends with the user prompt and does not contain any Step 2 content or implementation planning."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

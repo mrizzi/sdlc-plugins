@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 129: \"Call `apply_filter(query, \"license\", license_value)` — this function already handles comma-separated parsing and IN clause generation\". reuse-analysis.md Reuse Candidate 1 states: \"The `apply_filter` function handles comma-separated multi-value query parameter parsing and SQL IN clause generation\" and \"This eliminates the need to write any custom comma-parsing or IN clause generation logic.\""
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 108: \"Add an `Option<String>` field named `license` to the existing `Query` struct (following the same pattern as the `severity` field in `modules/fundamental/src/advisory/endpoints/list.rs`)\". plan.md line 44-48: lists the advisory list endpoint as a sibling pattern / Reuse Candidate and instructs to \"understand how it extracts and applies the severity filter — this is the structural template for the license filter\". reuse-analysis.md Reuse Candidate 2 explicitly states: \"The advisory handler's pattern is used as a structural template (not copied verbatim) for modifying the package list handler.\""
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md lines 125-126: \"Join through the `package_license` entity (`entity/src/package_license.rs`) to filter packages by their associated license SPDX identifiers\". plan.md line 131: \"Use the `package_license` SeaORM entity for the JOIN\". reuse-analysis.md Reuse Candidate 3: \"Used in `PackageService::list()` to construct the JOIN query when the license filter is active. Instead of writing raw SQL, the implementation uses SeaORM's relation model\""
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three detailed sections: \"Reuse Candidate 1: `common/src/db/query.rs::apply_filter`\" (lines 10-36), \"Reuse Candidate 2: `modules/fundamental/src/advisory/endpoints/list.rs`\" (lines 38-67), and \"Reuse Candidate 3: `entity/src/package_license.rs`\" (lines 69-96). Each section includes \"What it provides\", \"How it will be reused\" with code examples or specific steps, \"Reuse type\", and \"Benefit\" subsections."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "plan.md Task Description Parsing (lines 25-26) identifies Files to Modify as: `modules/fundamental/src/package/endpoints/list.rs`, `modules/fundamental/src/package/service/mod.rs`, and Files to Create as: `tests/api/package_license_filter.rs`. The plan's \"Files to Modify\" section covers exactly those 2 files (sections 1 and 2). Section 3 mentions `modules/fundamental/src/package/endpoints/mod.rs` but only as a potential verification target (\"No change expected, but verify during code understanding\"). The \"Files to Create\" section lists only `tests/api/package_license_filter.rs`. The Self-Verification Plan (line 196-197) acknowledges `tests/api/mod.rs` may need updating for module registration but explicitly calls it out as \"an expected out-of-scope file that is necessary for the test to compile\". No other files are proposed for modification or creation."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 129 explicitly states to call apply_filter directly: \"Call `apply_filter(query, \"license\", license_value)`\". reuse-analysis.md states: \"No new utility code, helper functions, or shared modules need to be created — the existing infrastructure fully supports the license filter feature\" (lines 109-110). No section of the plan proposes writing custom parsing, splitting, or IN clause generation logic."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

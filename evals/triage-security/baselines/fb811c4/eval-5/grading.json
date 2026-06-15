@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction identifies the ecosystem as RPM based on the library name (openssl-libs) and component context, not Cargo (Step 1 Ecosystem detection — read ecosystems from Ecosystem Mappings config)",
+      "passed": true,
+      "evidence": "In data-extraction.md, the Ecosystem field is listed as 'RPM' (line 16). The Ecosystem Detection section (lines 26-31) explicitly states: 'The ecosystem is RPM (system package), not Cargo' and provides three supporting reasons: (1) 'openssl-libs is an RPM package name (system library), not a Cargo crate or npm package', (2) 'Ecosystem Mappings in security-matrix.md for the 2.2.x stream confirms RPM as a configured ecosystem with lock file rpms.lock.yaml', and (3) 'The openssl-libs version data comes from rpms.lock.yaml, not Cargo.lock'."
+    },
+    {
+      "text": "Version impact table includes ALL versions from the 2.2.x stream supportability matrix (2.2.0 through 2.2.4) and uses rpms.lock.yaml data for version extraction (Step 2.3)",
+      "passed": true,
+      "evidence": "In version-impact.md, the Version Impact Table (lines 13-19) lists all five versions: 2.2.0, 2.2.1, 2.2.2, 2.2.3, and 2.2.4. The table column header is 'openssl-libs Version (rpms.lock.yaml)' confirming rpms.lock.yaml as the data source. The Scope section (line 9) also states 'Ecosystem: RPM (lock file: rpms.lock.yaml)'. Each version row includes the specific openssl-libs version extracted from rpms.lock.yaml."
+    },
+    {
+      "text": "Dependency chain context classifies the package origin as explicit install because openssl-libs is present in rpms.lock.yaml, not inherited from the base image (Step 2.3.5)",
+      "passed": true,
+      "evidence": "In version-impact.md, the Dependency Chain Context section (lines 29-32) states: 'Package origin: explicit install' and 'Rationale: openssl-libs IS present in rpms.lock.yaml for all tags in the 2.2.x stream, indicating it is an explicitly installed RPM package (not inherited solely from the base image).' This matches the assertion exactly."
+    },
+    {
+      "text": "Remediation creates a single task for the Konflux release repo — not the two-task upstream backport + downstream propagation flow used for source dependency ecosystems (Step 7 Remediation Task Creation — system package path)",
+      "passed": true,
+      "evidence": "In remediation.md, the Ecosystem and Task Flow section (lines 6-7) explicitly states: 'Task flow: Single task (RPM ecosystems do not use the two-task upstream backport + downstream propagation flow)'. Only one task is defined: 'Remediate CVE-2026-40215 in rhtpa-release.0.4.z' (line 10), targeting the Konflux release repo 'rhtpa-release.0.4.z' (line 28). There is no second task for upstream backport."
+    },
+    {
+      "text": "Remediation task description follows task-description-template.md format with Repository, Target Branch, Description, Implementation Notes, and Acceptance Criteria sections — Files to Modify is intentionally omitted per remediation-templates.md (Step 7 Remediation Task Creation)",
+      "passed": true,
+      "evidence": "In remediation.md, the Task Description (lines 26-48) contains the following sections: '## Repository' (line 26, value: rhtpa-release.0.4.z), '## Target Branch' (line 30, value: main), '## Description' (line 34), '## Implementation Notes' (line 38), '## Acceptance Criteria' (line 45). There is no 'Files to Modify' section present, which is correct per the assertion that it should be intentionally omitted. The template structure matches the required format."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

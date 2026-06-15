@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "In digest-match.md, Section '2. Locate the digest comment' (line 21): 'Search all returned comments for bodies starting with the marker string `[sdlc-workflow] Description digest:`. One comment matches.' Also in plan.md, Step 1.5 item 2 (line 56): 'Locate the digest comment: one comment found with body `[sdlc-workflow] Description digest: sha256-md:...`'. Both files explicitly describe locating the digest comment using the exact marker string '[sdlc-workflow] Description digest:'."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "In digest-match.md, Section '5. Compute the current digest' (lines 38-44): 'Extract the description field from the Jira issue response. Write it to a temp file (`/tmp/desc-TC-9201.txt`). Run the digest script: `python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt`'. Section '7. Compare hex digests' (lines 50-55) shows the comparison: 'Stored hex: `a1b2c3d4...` Computed hex: `a1b2c3d4...` Result: **Match**.' Also in plan.md Step 1.5 items 5 and 7 (lines 59-61): 'Compute current digest: write description to `/tmp/desc-TC-9201.txt`, run `python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt`' and 'Compare hex digests: **match**'."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "In digest-match.md, Section '8. Outcome' (line 59): 'The digests match. Per the protocol, the skill proceeds silently -- no user prompt, no warning, no added latency.' Also line 70: 'The skill proceeds to Step 2 (Verify Dependencies) without any output or user interaction related to Step 1.5.' In plan.md, Step 1.5 item 8 (line 62): '**Outcome: proceed silently.** No user prompt, no warning, no delay.'"
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "In digest-match.md, lines 63-69 enumerate all conditions for silent pass are met, and line 70 states: 'The skill proceeds to Step 2 (Verify Dependencies) without any output or user interaction related to Step 1.5.' In plan.md, Step 1.5 concludes with 'proceed silently' (line 62) and the plan continues directly to 'Step 2 -- Verify Dependencies' (line 65) with no intervening user interaction or alert. No warnings, prompts, or pauses are described anywhere in either file related to the digest check."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}
