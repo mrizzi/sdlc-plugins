@@ -1,0 +1,14 @@
+name: fullsend verify-pr
+
+on:
+  workflow_dispatch:
+    inputs:
+      jira_issue_id:
+        description: 'Jira issue ID (e.g., TC-4792)'
+        required: true
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Use --ref run-in-fullsend to run the real workflow"
