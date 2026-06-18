@@ -85,3 +85,7 @@ These extensions are documented in the skill that produces them:
 - **Bookend Type** — used by plan-feature for feature-branch bookend tasks,
   values: `create-branch` or `merge-branch`. implement-task uses this to skip
   normal implementation steps and handle branch/PR operations instead
+- **Bug Context** — used by triage-bug to capture the originating Bug's key,
+  Steps to Reproduce, Expected/Actual Result, and Root Cause summary.
+  implement-task uses this to understand the bug being fixed and to write
+  the reproducer test.
