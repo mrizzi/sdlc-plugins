@@ -42,6 +42,12 @@ is `serena_backend`:
 - `serena_backend`: rust-analyzer may take 30-60 seconds to index on first use
 - `serena_ui`: No known limitations
 
+## Bug Configuration
+
+- Bug issue type ID: 10001
+- Bug template: docs/bug-template.md
+- Bug-to-Task link type: Blocks
+
 ## Security Configuration
 
 ### Product Lifecycle
