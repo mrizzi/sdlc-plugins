@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows mixed results: 2.1.x versions marked YES (affected) and 2.2.x versions marked NO (not affected) based on lock file evidence",
+      "passed": true,
+      "evidence": "version-impact.md contains a table with 2.1.x versions (2.1.0, 2.1.1) marked 'YES' as affected (h2 0.4.5 < 0.4.8) and all 2.2.x versions (2.2.0 through 2.2.4) marked 'NO' (h2 >= 0.4.8). Lock file evidence is cited via h2 versions extracted from Cargo.lock at each build tag."
+    },
+    {
+      "text": "Affects Versions correction includes only the actually affected versions (2.1.x versions), not the unaffected 2.2.x versions (Step 3.2)",
+      "passed": true,
+      "evidence": "affects-versions.md shows corrected Affects Versions as exactly [RHTPA 2.1.0, RHTPA 2.1.1]. RHTPA 2.2.0 is explicitly removed ('Remove: RHTPA 2.2.0 (ships h2 0.4.8 — not vulnerable)') and RHTPA 2.1.1 is added. No 2.2.x versions appear in the corrected list."
+    },
+    {
+      "text": "Remediation tasks are created only for the affected stream (2.1.x), not for 2.2.x which already ships the patched version (Step 7 Case A scoping)",
+      "passed": true,
+      "evidence": "remediation.md stream applicability table shows 2.1.x Remediation Needed: YES and 2.2.x Remediation Needed: NO. Two tasks are proposed (upstream backport to release/0.3.z, downstream propagation to 2.1.x release repo) — both target only the 2.1.x stream. Line 80: 'No remediation tasks are created for the 2.2.x stream because it is not affected.'"
+    },
+    {
+      "text": "The analysis treats the issue as unscoped (no stream suffix) and checks ALL versions across all streams (Step 1 Stream scope resolution, unscoped path)",
+      "passed": true,
+      "evidence": "data-extraction.md line 31: 'The issue summary has NO stream suffix — this is an UNSCOPED issue covering all streams. The version impact analysis must check ALL versions across ALL streams.' version-impact.md line 8: 'Since the issue is UNSCOPED (no stream suffix), all versions across all streams are checked.' The version impact table includes versions from both 2.1.x (2 versions) and 2.2.x (5 versions) streams."
+    },
+    {
+      "text": "Cross-stream impact notice is NOT generated because the issue is unscoped — it covers all streams by definition (Step 7 Case B applies only to scoped issues)",
+      "passed": true,
+      "evidence": "remediation.md lines 12-13: 'Since the issue is UNSCOPED (no stream suffix), a Cross-stream impact notice is NOT needed (Case B only applies to scoped issues).' Line 82: 'No Cross-stream impact notice is needed because the issue is unscoped (covers all streams).' No cross-stream impact notice file exists in the outputs directory."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

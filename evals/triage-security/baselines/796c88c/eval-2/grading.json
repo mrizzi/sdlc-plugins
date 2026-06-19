@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
+      "passed": true,
+      "evidence": "In version-impact.md, all 7 supported versions show 'No' in the Affected column: 2.1.0 (serde_json 1.0.137), 2.1.1 (1.0.137), 2.2.0 (1.0.138), 2.2.1 (1.0.138), 2.2.2 (1.0.138), 2.2.3 (1.0.139), 2.2.4 (1.0.139). All are >= 1.0.135 fix threshold. Summary states '0 of 7 supported versions are affected.'"
+    },
+    {
+      "text": "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 7 Case C)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, decision header is 'Case C -- No Supported Versions Affected'. Section '1. Transition Issue to Closed' proposes Resolution: 'Not a Bug' with reason: 'The vulnerable component (serde_json < 1.0.135) is not present in any supported product version.'"
+    },
+    {
+      "text": "The close recommendation includes a comment documenting the version impact evidence — listing each version and its dependency version as proof of non-impact",
+      "passed": true,
+      "evidence": "In triage-outcome.md, Section '2. Add Triage Comment' includes a detailed comment listing all 7 versions with their build tags and serde_json versions: '2.1.0 (v0.3.8): serde_json 1.0.137 -- not affected', '2.1.1 (v0.3.12): serde_json 1.0.137 -- not affected', '2.2.0 (v0.4.5): serde_json 1.0.138 -- not affected', etc."
+    },
+    {
+      "text": "VEX Justification is set to 'Component not Present' or appropriate value when the VEX field is configured (Step 7 VEX Justification)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, Section '3. Set VEX Justification' proposes setting customfield_12345 (VEX Justification) to 'Component not Present' with reason: 'The vulnerable version of serde_json (< 1.0.135) is not present in any supported product version.'"
+    },
+    {
+      "text": "The analysis does NOT create any remediation tasks — no upstream backport, no downstream propagation (Step 7 Case C closes the issue)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, Section '4. No Remediation Tasks' explicitly states: 'Per Case C procedure, no remediation tasks are created since no supported versions are affected.' No other output files (data-extraction.md, version-impact.md) contain any remediation task creation."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

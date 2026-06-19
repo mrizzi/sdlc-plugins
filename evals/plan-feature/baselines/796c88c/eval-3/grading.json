@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "Tasks target both 'trustify-backend' and 'trustify-ui' repositories with at least one task per repo",
+      "passed": true,
+      "evidence": "Backend tasks: task-1 (create-branch), task-2 (model), task-3 (service), task-4 (endpoint), task-5 (integration tests), task-10 (merge-branch) all have 'Repository: trustify-backend'. Frontend tasks: task-6 (API types), task-7 (hook), task-8 (page), task-9 (mocks/tests) all have 'Repository: trustify-ui'. Both repositories have multiple tasks."
+    },
+    {
+      "text": "Backend tasks have lower task numbers than the frontend tasks that depend on them",
+      "passed": true,
+      "evidence": "Backend tasks are numbered 2-5, frontend tasks are numbered 6-9. Task 6 (frontend API types) depends on Task 4 (backend endpoint). Task 7 depends on Task 6. Task 8 depends on Tasks 6, 7. Task 9 depends on Task 8. All backend tasks that produce the API (2-4) have lower numbers than the frontend tasks that consume it (6-9)."
+    },
+    {
+      "text": "UI-facing frontend tasks (pages, components) reference Figma design context mentioning specific PatternFly components and visual specifications — API-layer frontend tasks (API types, client functions, hooks) are exempt from this requirement",
+      "passed": true,
+      "evidence": "Task 8 (ComparisonPage, the UI-facing page task) contains a detailed 'Figma Component Mapping' section listing specific PatternFly components: Select (single, typeahead), Button variant='primary', Dropdown, ExpandableSection, Badge (with color specs: green, red, blue, yellow), Table (composable), EmptyState with CodeBranchIcon, Skeleton. Visual specifications include badge colors per section, critical row highlighting, and empty/loading states. API-layer tasks (6: API types/client, 7: hook) are exempt and don't reference Figma, which is correct per the assertion."
+    },
+    {
+      "text": "Cross-repo dependency ordering is enforced: either at least one frontend task explicitly depends on a backend task in its Dependencies section, or all tasks target a shared feature branch where backend tasks have lower task numbers than frontend tasks (implicit ordering via feature-branch workflow)",
+      "passed": true,
+      "evidence": "Task 6 (frontend API types, trustify-ui) explicitly states 'Depends on: Task 4 — Backend comparison endpoint (API contract must be finalized)' and 'Depends on: Task 1 — Create feature branch'. This is a direct cross-repo dependency from a frontend task to a backend task. Additionally, all tasks use the shared feature branch TC-9003, with backend tasks (2-5) having lower numbers than frontend tasks (6-9)."
+    },
+    {
+      "text": "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+      "passed": true,
+      "evidence": "Backend tasks (2-5) reference paths under modules/fundamental/src/sbom/, modules/fundamental/src/package/, modules/fundamental/src/advisory/, common/src/, tests/api/ — all matching the backend manifest (modules/fundamental/src/sbom/, modules/fundamental/src/advisory/, modules/fundamental/src/package/, common/src/, tests/api/). Frontend tasks (6-9) reference paths under src/api/ (models.ts, rest.ts, client.ts), src/hooks/ (useSbomComparison.ts, useSboms.ts, useSbomById.ts), src/pages/ (ComparisonPage/), src/components/ (SeverityBadge.tsx, EmptyStateCard.tsx, FilterToolbar.tsx), src/routes.tsx, tests/mocks/ — all matching the frontend manifest."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 10 tasks have a '## Repository' section with exactly one repository name: tasks 1-5 and 10 have 'trustify-backend', tasks 6-9 have 'trustify-ui'. No task lists multiple repositories in its Repository section. Note: task-1 and task-10 mention both repos in their Description text (describing branch operations across repos), but the Repository section itself contains only a single name, satisfying the assertion."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": false,
+      "evidence": "Bookend tasks (task-1 create-branch and task-10 merge-branch) do not contain a 'Test Requirements' section. While the task-description-template.md allows omitting sections that don't apply, and bookend tasks arguably don't need test requirements, the assertion says 'every generated task description' must contain these sections. Tasks 2-9 all contain Target Branch, Description, Acceptance Criteria, and Test Requirements. But tasks 1 and 10 are missing Test Requirements."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": false,
+      "evidence": "Task 8 (frontend ComparisonPage) lists 'src/App.tsx' under Files to Modify. The frontend manifest (trustify-ui) lists: src/api/ (client.ts, models.ts, rest.ts), src/hooks/, src/pages/, src/components/, src/routes.tsx, src/utils/, tests/mocks/, tests/e2e/. 'src/App.tsx' is not present in the manifest. All other file paths are well-grounded in the manifests: backend paths under modules/fundamental/src/sbom/, common/src/, tests/api/; frontend paths under src/api/, src/hooks/, src/pages/, src/components/, src/routes.tsx, tests/mocks/. But src/App.tsx is not from the manifest."
+    },
+    {
+      "text": "Implementation Notes in every non-bookend task reference specific file paths and code patterns from the repository, not abstract or generic guidance — bookend tasks (create-branch, merge-branch) are exempt as they omit Implementation Notes by design",
+      "passed": true,
+      "evidence": "All non-bookend tasks (2-9) contain Implementation Notes that reference specific file paths and code patterns: Task 2 references 'modules/fundamental/src/sbom/model/' with specific derive macro patterns and struct field definitions. Task 3 references 'modules/fundamental/src/sbom/service/sbom.rs' for SbomService, PackageService, and AppError patterns with specific method signatures. Task 4 references 'modules/fundamental/src/sbom/endpoints/get.rs' and 'list.rs' for handler and route registration patterns. Task 5 references 'tests/api/sbom.rs' for test setup and assertion patterns including 'assert_eq!(resp.status(), StatusCode::OK)'. Task 6 references 'src/api/models.ts' and 'src/api/rest.ts' with concrete TypeScript interface and function implementations. Task 7 references 'src/hooks/useSboms.ts' and 'src/hooks/useSbomById.ts' with a concrete hook implementation. Task 8 references specific PatternFly components (Select, Button, ExpandableSection, Badge, Table, EmptyState, Skeleton) and existing components like 'src/components/SeverityBadge.tsx'. Task 9 references 'tests/mocks/handlers.ts' with concrete MSW handler code. Bookend tasks (1, 10) are exempt per the assertion."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section — either all set to 'main' (direct-to-main workflow) or bookend tasks set to 'main' with intermediate tasks set to the feature issue ID (feature-branch workflow)",
+      "passed": true,
+      "evidence": "All 10 tasks contain a '## Target Branch' section. Bookend tasks (task-1 create-branch, task-10 merge-branch) have Target Branch set to 'main'. All intermediate tasks (2-9) have Target Branch set to 'TC-9003' (the feature issue ID). This matches the feature-branch workflow pattern exactly."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": false,
+      "evidence": "No output file contains any SHA-256 digest, 'sha256-md:', 'sha256-adf:', or '[sdlc-workflow] Description digest:' marker. Grep for 'sha256', 'digest', and 'Description digest' across all output files returned no matches. No digest comments were posted after task creation."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No task output contains any convention-aware enrichment section, 'Applies:' rationale annotations, or references to convention-applicability-rules.md. The word 'convention' appears only in informal usage (e.g., 'Reference for struct conventions', 'per project conventions') in Implementation Notes and Reuse Candidates, not as a structured convention-applicability section with the prescribed format."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 4,
+    "total": 12,
+    "pass_rate": 0.67
+  }
+}

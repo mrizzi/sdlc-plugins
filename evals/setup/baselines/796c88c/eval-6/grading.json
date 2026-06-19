@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 42-64 contain the full Security Configuration section with all three subsections matching the reference fixture exactly: Product Lifecycle (5 fields: Product pages URL, Jira version prefix, Vulnerability issue type ID, Component label pattern, VEX Justification custom field), Version Streams table (1 row: 2.1.x stream), and Source Repositories table (2 rows: backend, frontend-ui). All values match the reference: e.g., 'Product pages URL: https://access.example.com/product-lifecycle', 'Vulnerability issue type ID: 10200', 'VEX Justification custom field: customfield_12345'."
+    },
+    {
+      "text": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "passed": true,
+      "evidence": "discovery-log.md Step 9 (lines 37-41) states: 'Section exists with all required fields fully populated across all subsections: Product Lifecycle: 5/5 fields populated (including optional VEX Justification), Version Streams: 1 stream configured, Source Repositories: 2 repositories configured. No placeholder markers found. Security Configuration is up to date.'"
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "passed": true,
+      "evidence": "changes-log.md line 1 states 'Project Configuration is up to date -- no changes needed.' The section status table (lines 7-13) shows 'Security Configuration | Up to date'. The summary (lines 15-17) confirms: 'All sections of the Project Configuration are fully populated with no placeholder markers remaining... No fields were added, modified, or removed.'"
+    },
+    {
+      "text": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "passed": true,
+      "evidence": "discovery-log.md Step 9 reports all fields are fully populated with no placeholders, concluding 'Security Configuration is up to date.' changes-log.md shows Security Configuration status as 'Up to date' with no changes. No output file contains any opt-in prompt, confirmation dialog, or question to the user about adding/configuring Security Configuration. The skill detected the existing fully-populated section and skipped it."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 5-8 contain the Repository Registry table with both entries exactly matching the reference: '| backend | Rust backend service | serena_backend | /home/user/backend |' and '| frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui |'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 12-16 contain all 5 Jira Configuration fields matching the reference exactly: 'Project key: TC', 'Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432', 'Feature issue type ID: 10142', 'Git Pull Request custom field: customfield_10875', 'GitHub Issue custom field: customfield_10747'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with all three fields (Bug issue type ID, Bug template, Bug-to-Task link type) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 37-40 contain the Bug Configuration section with all three fields matching the reference: 'Bug issue type ID: 10001', 'Bug template: docs/bug-template.md', 'Bug-to-Task link type: Blocks'. discovery-log.md Step 8 confirms: 'Section exists with all three required fields populated... Bug Configuration is up to date.' changes-log.md shows 'Bug Configuration | Up to date'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

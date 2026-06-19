@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md lines 19-27: 'The skill iterates through all returned comments and searches for any whose body starts with the exact marker string: [sdlc-workflow] Description digest:' and 'This marker is defined in shared/description-digest-protocol.md and is fixed across all skills and invocations.' Also plan.md line 54 references the same marker string."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md lines 59-66: 'The skill extracts the description field from the Jira issue response (fetched in Step 1), writes it to a temporary file, and computes the digest using the project script: python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt'. Lines 76-93 describe comparing both format tags and hex digests between stored and computed values."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user -- no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md lines 96-100: 'Because the digests match, the description has not been modified since plan-feature created the task. The skill proceeds silently to Step 2 (Verify Dependencies) with no additional user prompt, no warning message, and no added latency.' Line 100 quotes the protocol: 'Match: proceed silently -- no additional user prompt, no added latency.'"
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check -- it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md lines 96-98 confirm proceeding silently with 'no additional user prompt, no warning message, and no added latency.' plan.md line 61: 'Result: Proceed silently -- no user prompt, no warning' followed immediately by Step 2 on line 63: 'Step 2 -- Verify Dependencies... No dependency verification needed. Proceed.' No alert or pause is present anywhere in either output file."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

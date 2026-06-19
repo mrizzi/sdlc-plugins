@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "preview.md line 5: '## Feature Overview' heading is present."
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 9: '## Requirements' heading is present."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "preview.md contains only headings '## Feature Overview' and '## Requirements'. No '## Background and Strategic Fit' heading found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Goals'",
+      "passed": true,
+      "evidence": "preview.md contains only headings '## Feature Overview' and '## Requirements'. No '## Goals' heading found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "preview.md contains only headings '## Feature Overview' and '## Requirements'. No '## Non-Functional Requirements' heading found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Use Cases'",
+      "passed": true,
+      "evidence": "preview.md contains only headings '## Feature Overview' and '## Requirements'. No '## Use Cases' heading found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "preview.md contains only headings '## Feature Overview' and '## Requirements'. No '## Customer Considerations' heading found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "preview.md contains only headings '## Feature Overview' and '## Requirements'. No '## Customer Information/Supportability' heading found anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "preview.md contains only headings '## Feature Overview' and '## Requirements'. No '## Documentation Considerations' heading found anywhere in the file."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'",
+      "passed": true,
+      "evidence": "jira-create.md line 23: '**assignee:** not included (unassigned)'. The createJiraIssue call on line 4-12 has no assignee parameter in its arguments."
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 11: 'additional_fields={ \"labels\": [\"ai-generated-jira\"] }' and line 22: '**labels:** `[\"ai-generated-jira\"]`'."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

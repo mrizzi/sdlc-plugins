@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "Plan lines 137-138: 'call apply_filter from common/src/db/query.rs to parse the comma-separated values and generate the appropriate SQL IN clause. This reuses the existing shared helper rather than writing custom parsing or SQL.' Also plan line 153: 'common/src/db/query.rs::apply_filter -- call directly for comma-separated parsing and SQL IN clause generation.' Reuse analysis section 1 (lines 11-33) provides detailed explanation of how apply_filter is reused for comma-separated multi-value parsing."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "Plan line 39-42 lists advisory/endpoints/list.rs as a file to inspect as a 'sibling/reuse reference'. Plan lines 57-65 detail 'Sibling Convention Analysis' extracted from the advisory module. Plan line 118-120: 'Follow the exact pattern from modules/fundamental/src/advisory/endpoints/list.rs for how the advisory list endpoint defines its Query struct with severity and passes it to the service layer.' Reuse analysis section 2 (lines 37-69) extensively documents the advisory severity filter as a structural guide."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "Plan lines 143-146: 'Add a JOIN to the package_license table (using the entity::package_license SeaORM entity from entity/src/package_license.rs) to filter packages by their associated license SPDX identifiers.' Plan lines 155-156: 'entity/src/package_license.rs -- use the SeaORM entity for the JOIN rather than writing raw SQL.' Reuse analysis section 3 (lines 73-90) explains: 'Instead of writing raw SQL like JOIN package_license ON package.id = package_license.package_id, the implementation uses SeaORM’s type-safe join API with the package_license entity.'"
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three numbered sections: '1. common/src/db/query.rs::apply_filter' (lines 11-33), '2. modules/fundamental/src/advisory/endpoints/list.rs (Severity Filter Pattern)' (lines 37-69), '3. entity/src/package_license.rs (Package-License Entity)' (lines 73-96). Each section includes 'What it provides', 'How it is reused', and 'Why reuse is correct' subsections with detailed explanations of application."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "Plan 'Scope Containment' section (lines 226-233) explicitly lists only three files: 'modules/fundamental/src/package/endpoints/list.rs -- modify (in scope)', 'modules/fundamental/src/package/service/mod.rs -- modify (in scope)', 'tests/api/package_license_filter.rs -- create (in scope)'. States 'Only the three files listed above are modified or created. No other files are touched' and 'Shared code (common/src/db/query.rs, entity/src/package_license.rs) is reused but not modified.' No files outside the Files to Modify/Create scope are proposed for modification or creation."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "Plan line 137-138 calls apply_filter directly rather than creating new parsing logic. Reuse analysis lines 30-33: 'Alternative considered and rejected: Writing a custom parse_license_filter function that splits on commas and builds the query. Rejected because apply_filter already does exactly this, and introducing a parallel implementation would create duplication.' Reuse analysis lines 107-109: 'No new utility functions, helpers, or shared modules are created. All filtering logic is implemented by composing existing components.' Lines 114-119 confirm only new code is a struct field, a parameter/filter call, and integration tests -- 'None of this duplicates existing functionality.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}
