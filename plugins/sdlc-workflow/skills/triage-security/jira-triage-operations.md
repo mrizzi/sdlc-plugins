@@ -125,7 +125,16 @@ If a same-stream sibling exists and is open or in progress:
 Different-stream siblings are **companion trackers**, not duplicates. PSIRT creates
 one issue per stream intentionally. For each different-stream sibling:
 
-1. **Link** the current issue to the sibling with a "Related" link type:
+1. **Check for existing link** before creating one. Read the current issue's
+   `issuelinks` array from the `jira.get_issue` response (already fetched in
+   Step 1). Check if any existing link satisfies all of:
+   - `type.name` is `"Related"`
+   - `inwardIssue.key` or `outwardIssue.key` matches the sibling key
+
+   If a matching link exists, skip link creation and log:
+   > "Related link to [sibling-key] already exists — skipping"
+
+   If no matching link exists, create the link:
    ```
    jira.create_link(
      inwardIssue: <current-issue-key>,

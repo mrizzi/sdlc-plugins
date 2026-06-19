@@ -83,6 +83,19 @@
         "Each listed issue shows: issue key, status, CVE ID (from labels), summary, and created date",
         "Status-aware handling: New issues (TC-9001, TC-9002, TC-9004) are presented for full triage, while the In Progress issue (TC-9003) triggers a warning about active work"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "Triage Vulnerability issue TC-8006. The issue details are in vuln-issue-sibling-prelinked.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.1] and a pre-existing 'Related' link to sibling TC-8001 (stream [rhtpa-2.2]). Assume a JQL search for sibling issues with the same CVE label returns one result: TC-8001 with status 'In Progress', stream suffix [rhtpa-2.2], and Affects Versions [RHTPA 2.2.0, RHTPA 2.2.1]. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/sibling-check.md with the Step 4 sibling and link analysis, and write outputs/triage-outcome.md explaining how Step 4.2 handled the pre-existing link.",
+      "expected_output": "A triage analysis where Step 4 detects sibling TC-8001 as a different-stream companion (not a duplicate). Step 4.2 checks the issue's existing issuelinks, finds a pre-existing 'Related' link to TC-8001, and skips link creation instead of creating a duplicate. The output explicitly states that the link was skipped because it already exists.",
+      "files": ["files/vuln-issue-sibling-prelinked.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "assertions": [
+        "Sibling check correctly classifies TC-8001 as a different-stream companion (stream [rhtpa-2.2] vs current issue's [rhtpa-2.1]), not a same-stream duplicate (Step 4)",
+        "Step 4.2 checks the current issue's existing issuelinks before attempting to create a 'Related' link to TC-8001 (§1.50)",
+        "Step 4.2 detects the pre-existing 'Related' link to TC-8001 and skips link creation — does NOT call jira.create_link (§1.50)",
+        "The output includes a log message indicating the link was skipped because it already exists (e.g., 'Related link to TC-8001 already exists — skipping')",
+        "The sibling landscape table is still presented to the engineer despite the link already existing — the idempotent check only affects link creation, not the sibling summary"
+      ]
     }
   ]
 }

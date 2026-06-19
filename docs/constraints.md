@@ -67,6 +67,7 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.55 | `triage-bug` MUST front-load the reproducer test as the first acceptance criterion and first test requirement in generated Tasks. | `triage-bug/SKILL.md` — Step 5 (Front-load the reproducer test) |
 | 1.56 | `triage-bug` MUST post a root cause analysis comment on the Bug issue before creating the fix Task. | `triage-bug/SKILL.md` — Step 4 (Post root cause comment) |
 | 1.57 | `triage-bug` MUST flag multi-root-cause bugs for decomposition rather than silently creating a single Task that bundles unrelated fixes. | `triage-bug/SKILL.md` — Step 6 (Decomposition Guard) |
+| 1.58 | `triage-security` MUST check existing issuelinks before creating sibling "Related" links — MUST NOT create a link if one already exists between the two issues. | `triage-security/jira-triage-operations.md` — Step 4.2 |
 
 ### Prior Art — Cross-phase integrity (§1.33–1.35)
 
@@ -161,4 +162,5 @@ Each constraint above references its source. The full source files are:
 - `plugins/sdlc-workflow/skills/report-bug/SKILL.md` — Guardrails (§1.50–1.51), Step 4 Preview and Confirm (§1.52)
 - `plugins/sdlc-workflow/skills/triage-bug/SKILL.md` — Guardrails (§1.53–1.54), Step 5 Front-load reproducer test (§1.55), Step 4 Post root cause comment (§1.56), Step 6 Decomposition Guard (§1.57)
 - `plugins/sdlc-workflow/skills/triage-security/SKILL.md` — Guardrails (§1.37, §1.38, §1.47), Step 0 (§1.49), Step 1 Ecosystem detection (§1.48), Step 1 Data Extraction (§1.49), Step 2.1 (§1.47), Step 2.2 (§1.42), Step 2.3 (§1.48), Step 2.4 (§1.44), Step 7 (§1.43), Important Rules (§1.38–§1.43, §1.45, §1.46), Remediation Task Creation (§1.46)
+- `plugins/sdlc-workflow/skills/triage-security/jira-triage-operations.md` — Step 4.2 Idempotent sibling linking (§1.58)
 - `docs/methodology.md` — Core Principles (§2.1, §3.2, §5.5)
