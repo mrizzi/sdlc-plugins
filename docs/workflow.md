@@ -4,6 +4,8 @@ This document describes the execution workflow for the sdlc-workflow plugin skil
 
 ## Workflow Overview
 
+### Feature Lifecycle Overview
+
 ```mermaid
 flowchart TD
     subgraph Prerequisites
