@@ -1,0 +1,47 @@
+{
+  "skill_name": "triage-bug",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Triage Bug issue ACME-500. The issue details are in bug-issue-standard.md, the bug template is in bug-template-mock.md, the repository context is in repo-context-mock.md, and the project CLAUDE.md is in claude-md-bug-config.md. Do NOT actually call Jira MCP, Serena, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/bug-parsing.md with the parsed description sections from Step 1, write outputs/investigation.md with the codebase investigation findings from Steps 2-3, write outputs/root-cause.md with the root cause analysis from Step 4 (the comment you would post on the Bug), and write outputs/task-description.md with the full Task description you would create in Step 5 (following shared/task-description-template.md format).",
+      "expected_output": "A complete triage analysis demonstrating: correct Bug description parsing (all required sections extracted from the heading formats in the bug template), codebase investigation identifying the trailing-whitespace heading extraction bug, root cause analysis posted as a comment, and a Task description with reproducer test front-loaded as the first acceptance criterion and first test requirement. The Task should include a Bug Context extension section.",
+      "files": ["files/bug-issue-standard.md", "files/bug-template-mock.md", "files/repo-context-mock.md", "files/claude-md-bug-config.md"],
+      "assertions": [
+        "Bug parsing correctly extracts all four required sections (Description, Steps to Reproduce, Expected Result, Actual Result) using the heading formats from bug-template-mock.md (Step 1)",
+        "Bug validation confirms the issue type ID (10020) matches the Bug issue type ID from Bug Configuration (Step 1)",
+        "Investigation identifies the trailing-whitespace heading extraction as the root cause — line[3:] does not strip whitespace (Steps 2-3)",
+        "Root cause comment includes: what is broken (heading extraction does not strip trailing whitespace), where it is broken (plan-feature convention lookup), and how to verify the fix (reproducer test with whitespace in heading) (Step 4)",
+        "Task description has reproducer test as the FIRST acceptance criterion — before any fix criteria (Step 5 Acceptance Criteria ordering)",
+        "Task description has reproducer test as the FIRST test requirement — with explicit assertion guidance derived from the Steps to Reproduce (Step 5 Test Requirements ordering)",
+        "Task description includes a Bug Context section with Bug key (ACME-500), Steps to Reproduce, Expected/Actual Result, and Root Cause summary (Step 5 Bug Context extension)",
+        "Task description sets Target Branch to main (Step 5 Target Branch)",
+        "Task description includes the ai-generated-jira label (Step 5 Task creation)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Triage Bug issue ACME-501. The issue details are in bug-issue-missing-sections.md, the bug template is in bug-template-mock.md, and the project CLAUDE.md is in claude-md-bug-config.md. Do NOT actually call Jira MCP, Serena, or any external tools. Instead, write your analysis to the workspace outputs/ directory: write outputs/validation-result.md explaining what happened during Bug description parsing in Step 1.",
+      "expected_output": "The triage should stop at Step 1 with a validation error listing the missing required sections. The Bug description is missing 'Steps to Reproduce' and 'Expected Result' sections. The skill should NOT proceed to investigation or task creation.",
+      "files": ["files/bug-issue-missing-sections.md", "files/bug-template-mock.md", "files/claude-md-bug-config.md"],
+      "assertions": [
+        "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+        "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+        "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+        "The error message lists the specific missing sections and references the Bug template path from Bug Configuration"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Triage Bug issue ACME-502. The issue details are in bug-issue-multi-root-cause.md, the bug template is in bug-template-mock.md, and the project CLAUDE.md is in claude-md-bug-config.md. During investigation, you discover that the two problems described in the bug (malformed convention references and wrong issue type) are caused by independent code paths in different modules — the convention formatter in shared/convention-utils.md and the task creation logic in plan-feature/SKILL.md Step 6a. Do NOT actually call Jira MCP, Serena, or any external tools. Instead, write your analysis to the workspace outputs/ directory: write outputs/investigation.md with the findings showing two independent root causes, and write outputs/decomposition-guard.md with the decomposition guard prompt you would present to the user (Step 6).",
+      "expected_output": "The triage analysis should identify two independent root causes in different modules and trigger the Decomposition Guard (Step 6). The guard should present the two issues and ask the user whether to proceed with a single Task or split into separate Bugs.",
+      "files": ["files/bug-issue-multi-root-cause.md", "files/bug-template-mock.md", "files/claude-md-bug-config.md"],
+      "assertions": [
+        "Investigation identifies two independent root causes: (1) convention reference formatter using wrong case transform, (2) task creation using Feature issue type ID instead of Task (Steps 2-4)",
+        "Decomposition Guard is triggered because the two root causes are in different modules/code paths (Step 6)",
+        "Decomposition Guard presents both issues with their affected files/modules (Step 6)",
+        "Decomposition Guard offers the user two options: Proceed with single Task or Split into separate Bugs (Step 6)",
+        "The skill does NOT silently create a single Task bundling both fixes — it waits for user input (Step 6 stop rule)"
+      ]
+    }
+  ]
+}
