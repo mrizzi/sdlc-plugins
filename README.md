@@ -31,6 +31,14 @@ implementing tasks, and verifying pull requests:
 - **verify-pr** — Verify a PR against its Jira task's acceptance criteria and
   deterministic guardrails.
 
+- **report-bug** — Interactively define a Jira Bug by walking through
+  project-configured template sections, or accept structured input
+  programmatically from other skills.
+
+- **triage-bug** — Triage a Jira Bug issue by investigating root cause through
+  codebase analysis, posting a root cause comment, and producing a linked fix
+  Task with a reproducer test front-loaded for `/implement-task` consumption.
+
 - **triage-security** — Triage PSIRT-created Vulnerability issues (CVEs) with
   version-aware impact analysis across supported product versions. Includes a
   discovery mode for listing untriaged vulnerabilities.
@@ -87,6 +95,8 @@ catching regressions. See the eval directories for each skill:
 - [evals/define-feature/](evals/define-feature/) — Define-feature eval cases
 - [evals/implement-task/](evals/implement-task/) — Implement-task eval cases
 - [evals/verify-pr/](evals/verify-pr/) — Verify-pr eval cases
+- [evals/report-bug/](evals/report-bug/) — Report-bug eval cases
+- [evals/triage-bug/](evals/triage-bug/) — Triage-bug eval cases
 - [evals/triage-security/](evals/triage-security/) — Triage-security eval cases
 - [evals/setup/](evals/setup/) — Setup eval cases
 

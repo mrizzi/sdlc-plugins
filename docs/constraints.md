@@ -59,6 +59,14 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.47 | `triage-security` output goes to Jira only, with one exception: it may write to local `security-matrix.md` files in the project working directory for supportability matrix population. | `triage-security/SKILL.md` — Guardrails, Step 2.1 |
 | 1.48 | `triage-security` MUST read ecosystems, lock file paths, and check commands from security-matrix.md Ecosystem Mappings — MUST NOT hardcode language-specific logic. | `triage-security/SKILL.md` — Step 1 (Ecosystem detection), Step 2.3 |
 | 1.49 | `triage-security` MUST read the Component label pattern from Security Configuration — MUST NOT hardcode label prefixes. | `triage-security/SKILL.md` — Step 0, Step 1 (Data Extraction) |
+| 1.50 | `report-bug` MUST NOT modify, create, or delete any files in any repository. Only Jira MCP tools are permitted for output. | `report-bug/SKILL.md` — Guardrails |
+| 1.51 | `report-bug` MUST NOT fabricate content. All Bug description content must come from user input or structured input from calling skills. | `report-bug/SKILL.md` — Guardrails |
+| 1.52 | `report-bug` MUST NOT create a Jira issue without showing a full preview and receiving explicit user approval. | `report-bug/SKILL.md` — Step 6 (Preview and Approval) |
+| 1.53 | `triage-bug` MUST NOT modify, create, or delete any source code files in any repository. Only read-only tools (Read, Glob, Grep, Serena search) are permitted for codebase investigation. | `triage-bug/SKILL.md` — Guardrails |
+| 1.54 | `triage-bug` output goes to Jira (tasks, comments, links) — never to the filesystem. | `triage-bug/SKILL.md` — Guardrails |
+| 1.55 | `triage-bug` MUST front-load the reproducer test as the first acceptance criterion and first test requirement in generated Tasks. | `triage-bug/SKILL.md` — Step 5 (Front-load the reproducer test) |
+| 1.56 | `triage-bug` MUST post a root cause analysis comment on the Bug issue before creating the fix Task. | `triage-bug/SKILL.md` — Step 4 (Post root cause comment) |
+| 1.57 | `triage-bug` MUST flag multi-root-cause bugs for decomposition rather than silently creating a single Task that bundles unrelated fixes. | `triage-bug/SKILL.md` — Step 6 (Decomposition Guard) |
 
 ### Prior Art — Cross-phase integrity (§1.33–1.35)
 
@@ -150,5 +158,7 @@ Each constraint above references its source. The full source files are:
 - `plugins/sdlc-workflow/skills/verify-pr/correctness.md` — Constraints (§1.11, §1.22, §1.23), Output Format (§1.24)
 - `plugins/sdlc-workflow/skills/verify-pr/style-conventions.md` — Check 1 Convention applicability (§1.36), Check 2 (§1.16), Check 3 (§1.17), Check 4 (§1.18, §1.19, §1.20, §1.21), Check 5 (§1.30), Constraints (§1.11, §1.22, §1.23), Output Format (§1.24)
 - `plugins/sdlc-workflow/skills/define-feature/SKILL.md` — Guardrails (§1.7–1.8), Important Rules (§1.9)
+- `plugins/sdlc-workflow/skills/report-bug/SKILL.md` — Guardrails (§1.50–1.51), Step 6 Preview and Approval (§1.52)
+- `plugins/sdlc-workflow/skills/triage-bug/SKILL.md` — Guardrails (§1.53–1.54), Step 5 Front-load reproducer test (§1.55), Step 4 Post root cause comment (§1.56), Step 6 Decomposition Guard (§1.57)
 - `plugins/sdlc-workflow/skills/triage-security/SKILL.md` — Guardrails (§1.37, §1.38, §1.47), Step 0 (§1.49), Step 1 Ecosystem detection (§1.48), Step 1 Data Extraction (§1.49), Step 2.1 (§1.47), Step 2.2 (§1.42), Step 2.3 (§1.48), Step 2.4 (§1.44), Step 7 (§1.43), Important Rules (§1.38–§1.43, §1.45, §1.46), Remediation Task Creation (§1.46)
 - `docs/methodology.md` — Core Principles (§2.1, §3.2, §5.5)

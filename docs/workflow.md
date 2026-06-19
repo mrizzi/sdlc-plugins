@@ -284,6 +284,119 @@ Triages a Jira Vulnerability issue (CVE-based, auto-created by PSIRT) with full 
 
 ---
 
+### Bug Lifecycle
+
+The bug lifecycle uses two entry-point skills (`report-bug` and `triage-bug`) that
+feed into the existing `implement-task` and `verify-pr` phases.
+
+```mermaid
+flowchart TD
+    subgraph Report Phase
+        report["/report-bug"]
+    end
+
+    subgraph Triage Phase
+        triage["/triage-bug PROJ-456"]
+    end
+
+    subgraph Implement Phase
+        implement_fix["/implement-task PROJ-457"]
+    end
+
+    subgraph Verify Phase
+        verify_fix["/verify-pr PROJ-457"]
+        merge_decision{"Human decides\nto merge"}
+    end
+
+    report -->|"Bug created in Jira"| triage
+    triage -->|"Fix Task created in Jira\n(linked to Bug)"| implement_fix
+    implement_fix -->|"Branch + PR created\n(status: In Review)"| verify_fix
+    verify_fix --> merge_decision
+    merge_decision -->|Merged| done["Done"]
+
+    classDef skill fill:#4a90d9,stroke:#2c5f8a,color:#fff
+    classDef human fill:#f5a623,stroke:#c47d10,color:#fff
+    classDef state fill:#7ed321,stroke:#5a9e18,color:#fff
+
+    class report,triage,implement_fix,verify_fix skill
+    class merge_decision human
+    class done state
+```
+
+**Jira state transitions:** New → In Progress (implement-task) → In Review (implement-task) → Done (human merge)
+
+#### Report Phase
+
+**Skill:** `/sdlc-workflow:report-bug`
+
+Interactively walks the user through the project's bug description template sections
+and creates a fully-described Bug issue in Jira. Also accepts structured input
+programmatically from other skills.
+
+**Invocation:**
+
+```
+/sdlc-workflow:report-bug
+/sdlc-workflow:report-bug My Bug Summary
+/sdlc-workflow:report-bug <structured-input>
+```
+
+**Workflow:**
+1. Validate Project Configuration and Bug Configuration in CLAUDE.md
+2. Load the bug description template
+3. Walk through required sections interactively (or accept structured input)
+4. Walk through optional sections
+5. Offer self-assignment
+6. Preview the full description and collect approval
+7. Create the Bug issue in Jira (labeled `ai-generated-jira`)
+8. Post a summary comment and suggest `/triage-bug` as the next step
+
+**Output:**
+- Bug issue created in Jira with a structured description
+- Summary comment on the created issue
+
+**Guardrails:**
+- Jira-only — no filesystem modifications permitted
+- All description content must come from user input — no fabrication
+- Issue is never created without user preview and approval
+
+#### Triage Phase (Bug)
+
+**Skill:** `/sdlc-workflow:triage-bug`
+
+Investigates a Jira Bug issue's root cause through codebase analysis and produces
+a single linked Task that `/implement-task` can consume. The generated Task
+front-loads a reproducer test as the first acceptance criterion.
+
+**Invocation:**
+
+```
+/sdlc-workflow:triage-bug PROJ-456
+```
+
+**Workflow:**
+1. Validate Project Configuration and Bug Configuration in CLAUDE.md
+2. Fetch and parse the Bug issue description
+3. Reproduce or trace the bug behavior
+4. Investigate the codebase using Serena or fallback tools
+5. Post root cause analysis comment on the Bug issue
+6. Generate a fix Task with reproducer test front-loaded
+7. Link Task to Bug (Task blocks Bug)
+8. Flag multi-root-cause bugs for decomposition
+
+**Output:**
+- Root cause analysis comment on the Bug issue
+- Fix Task created in Jira (labeled `ai-generated-jira`, linked to Bug)
+- Description digest comment on the created Task
+
+**Guardrails:**
+- Read-only + Jira — no source code modifications permitted
+- Only read-only tools for codebase investigation
+- All output goes to Jira, never to the filesystem
+- Multi-root-cause bugs flagged for decomposition rather than silently bundled
+
+---
+
 ## Feature Branch Workflow Variant
 
 When `plan-feature` selects **feature-branch mode**, the workflow wraps the normal implementation tasks with two bookend tasks that manage the feature branch lifecycle:

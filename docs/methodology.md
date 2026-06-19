@@ -101,6 +101,35 @@ decline in the `review-feedback` metric over time = system improving.
 
 ---
 
+## SDLC Pipelines
+
+The workflow supports two parallel pipelines that share downstream execution phases:
+
+```
+Feature:  define-feature → plan-feature  → implement-task → verify-pr
+Bug:      report-bug     → triage-bug    → implement-task → verify-pr
+```
+
+### Feature Pipeline
+
+The feature pipeline starts with an interactive Feature definition (`define-feature`),
+followed by automated planning that decomposes the Feature into implementation Tasks
+(`plan-feature`). Each Task is then implemented (`implement-task`) and verified
+(`verify-pr`).
+
+### Bug Pipeline
+
+The bug pipeline starts with a structured Bug report (`report-bug`), followed by
+automated triage that investigates the root cause and produces a single fix Task
+(`triage-bug`). The generated Task front-loads a reproducer test as its first
+acceptance criterion, ensuring the bug is verified fixed before the PR merges.
+
+The bug pipeline reuses downstream skills unchanged — the key difference is the
+entry point (Bug issue type vs Feature issue type) and the intermediate phase
+(triage with codebase investigation vs planning with task decomposition).
+
+---
+
 ## SDLC Workflow Phases
 
 The platform evolves incrementally. The AI assistant should always
