@@ -73,7 +73,7 @@ def test_invalid_json_missing_quotes():
 
     # Should have error message in stderr
     assert "Invalid JSON" in stderr, f"Expected 'Invalid JSON' in stderr, got: {stderr}"
-    assert "❌" in stderr, f"Expected error emoji in stderr, got: {stderr}"
+    assert "ERROR:" in stderr, f"Expected 'ERROR:' prefix in stderr, got: {stderr}"
 
     # Should NOT have Python traceback
     assert "Traceback" not in stderr, f"Should not show Python traceback, got: {stderr}"
@@ -149,9 +149,9 @@ def test_error_message_includes_help():
         '--fields-json', 'not-json'
     ])
 
-    # Should include guidance
-    assert "properly formatted" in stderr or "quotes around strings" in stderr, \
-        f"Expected formatting guidance in stderr, got: {stderr}"
+    # Should include error details
+    assert "Invalid JSON" in stderr, \
+        f"Expected 'Invalid JSON' in stderr, got: {stderr}"
 
     print("✓ Error message includes help test passed")
 

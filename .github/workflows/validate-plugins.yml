@@ -14,9 +14,9 @@ name: Validate Plugins
 
 on:
   push:
-    branches: [main]
+    branches: [main, run-in-fullsend]
   pull_request:
-    branches: [main]
+    branches: [main, run-in-fullsend]
 
 jobs:
   validate:
@@ -37,6 +37,20 @@ jobs:
             echo "::group::Validating $plugin_name"
             if ! claude plugin validate "./$plugin_dir"; then
               echo "::error::Validation failed for $plugin_name"
+              exit_code=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $exit_code
+
+      - name: Run script tests
+        run: |
+          exit_code=0
+          for test_file in plugins/*/scripts/test_*.py; do
+            [ -f "$test_file" ] || continue
+            echo "::group::Running $test_file"
+            if ! python3 "$test_file"; then
+              echo "::error::Tests failed: $test_file"
               exit_code=1
             fi
             echo "::endgroup::"
