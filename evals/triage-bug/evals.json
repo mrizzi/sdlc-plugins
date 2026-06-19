@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Triage Bug issue ACME-500. The issue details are in bug-issue-standard.md, the bug template is in bug-template-mock.md, the repository context is in repo-context-mock.md, and the project CLAUDE.md is in claude-md-bug-config.md. Do NOT actually call Jira MCP, Serena, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/bug-parsing.md with the parsed description sections from Step 1, write outputs/investigation.md with the codebase investigation findings from Steps 2-3, write outputs/root-cause.md with the root cause analysis from Step 4 (the comment you would post on the Bug), and write outputs/task-description.md with the full Task description you would create in Step 5 (following shared/task-description-template.md format).",
+      "prompt": "Triage Bug issue ACME-500. The issue details are in bug-issue-standard.md, the bug template is in bug-template-mock.md, the repository context is in repo-context-mock.md, and the project CLAUDE.md is in claude-md-bug-config.md. Do NOT actually call Jira MCP, Serena, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/bug-parsing.md with the parsed description sections from Step 1, write outputs/investigation.md with the codebase investigation findings from Steps 2-3, write outputs/root-cause.md with the root cause analysis from Step 4 (the comment you would post on the Bug), and write outputs/task-description.md with the full Task description you would create in Step 5 (following shared/task-description-template.md format). At the top of outputs/task-description.md, before the task description body, include a Jira API metadata block showing the parameters you would pass to jira.create_issue: project key, issue type, and labels (including ai-generated-jira).",
       "expected_output": "A complete triage analysis demonstrating: correct Bug description parsing (all required sections extracted from the heading formats in the bug template), codebase investigation identifying the trailing-whitespace heading extraction bug, root cause analysis posted as a comment, and a Task description with reproducer test front-loaded as the first acceptance criterion and first test requirement. The Task should include a Bug Context extension section.",
       "files": ["files/bug-issue-standard.md", "files/bug-template-mock.md", "files/repo-context-mock.md", "files/claude-md-bug-config.md"],
       "assertions": [
@@ -15,7 +15,7 @@
         "Task description has reproducer test as the FIRST test requirement — with explicit assertion guidance derived from the Steps to Reproduce (Step 5 Test Requirements ordering)",
         "Task description includes a Bug Context section with Bug key (ACME-500), Steps to Reproduce, Expected/Actual Result, and Root Cause summary (Step 5 Bug Context extension)",
         "Task description sets Target Branch to main (Step 5 Target Branch)",
-        "Task description includes the ai-generated-jira label (Step 5 Task creation)"
+        "Task description output includes ai-generated-jira in the Jira API metadata block showing it would be passed as a label to jira.create_issue (Step 5 Task creation)"
       ]
     },
     {
