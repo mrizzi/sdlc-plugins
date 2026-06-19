@@ -1,0 +1,13 @@
+{
+  "eval_id": 3,
+  "name": "Missing config",
+  "pass_rate": 1.0,
+  "assertions": [
+    {"assertion": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step", "pass": true, "evidence": "Line 1: 'Please run `/setup` first'"},
+    {"assertion": "outputs/response.md contains 'Project Configuration' indicating what is missing", "pass": true, "evidence": "Line 3: 'missing the `# Project Configuration` section'"},
+    {"assertion": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)", "pass": true, "evidence": "File does not exist in outputs/"},
+    {"assertion": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)", "pass": true, "evidence": "File does not exist in outputs/"},
+    {"assertion": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)", "pass": true, "evidence": "File does not exist in outputs/"},
+    {"assertion": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.)", "pass": true, "evidence": "File contains only the stop message with Project Configuration subsection names (Repository Registry, Jira Configuration, Code Intelligence) — none of the 9 template section headings appear"}
+  ]
+}

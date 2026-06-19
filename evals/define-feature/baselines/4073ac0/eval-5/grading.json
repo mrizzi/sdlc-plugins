@@ -1,0 +1,16 @@
+{
+  "eval_id": 5,
+  "name": "API claim verified",
+  "pass_rate": 1.0,
+  "assertions": [
+    {"assertion": "outputs/api-claim-verification.md exists", "pass": true, "evidence": "File exists"},
+    {"assertion": "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')", "pass": true, "evidence": "Contains both 'PR reviews cannot be updated after initial submission' and 'The GitHub API does not support modifying a submitted review'"},
+    {"assertion": "outputs/api-claim-verification.md contains a reference to the GitHub REST API endpoint PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id} or equivalent evidence that the claim is incorrect", "pass": true, "evidence": "Contains 'PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}' with explanation"},
+    {"assertion": "outputs/api-claim-verification.md contains suggested corrected language for the Requirement", "pass": true, "evidence": "Suggested corrected requirement: 'Update an existing eval review if one was previously posted; create a new review only on the first run'"},
+    {"assertion": "outputs/preview.md contains the heading '## Feature Overview'", "pass": true, "evidence": "Line 11: '## Feature Overview'"},
+    {"assertion": "outputs/preview.md contains the heading '## Requirements'", "pass": true, "evidence": "Line 15: '## Requirements'"},
+    {"assertion": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'", "pass": true, "evidence": "Heading not present in file"},
+    {"assertion": "outputs/jira-create.md references project key 'TC'", "pass": true, "evidence": "Line 5: 'projectKey=\"TC\"'"},
+    {"assertion": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'", "pass": true, "evidence": "Line 27: 'sdlc-workflow/define-feature' in Comment Footnote"}
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | MIXED | 1 test function removed (`test_recommend_purls_with_qualifiers`), 4 test functions added (1 replacement dedup test + 3 new in `purl_simplify.rs`); both reductive and additive signals present |'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md line 29: 'The removal of `test_recommend_purls_with_qualifiers` is a reductive signal (loss of test coverage for qualifier-specific behavior)'. Also line 62: 'Reductive: `test_recommend_purls_with_qualifiers` removed.'"
+    },
+    {
+      "text": "The structural summary or reductive findings note the assertion change in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers, which the semantic assessment may identify as a relaxation contributing to the MIXED classification",
+      "passed": false,
+      "evidence": "The report does not mention the assertion change in test_recommend_purls_basic as a reductive signal or relaxation. The assertion change is only mentioned in criterion-1.md (line 31-33) in the context of evaluating acceptance criteria, not as a structural/semantic finding contributing to the MIXED classification. The Test Change Classification analysis in report.md (lines 14, 29, 62) only identifies the removed function and added functions, not the assertion change within test_recommend_purls_basic."
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md line 14: '4 test functions added (1 replacement dedup test + 3 new in `purl_simplify.rs`)'. Line 62: '3 new tests in purl_simplify.rs'."
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md line 62: 'Additive: `test_recommend_purls_dedup` added'. Also line 14: '1 replacement dedup test'."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only analysis/report files (report.md, criterion-1.md through criterion-5.md). No code files were created or modified. The report presents findings without taking any modification actions."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md presents findings with 'Overall: FAIL' verdict (line 17) and lists observations for human review. No merge action is taken or suggested. The report structure is purely informational."
+    },
+    {
+      "text": "The test change classification verdict appears in the verification report summary table and is accompanied by a detailed analysis section explaining the structural and semantic assessment",
+      "passed": true,
+      "evidence": "Summary table row at line 14: '| Test Change Classification | MIXED | ... |'. Detailed analysis at lines 29-30: 'The removal of `test_recommend_purls_with_qualifiers` is a reductive signal (loss of test coverage for qualifier-specific behavior), offset by additive signals from 4 new test functions. The removal is semantically justified since qualifier-inclusion behavior was intentionally removed from the system, but the classification reflects the structural test coverage change.' Further detail at line 62."
+    },
+    {
+      "text": "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)",
+      "passed": true,
+      "evidence": "report.md lines 14, 29, 62 reference concrete file content: specific function names removed/added (test_recommend_purls_with_qualifiers removed, test_recommend_purls_dedup added, 3 new tests in purl_simplify.rs), assertion content ('!contains(?)' assertions), and test file names. The structural assessment counts function additions/removals from file content. The semantic note about qualifier behavior being intentionally removed is supplementary context, not the basis of the classification."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — no reviews match the eval result detection criteria, so Eval Quality does not affect the Test Quality combination",
+      "passed": true,
+      "evidence": "report.md line 13: 'Eval Quality: N/A'. Line 61: 'Eval Quality (N/A): No eval result reviews found.'"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 1,
+    "total": 10,
+    "pass_rate": 0.9
+  }
+}

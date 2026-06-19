@@ -1,0 +1,13 @@
+{
+  "eval_id": 6,
+  "name": "API claim unverified",
+  "pass_rate": 1.0,
+  "assertions": [
+    {"assertion": "outputs/api-claim-verification.md exists", "pass": true, "evidence": "File exists"},
+    {"assertion": "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')", "pass": true, "evidence": "Contains 'The GitHub API does not support modifying a submitted review'"},
+    {"assertion": "outputs/api-claim-verification.md indicates the claim could not be verified (e.g., 'unverified', 'unavailable', 'cannot verify', or 'web tools unavailable')", "pass": true, "evidence": "Contains 'Status: Unverified', 'web tools unavailable', 'cannot verify'"},
+    {"assertion": "outputs/api-claim-verification.md contains a prompt or indication that the user was asked to decide (e.g., 'proceed as-is', 'verify manually', or 'Would you like to')", "pass": true, "evidence": "'Would you like to proceed as-is, or verify it manually before continuing?'"},
+    {"assertion": "outputs/preview.md contains the heading '## Requirements'", "pass": true, "evidence": "Line 16: '## Requirements'"},
+    {"assertion": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'", "pass": true, "evidence": "ADF JSON contains 'sdlc-workflow/define-feature' text node with link mark"}
+  ]
+}

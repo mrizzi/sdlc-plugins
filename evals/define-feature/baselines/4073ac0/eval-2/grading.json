@@ -1,0 +1,18 @@
+{
+  "eval_id": 2,
+  "name": "Partial sections",
+  "pass_rate": 1.0,
+  "assertions": [
+    {"assertion": "outputs/preview.md contains the heading '## Feature Overview'", "pass": true, "evidence": "Line 6: '## Feature Overview'"},
+    {"assertion": "outputs/preview.md contains the heading '## Requirements'", "pass": true, "evidence": "Line 10: '## Requirements'"},
+    {"assertion": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'", "pass": true, "evidence": "Heading not present in file"},
+    {"assertion": "outputs/preview.md does NOT contain the heading '## Goals'", "pass": true, "evidence": "Heading not present in file"},
+    {"assertion": "outputs/preview.md does NOT contain the heading '## Non-Functional Requirements'", "pass": true, "evidence": "Heading not present in file"},
+    {"assertion": "outputs/preview.md does NOT contain the heading '## Use Cases'", "pass": true, "evidence": "Heading not present in file"},
+    {"assertion": "outputs/preview.md does NOT contain the heading '## Customer Considerations'", "pass": true, "evidence": "Heading not present in file"},
+    {"assertion": "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'", "pass": true, "evidence": "Heading not present in file"},
+    {"assertion": "outputs/preview.md does NOT contain the heading '## Documentation Considerations'", "pass": true, "evidence": "Heading not present in file"},
+    {"assertion": "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'", "pass": true, "evidence": "Line 13: 'Assignee: unassigned (no assignee field included)'"},
+    {"assertion": "outputs/jira-create.md includes the label 'ai-generated-jira'", "pass": true, "evidence": "Line 9: 'labels: [\"ai-generated-jira\"]'"}
+  ]
+}

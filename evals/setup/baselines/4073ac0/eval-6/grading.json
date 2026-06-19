@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "passed": true,
+      "evidence": "The Security Configuration section in claude-md-result.md (lines 42-63) is byte-identical to the reference file. diff confirms no differences. Product Lifecycle contains all 5 fields (Product pages URL, Jira version prefix, Vulnerability issue type ID, Component label pattern, VEX Justification custom field), Version Streams table has the 2.1.x stream row, and Source Repositories table has backend and frontend-ui entries -- all matching the reference exactly."
+    },
+    {
+      "text": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "passed": true,
+      "evidence": "discovery-log.md lines 55-64: '## Security Configuration Check' section states 'The Security Configuration section already exists and is fully configured with all three subsections' and concludes with 'Result: Security Configuration already exists and is fully configured -- no changes needed.'"
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "passed": true,
+      "evidence": "changes-log.md lines 41-49: '### Security Configuration: PRESERVED (no changes)' with all subsections listed as preserved. Line 57: 'Total changes: 0'. Line 5: 'All sections of the Project Configuration were found to be fully populated and up to date. No modifications were made.'"
+    },
+    {
+      "text": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "passed": true,
+      "evidence": "discovery-log.md line 62: 'The Security Configuration opt-in prompt was NOT shown because the section already exists and is fully populated (idempotency skip).' changes-log.md line 49: 'Opt-in prompt was NOT shown (section already exists and is fully populated -- idempotency).' changes-log.md line 56: 'No opt-in prompts shown (idempotency)'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 5-8 show the Repository Registry table with both entries: 'backend | Rust backend service | serena_backend | /home/user/backend' and 'frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui'. diff against the reference file shows no differences in this section."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 10-16 contain all 5 Jira fields identical to reference: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747. diff confirms no differences."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with all three fields (Bug issue type ID, Bug template, Bug-to-Task link type) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 36-40: '## Bug Configuration' with 'Bug issue type ID: 10001', 'Bug template: docs/bug-template.md', 'Bug-to-Task link type: Blocks' -- all matching reference exactly (diff confirms no differences). discovery-log.md lines 43-52 report Bug Configuration 'already exists and is fully populated -- up to date' with idempotency skip. changes-log.md lines 33-39 report 'Bug Configuration: PRESERVED (no changes)'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

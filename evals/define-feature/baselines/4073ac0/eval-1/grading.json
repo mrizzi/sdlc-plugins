@@ -1,0 +1,23 @@
+{
+  "eval_id": 1,
+  "name": "Complete feature",
+  "pass_rate": 1.0,
+  "assertions": [
+    {"assertion": "outputs/preview.md contains the heading '## Feature Overview'", "pass": true, "evidence": "Line 9: '## Feature Overview'"},
+    {"assertion": "outputs/preview.md contains the heading '## Background and Strategic Fit'", "pass": true, "evidence": "Line 19: '## Background and Strategic Fit'"},
+    {"assertion": "outputs/preview.md contains the heading '## Goals'", "pass": true, "evidence": "Line 29: '## Goals'"},
+    {"assertion": "outputs/preview.md contains the heading '## Requirements'", "pass": true, "evidence": "Line 46: '## Requirements'"},
+    {"assertion": "outputs/preview.md contains the heading '## Non-Functional Requirements'", "pass": true, "evidence": "Line 58: '## Non-Functional Requirements'"},
+    {"assertion": "outputs/preview.md contains the heading '## Use Cases' or '## Use Cases (User Experience & Workflow)'", "pass": true, "evidence": "Line 68: '## Use Cases (User Experience & Workflow)'"},
+    {"assertion": "outputs/preview.md contains the heading '## Customer Considerations'", "pass": true, "evidence": "Line 101: '## Customer Considerations'"},
+    {"assertion": "outputs/preview.md contains the heading '## Customer Information/Supportability'", "pass": true, "evidence": "Line 111: '## Customer Information/Supportability'"},
+    {"assertion": "outputs/preview.md contains the heading '## Documentation Considerations'", "pass": true, "evidence": "Line 119: '## Documentation Considerations'"},
+    {"assertion": "outputs/jira-create.md references project key 'TC'", "pass": true, "evidence": "Line 5: 'projectKey: TC'"},
+    {"assertion": "outputs/jira-create.md references issue type ID '10142'", "pass": true, "evidence": "Line 6: 'issueTypeId: 10142'"},
+    {"assertion": "outputs/jira-create.md includes the label 'ai-generated-jira'", "pass": true, "evidence": "Line 139: 'labels: [\"ai-generated-jira\"]'"},
+    {"assertion": "outputs/jira-create.md includes an assignee (self-assignment was chosen)", "pass": true, "evidence": "Line 140: 'assignee: { \"accountId\": \"<current-user-account-id>\" } (self-assigned)'"},
+    {"assertion": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'", "pass": true, "evidence": "Line 27: 'sdlc-workflow/define-feature'"},
+    {"assertion": "outputs/jira-comment.md contains 'https://github.com/mrizzi/sdlc-plugins'", "pass": true, "evidence": "Line 27: link to 'https://github.com/mrizzi/sdlc-plugins'"},
+    {"assertion": "outputs/jira-comment.md contains a version string (e.g., 'v0.' or version from plugin.json)", "pass": true, "evidence": "Line 27: 'v0.11.0'"}
+  ]
+}

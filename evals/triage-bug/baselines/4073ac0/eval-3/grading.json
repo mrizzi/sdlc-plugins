@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Investigation identifies two independent root causes: (1) convention reference formatter using wrong case transform, (2) task creation using Feature issue type ID instead of Task (Steps 2-4)",
+      "passed": true,
+      "evidence": "investigation.md Step 4 explicitly identifies two root causes: 'Root Cause 1: Wrong case transform in convention reference formatter' describing kebab-case transformation in shared/convention-utils.md, and 'Root Cause 2: Task creation uses Feature issue type ID instead of Task' describing the use of Feature issue type ID (10142) instead of Task issue type ID in plan-feature/SKILL.md Step 6a. Steps 2-3 trace both code paths and the defects in detail."
+    },
+    {
+      "text": "Decomposition Guard is triggered because the two root causes are in different modules/code paths (Step 6)",
+      "passed": true,
+      "evidence": "investigation.md states: 'They reside in different modules: Root Cause 1 is in shared/convention-utils.md (shared utility), while Root Cause 2 is in plan-feature/SKILL.md Step 6a (skill-specific logic).' and 'This independence triggers the Decomposition Guard (Step 6 of triage-bug)'. decomposition-guard.md confirms: 'These two root causes are in different modules and affect different code paths: Root Cause 1 is in the shared convention formatting utilities (shared/convention-utils.md)... Root Cause 2 is in the plan-feature skill logic (plan-feature/SKILL.md).'"
+    },
+    {
+      "text": "Decomposition Guard presents both issues with their affected files/modules (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md lists both issues with their affected files: '1. Convention reference formatter uses wrong case transform (in shared/convention-utils.md)' and '2. Task creation uses Feature issue type ID instead of Task (in plan-feature/SKILL.md Step 6a)'. Each entry includes a description of the defect and the specific module/file affected."
+    },
+    {
+      "text": "Decomposition Guard offers the user two options: Proceed with single Task or Split into separate Bugs (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md presents an '## Options' section with two choices: '1. Proceed -- create a single Task covering both fixes (convention formatter fix in shared/convention-utils.md and issue type fix in plan-feature/SKILL.md Step 6a)' and '2. Split -- I recommend creating separate Bugs for each independent issue, then triaging each one individually: Bug A: \"Convention reference formatter uses wrong case transform\" ... Bug B: \"Task creation uses Feature issue type ID instead of Task\"'. It ends with 'Choose (1/2):'."
+    },
+    {
+      "text": "The skill does NOT silently create a single Task bundling both fixes — it waits for user input (Step 6 stop rule)",
+      "passed": true,
+      "evidence": "decomposition-guard.md explicitly states at the bottom: 'The skill stops here and waits for user input before proceeding. No Task will be created until the user chooses an option. This ensures the user explicitly decides whether to bundle unrelated fixes into a single Task or split them into separate Bug issues for independent triage.' No task creation output exists in any output file."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

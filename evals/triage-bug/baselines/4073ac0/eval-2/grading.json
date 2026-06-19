@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 48 shows 'Steps to Reproduce | `### **Steps to Reproduce**` | **MISSING**' in the parsed sections table, and line 60 states '`### **Steps to Reproduce**` — not present in the bug description'."
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 49 shows 'Expected Result | `### **Expected Result**` | **MISSING**' in the parsed sections table, and line 61 states '`### **Expected Result**` — not present in the bug description'."
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "validation-result.md lines 67-73 contain an 'Execution Stopped' section stating: 'Execution stopped at **Step 1 — Parse bug description** because required sections are missing' and '**Steps 2 through 7 were NOT executed.** No investigation, no root cause analysis, no task creation, and no Jira modifications were performed.' No Step 2 or later content appears in the file."
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "validation-result.md line 65 contains: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**. The bug description does not follow the template at `docs/templates/bug-template.md`.' This lists both specific missing sections and references the template path."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}
