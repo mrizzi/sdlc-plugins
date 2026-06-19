@@ -5,6 +5,29 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-06-19
+
+### Added
+
+- `report-bug` skill for structured bug reporting with Jira issue creation
+- `triage-bug` skill for bug lifecycle pipeline triage
+- Bug Configuration scaffolding step in `setup` skill
+- Bug description template scaffold
+- Bug lifecycle pipeline documentation and constraints
+- Eval infrastructure for `report-bug` and `triage-bug` skills
+
+### Changed
+
+- Improved `triage-bug` skill discoverability and navigation
+
+### Fixed
+
+- `triage-bug` digest comment exempted from Comment Footnote rule
+- `triage-bug` eval assertion for `ai-generated-jira` label
+- `report-bug` programmatic input format and composed output examples
+- Bug lifecycle docs heading levels aligned with feature phases
+- Corrected `report-bug` constraint source reference
+
 ## [0.10.0] - 2026-06-15
 
 ### Added
