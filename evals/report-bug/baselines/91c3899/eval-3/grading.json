@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 6: \"Please run `/setup` first to configure your project, then re-run `/sdlc-workflow:report-bug`.\""
+    },
+    {
+      "text": "outputs/response.md contains 'Bug Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 1: \"Your project's CLAUDE.md is missing the **Bug Configuration** section under `# Project Configuration`.\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "File /tmp/report-bug-eval-baseline/eval-3/outputs/preview.md does not exist in the outputs directory. Only response.md is present."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "File /tmp/report-bug-eval-baseline/eval-3/outputs/jira-create.md does not exist in the outputs directory. Only response.md is present."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "File /tmp/report-bug-eval-baseline/eval-3/outputs/jira-comment.md does not exist in the outputs directory. Only response.md is present."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the template section headings ('### **Issue Description**', '### **Steps to Reproduce**', etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "response.md contains no template section headings. The full content discusses only the missing Bug Configuration section and recommends running /setup. No occurrences of '### **Issue Description**', '### **Steps to Reproduce**', or similar headings found."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

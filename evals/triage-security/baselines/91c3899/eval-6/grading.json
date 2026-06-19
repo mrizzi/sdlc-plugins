@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "JQL queries use the project key (TC) and vulnerability issue type ID (10024) from the Security Configuration in claude-md-security-config.md — not hardcoded values (§1.49)",
+      "passed": true,
+      "evidence": "In discovery-listing.md, the Configuration Used section explicitly states: 'Project key: TC (from Jira Configuration)' and 'Vulnerability issue type ID: 10024 (from Security Configuration > Product Lifecycle)'. Both JQL queries use 'project = TC AND issuetype = 10024', and the provenance of these values is clearly attributed to configuration rather than being hardcoded."
+    },
+    {
+      "text": "Two separate queries are constructed: one for untriaged issues (labels NOT IN ai-cve-triaged) and one for triaged-but-new issues (labels IN ai-cve-triaged AND status = New) (§1.48)",
+      "passed": true,
+      "evidence": "In discovery-listing.md, Query 1 uses JQL: 'project = TC AND issuetype = 10024 AND labels NOT IN (ai-cve-triaged) ORDER BY status ASC, created DESC' for untriaged issues. Query 2 uses JQL: 'project = TC AND issuetype = 10024 AND labels IN (ai-cve-triaged) AND status = New ORDER BY created DESC' for triaged-but-new issues. Both queries match the required structure exactly."
+    },
+    {
+      "text": "Results are grouped into two clearly separated lists: Untriaged issues and Triaged but still New issues",
+      "passed": true,
+      "evidence": "In discovery-listing.md, results are clearly separated under 'Query 1: Untriaged Issues' (with 4 results, further sub-grouped by status) and 'Query 2: Triaged but still New' (with 1 result). The sections are separated by horizontal rules and have distinct headers."
+    },
+    {
+      "text": "Each listed issue shows: issue key, status, CVE ID (from labels), summary, and created date",
+      "passed": true,
+      "evidence": "In discovery-listing.md, all five issues are displayed in tables with columns: Issue Key, Status, CVE ID, Summary, and Created. TC-9001 shows (TC-9001, New, CVE-2026-40112, 'h2 - HTTP/2 rapid reset vulnerability [rhtpa-2.2]', 2026-06-08). TC-9002 shows (TC-9002, New, CVE-2026-40297, 'serde_json - Stack overflow on deeply nested input [rhtpa-2.1]', 2026-06-07). TC-9003 shows (TC-9003, In Progress, CVE-2026-40455, 'tokio - Race condition in task cancellation [rhtpa-2.2]', 2026-06-05). TC-9004 shows (TC-9004, New, CVE-2026-40518, 'ring - Timing side-channel in RSA verification [rhtpa-2.2]', 2026-06-04). TC-9010 shows (TC-9010, New, CVE-2026-39874, 'quinn-proto - Panic on malformed QUIC frame [rhtpa-2.2]', 2026-05-28). All 5 data fields are present for all 5 issues."
+    },
+    {
+      "text": "Status-aware handling: New issues (TC-9001, TC-9002, TC-9004) are presented for full triage, while the In Progress issue (TC-9003) triggers a warning about active work",
+      "passed": true,
+      "evidence": "In status-handling.md, TC-9001 handling states 'Proceed with full triage. This issue is in New status, which is the default path.' Same for TC-9002 and TC-9004. For TC-9003 (In Progress), the handling states 'WARNING -- This issue is already in In Progress. It may be actively worked on.' and 'This issue should NOT be triaged automatically. The In Progress status indicates someone may already be investigating or remediating this vulnerability.' The engineer is asked to either proceed or skip. This correctly differentiates New issues from the In Progress issue."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

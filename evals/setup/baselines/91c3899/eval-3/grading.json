@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with the table headers (Repository, Role, Serena Instance, Path) but no data rows, or explicitly notes that no repositories are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-24 contain '## Repository Registry' with table headers '| Repository | Role | Serena Instance | Path |' and separator '|---|---|---|---|' but no data rows follow."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with Project key (MYPROJ), Cloud ID (abc123), and Feature issue type ID (10001)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 25-29 contain '## Jira Configuration' with '- Project key: MYPROJ', '- Cloud ID: abc123', '- Feature issue type ID: 10001'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that indicates no Serena instances are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 31-37 contain '## Code Intelligence' with 'No Serena MCP servers are configured. Code intelligence is not available.' and '### Limitations' noting 'No limitations known — no Serena instances configured.'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Serena MCP tools were discovered among the available tools",
+      "passed": true,
+      "evidence": "discovery-log.md lines 11-12: 'No Serena MCP tools found (no tools matching the `mcp__<instance>__find_symbol` / `get_symbols_overview` / `search_for_pattern` / `replace_symbol_body` naming pattern).'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Atlassian MCP tools were discovered and Jira fields were provided via manual entry",
+      "passed": true,
+      "evidence": "discovery-log.md lines 21-23: 'Checked for Atlassian MCP tools among available MCP tools. No Atlassian MCP tools found (no tools prefixed with `mcp__atlassian__`). MCP auto-discovery is not available.' Lines 27-28: 'User chose option 2: \"No - Skip auto-discovery, I'll provide fields manually.\"' Lines 32-36: 'Jira fields were provided via manual entry: Project key: MYPROJ, Cloud ID: abc123, Feature issue type ID: 10001'."
+    },
+    {
+      "text": "The output or discovery log mentions prompting the user about continuing without code intelligence (the skill should ask whether to continue or set up Serena first)",
+      "passed": true,
+      "evidence": "discovery-log.md lines 13-14: 'Prompted the user: \"No Serena MCP servers were found. Would you like to continue without code intelligence or set up Serena first?\" User chose to continue without code intelligence.'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Bug Configuration' section with three fields: Bug issue type ID (10001), Bug template (docs/bug-template.md), Bug-to-Task link type (Blocks)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 39-43 contain '## Bug Configuration' with '- Bug issue type ID: 10001', '- Bug template: docs/bug-template.md', '- Bug-to-Task link type: Blocks'."
+    },
+    {
+      "text": "The skill offers Security Configuration opt-in and respects the user's decline — outputs/claude-md-result.md does NOT contain a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "discovery-log.md lines 69-71: 'Asked user: \"Would you like to enable security triage for this project?\" User declined. Security Configuration section skipped.' claude-md-result.md does not contain any '## Security Configuration' section — the file ends after the Bug Configuration section at line 44."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

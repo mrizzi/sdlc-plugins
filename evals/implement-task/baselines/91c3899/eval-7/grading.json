@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Section 2 ('Locate the Digest Comment') states: 'Scan the returned comments for any whose body starts with the marker string `[sdlc-workflow] Description digest:`. This is the exact fixed marker defined in the protocol.' This matches the marker string from shared/description-digest-protocol.md line 14."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Section 7 ('Compare Hex Digests — MISMATCH Detected') explicitly states: 'The stored hex digest is `0000000000000000000000000000000000000000000000000000000000000000`. The computed hex digest is a different value (e.g., `abc123...def456`). The format tags match (`sha256-md`) but the hex hashes differ. This is a **MISMATCH** -- the task description was modified after plan-feature created it.'"
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Section 8 ('Alert the User and Stop Execution') states: 'The task description for TC-9201 has been modified since plan-feature created it.' It displays: '- **Expected digest** (from plan-feature comment): `sha256-md:0000000000000000000000000000000000000000000000000000000000000000`' and '- **Actual digest** (computed from current description): `sha256-md:<the-actual-64-char-hex-digest-computed-from-current-description>`'"
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Section 8 presents: '1. **Proceed** -- implement using the current description as-is, accepting that it differs from what was originally planned' and '2. **Stop** -- halt implementation so you can re-run plan-feature to regenerate tasks based on the updated description' followed by 'Please choose (1 or 2):'"
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, Section 8 explicitly states: '**EXECUTION STOPPED.** I will not proceed to Step 2 (Verify Dependencies), Step 3 (Transition to In Progress), or any subsequent implementation steps until the user responds with their choice. This follows the same pause-and-ask pattern used when a task description is incomplete -- execution halts completely, no branches are created, no code is inspected or modified, and no Jira transitions occur. The user’s explicit decision is required before any further action.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

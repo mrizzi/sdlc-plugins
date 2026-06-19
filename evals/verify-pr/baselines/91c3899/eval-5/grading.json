@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "report.md line 14: '| Test Change Classification | MIXED | Modified file tests/api/purl_recommend.rs has both reductive signals (removed test_recommend_purls_with_qualifiers function, relaxed assertion specificity in test_recommend_purls_basic) and additive signals (new test_recommend_purls_dedup function, new !contains(\"?\") assertions). New file tests/api/purl_simplify.rs is purely additive (3 new test functions). Combined classification: MIXED. |'"
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "report.md lines 113-114 in the Structural Summary table: '| test_recommend_purls_with_qualifiers removed | Reductive | Entire test function deleted (-1 function). This function verified that qualifier variants appeared as distinct entries and that each contained repository_url=. |'"
+    },
+    {
+      "text": "The structural summary or reductive findings note the assertion change in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers, which the semantic assessment may identify as a relaxation contributing to the MIXED classification",
+      "passed": true,
+      "evidence": "report.md lines 117-118 in Structural Summary: '| test_recommend_purls_basic assertion relaxed | Reductive | Base branch asserted body.items[0].purl equals fully qualified PURL \"pkg:maven/org.apache/commons-lang3@3.12?repository_url=https://repo1.maven.org&type=jar\". PR branch asserts \"pkg:maven/org.apache/commons-lang3@3.12\" (versioned only, no qualifiers). This is a relaxation of assertion specificity. |' Semantic Assessment (lines 133-136) further explains: 'the matcher moved from checking a full qualified PURL string to a shorter versioned-only string...a relaxation of assertion specificity.'"
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "report.md lines 125-131: 'tests/api/purl_simplify.rs (NEW)' section lists 3 additive test functions (test_simplified_purl_no_version, test_simplified_purl_mixed_types, test_simplified_purl_ordering_preserved) with 'Tally: +3 test functions (purely additive).'"
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "report.md line 119 in the Structural Summary table for purl_recommend.rs (MODIFIED): '| test_recommend_purls_dedup added | Additive | New function (+1 function) verifying deduplication: seeds 2 PURLs differing only in qualifiers, asserts 1 deduplicated result. |'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All output files are verification artifacts only: report.md and criterion-1.md through criterion-5.md. report.md line 142 states: 'No code was modified, and no auto-merge action was taken.' No code files appear in the outputs directory."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md line 142: 'No code was modified, and no auto-merge action was taken.' The report presents verification findings (summary table, detailed findings) without any merge action. The overall verdict is 'PASS' but no merge is triggered."
+    },
+    {
+      "text": "The test change classification verdict appears in the verification report summary table and is accompanied by a detailed analysis section explaining the structural and semantic assessment",
+      "passed": true,
+      "evidence": "Summary table at report.md line 14: '| Test Change Classification | MIXED |'. Detailed analysis section at lines 109-139 titled 'Test Change Classification -- MIXED' contains two subsections: 'Structural Summary' (lines 112-131) with per-file signal tables and tallies, and 'Semantic Assessment' (lines 133-139) explaining the assertion relaxation and removed function coverage impact."
+    },
+    {
+      "text": "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)",
+      "passed": true,
+      "evidence": "Structural Summary (lines 112-131) enumerates function additions/removals and assertion changes by comparing base and PR branch file content: removed function test_recommend_purls_with_qualifiers, relaxed assertion in test_recommend_purls_basic (base branch PURL 'pkg:maven/org.apache/commons-lang3@3.12?repository_url=...' vs PR branch 'pkg:maven/org.apache/commons-lang3@3.12'), added function test_recommend_purls_dedup, added !contains('?') assertions. Semantic Assessment (lines 133-139) discusses 'On the base branch, the test verified full round-trip fidelity of PURLs' vs 'On the PR branch, the test verifies that qualifiers are actively stripped'. All references are to test file content (function names, assertion strings, PURL values), not to acceptance criteria or task requirements."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — no reviews match the eval result detection criteria, so Eval Quality does not affect the Test Quality combination",
+      "passed": true,
+      "evidence": "report.md line 13: 'Eval Quality: N/A (no eval result reviews on this PR).' Lines 104-106: '#### Eval Quality -- N/A / No eval result reviews found on this PR. No eval metrics to extract.' Test Quality verdict on line 13 is PASS, confirming Eval Quality N/A did not drag it to WARN."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}
