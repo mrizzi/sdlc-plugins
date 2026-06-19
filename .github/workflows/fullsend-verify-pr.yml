@@ -8,7 +8,22 @@ on:
         required: true
 
 jobs:
-  placeholder:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Use --ref run-in-fullsend to run the real workflow"
+  verify-pr:
+    uses: mrizzi/sdlc-plugins/.github/workflows/reusable-verify-pr.yml@run-in-fullsend
+    with:
+      jira_issue_id: ${{ inputs.jira_issue_id }}
+      sdlc_plugins_ref: run-in-fullsend
+    secrets:
+      FULLSEND_GCP_WIF_PROVIDER: ${{ secrets.GCP_WIF_PROVIDER }}
+      FULLSEND_GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      GCP_CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
+      JIRA_SERVER_URL: ${{ secrets.JIRA_SERVER_URL }}
+      JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
+    permissions:
+      contents: read
+      id-token: write
+      issues: write
+      pull-requests: write
+      packages: read

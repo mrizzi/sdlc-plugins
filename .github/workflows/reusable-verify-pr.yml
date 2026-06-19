@@ -1,0 +1,132 @@
+# Reusable verify-pr agent workflow. Called by thin shim workflows
+# via workflow_call. Follows fullsend's reusable-triage.yml pattern.
+name: Verify-PR Agent
+
+on:
+  workflow_call:
+    inputs:
+      jira_issue_id:
+        required: true
+        type: string
+      sdlc_plugins_ref:
+        description: Ref of mrizzi/sdlc-plugins to load skill files from.
+        type: string
+        required: false
+        default: run-in-fullsend
+      fullsend_ai_ref:
+        description: Ref of fullsend-ai/fullsend to load actions from.
+        type: string
+        required: false
+        default: v0.17.0
+      fullsend_version:
+        description: Fullsend CLI version to install.
+        type: string
+        required: false
+        default: "latest"
+    secrets:
+      FULLSEND_GCP_WIF_PROVIDER:
+        required: true
+      FULLSEND_GCP_PROJECT_ID:
+        required: true
+      JIRA_SERVER_URL:
+        required: true
+      JIRA_EMAIL:
+        required: true
+      JIRA_API_TOKEN:
+        required: true
+      JIRA_PROJECT_KEY:
+        required: true
+      GCP_CLOUD_ML_REGION:
+        required: true
+      GH_TOKEN:
+        required: false
+
+jobs:
+  verify-pr:
+    name: Verify PR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      issues: write
+      pull-requests: write
+      packages: read
+
+    steps:
+      - name: Checkout config repository
+        uses: actions/checkout@v6
+
+      - name: Checkout fullsend upstream defaults
+        uses: actions/checkout@v6
+        with:
+          repository: fullsend-ai/fullsend
+          ref: ${{ inputs.fullsend_ai_ref }}
+          path: .defaults
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/
+            .github/scripts/
+            internal/scaffold/fullsend-repo/
+            action.yml
+
+      - name: Checkout sdlc-plugins skill files
+        uses: actions/checkout@v6
+        with:
+          repository: mrizzi/sdlc-plugins
+          ref: ${{ inputs.sdlc_plugins_ref }}
+          path: .sdlc-plugins
+          fetch-depth: 1
+          sparse-checkout: plugins/sdlc-workflow/
+
+      - name: Prepare workspace (upstream defaults + sdlc-plugins overlay)
+        run: |
+          set -euo pipefail
+          SRC=".defaults/internal/scaffold/fullsend-repo"
+          LAYERED_DIRS="agents skills schemas harness plugins policies scripts env providers"
+          for dir in ${LAYERED_DIRS}; do
+            if [[ -d "${SRC}/${dir}" ]]; then
+              mkdir -p "${dir}"
+              cp -r "${SRC}/${dir}/." "${dir}/"
+            fi
+          done
+          PLUGIN=".sdlc-plugins/plugins/sdlc-workflow"
+          for dir in ${LAYERED_DIRS}; do
+            if [[ -d "${PLUGIN}/${dir}" ]]; then
+              mkdir -p "${dir}"
+              cp -r "${PLUGIN}/${dir}/." "${dir}/"
+            fi
+          done
+          mkdir -p .github/scripts
+          cp "${SRC}/.github/scripts/setup-agent-env.sh" .github/scripts/setup-agent-env.sh
+
+      - name: Checkout target repository
+        uses: actions/checkout@v6
+        with:
+          path: target-repo
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup GCP and prepare credentials
+        uses: ./.defaults/.github/actions/setup-gcp
+        with:
+          gcp_wif_provider: ${{ secrets.FULLSEND_GCP_WIF_PROVIDER }}
+          gcp_project_id: ${{ secrets.FULLSEND_GCP_PROJECT_ID }}
+
+      - name: Setup agent environment
+        env:
+          AGENT_PREFIX: VERIFY_PR_
+          VERIFY_PR_JIRA_ISSUE_ID: ${{ inputs.jira_issue_id }}
+          VERIFY_PR_JIRA_SERVER_URL: ${{ secrets.JIRA_SERVER_URL }}
+          VERIFY_PR_JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
+          VERIFY_PR_JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          VERIFY_PR_JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
+          VERIFY_PR_GH_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
+          VERIFY_PR_ANTHROPIC_VERTEX_PROJECT_ID: ${{ secrets.FULLSEND_GCP_PROJECT_ID }}
+          VERIFY_PR_CLOUD_ML_REGION: ${{ secrets.GCP_CLOUD_ML_REGION }}
+        run: bash .github/scripts/setup-agent-env.sh
+
+      - name: Run verify-pr agent
+        uses: ./.defaults/
+        with:
+          agent: verify-pr
+          version: ${{ inputs.fullsend_version }}

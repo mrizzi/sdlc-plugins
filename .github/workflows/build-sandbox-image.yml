@@ -1,0 +1,75 @@
+name: Build sandbox image
+
+on:
+  push:
+    branches: [run-in-fullsend]
+    tags: ['v*']
+    paths:
+      - 'plugins/sdlc-workflow/**'
+      - '.github/workflows/build-sandbox-image.yml'
+  pull_request:
+    branches: [run-in-fullsend]
+    paths:
+      - 'plugins/sdlc-workflow/**'
+      - '.github/workflows/build-sandbox-image.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: build-sandbox-image-${{ github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/sdlc-plugins/sdlc-base
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up QEMU for multi-arch builds
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-qemu-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest-run-in-fullsend,enable=${{ github.ref_name == 'run-in-fullsend' }}
+            type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - name: Build image
+        id: build
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ steps.meta.outputs.tag-names }}
+          containerfiles: plugins/sdlc-workflow/sandboxes/base/Dockerfile
+          context: .
+          platforms: ${{ github.event_name != 'pull_request' && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
+
+      - name: Push to GHCR
+        if: github.event_name != 'pull_request'
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ steps.meta.outputs.tag-names }}
+          registry: ${{ env.REGISTRY }}
