@@ -197,6 +197,31 @@ to maintain the full Outcome → Feature → Epic → Task hierarchy.
 5. **If user skips (presses Enter)**: proceed without linking — this step is
    entirely optional.
 
+### Documentation signal extraction
+
+After extracting the standard fields, detect and parse the "Documentation
+Considerations" section from the Feature description. The define-feature skill
+(Step 3i) captures this section with standard categories:
+
+- **New Content** — new documentation pages or sections needed
+- **Updates to existing content** — revisions to existing documentation
+- **Release Notes** — release note entries needed
+- **No Doc Impact** — explicitly no documentation changes required
+
+Extract:
+
+- **Doc impact type**: one of `New Content`, `Updates`, `Release Notes`, or
+  `No Doc Impact`
+- **Details**: any additional context provided (user purpose, reference material,
+  source material)
+
+Store these as documentation signals for use in Step 5 (Documentation task
+generation).
+
+If the Feature description has no "Documentation Considerations" section, record
+that no documentation signals are present — do not prompt the user or treat this
+as an error.
+
 ## Step 2 – Inspect Figma Design
 
 If a Figma URL was provided as an argument, use it directly.
@@ -639,9 +664,44 @@ Annotate each task with its Epic group assignment:
   finalizing.
 - **trivial**: all tasks belong to the single Epic.
 
-### Documentation task guidance
+### Documentation task generation
 
-When a feature introduces significant new behavior (new user-facing capabilities, new APIs, or major architectural changes), consider generating a **dedicated documentation-only task** to cover cross-cutting documentation updates that span multiple implementation tasks. Use this when the documentation work is substantial enough to warrant its own task rather than being spread across individual implementation tasks.
+Generate a documentation task when the Feature description contains documentation
+signals extracted in Step 1.
+
+1. **Check for documentation signals**: if no documentation signals were extracted
+   in Step 1 (the Feature description has no "Documentation Considerations" section),
+   skip documentation task generation silently.
+2. **Check doc impact type**: if the doc impact type is "No Doc Impact", skip
+   documentation task generation silently.
+3. **Generate documentation task**: if doc signals are present (New Content, Updates
+   to existing content, or Release Notes), generate a documentation task following
+   the `task-description-template.md` format.
+
+The documentation task description MUST include:
+
+- `## Repository` — the repository where the documentation lives
+- `## Target Branch` — follows the same Target Branch assignment rules as other
+  tasks (see below)
+- `## Description` — what changed (from the Feature overview and requirements),
+  the doc impact type (New Content, Updates, or Release Notes), details from
+  the Documentation Considerations section, and a reference to the Feature issue
+- `## Acceptance Criteria` — verify the documentation accurately reflects the
+  feature's behavior and covers the scope identified in Documentation Considerations
+- `## Test Requirements` — verify the documentation is accurate, complete, and
+  consistent with the implemented feature behavior
+- `## Dependencies` — depends on the implementation tasks (documentation should
+  be written after implementation is complete)
+
+The documentation task MUST omit the following sections (the implementer determines
+which doc files to update based on the description):
+
+- Files to Modify
+- Files to Create
+- API Changes
+- Implementation Notes
+- Reuse Candidates
+- Verification Commands
 
 ### Convention-aware task enrichment
 
