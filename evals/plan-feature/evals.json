@@ -7,7 +7,7 @@
       "expected_output": "A structured implementation plan with task decomposition, each task following task-description-template.md format, with clear dependency ordering. Tasks should reference real file paths from the repo manifest.",
       "files": ["files/feature-standard.md", "files/repo-backend.md"],
       "assertions": [
-        "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+        "Each non-documentation task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements. Documentation tasks (tasks whose filename or description indicates doc-only scope) are exempt from requiring Files to Modify, Files to Create, and Implementation Notes — they must still include Repository, Target Branch, Description, Acceptance Criteria, and Test Requirements",
         "Task count is between 3 and 10 inclusive",
         "All tasks reference repository 'trustify-backend'",
         "Task dependencies form a DAG with no circular dependencies",
@@ -16,7 +16,7 @@
         "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
         "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
         "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
-        "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+        "Implementation Notes in every non-documentation task reference specific file paths and code patterns from the repository, not abstract or generic guidance. Documentation tasks are exempt from this requirement as they intentionally omit Implementation Notes",
         "Every generated task description contains a Target Branch section set to 'main'",
         "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
         "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
