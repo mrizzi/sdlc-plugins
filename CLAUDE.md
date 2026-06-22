@@ -43,3 +43,13 @@ No Serena MCP servers are configured. Code intelligence is not available.
 ### Limitations
 
 No limitations known — no Serena instances configured.
+
+## Bug Configuration
+
+- Bug issue type ID: 10016
+- Bug template: docs/templates/bug-template.md
+- Bug-to-Task link type: Blocks
+
+## Hierarchy Configuration
+
+- Default epic grouping strategy: by-sub-feature
