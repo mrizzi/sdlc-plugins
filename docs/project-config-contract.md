@@ -270,6 +270,44 @@ repository names listed here.
 
 ---
 
+### 5. Hierarchy Configuration
+
+The Hierarchy Configuration section is under the heading
+`## Hierarchy Configuration`. It stores hierarchy preferences used by
+the `plan-feature` skill for Epic grouping when a level-1 issue type
+(Epic) exists in the project.
+
+#### Required fields
+
+| Field | Required | Description | Example |
+|---|---|---|---|
+| Default epic grouping strategy | Yes | How tasks are grouped into Epics when a level-1 issue type exists | `by-repository` |
+
+#### Valid values
+
+- `by-repository` — one Epic per repository (recommended for multi-repo projects)
+- `by-sub-feature` — group by logical sub-features
+- `trivial` — single Epic wrapping all tasks
+- `none` — ask each time (no default)
+
+#### Structure
+
+```markdown
+## Hierarchy Configuration
+
+- Default epic grouping strategy: by-repository
+```
+
+#### How skills use it
+
+- "`plan-feature` reads the default Epic grouping strategy from
+  Hierarchy Configuration. If set, uses it directly instead of prompting
+  the user. If set to `none`, prompts every time."
+- "`setup` scaffolds this section interactively by discovering project
+  issue types and asking the user for their preference."
+
+---
+
 ## Extensibility
 
 Projects may add optional sections to `# Project Configuration` beyond
@@ -309,6 +347,7 @@ the contract:
 - [ ] `## Code Intelligence` documents the `mcp__<instance>__<tool>` naming convention
 - [ ] `## Code Intelligence` lists any per-instance limitations under a `### Limitations` subheading
 - [ ] All Serena instance names in the Registry match those referenced in Code Intelligence limitations
+- [ ] (If present) `## Hierarchy Configuration` contains Default epic grouping strategy with a valid value (by-repository, by-sub-feature, trivial, none)
 - [ ] (If present) `## Security Configuration` contains `### Product Lifecycle` with all four required fields (VEX Justification is optional)
 - [ ] (If present) `## Security Configuration` contains `### Version Streams` with at least one row
 - [ ] (If present) `## Security Configuration` contains `### Source Repositories` with at least one row

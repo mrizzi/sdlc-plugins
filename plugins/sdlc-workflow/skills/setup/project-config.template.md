@@ -36,3 +36,7 @@ is `{{serena-instance-name}}`:
 - Bug issue type ID: {{bug-issue-type-id}}
 - Bug template: {{bug-template-path}}
 - Bug-to-Task link type: {{bug-task-link-type}}
+
+## Hierarchy Configuration
+
+- Default epic grouping strategy: {{epic-grouping-strategy}}

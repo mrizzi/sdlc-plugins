@@ -35,6 +35,7 @@ Read the project's CLAUDE.md file. If it exists, parse it for:
 - `## Code Intelligence` section — record which Serena instances are already documented
 - `## Bug Configuration` section — record whether it exists and which fields are populated
 - `## Security Configuration` section — record whether it exists and which fields are populated
+- `## Hierarchy Configuration` section — record whether it exists and which fields are populated
 
 If the file doesn't exist, note that everything needs to be created.
 
@@ -56,7 +57,7 @@ If **no** Serena instances are discovered at all, inform the user that no Serena
 
 ## Step 3 – Jira Configuration
 
-If `## Jira Configuration` already exists with all three required fields (Project key, Cloud ID, Feature issue type ID) populated, report "Jira Configuration is up to date" and skip to Step 4.
+If `## Jira Configuration` already exists with all three required fields (Project key, Cloud ID, Feature issue type ID) populated, report "Jira Configuration is up to date" and skip to Step 3.5.
 
 Otherwise, determine which fields are missing and gather them:
 
@@ -133,7 +134,7 @@ Use the Python client to gather Jira configuration:
 
 5. Ask the user if they have a GitHub Issue custom field ID (optional).
 
-Proceed to Step 4 with the gathered fields.
+Proceed to Step 3.5 with the gathered fields.
 
 ### Step 3.4 – Manual Entry (Fallback)
 
@@ -146,7 +147,68 @@ If MCP is not available and user chooses not to use REST API, ask the user to pr
 
 Only ask for fields that are not already configured.
 
-Proceed to Step 4 with the provided fields.
+Proceed to Step 3.5 with the provided fields.
+
+## Step 3.5 – Hierarchy Preferences
+
+Check if `## Hierarchy Configuration` already exists in CLAUDE.md with all fields
+populated (no `{{placeholder}}` markers).
+
+- **If it exists and is fully populated**: Report "Hierarchy Configuration is up to date"
+  and skip to Step 4.
+- **If it exists but contains `{{placeholder}}` markers**: Treat it as not yet populated
+  and proceed to the discovery steps below (skip scaffolding the section heading since
+  it already exists).
+- **If it does NOT exist**: Proceed to discover hierarchy and scaffold the section below.
+
+### Step 3.5.1 – Discover Issue Type Hierarchy
+
+Use the same MCP-first-with-REST-fallback pattern from Step 3:
+
+1. Try `getJiraProjectIssueTypesMetadata` via MCP to list issue types for the project.
+2. Group the returned issue types by their `hierarchyLevel` field.
+3. If MCP fails, follow the REST API fallback flow from Step 3.2.
+4. If auto-discovery fails entirely, ask the user for hierarchy information manually.
+
+Display the discovered hierarchy to the user in a structured format, grouped by
+hierarchy level and sorted descending. Include the type name and ID for each.
+Mark the configured Feature issue type with "← currently configured":
+
+```
+Discovered Jira hierarchy for project <key>:
+- Level 3: Outcome (id: 10130)
+- Level 2: Feature (id: 10142) ← currently configured
+- Level 1: Epic (id: 10000)
+- Level 0: Task (id: 10014), Story (id: 10009), Bug (id: 10016), ...
+```
+
+### Step 3.5.2 – Ask for Grouping Strategy
+
+If a level-1 type (Epic) exists in the discovered hierarchy, ask:
+
+```
+Default Epic grouping strategy for plan-feature?
+
+1. by-repository — one Epic per repository (recommended for multi-repo projects)
+2. by-sub-feature — group by logical sub-features
+3. trivial — single Epic wrapping all tasks
+4. none — ask each time (no default)
+
+Choose (1/2/3/4):
+```
+
+If no level-1 type exists in the project, skip the grouping strategy question
+entirely and note: "No Epic-level type found in project — Epic grouping is not
+available. Hierarchy Configuration will not be created." Then skip to Step 4.
+
+### Step 3.5.3 – Write Hierarchy Configuration
+
+Write the `## Hierarchy Configuration` section to CLAUDE.md with the gathered
+values. Follow the template structure from `project-config.template.md`. Present
+the planned changes to the user for review before writing.
+
+If the section already exists but has placeholder markers, replace only the
+placeholder content, preserving any surrounding text.
 
 ## Step 4 – Code Intelligence
 
@@ -406,6 +468,7 @@ After writing, read the CLAUDE.md back and verify:
 - `docs/constraints.md` exists in the target project
 - (If scaffolded) `## Bug Configuration` contains: Bug issue type ID, Bug template path, Bug-to-Task link type
 - (If scaffolded) The bug template file exists at the configured Bug template path
+- (If scaffolded) `## Hierarchy Configuration` contains Default epic grouping strategy
 - (If scaffolded) `## Security Configuration` contains `### Product Lifecycle` with all four required fields (VEX Justification is optional)
 - (If scaffolded) `## Security Configuration` contains `### Version Streams` with at least one row
 - (If scaffolded) `## Security Configuration` contains `### Source Repositories` with at least one row
