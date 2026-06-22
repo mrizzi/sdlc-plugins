@@ -71,6 +71,9 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.59 | `triage-security` MUST search for related CVE Jiras by Upstream Affected Component (`customfield_10632`) in Step 4.3 and check existing remediation tasks before creating new ones. | `triage-security/jira-triage-operations.md` — Step 4.3 |
 | 1.60 | `verify-pr` MUST compare eval assertion failures against base branch eval baselines before creating subtasks — only regressions (assertions that pass at baseline but fail on the PR) trigger subtask creation. | `verify-pr/SKILL.md` — Step 6d (Eval failure sub-tasks), `verify-pr/style-conventions.md` — Check 5 |
 | 1.61 | `triage-security` MUST create proactive remediation tasks with `security-preemptive` label for affected streams without CVE Jiras (Step 7 Case B) and MUST reconcile when stream-specific CVE Jiras arrive by linking the CVE and removing the label (Step 4.4). | `triage-security/SKILL.md` — Step 7 Case B, `triage-security/jira-triage-operations.md` — Step 4.4 |
+| 1.62 | `plan-feature` MUST discover issue types dynamically from the Jira project, not hardcode type names or IDs. | `plan-feature/SKILL.md` — Step 2.5 |
+| 1.63 | `plan-feature` MUST map issue types to hierarchy roles by `hierarchyLevel` field, not by type name. | `plan-feature/SKILL.md` — Step 2.5 |
+| 1.64 | `plan-feature` MUST fall back to Feature → Task hierarchy when no level-1 type exists, without error. | `plan-feature/SKILL.md` — Step 2.5 |
 
 ### Prior Art — Cross-phase integrity (§1.33–1.35)
 
@@ -151,7 +154,7 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 
 Each constraint above references its source. The full source files are:
 
-- `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Step 4.5 Determine Workflow Mode (§1.27), Step 5 Convention-aware task enrichment (§4.11, §4.13), Step 5 Target Branch assignment (§4.12), Step 5 Bookend task generation (§3.4), Step 6a Digest posting (§1.33), Task Description Template (§4.1–4.10)
+- `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Step 2.5 Discover Project Issue Types (§1.62–1.64), Step 4.5 Determine Workflow Mode (§1.27), Step 5 Convention-aware task enrichment (§4.11, §4.13), Step 5 Target Branch assignment (§4.12), Step 5 Bookend task generation (§3.4), Step 6a Digest posting (§1.33), Task Description Template (§4.1–4.10)
 - `plugins/sdlc-workflow/skills/implement-task/SKILL.md` — Important Rules (§1.4–1.6, §5.1–5.3), Step 1 (§1.6), Step 1.5 Digest verification (§1.34, §1.35), Step 4/6/9 (§5.4), Step 5 (§1.15, §3.1, §3.4), Step 7 (§5.9–5.13), Step 9 (§2.1–2.3, §5.6–5.8), Step 10 (§3.2, §3.3)
 - `plugins/sdlc-workflow/shared/task-description-template.md` — Rules (§4.12)
 - `plugins/sdlc-workflow/shared/description-digest-protocol.md` — Digest format and verification procedure (§1.33, §1.34, §1.35)

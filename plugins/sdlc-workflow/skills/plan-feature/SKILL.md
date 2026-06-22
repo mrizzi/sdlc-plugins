@@ -84,7 +84,7 @@ If any of these sections are missing or incomplete, inform the user:
 
 ## Step 0.5 – JIRA Access Initialization
 
-Before attempting any JIRA operations (Steps 1, 4, 6), determine the access method.
+Before attempting any JIRA operations (Steps 1, 2.5, 4, 6), determine the access method.
 
 **For every JIRA operation:**
 1. **Attempt MCP first** (preferred method)
@@ -109,6 +109,7 @@ Before attempting any JIRA operations (Steps 1, 4, 6), determine the access meth
 **REST API equivalents for this skill's operations:**
 - `jira.get_issue(id)` → `python3 scripts/jira-client.py get_issue <id> --fields "*all"`
 - `jira.add_comment(id, text)` → `python3 scripts/jira-client.py add_comment <id> --comment-md "<text>"`
+- `jira.get_project_issue_types(project)` → `python3 scripts/jira-client.py get_project_metadata <project-key>`
 - `jira.create_issue(...)` → `python3 scripts/jira-client.py create_issue --project <key> --summary "<summary>" --description-md "<desc>" --issue-type Task --labels <labels>`
 - `jira.create_issue_link(...)` → `python3 scripts/jira-client.py create_link --inward <issue1> --outward <issue2> --link-type <type>`
 
@@ -276,6 +277,72 @@ backend returns `threat_identification` as the field value.
 >   — **frontend mapping needed** (case transformation: snake_case → Title Case)
 > - Field `category.label` in filter dropdown: Figma shows category names that match API
 >   response — **no mismatch** (no action needed)
+
+## Step 2.5 – Discover Project Issue Types
+
+Dynamically discover the available issue types in the Jira project and map them
+to hierarchy roles. This replaces hardcoded type assumptions and enables Epic
+support for projects that have a level-1 issue type.
+
+### Fetch issue types
+
+Use MCP (preferred) or REST API fallback to fetch the project's issue types:
+
+```
+jira.get_project_issue_types(cloudId, projectKey)
+```
+
+The `cloudId` and project key come from the project's `## Jira Configuration` in
+CLAUDE.md (already read in Step 0).
+
+### Map types to hierarchy roles
+
+Classify each discovered issue type by its `hierarchyLevel` field:
+
+| `hierarchyLevel` | Role | Description |
+|---|---|---|
+| 2+ | Feature | The feature-level issue type (already known from Jira Configuration) |
+| 1 | Epic | Intermediate hierarchy — used to group tasks under the Feature |
+| 0 | Task | The work-item issue type for implementation tasks |
+
+**Filtering rules:**
+- Ignore subtask types (`subtask: true`)
+- Ignore types at level -1
+
+### Handle edge cases
+
+1. **No level-1 type exists:** log an informational message to the user:
+
+   > "No Epic-level type found in project — tasks will be created directly under
+   > the Feature."
+
+   Set a flag to skip Epic creation in Steps 5 and 6. This preserves backward
+   compatibility for projects without Epics — the skill proceeds with
+   Feature → Task hierarchy without error.
+
+2. **Multiple level-1 types exist:** prefer the one named "Epic"
+   (case-insensitive match). If none is named "Epic", present the available
+   level-1 types to the user and ask them to select which to use for the
+   intermediate hierarchy role.
+
+### Store the type-to-role mapping
+
+Record the mapping (type ID, type name, hierarchy level) for each role:
+
+```
+Type-to-role mapping:
+  Feature: <type-name> (ID: <type-id>, level: <level>)
+  Epic:    <type-name> (ID: <type-id>, level: 1)     # if available
+  Task:    <type-name> (ID: <type-id>, level: 0)
+```
+
+This mapping is used in Steps 5 and 6 when creating Jira issues.
+
+### Hierarchy Configuration override
+
+If CLAUDE.md has a `## Hierarchy Configuration` section (from the setup skill),
+read the stored default grouping strategy and apply it. If not present, skip
+silently — hierarchy preferences are optional.
 
 ## Step 3 – Repository Analysis
 
