@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "claude-md-result.md line 41: '## Security Configuration' heading is present."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Product Lifecycle' subsection with all 5 fields: Product pages URL (https://access.example.com/product-lifecycle), Jira version prefix (MYPRODUCT), Vulnerability issue type ID (10200), Component label pattern (pscomponent:), and VEX Justification custom field (customfield_12345)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 43-49: '### Product Lifecycle' subsection contains all 5 fields: 'Product pages URL: https://access.example.com/product-lifecycle', 'Jira version prefix: MYPRODUCT', 'Vulnerability issue type ID: 10200', 'Component label pattern: pscomponent:', 'VEX Justification custom field: customfield_12345'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Version Streams' subsection with a table containing at least one row for stream 2.1.x with the Konflux release repo URL",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 51-55: '### Version Streams' subsection contains a table with headers 'Stream | Konflux Release Repo | Local Path | Security Matrix Path' and a row: '2.1.x | git.downstream.example.com/my-org/product-release.2.1.z | /home/user/product-release.2.1.z | security-matrix.md'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Source Repositories' subsection with a table containing entries for backend and frontend-ui with their GitHub URLs",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 57-62: '### Source Repositories' subsection contains a table with entries 'backend | https://github.com/example/backend' and 'frontend-ui | https://github.com/example/frontend-ui'."
+    },
+    {
+      "text": "outputs/claude-md-result.md also contains the standard Project Configuration sections: Repository Registry, Jira Configuration, Code Intelligence with Limitations, and Bug Configuration",
+      "passed": true,
+      "evidence": "claude-md-result.md contains: '## Repository Registry' (line 3) with a table of repositories, '## Jira Configuration' (line 10) with 5 fields, '## Code Intelligence' (line 18) with tool naming conventions and '### Limitations' (line 31) subsection, and '## Bug Configuration' (line 35) with 3 fields."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Bug Configuration' section with three fields: Bug issue type ID (10001), Bug template (docs/bug-template.md), Bug-to-Task link type (Blocks)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 35-39: '## Bug Configuration' section contains 'Bug issue type ID: 10001', 'Bug template: docs/bug-template.md', 'Bug-to-Task link type: Blocks'."
+    },
+    {
+      "text": "outputs/discovery-log.md mentions Security Configuration being opted in by the user and fields being collected",
+      "passed": true,
+      "evidence": "discovery-log.md lines 44-47: 'Step 9 -- Security Configuration' states 'User was asked whether to enable security triage: **accepted (opted in)**' and 'Security Configuration being opted in -- proceeding with collection'. Lines 49-74 detail the fields collected for Product Lifecycle, Version Streams, and Source Repositories."
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration and Bug Configuration were newly added along with the other Project Configuration sections",
+      "passed": true,
+      "evidence": "changes-log.md lists all sections under '## Sections Added': '### 1. Project Configuration' (line 5), '### 2. Repository Registry' (line 9), '### 3. Jira Configuration' (line 15), '### 4. Code Intelligence' (line 25), '### 5. Bug Configuration' (line 30, 'Added ## Bug Configuration section with all 3 fields'), '### 6. Security Configuration' (line 37, 'Added ## Security Configuration section (user opted in to security triage)')."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

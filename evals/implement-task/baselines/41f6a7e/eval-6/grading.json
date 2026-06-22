@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md, Section '2. Locate the Digest Comment' (lines 19-24): 'Search through the returned comments for any whose body starts with the marker string `[sdlc-workflow] Description digest:`. This marker is defined in `shared/description-digest-protocol.md` and is the fixed identifier used by all producer and consumer skills in the sdlc-workflow plugin.' Also referenced in plan.md line 63: 'Located digest comment with marker `[sdlc-workflow] Description digest:`'."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md, Section '5. Compute the Current Digest' (lines 64-78): 'Write it to a temporary file and compute the digest using the project script: `python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt`'. Section '7. Compare Hex Digests' (lines 98-103) shows direct comparison: 'Stored hex digest: a1b2c3...` vs `Computed hex digest: a1b2c3...`. Also plan.md line 66: 'Computed current digest using `python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt`'."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md, Section 'Result' (lines 107-114): 'The digests match, so execution proceeds **silently** -- no user prompt, no additional latency, no warning message. The workflow continues directly to Step 2 (Verify Dependencies) without any interruption. This is the expected happy-path behavior: when the digest matches, the integrity check adds no observable delay or user interaction. The user is not informed of the check at all -- it happens transparently as part of Step 1.5.' Also plan.md line 69: '**Result:** Proceed silently -- no user prompt, no interruption'."
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md line 108-109: 'execution proceeds **silently** -- no user prompt, no additional latency, no warning message. The workflow continues directly to Step 2 (Verify Dependencies) without any interruption.' plan.md confirms the workflow continued past Step 1.5 to Step 2 (line 72: 'The task lists \"Depends on: None\". No dependency checks required. Proceeding.') and through all subsequent steps (Steps 3-11) without any interruption or user alert related to the digest check."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

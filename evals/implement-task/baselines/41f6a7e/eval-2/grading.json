@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "Line 25: '**Implementation Notes** | **MISSING** | No Implementation Notes section — no patterns, code references, or guidance on how to implement the search'. Lines 44-49 in 'Missing Sections' elaborate further. Line 78 in 'Clarification Needed' asks for Implementation Notes details."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "Line 26: '**Acceptance Criteria** | Present but vague | All three criteria are non-specific and unmeasurable'. Lines 53-56 in 'Vague Sections' specifically call out: '\"Search results are relevant\" — what ranking or matching algorithm defines relevance? Is partial matching expected?' and '\"Performance is acceptable\" — what is the performance target? (e.g., < 200ms for 10k packages?)'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "Line 27: '**Test Requirements** | Present but vague | Single item \"Test that search works correctly\" — no specific test scenarios, edge cases, error cases, or expected behaviors defined'. Lines 58-62 elaborate on what is missing from test requirements."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "Lines 64-70: 'Decision: Stop Execution' section explicitly quotes the skill rules about stopping when the description is incomplete. Line 70: '**Execution stopped.**' Lines 74-84 present a 'Clarification Needed' section with specific questions. No implementation plan, branch creation, or code changes are present in the output."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The 'Clarification Needed' section (lines 74-84) asks 4 numbered questions. Question 2 (line 78) asks 'What fields should be searchable? What matching strategy (exact, prefix, full-text)?'. Line 55 asks 'what ranking or matching algorithm defines relevance? Is partial matching expected?'. Line 56 asks 'what is the performance target? (e.g., < 200ms for 10k packages?)'. Question 3 (line 80) reinforces the performance threshold question with example measurable criteria."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

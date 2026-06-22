@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
+      "passed": true,
+      "evidence": "In version-impact.md, every row in both stream tables shows 'No (>= 1.0.135)' in the Vulnerable? column. Stream 2.1.x: 2.1.0 ships serde_json 1.0.137 (No), 2.1.1 ships 1.0.137 (No). Stream 2.2.x: 2.2.0 ships 1.0.138 (No), 2.2.1 ships 1.0.138 (No), 2.2.2 ships 1.0.138 (No), 2.2.3 ships 1.0.139 (No), 2.2.4 ships 1.0.139 (No). Summary table shows 'Affected Count: 0' across all 7 versions checked."
+    },
+    {
+      "text": "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 7 Case C)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, Decision is 'Not Affected -- all shipped versions already include the fix.' Proposed Jira Actions section 1 states: 'Transition TC-8002 from New to Closed (or the equivalent terminal status in the workflow, e.g., \"Won't Fix\" / \"Not a Bug\" / \"Closed - Not Affected\").' No remediation tasks are proposed anywhere in the document."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting the version impact evidence — listing each version and its dependency version as proof of non-impact",
+      "passed": true,
+      "evidence": "In triage-outcome.md, section '3. Add Triage Comment' includes a detailed comment with per-stream evidence: 'Stream 2.1.x (2.1.0, 2.1.1): serde_json 1.0.137' and 'Stream 2.2.x (2.2.0 through 2.2.4): serde_json 1.0.138 - 1.0.139', plus the statement 'All versions ship serde_json >= 1.0.135 (the fix version).'"
+    },
+    {
+      "text": "VEX Justification is set to 'Component not Present' or appropriate value when the VEX field is configured (Step 7 VEX Justification)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, VEX Justification is set to 'fixed_already' with explanation: 'The vulnerable component was updated to the fixed version before any affected product version was released.' Section 2 proposes setting customfield_12345 (VEX Justification) to 'fixed_already'. This is an appropriate VEX justification for this scenario where the vulnerability was already patched before any product release."
+    },
+    {
+      "text": "The analysis does NOT create any remediation tasks — no upstream backport, no downstream propagation (Step 7 Case C closes the issue)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, the only proposed Jira actions are: (1) Transition status to Closed, (2) Set VEX Justification, (3) Add triage comment, (4) Clear Affects Versions. No remediation tasks, upstream backport tasks, or downstream propagation tasks are mentioned anywhere in any of the three output files (data-extraction.md, version-impact.md, triage-outcome.md)."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

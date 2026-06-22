@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "In plan.md Step 4 'Understand the Code', the plan explicitly lists inspecting: (1) 'advisory/service/advisory.rs' via mcp__serena_backend__get_symbols_overview, (2) 'advisory/endpoints/get.rs' listed as a sibling endpoint in conventions.md, (3) 'AdvisorySummary in model/summary.rs' via mcp__serena_backend__find_symbol. Additionally, conventions.md lists 'advisory/endpoints/get.rs' and 'advisory/model/summary.rs' as analyzed sibling files. The plan also mentions inspecting 'AppError' from common/src/error.rs via the error handling convention analysis ('AppError is defined in common/src/error.rs')."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "Plan.md Step 6 lists exactly 6 files: 3 to create (model/severity_summary.rs, endpoints/severity_summary.rs, tests/api/advisory_summary.rs) and 3 to modify (model/mod.rs, service/advisory.rs, endpoints/mod.rs). Step 9 'Scope containment' explicitly runs git diff --name-only to compare against Files to Modify/Create, listing those same 6 files. The plan notes 'server/src/main.rs -- no changes needed' and flags that if tests/Cargo.toml needs updating, it would be flagged as out-of-scope for user approval. No unrelated files are modified."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "Plan.md Step 6 'Files to Create' lists: (1) 'modules/fundamental/src/advisory/model/severity_summary.rs -- SeveritySummary response struct' with details in file-1-description.md, (2) 'modules/fundamental/src/advisory/endpoints/severity_summary.rs -- GET handler' with details in file-2-description.md, (3) 'tests/api/advisory_summary.rs -- integration tests' with details in file-5-description.md."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "Plan.md Step 6 'Files to Modify' lists: (4) 'modules/fundamental/src/advisory/model/mod.rs -- register new model module' in file-3-description.md, (5) 'modules/fundamental/src/advisory/service/advisory.rs -- add severity_summary method' in file-4-description.md, (6) 'modules/fundamental/src/advisory/endpoints/mod.rs -- register new route' in file-6-description.md."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "Plan.md Step 10 shows the commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' which follows Conventional Commits format (type=feat, scope=advisory, description). The footer contains 'Implements TC-9201' referencing the Jira ticket."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "Plan.md Step 10 'Commit command' shows: git commit --trailer='Assisted-by: Claude Code' -m \"feat(advisory): add severity aggregation endpoint for SBOM advisories..."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "Plan.md Step 5 'Create Branch' shows: 'git checkout main', 'git pull', 'git checkout -b TC-9201'. The branch name is TC-9201. Step 10 shows 'git push -u origin TC-9201' and 'gh pr create --base main'. The Task Summary at the top states 'Target Branch: main' and 'Branch to Create: TC-9201'."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md 'Error handling' section states: 'All handlers return Result<T, AppError> where AppError is defined in common/src/error.rs' and 'Error wrapping uses .context(\"descriptive message\") pattern'. The 'Module structure' section states: 'Each domain module (sbom, advisory, package) follows the model/ + service/ + endpoints/ structure'. Both patterns are clearly identified from sibling code analysis."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "Plan.md Step 1 'Fetch and Parse Jira Task' explicitly lists 'Target Branch: main'. The Task Summary section states 'Target Branch: main'. Step 5 shows 'git checkout main' and Step 10 shows 'gh pr create --base main'."
+    },
+    {
+      "text": "The plan mentions checking for a description digest comment (Step 1.5) and notes that when no digest is found, it proceeds with a warning rather than blocking execution (backward compatibility per shared/description-digest-protocol.md)",
+      "passed": true,
+      "evidence": "Plan.md Step 1.5 'Verify Description Integrity' states: (1) 'Would fetch issue comments via jira.get_issue_comments(TC-9201)', (2) 'Would search for comments starting with [sdlc-workflow] Description digest:', (3) 'No digest comment found: log warning and proceed' with the exact warning message: 'No description digest found -- skipping integrity check. This task may have been created before digest tracking was introduced.' and concludes 'Proceed with implementation without blocking.'"
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}
