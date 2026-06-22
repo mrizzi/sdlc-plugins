@@ -612,6 +612,37 @@ test structure, API design patterns, logging conventions, etc. The goal is to ma
 relevant convention explicit in the task description rather than relying on the implementer
 to independently discover and apply it.
 
+### Convention enrichment verification
+
+After generating all task descriptions, perform a final verification sweep over
+every task's Implementation Notes to confirm that convention references comply
+with the prescribed format. This is a mandatory second pass — do not skip it.
+
+For each task, scan its Implementation Notes for any line that references
+CONVENTIONS.md or mentions a convention by section name. For each such reference,
+verify the following checklist:
+
+1. **Rationale starts with `Applies:`** — the line containing the file-type
+   applicability rationale must begin with the word `Applies:` followed by a
+   reference to a specific file from the task's Files to Modify or Files to
+   Create. If the rationale uses free-form prose (e.g., "This convention is
+   relevant because...", "Applicable — this task..."), rewrite it to the
+   prescribed format: `Applies: task modifies <file> matching the convention's <scope>.`
+
+2. **No excluded conventions appear** — search the entire task description for
+   any convention listed with "Not applicable", "does NOT apply", "N/A",
+   "Excluded", or similar annotations. If found, remove the convention entry
+   entirely — failing conventions must be absent, not annotated.
+
+3. **Rationale names a real file** — the file named in the `Applies:` line must
+   appear in the task's Files to Modify or Files to Create sections. If it
+   references a file not listed in those sections, either fix the rationale or
+   remove the convention.
+
+If any convention reference fails this checklist, fix it before finalizing the
+task description. Do not proceed to Step 6 with non-compliant convention
+references.
+
 ### Eval coverage propagation
 
 For each task, apply the eval coverage propagation from
