@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/api-claim-verification.md exists",
+      "passed": true,
+      "evidence": "File exists at /tmp/define-feature-eval-baseline/eval-5/outputs/api-claim-verification.md with 37 lines of content."
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')",
+      "passed": true,
+      "evidence": "Line 8: '\"PR reviews cannot be updated after initial submission\" / \"The GitHub API does not support modifying a submitted review\"' — both claim phrasings are present in the Detected Claim section."
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains a reference to the GitHub REST API endpoint PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id} or equivalent evidence that the claim is incorrect",
+      "passed": true,
+      "evidence": "Line 18: 'PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}' is explicitly referenced, and line 14 states 'Status: INCORRECT'."
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains suggested corrected language for the Requirement",
+      "passed": true,
+      "evidence": "Lines 29-37 contain a 'Recommended Correction' section with suggested corrected language: 'Update the existing PR review when re-running evals on the same PR, rather than creating a new review'."
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "Line 13 of preview.md: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "Line 17 of preview.md: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "No '## Background and Strategic Fit' heading exists in preview.md. The phrase 'Background and Strategic Fit' only appears on line 32 as plain text in the 'Sections skipped' list, not as a markdown heading."
+    },
+    {
+      "text": "outputs/jira-create.md references project key 'TC'",
+      "passed": true,
+      "evidence": "Line 9: 'projectKey=\"TC\"' and line 26 in the Parameters Breakdown table: 'Project Key | TC'."
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "Line 167: '\"text\": \"sdlc-workflow/define-feature\"' within the ADF comment content, and line 191: 'sdlc-workflow/define-feature' in the Comment Footnote section."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

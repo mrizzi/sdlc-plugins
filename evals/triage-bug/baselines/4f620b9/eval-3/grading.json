@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Investigation identifies two independent root causes: (1) convention reference formatter using wrong case transform, (2) task creation using Feature issue type ID instead of Task (Steps 2-4)",
+      "passed": true,
+      "evidence": "investigation.md Step 4 explicitly identifies 'Root Cause 1: Convention reference formatter uses wrong case transform' (line 92) in shared/convention-utils.md and 'Root Cause 2: Task creation uses Feature issue type ID instead of Task' (line 106) in plan-feature/SKILL.md Step 6a. Both are traced through Steps 2-4, with Step 2 providing code-path traces, Step 3 listing affected files, and Step 4 providing detailed root cause analysis. The Independence Assessment (lines 120-127) confirms they are independent."
+    },
+    {
+      "text": "Decomposition Guard is triggered because the two root causes are in different modules/code paths (Step 6)",
+      "passed": true,
+      "evidence": "investigation.md line 127: 'This triggers the **Decomposition Guard** (Step 6) -- the bug involves multiple independent issues in different modules that should not be silently bundled into a single Task.' The Independence Assessment (lines 120-126) explicitly states: 'Different modules: Root Cause 1 is in the shared convention formatting utilities (shared/convention-utils.md). Root Cause 2 is in the plan-feature task creation logic (plan-feature/SKILL.md Step 6a).' and 'Different code paths: The convention formatter runs during Step 5... The issue type resolution runs during Step 6a.' A separate decomposition-guard.md file was produced confirming the guard was triggered."
+    },
+    {
+      "text": "Decomposition Guard presents both issues with their affected files/modules (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md presents both issues with affected files: (1) 'Convention reference formatter uses wrong case transform (in shared/convention-utils.md)' with details about Step 5 of plan-feature and the case transform function, and (2) 'Task creation uses Feature issue type ID instead of Task (in plan-feature/SKILL.md Step 6a)' with details about issue type ID 10142 vs correct Task ID. Lines 9-11 further clarify: 'Root Cause 1 is in the shared convention formatting layer (shared/convention-utils.md)' and 'Root Cause 2 is in the plan-feature task creation logic (plan-feature/SKILL.md Step 6a)'."
+    },
+    {
+      "text": "Decomposition Guard offers the user two options: Proceed with single Task or Split into separate Bugs (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md lines 14-17 present two explicit options: '1. **Proceed** -- create a single Task covering both fixes' and '2. **Split** -- I recommend creating separate Bugs for each independent issue, then triaging each one individually'. Both options are clearly labeled."
+    },
+    {
+      "text": "The skill does NOT silently create a single Task bundling both fixes — it waits for user input (Step 6 stop rule)",
+      "passed": true,
+      "evidence": "decomposition-guard.md ends on line 18 with 'Choose (1/2):' — an explicit prompt waiting for user input. No additional output files exist beyond investigation.md and decomposition-guard.md. No task creation output, Jira API calls, or task confirmation files are present in the outputs directory, confirming the skill stopped and waited for user input rather than silently proceeding."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

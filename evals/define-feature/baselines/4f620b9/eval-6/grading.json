@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/api-claim-verification.md exists",
+      "passed": true,
+      "evidence": "File exists at /tmp/define-feature-eval-baseline/eval-6/outputs/api-claim-verification.md (1614 bytes, 34 lines)."
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')",
+      "passed": true,
+      "evidence": "Line 7: '\"PR reviews cannot be updated after initial submission so always create a new review — The GitHub API does not support modifying a submitted review\"'"
+    },
+    {
+      "text": "outputs/api-claim-verification.md indicates the claim could not be verified (e.g., 'unverified', 'unavailable', 'cannot verify', or 'web tools unavailable')",
+      "passed": true,
+      "evidence": "Line 9: 'UNVERIFIED (fallback)'; Line 13: 'Web tools (WebSearch and WebFetch) are unavailable. Unable to verify this claim against official GitHub REST API documentation.'"
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains a prompt or indication that the user was asked to decide (e.g., 'proceed as-is', 'verify manually', or 'Would you like to')",
+      "passed": true,
+      "evidence": "Lines 18-21: 'Would you like to proceed as-is, or verify it manually before continuing?'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": false,
+      "evidence": "Line 28 of preview.md contains '### Requirements' (h3), not '## Requirements' (h2). The exact heading '## Requirements' does not appear anywhere in the file."
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "Line 174 of jira-comment.md: '\"text\": \"sdlc-workflow/define-feature\"'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.83
+  }
+}

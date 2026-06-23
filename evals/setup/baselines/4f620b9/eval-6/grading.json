@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 42-63 contain the complete '## Security Configuration' section with all three subsections exactly matching the fixture: '### Product Lifecycle' (lines 44-50 with Product pages URL, Jira version prefix, Vulnerability issue type ID, Component label pattern, VEX Justification custom field all identical), '### Version Streams' table (lines 52-56 with the 2.1.x stream row), and '### Source Repositories' table (lines 58-63 with backend and frontend-ui URLs). All values match the reference fixture exactly."
+    },
+    {
+      "text": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "passed": true,
+      "evidence": "discovery-log.md Step 9 (lines 86-93) explicitly states: '## Security Configuration exists and is fully populated with no {{placeholder}} markers' and concludes with 'Result: **Security Configuration is up to date.**'"
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "passed": true,
+      "evidence": "changes-log.md Section-by-Section Status table (line 17) shows: 'Security Configuration | Up to date | No changes — Product Lifecycle, Version Streams, and Source Repositories all fully populated'. The summary (line 5) states: 'Project Configuration is up to date — no changes needed.' Line 22 states: 'None. All existing configuration entries were preserved without modification.'"
+    },
+    {
+      "text": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "passed": true,
+      "evidence": "discovery-log.md Step 9 (lines 86-93) shows the skill detected Security Configuration exists and is fully populated with no placeholder markers, resulting in 'Security Configuration is up to date.' The changes-log.md confirms 'No changes' for Security Configuration. There is no mention of any opt-in prompt being offered anywhere in the logs — the skill skipped directly to reporting 'up to date' status."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 4-8 contain the Repository Registry table with both entries exactly matching the fixture: 'backend | Rust backend service | serena_backend | /home/user/backend' and 'frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 10-16 contain the Jira Configuration section with all five fields exactly matching the fixture: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with all three fields (Bug issue type ID, Bug template, Bug-to-Task link type) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 37-40 contain: 'Bug issue type ID: 10001', 'Bug template: docs/bug-template.md', 'Bug-to-Task link type: Blocks' — all three fields match the fixture exactly. discovery-log.md Step 8 (lines 79-83) states 'All three required fields are populated' and concludes 'Result: **Bug Configuration is up to date.**' changes-log.md confirms 'Bug Configuration | Up to date | No changes — all three required fields populated'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

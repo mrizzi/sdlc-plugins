@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The report contains a Test Change Classification row with MIXED — both additive and reductive signals are present across the test file changes",
+      "passed": true,
+      "evidence": "Report summary table line: '| Test Change Classification | MIXED | Modified file has both additive signals (new test function, tightened assertions) and reductive signals (removed test function); new test file is additive |' — explicitly shows MIXED classification with both additive and reductive signals."
+    },
+    {
+      "text": "The structural summary or reductive findings identify the removed test function test_recommend_purls_with_qualifiers as a reductive signal",
+      "passed": true,
+      "evidence": "Report summary table mentions 'reductive signals (removed test function)' and the detailed paragraph states: 'The `test_recommend_purls_with_qualifiers` test was removed (qualifier-specific behavior no longer exists)'. The removed function is explicitly named and identified as part of the reductive signal."
+    },
+    {
+      "text": "The structural summary or reductive findings note the assertion change in test_recommend_purls_basic — the PURL assertion changed from checking a fully qualified PURL with qualifiers to checking a versioned PURL without qualifiers, which the semantic assessment may identify as a relaxation contributing to the MIXED classification",
+      "passed": true,
+      "evidence": "Report paragraph states: 'The `test_recommend_purls_basic` test was updated with tighter assertions.' The summary table also lists 'tightened assertions' as an additive signal. The assertion change in test_recommend_purls_basic is noted in the structural summary. The 'may identify as a relaxation' clause uses 'may' making the relaxation characterization optional — the report characterizes it as 'tighter' instead, which is a different semantic interpretation but the change itself is noted."
+    },
+    {
+      "text": "The new test file tests/api/purl_simplify.rs is recognized as additive (3 new test functions)",
+      "passed": true,
+      "evidence": "Report summary table: 'new test file is additive'. Report detailed paragraph: 'A new test file `purl_simplify.rs` adds 3 edge-case tests.' Criterion-1.md also references the three tests: 'test_simplified_purl_no_version', 'test_simplified_purl_mixed_types', 'test_simplified_purl_ordering_preserved'."
+    },
+    {
+      "text": "The new test function test_recommend_purls_dedup in the modified file is recognized as an additive signal",
+      "passed": true,
+      "evidence": "Report summary table: 'additive signals (new test function, tightened assertions)'. Report detailed paragraph: 'replaced by `test_recommend_purls_dedup`'. Criterion-3.md line 13: 'The `test_recommend_purls_dedup` test in `tests/api/purl_recommend.rs` directly tests this scenario'. The new test function is recognized as additive."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All output files are report/analysis documents: report.md, criterion-1.md through criterion-5.md. None of these are code files. The report content describes reading and analyzing code but contains no evidence of code modification commands or file edits."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "The report concludes with 'Overall: PASS' and presents detailed findings including scope analysis, acceptance criteria assessment, and test change classification. There is no merge command, auto-merge action, or merge indication anywhere in the outputs. The report is structured as a verification comment for human review."
+    },
+    {
+      "text": "The test change classification verdict appears in the verification report summary table and is accompanied by a detailed analysis section explaining the structural and semantic assessment",
+      "passed": true,
+      "evidence": "Summary table contains: '| Test Change Classification | MIXED | Modified file has both additive signals (new test function, tightened assertions) and reductive signals (removed test function); new test file is additive |'. The report's Key observations section includes a '**Test Changes:**' paragraph explaining: removed test function name, why it was removed, what replaced it, assertion updates, new test file with 3 edge-case tests, and overall coverage assessment. This constitutes a detailed analysis of structural changes."
+    },
+    {
+      "text": "The test change classification analysis is based on comparing base-branch and PR-branch file content (function additions, removals, assertion changes) — the structural and semantic assessment references test file content, not acceptance criteria or task requirements (constraint 1.18)",
+      "passed": true,
+      "evidence": "The test change classification in the summary table references structural code observations: 'new test function', 'tightened assertions', 'removed test function', 'new test file'. The detailed paragraph references specific test file content: function names (test_recommend_purls_with_qualifiers removed, test_recommend_purls_dedup added), file names (purl_simplify.rs), and test behavior (3 edge-case tests). These are all references to test file content and code structure, not to acceptance criteria or task requirements."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — no reviews match the eval result detection criteria, so Eval Quality does not affect the Test Quality combination",
+      "passed": true,
+      "evidence": "Report summary table: '| Test Quality | PASS | All test functions have doc comments; no repetitive test patterns detected; Eval Quality: N/A |'. Eval Quality is explicitly marked N/A. The Review Feedback row also shows 'N/A | No review comments exist on this PR', confirming no reviews exist that could contain eval results."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

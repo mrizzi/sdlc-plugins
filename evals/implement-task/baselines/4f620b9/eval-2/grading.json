@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "In the Step 1 parsing table, 'Implementation Notes' is listed as '**Missing** | Not provided'. In the gaps section, item '**2. Implementation Notes (missing entirely)**' explicitly flags this with four specific sub-questions about which patterns to follow, search strategy (PostgreSQL full-text vs LIKE vs SearchService), query builder helpers, and purl matching."
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "In the gaps section, item '**5. Acceptance Criteria (unmeasurable)**' specifically calls out: '\"Search results are relevant\" — what defines relevance? Exact name match ranks higher? purl match?' and '\"Performance is acceptable\" — what is acceptable? Under 200ms? Under 1s? Is there a dataset size expectation?' Both phrases are explicitly quoted and challenged."
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "In the gaps section, item '**6. Test Requirements (insufficient)**' states: '\"Test that search works correctly\" — what specific scenarios should be tested?' and then lists six example missing scenarios (exact match, partial name, no results, pagination, special characters, performance testing). The Step 1 table also marks Test Requirements as '**Incomplete** | Single vague requirement with no specific test scenarios'."
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response explicitly states 'I have stopped execution and will not proceed with branching, implementation planning, or code changes until the user provides the missing information.' under the 'Gaps Identified — STOP EXECUTION' heading. The subsequent steps (Steps 1.5 through 11) are presented as 'What I Would Do After Receiving Clarification' — conditional future steps, not an actual implementation plan being executed. No code is written, no branch is created, no PR is opened."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks specific clarifying questions across multiple gap sections: (1) Which fields to search — gap item 3 asks 'search by what fields? Package name? Package URL? License? Version? All of these?' and 'What matching semantics? Exact match, prefix match, substring, full-text?'; (2) What relevance ranking means — gap item 5 asks '\"Search results are relevant\" — what defines relevance? Exact name match ranks higher? purl match?'; (3) What performance threshold is required — gap item 5 asks '\"Performance is acceptable\" — what is acceptable? Under 200ms? Under 1s? Is there a dataset size expectation?'. Additionally there are clarifying questions about API design (gap 1), implementation approach (gap 2), file scope (gap 4), test scenarios (gap 6), and dependencies (gap 7) — well over 3 specific questions."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

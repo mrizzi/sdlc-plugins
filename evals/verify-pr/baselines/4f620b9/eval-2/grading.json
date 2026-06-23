@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "report.md Acceptance Criteria row shows 'FAIL | 2 of 6 criteria met; 4 criteria failed'. The Acceptance Criteria Details table marks criteria 1, 3, 4, and 5 as FAIL with specific explanations: inverted filtering logic, silent acceptance of invalid thresholds via unwrap_or(0), broken severity ordering application, and missing threshold_applied boolean field."
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "report.md criterion 3 row: 'FAIL | `.unwrap_or(0)` silently treats invalid threshold values as \"critical\" (index 0) instead of returning a 400 error via `AppError`.' Also criterion-3.md states: 'instead of detecting this invalid input and returning a 400 error, the code uses `.unwrap_or(0)` to silently default to index 0 (which corresponds to \"critical\")'"
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "report.md criterion 5 row: 'FAIL | The `AdvisorySummary` struct contains only critical, high, medium, low, and total fields. No `threshold_applied` boolean field exists in the response.' criterion-5.md confirms: 'There is no `threshold_applied` boolean field in either the filtered or unfiltered response path.'"
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md Scope Containment row: 'FAIL | Required file `tests/api/advisory_summary.rs` is missing from the PR; task specified it under Files to Create'. The Scope Containment Details section lists 'Task-required files missing from PR: tests/api/advisory_summary.rs (should have been created per Files to Create)'. Additional Issues #3: 'The task explicitly required creating `tests/api/advisory_summary.rs` with integration tests covering threshold filtering, invalid values, and 404 behavior. No test file was created.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report files: report.md, criterion-1.md through criterion-6.md. These are all verification/analysis documents. No code files were created or modified. The report itself is a verification document, not a code change."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'Overall: FAIL' and 'This PR has significant correctness issues. Four of six acceptance criteria are not satisfied, and the required test file is entirely missing.' There is no mention of merging, auto-merging, or any merge action. The report presents findings for human review."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md line 17: '### Overall: FAIL'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
+      "passed": true,
+      "evidence": "report.md table row: '| Test Change Classification | N/A | No test files in PR diff |'"
+    },
+    {
+      "text": "The report includes detailed findings for each failing check with specific evidence from the diff — Scope Containment identifies the missing test file by comparing PR files against the task specification, Acceptance Criteria provides per-criterion analysis explaining each gap",
+      "passed": true,
+      "evidence": "Scope Containment Details section lists PR files (get.rs, advisory.rs) and identifies 'Task-required files missing from PR: tests/api/advisory_summary.rs (should have been created per Files to Create)'. Acceptance Criteria Details table provides per-criterion analysis: criterion 1 explains inverted comparison logic with code evidence ('threshold_idx <= 1' vs correct 'N <= threshold_idx'), criterion 3 explains unwrap_or(0) silently treating invalid input as critical, criterion 4 explains ordering defined correctly but applied incorrectly, criterion 5 explains missing threshold_applied field listing the five fields that do exist."
+    },
+    {
+      "text": "Acceptance criteria verification produces per-criterion PASS/FAIL analysis with code-level evidence — each criterion-N.md output file contains detailed reasoning about what was checked and what gap was found",
+      "passed": true,
+      "evidence": "Six criterion files exist (criterion-1.md through criterion-6.md). Each contains a verdict (PASS or FAIL), code analysis with specific code snippets from the diff, and detailed reasoning. criterion-1.md: FAIL with inverted comparison analysis showing specific index evaluations. criterion-2.md: PASS with code showing None => summary passthrough. criterion-3.md: FAIL with unwrap_or(0) analysis. criterion-4.md: FAIL with ordering application analysis. criterion-5.md: FAIL listing the five struct fields and noting threshold_applied is absent. criterion-6.md: PASS with evidence that SBOM fetch code is untouched."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — no reviews match the eval result detection criteria, so Eval Quality does not affect the Test Quality combination",
+      "passed": true,
+      "evidence": "report.md Test Quality row: '| Test Quality | N/A | No test files in PR diff; Eval Quality: N/A |'. The Eval Quality is explicitly marked as N/A within the Test Quality row."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

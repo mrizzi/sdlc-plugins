@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
+      "passed": true,
+      "evidence": "In version-impact.md, the Version Impact Table lists 7 product versions across two streams (2.1.x: 2.1.0, 2.1.1; 2.2.x: 2.2.0-2.2.4). Every row shows Affected? = 'NO' with serde_json versions ranging from 1.0.137 to 1.0.139, all above the fix threshold of 1.0.135. The summary table confirms: '2.1.x | 2 | 0 | All versions ship patched serde_json' and '2.2.x | 5 (including 1 retag) | 0 | All versions ship patched serde_json'. Conclusion states: 'No supported product version ships a vulnerable version of serde_json.'"
+    },
+    {
+      "text": "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 7 Case C)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, the heading reads '## Decision: Case C -- Close as Not a Bug (Not Affected)'. The Proposed Jira Actions section includes '### 2. Transition TC-8002 to Closed' with '- **Resolution**: Not a Bug'. The document explicitly states 'No remediation tasks are needed.' and under 'Actions NOT Taken': 'No remediation tasks created -- zero affected versions means no fix work is needed.'"
+    },
+    {
+      "text": "The close recommendation includes a comment documenting the version impact evidence — listing each version and its dependency version as proof of non-impact",
+      "passed": true,
+      "evidence": "In triage-outcome.md, the proposed comment (section '### 1. Add triage comment to TC-8002') contains a version impact table with columns Stream, Versions, serde_json Range, and Affected?. It lists '2.1.x | 2.1.0, 2.1.1 | 1.0.137 | NO' and '2.2.x | 2.2.0 -- 2.2.4 | 1.0.138 -- 1.0.139 | NO', followed by the explanation: 'All supported versions ship serde_json >= 1.0.137, which is above the affected range (versions before 1.0.135).'"
+    },
+    {
+      "text": "VEX Justification is set to 'Component not Present' or appropriate value when the VEX field is configured (Step 7 VEX Justification)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, the '## VEX Justification' section states: 'The VEX Justification custom field (`customfield_12345`) is configured in the project's Security Configuration.' and '**Recommended VEX value**: `Component not Present`'. The proposed Jira action '### 3. Set VEX Justification' confirms: '- **Field**: `customfield_12345` / - **Value**: `Component not Present`'."
+    },
+    {
+      "text": "The analysis does NOT create any remediation tasks — no upstream backport, no downstream propagation (Step 7 Case C closes the issue)",
+      "passed": true,
+      "evidence": "In triage-outcome.md, under '## Actions NOT Taken': 'No remediation tasks created -- zero affected versions means no fix work is needed.' and 'No cross-stream impact comment -- no stream is affected, so there is no cross-stream impact to report.' The decision section also states: 'No remediation tasks are needed. There are zero affected versions, so no upstream backport or downstream propagation work is required.' No other output file contains any reference to task creation."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

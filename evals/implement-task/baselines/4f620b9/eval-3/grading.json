@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "Plan line 27: 'use apply_filter from common/src/db/query.rs'. Plan lines 155-158 describe importing apply_filter from common/src/db/query.rs to 'handle comma-separated values and generate the SQL IN clause'. Plan line 167: 'common/src/db/query.rs::apply_filter -- called directly with the license parameter value and the package_license column'. Reuse analysis lines 9-29 detail apply_filter handling comma-separated multi-value parsing, stating 'No modifications to apply_filter itself are needed -- it is reused as-is'."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "Plan line 63-65: advisory list.rs inspected as 'reuse candidate -- sibling pattern'. Plan line 130: 'Follow the exact same pattern used for the severity field in the advisory list endpoint's Query struct'. Plan line 141: 'Follow the advisory list.rs Query struct pattern exactly.' Reuse analysis lines 33-64 describe the advisory endpoint as 'the structural template for the changes to modules/fundamental/src/package/endpoints/list.rs', with detailed code examples showing the Query struct pattern to replicate."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "Plan line 27: 'join through entity/src/package_license.rs'. Plan lines 156-157: 'Import the package_license entity from entity/src/package_license.rs'. Plan lines 162-164: 'Use SeaORM's .join() method to join package to package_license on the package ID foreign key'. Reuse analysis lines 68-88 cover this candidate, stating 'use for the JOIN query rather than writing raw SQL' and showing SeaORM join code. Reuse analysis line 84: 'Avoids writing raw SQL for the JOIN, ensures type-safe column references'."
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "Reuse analysis covers three numbered candidates: (1) common/src/db/query.rs::apply_filter (lines 9-29, explains direct invocation with comma-separated parsing), (2) modules/fundamental/src/advisory/endpoints/list.rs severity filter pattern (lines 33-64, explains Query struct pattern replication with code examples), (3) entity/src/package_license.rs (lines 68-88, explains SeaORM JOIN construction with code example). Summary table at lines 118-124 confirms all three. Line 127 explicitly states: 'All three explicitly listed Reuse Candidates from the task description are incorporated into the implementation plan.'"
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "The plan's parsed task identifies Files to Modify: modules/fundamental/src/package/endpoints/list.rs, modules/fundamental/src/package/service/mod.rs; Files to Create: tests/api/package_license_filter.rs. The plan's implementation steps (Step 6) modify exactly those two files and create the one test file. The self-verification section (lines 235-238) confirms 'git diff --name-only should show only' those 3 files and states 'Any additional files would be flagged for user approval'. The git add command (lines 273-275) stages exactly those 3 files. A conditional mention of docs/api.md (line 214) is framed as 'If docs/api.md documents...' and is not included in the committed scope."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "Plan lines 258-260 in the self-verification section explicitly state: 'No new utility functions created; reusing existing apply_filter. No risk of duplication.' The implementation steps (File 2, lines 153-168) call apply_filter directly rather than creating new parsing logic. Reuse analysis line 25: 'No modifications to apply_filter itself are needed -- it is reused as-is'. Line 29: 'Eliminates the need to write custom comma-separated parsing logic, SQL IN clause construction, or input sanitization.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

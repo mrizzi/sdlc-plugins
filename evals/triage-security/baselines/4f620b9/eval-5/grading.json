@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction identifies the ecosystem as RPM based on the library name (openssl-libs) and component context, not Cargo (Step 1 Ecosystem detection — read ecosystems from Ecosystem Mappings config)",
+      "passed": true,
+      "evidence": "In data-extraction.md, the Ecosystem Detection section states: 'Library: openssl-libs (system RPM package)' and 'Ecosystem: **RPM** (per Ecosystem Mappings in the 2.2.x stream's security-matrix.md)' with 'Lock file: `rpms.lock.yaml`'. The ecosystem is correctly identified as RPM based on the library name openssl-libs, not Cargo."
+    },
+    {
+      "text": "Version impact table includes ALL versions from the 2.2.x stream supportability matrix (2.2.0 through 2.2.4) and uses rpms.lock.yaml data for version extraction (Step 2.3)",
+      "passed": true,
+      "evidence": "In version-impact.md, the version impact table includes all five versions: 2.2.0, 2.2.1, 2.2.2, 2.2.3, and 2.2.4 with their respective openssl-libs versions and affected status. The source is explicitly stated as 'rpms.lock.yaml data extracted via `git show <tag>:rpms.lock.yaml | grep 'openssl-libs'` for each pinned tag in the 2.2.x stream supportability matrix.'"
+    },
+    {
+      "text": "Dependency chain context classifies the package origin as explicit install because openssl-libs is present in rpms.lock.yaml, not inherited from the base image (Step 2.3.5)",
+      "passed": true,
+      "evidence": "In version-impact.md, the Dependency Chain section states: 'Origin: **explicit install** (openssl-libs is listed in rpms.lock.yaml)' and 'Since openssl-libs is an explicit install in rpms.lock.yaml, remediation requires updating the package spec in the Konflux release repo to pin the fixed version (3.0.7-28.el9_4 or later). No base image update is needed.'"
+    },
+    {
+      "text": "Remediation creates a single task for the Konflux release repo — not the two-task upstream backport + downstream propagation flow used for source dependency ecosystems (Step 7 Remediation Task Creation — system package path)",
+      "passed": true,
+      "evidence": "In remediation.md, the output explicitly states: 'Since the ecosystem is RPM and the package is an explicit install (present in rpms.lock.yaml), a **single** remediation task is created for the Konflux release repo. No upstream backport task is needed.' Only one jira.create_issue call is proposed (Section 1: 'Create remediation task') with the summary 'Remediate CVE-2026-40215: update openssl-libs to 3.0.7-28.el9_4 (2.2.x)'. No second downstream propagation task is created."
+    },
+    {
+      "text": "Remediation task description follows task-description-template.md format with Repository, Target Branch, Description, Implementation Notes, and Acceptance Criteria sections — Files to Modify is intentionally omitted per remediation-templates.md (Step 7 Remediation Task Creation)",
+      "passed": true,
+      "evidence": "In remediation.md, the task description contains: '## Repository' (rhtpa-release.0.4.z), '## Target Branch' (main), '## Description' (CVE remediation details), '## Implementation Notes' (update steps), '## Acceptance Criteria' (two checkboxes), '## Test Requirements', and '## Dependencies'. There is no '## Files to Modify' or '## Files to Create' section, consistent with remediation-templates.md which states: 'Files to Modify and Files to Create are intentionally omitted. These depend on repository structure that the triage skill does not have context for — implement-task discovers them via code analysis.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

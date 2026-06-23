@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md 'Flagged Ambiguities' section explicitly identifies 6 ambiguities: (1) 'Search should be faster' — no performance baseline or target metrics, (2) 'Results should be more relevant' — no definition of relevance, (3) 'Add filters' — no specification of which filters, (4) 'Better UI' — excluded from scope, (5) 'Should be fast enough' — vague NFR with no threshold, (6) 'Don't break existing functionality' — standard constraint needing clarification. This exceeds the required 3."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "impact-map.md ambiguity #4 states: '\"Better UI\" — Excluded from scope. The target repository is a backend service (trustify-backend). No frontend repository is in the Repository Registry. UI improvements cannot be planned without a frontend repo and design mockups.' The 'Excluded from Scope' section also lists: '\"Better UI\" requirement — no frontend repository available, no design mockups provided'."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 5 tasks follow the template format with the required and optional sections: Repository, Target Branch, Description, Files to Modify (and Files to Create where applicable), Implementation Notes, Acceptance Criteria, Test Requirements, and optional sections like API Changes (task-3), Reuse Candidates (tasks 1-4), Verification Commands (tasks 1-4), Documentation Updates (task-3), and Dependencies. This matches the task-description-template.md structure."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Task 1 contains: 'Ambiguity note: The feature TC-9002 does not specify which fields should be searchable or what \"faster\" means quantitatively. This task assumes that full-text search indexing on name/description fields... Validate with the product owner which fields should be indexed.' Task 2 contains: 'Ambiguity note: The feature does not define what \"relevant\" means. This task assumes relevance is determined by PostgreSQL's built-in ts_rank scoring...' Task 3 contains: 'Ambiguity note: The feature does not specify which filters to add or how they should behave. This task assumes the following filter parameters... These assumptions should be validated with the product owner.' The impact-map.md also labels each ambiguity with an explicit 'Assumption:' statement."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 5 tasks contain '## Repository' followed by 'trustify-backend' as a single repository name: task-1 line 1-2, task-2 line 1-2, task-3 line 1-2, task-4 line 1-2, task-5 line 1-2."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 5 tasks contain all four required sections: Task 1 has '## Target Branch' (line 4), '## Description' (line 7), '## Acceptance Criteria' (line 31), '## Test Requirements' (line 37). Task 2 has these at lines 4, 7, 35, 42. Task 3 has these at lines 4, 7, 43, 53. Task 4 has these at lines 4, 7, 33, 41. Task 5 has these at lines 4, 7, 27, 33."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Files to Modify paths all exist in repo-backend.md: migration/src/lib.rs (line 17), modules/search/src/service/mod.rs (line 91), modules/search/src/endpoints/mod.rs (line 93), tests/api/search.rs (line 113), README.md (line 5). The one Files to Create path is migration/src/m0002_fulltext_search_indexes/mod.rs — a new migration module following the established pattern of migration/src/m0001_initial/mod.rs (line 19), which is appropriate for a new file."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references 'migration/src/m0001_initial/mod.rs' for migration pattern. Task 2 references 'modules/search/src/service/mod.rs', 'common/src/model/paginated.rs' for PaginatedResults<T>, 'common/src/error.rs' for AppError. Task 3 references 'common/src/db/query.rs' for query builder helpers, 'modules/fundamental/src/advisory/model/summary.rs' for AdvisorySummary severity field. Task 4 references 'tests/api/search.rs', 'tests/api/sbom.rs', 'tests/api/advisory.rs' for test patterns, and the 'assert_eq!(resp.status(), StatusCode::OK)' pattern. Task 5 references the 'GET /api/v2/search' endpoint and specific query parameter names. All tasks include concrete file paths and code-level details."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 5 tasks have '## Target Branch' followed by 'main': task-1 line 4-5, task-2 line 4-5, task-3 line 4-5, task-4 line 4-5, task-5 line 4-5."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": true,
+      "evidence": "All 5 tasks contain digest comments in the correct format: Task 1: '[sdlc-workflow] Description digest: sha256-md:feed1cb8f2536e663f53a345c3ac4a8363e74ddc21e7008088f529c3efe00432' (64 hex chars). Task 2: 'sha256-md:3e1d59985b81b25da6d53b37f697d3dfc84ceadeaf03cb6568fe7d96e1a1804b' (64 hex chars). Task 3: 'sha256-md:a9292d4488a500d1c70fdabcfa2c126c6822817342e1fa3b30092968a0ce9fce' (64 hex chars). Task 4: 'sha256-md:21c196f1e89e2eb2c4f6418528f472f9c305c97969f05e1d426cf667bee4795a' (64 hex chars). Task 5: 'sha256-md:c4a72e4b44fec2cc238db3591ec00bef98d1909c830d4a34aa3e7e971b7adb93' (64 hex chars). All use the sha256-md: prefix, all are exactly 64 lowercase hex characters, all use the '[sdlc-workflow] Description digest:' marker format."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": false,
+      "evidence": "No task contains any 'Per CONVENTIONS.md §...' references or 'Applies:' rationales in the prescribed format. All convention references in Implementation Notes point to 'docs/constraints.md' sections (§2, §3, §5, §5.11, §5.12) but none reference CONVENTIONS.md with the required applicability rationale format 'Applies: task modifies <file> matching the convention's <scope>'. The convention-applicability-rules.md requires that applicable conventions include rationale in the format 'Applies: task modifies <matching file(s)> matching the convention's <scope signal>.' This format is absent from all 5 tasks."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 1,
+    "total": 11,
+    "pass_rate": 0.91
+  }
+}

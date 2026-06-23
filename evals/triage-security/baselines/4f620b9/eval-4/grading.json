@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows mixed results: 2.1.x versions marked YES (affected) and 2.2.x versions marked NO (not affected) based on lock file evidence",
+      "passed": true,
+      "evidence": "version-impact.md contains a table with 2.1.0 and 2.1.1 marked 'YES' (h2 0.4.5 < 0.4.8) and all 2.2.x versions (2.2.0 through 2.2.4) marked 'NO' (h2 >= 0.4.8). The Stream Impact Summary also states '2.1.x | YES | All versions (2.1.0, 2.1.1) ship h2 0.4.5, which is vulnerable' and '2.2.x | NO | All versions ship h2 >= 0.4.8, which includes the fix'. Lock file evidence is cited via h2 version numbers extracted from Cargo.lock."
+    },
+    {
+      "text": "Affects Versions correction includes only the actually affected versions (2.1.x versions), not the unaffected 2.2.x versions (Step 3.2)",
+      "passed": true,
+      "evidence": "affects-versions.md 'Corrected Affects Versions' section lists only 'RHTPA 2.1.0' and 'RHTPA 2.1.1'. It explicitly proposes to 'Remove: RHTPA 2.2.0 (ships h2 0.4.8, which is the fixed version -- not affected)' and 'Add: RHTPA 2.1.1 (ships h2 0.4.5, which is within the affected range -- missing from PSIRT assignment)'. No 2.2.x versions appear in the corrected list."
+    },
+    {
+      "text": "Remediation tasks are created only for the affected stream (2.1.x), not for 2.2.x which already ships the patched version (Step 7 Case A scoping)",
+      "passed": true,
+      "evidence": "remediation.md creates exactly two tasks, both scoped to 2.1.x: Task 1 'Remediate CVE-2026-33501: bump h2 to 0.4.8 (2.1.x)' targeting release/0.3.z, and Task 2 'Propagate CVE-2026-33501 fix: update backend ref in rhtpa-release.0.3.z (2.1.x)'. The file explicitly states under 'Why No 2.2.x Remediation': 'No remediation tasks are created for the 2.2.x stream because all 2.2.x versions (2.2.0 through 2.2.4) already ship h2 >= 0.4.8, which is at or above the fixed version.'"
+    },
+    {
+      "text": "The analysis treats the issue as unscoped (no stream suffix) and checks ALL versions across all streams (Step 1 Stream scope resolution, unscoped path)",
+      "passed": true,
+      "evidence": "data-extraction.md states under 'Stream Scope Resolution': 'The issue summary \"CVE-2026-33501 h2 - Memory exhaustion via CONTINUATION frames\" has no stream suffix in brackets. This issue is therefore unscoped and covers all configured version streams: 2.1.x (Konflux release repo: rhtpa-release.0.3.z), 2.2.x (Konflux release repo: rhtpa-release.0.4.z). All streams must be analyzed in Step 2.' The version-impact.md table then covers all versions from both streams (2.1.0, 2.1.1, 2.2.0, 2.2.1, 2.2.2, 2.2.3, 2.2.4)."
+    },
+    {
+      "text": "Cross-stream impact notice is NOT generated because the issue is unscoped — it covers all streams by definition (Step 7 Case B applies only to scoped issues)",
+      "passed": true,
+      "evidence": "remediation.md contains a dedicated section 'Why No Cross-Stream Impact Notice' stating: 'A cross-stream impact notice (Case B) is NOT generated because the issue is unscoped -- it has no stream suffix and already covers all streams. Cross-stream notices are only relevant for stream-scoped issues where the analysis reveals impact outside the issue's declared scope. Since TC-8004 is unscoped, there is no \"outside scope\" to report on.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
