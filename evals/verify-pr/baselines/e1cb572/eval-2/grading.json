@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "report.md Acceptance Criteria Breakdown table shows 3 FAILs: Criterion 1 (threshold=high filtering logic is inverted), Criterion 3 (invalid threshold silently accepted via unwrap_or(0)), and Criterion 5 (threshold_applied boolean field missing). The report states '3 of 6 acceptance criteria are not satisfied.'"
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "report.md Criterion 3 states: 'Invalid threshold values are silently accepted via `unwrap_or(0)`, treating unrecognized values as equivalent to `threshold=critical`. The task explicitly requires returning 400 using `AppError`, but no validation or error response is implemented.' criterion-3.md elaborates: 'unwrap_or(0) converts None to 0' and 'threshold_idx = 0 means the code treats the invalid input as equivalent to threshold=critical'."
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "report.md Criterion 5 states: 'The `AdvisorySummary` struct was not modified to include a `threshold_applied` field. The model file `summary.rs` does not appear in the diff. No boolean field is set in either the filtered or unfiltered response paths.' criterion-5.md further details: 'There is no `threshold_applied` field anywhere in the response construction.'"
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md Additional Issues section states: '**Missing test file:** The task specifies creating `tests/api/advisory_summary.rs` with 6 integration tests. This file is entirely absent from the PR diff. None of the Test Requirements are addressed.' Also, Test Change Classification row is 'N/A | No test files exist in the PR diff'."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All output files are verification/reporting artifacts: report.md (verification report) and criterion-1.md through criterion-6.md (per-criterion analysis). The outputs contain only analysis text referencing code via quoted snippets from the diff. There are no output files that are source code files, no indication of edits, writes, or modifications to code files anywhere in the outputs."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'Overall: FAIL' and states '3 of 6 acceptance criteria are not satisfied. The PR has significant gaps that must be addressed before it can be merged.' There is no merge action, no approval, no auto-merge. The report presents findings for human review."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md line 17 states '### Overall: FAIL'. The report also states '3 of 6 acceptance criteria are not satisfied.'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
+      "passed": true,
+      "evidence": "report.md table row: '| Test Change Classification | N/A | No test files exist in the PR diff |'"
+    },
+    {
+      "text": "The report includes detailed findings for each failing check with specific evidence from the diff — Scope Containment identifies the missing test file by comparing PR files against the task specification, Acceptance Criteria provides per-criterion analysis explaining each gap",
+      "passed": false,
+      "evidence": "The Acceptance Criteria check provides detailed per-criterion analysis with code-level evidence (both in report.md and criterion-*.md files). However, Scope Containment is marked PASS with details: 'Changes are limited to the two files specified in the task: modules/fundamental/src/advisory/endpoints/get.rs and modules/fundamental/src/advisory/service/advisory.rs'. It does NOT identify the missing test file tests/api/advisory_summary.rs as a scope gap. The missing test file is mentioned only in the 'Additional Issues' section, not in the Scope Containment check. The assertion requires Scope Containment specifically to identify the missing test file by comparing PR files against the task specification, which it does not do."
+    },
+    {
+      "text": "Acceptance criteria verification produces per-criterion PASS/FAIL analysis with code-level evidence — each criterion-N.md output file contains detailed reasoning about what was checked and what gap was found",
+      "passed": true,
+      "evidence": "Six criterion files exist (criterion-1.md through criterion-6.md). Each contains a verdict (PASS or FAIL), an 'Evidence from the Diff' section with quoted code snippets, detailed logic analysis, and a Conclusion. For example: criterion-1.md traces the logic for threshold=high step by step showing the inverted comparison; criterion-3.md explains the unwrap_or(0) behavior for invalid inputs; criterion-5.md explains the missing threshold_applied field. PASSing criteria (2, 4, 6) also provide code-level evidence for why they pass."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — no reviews match the eval result detection criteria, so Eval Quality does not affect the Test Quality combination",
+      "passed": true,
+      "evidence": "report.md Test Quality row states: 'N/A | Eval Quality: N/A'. This indicates Eval Quality is N/A, and Test Quality overall is N/A (not affected by Eval Quality). The Review Feedback row also shows 'N/A | No review comments on this PR', confirming no reviews exist."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 1,
+    "total": 11,
+    "pass_rate": 0.91
+  }
+}

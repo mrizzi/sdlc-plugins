@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 35 shows 'Steps to Reproduce | ... | **No -- MISSING**' in the required sections table. Lines 55-56 explicitly state: '**Steps to Reproduce** (`### **Steps to Reproduce**`) -- The bug description provides no steps to reproduce the issue.'"
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 36 shows 'Expected Result | ... | **No -- MISSING**' in the required sections table. Lines 57-58 explicitly state: '**Expected Result** (`### **Expected Result**`) -- The bug description does not state the expected behavior.'"
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "validation-result.md line 65 states '**Execution stopped.**' and line 69 states 'No further steps (Steps 2-7) were attempted.' The document contains only Step 0 and Step 1 sections — no Step 2 through Step 5 sections exist in the output."
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "validation-result.md lines 67-68 contain the error message: 'Bug ACME-501 is missing required sections: Steps to Reproduce, Expected Result. The bug description does not follow the template at docs/templates/bug-template.md.' This lists both specific missing sections by name and references the Bug template path 'docs/templates/bug-template.md' which matches the Bug Configuration shown on line 13."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

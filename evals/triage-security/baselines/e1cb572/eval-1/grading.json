@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction correctly identifies CVE-2026-31812, library quinn-proto, affected range < 0.11.14, and fixed version 0.11.14 from the Vulnerability issue (Step 1)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 7-13: CVE ID = CVE-2026-31812, Vulnerable library = quinn-proto, Affected version range = 'versions before 0.11.14', Fixed version = 0.11.14. All four fields are correctly extracted from the mock Vulnerability issue."
+    },
+    {
+      "text": "Data extraction identifies the ecosystem as Cargo based on the library name and component context (Step 1 Ecosystem detection)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 29-35: 'Ecosystem Detection' section states 'The vulnerable library quinn-proto is a Rust crate. Based on the Ecosystem Mappings in the security matrix, this falls under the Cargo ecosystem' with Lock file: Cargo.lock and Check command: git show <tag>:Cargo.lock."
+    },
+    {
+      "text": "Version impact table includes ALL versions from the security-matrix.md supportability matrix — no versions are skipped (Important Rule 4)",
+      "passed": true,
+      "evidence": "version-impact.md lines 8-14 lists all 7 versions from the security-matrix-mock.md: 2.1.0 (v0.3.8), 2.1.1 (v0.3.12) from stream 2.1.x, and 2.2.0 (v0.4.5), 2.2.1 (v0.4.8), 2.2.2 (v0.4.9), 2.2.3 (v0.4.11), 2.2.4 (v0.4.12) from stream 2.2.x. The security-matrix-mock.md defines exactly these 7 versions across both streams. No versions are skipped."
+    },
+    {
+      "text": "Version impact analysis uses pinned commit tags from the supportability matrix for each version, not branch HEAD (Important Rule 13)",
+      "passed": true,
+      "evidence": "version-impact.md 'Build Tag' column uses the exact pinned tags from the supportability matrix: v0.3.8, v0.3.12, v0.4.5, v0.4.8, v0.4.9, v0.4.11, v0.4.12. These match the backend column values from security-matrix-mock.md. The analysis does not reference branch HEAD anywhere — each version's dependency is checked at its specific pinned tag."
+    },
+    {
+      "text": "Version impact table identifies retag versions and carries forward the affected status from the original version (Important Rule 5)",
+      "passed": true,
+      "evidence": "version-impact.md line 12: Version 2.2.2 with Build Tag v0.4.9 shows quinn-proto as '--' (no independent lookup) with Notes 'retag of 2.2.1 (same as v0.4.8)' and Affected? = YES. This correctly carries forward the affected status from the original version 2.2.1 (which ships quinn-proto 0.11.12, within the vulnerable range). The security-matrix-mock.md confirms 2.2.2 backend tag is v0.4.8 with note 'backend retag of 2.2.1'."
+    },
+    {
+      "text": "Affects Versions correction proposes replacing PSIRT-assigned versions with lock-file-verified versions, showing the diff (Step 3.2)",
+      "passed": true,
+      "evidence": "affects-versions.md lines 26-28 shows explicit diff: 'Current:  [RHTPA 2.0.0]' -> 'Proposed: [RHTPA 2.2.0, RHTPA 2.2.1, RHTPA 2.2.2]'. Lines 30-36 provide rationale for each change: RHTPA 2.0.0 removed (no 2.0.x stream exists), RHTPA 2.2.0/2.2.1/2.2.2 added based on lock file analysis at specific build tags, RHTPA 2.2.3/2.2.4 excluded because they ship the fixed version."
+    },
+    {
+      "text": "Affects Versions correction references version names from the supportability matrix rather than hardcoded Jira version IDs (Important Rule 6)",
+      "passed": true,
+      "evidence": "affects-versions.md lines 44-52: Proposed Jira Mutation uses version names {'name': 'RHTPA 2.2.0'}, {'name': 'RHTPA 2.2.1'}, {'name': 'RHTPA 2.2.2'} — not numeric Jira version IDs. Line 54 explicitly states: 'Actual version IDs would be discovered dynamically via getJiraIssueTypeMetaWithFields (Step 3.1). The names above are illustrative.'"
+    },
+    {
+      "text": "Remediation tasks include Repository, Target Branch, acceptance criteria, and dependency linkage between upstream and downstream tasks (Important Rule 9)",
+      "passed": true,
+      "evidence": "remediation.md Task 1 (lines 24-68): Repository = 'backend' (line 25), Target Branch = 'release/0.4.z' (line 29), Acceptance Criteria section (lines 55-59) with checkboxes. Task 2 (lines 71-115): Repository = 'rhtpa-release.0.4.z' (line 80), Target Branch = 'main' (line 84), Acceptance Criteria (lines 105-107). Dependency linkage at lines 119-141: Blocks link between upstream and downstream tasks via jira.create_link with type 'Blocks'."
+    },
+    {
+      "text": "For Cargo ecosystem, remediation creates two tasks: upstream backport task and downstream propagation subtask with Blocks dependency (Important Rule 8)",
+      "passed": true,
+      "evidence": "remediation.md creates Task 1 'Upstream Backport (2.2.x)' (line 15) targeting backend repo on release/0.4.z, and Task 2 'Downstream Propagation (2.2.x)' (line 71) targeting rhtpa-release.0.4.z. Lines 138-141 show the Blocks dependency: jira.create_link with inwardIssue=upstream-task-key, outwardIssue=downstream-task-key, type='Blocks'. Line 9 confirms: 'Ecosystem: Cargo (source dependency) — requires two tasks per stream (upstream backport + downstream propagation)'."
+    },
+    {
+      "text": "The analysis presents triage recommendations as proposed actions — framing Affects Versions changes, label additions, and status transitions as proposals rather than executed mutations (Guardrails)",
+      "passed": true,
+      "evidence": "affects-versions.md line 44: 'Proposed Jira Mutation' heading frames the edit_issue call as a proposal. Line 57: 'Proposed Jira Comment' heading frames the comment as proposed. remediation.md lines 309-324: Post-Triage Actions show jira.edit_issue and jira.transition_issue in code blocks as actions to be taken, not as completed mutations. All Jira calls are presented in code block format showing what would be executed, with no language stating the mutations were actually performed."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

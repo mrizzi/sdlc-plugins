@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Duplicate check searches for sibling issues using JQL with the CVE label and excludes the current issue key (Step 4)",
+      "passed": true,
+      "evidence": "duplicate-check.md lines 5-8: JQL query is 'project = TC AND labels = \"CVE-2026-31812\" AND issuetype = 10024 AND key != TC-8003'. This searches using the CVE label and explicitly excludes the current issue key TC-8003."
+    },
+    {
+      "text": "Duplicate check correctly classifies TC-7999 as a same-stream sibling (both have stream suffix [rhtpa-2.2]) and identifies it as a duplicate (Step 4.1)",
+      "passed": true,
+      "evidence": "duplicate-check.md lines 17-25: 'Current issue (TC-8003): stream suffix [rhtpa-2.2] -> stream 2.2.x' and 'Sibling issue (TC-7999): stream suffix [rhtpa-2.2] -> stream 2.2.x'. Line 25: 'Classification: Same-stream duplicate.'"
+    },
+    {
+      "text": "Triage outcome recommends closing TC-8003 as Duplicate with resolution 'Duplicate', referencing TC-7999 as the original (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md line 4: 'Decision: Close as Duplicate of TC-7999'. Lines 49-52: 'Transition to: Closed' and 'Resolution: Duplicate'. TC-7999 is explicitly referenced as the surviving/original issue throughout."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting why it is a duplicate — same CVE tracked for the same stream (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md lines 28-47 contain a proposed comment: 'Duplicate of TC-7999 -- same CVE (CVE-2026-31812) tracked for the same stream [rhtpa-2.2]. Version impact analysis confirms overlap: both issues cover quinn-proto vulnerability in RHTPA 2.2.0, 2.2.1, and 2.2.2.' This explicitly documents the same-CVE, same-stream rationale."
+    },
+    {
+      "text": "The analysis does NOT proceed to remediation task creation — duplicate detection short-circuits the triage flow",
+      "passed": true,
+      "evidence": "triage-outcome.md line 69: 'Step 7 (Remediation): Not needed -- remediation tasks, if any, would be created from TC-7999 (the surviving issue). No new remediation tasks are created for a duplicate.' No remediation task output files exist in the outputs directory (only data-extraction.md, duplicate-check.md, and triage-outcome.md). The triage flow was short-circuited after duplicate detection."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

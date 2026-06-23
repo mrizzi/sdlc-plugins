@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "Bug parsing correctly extracts all four required sections (Description, Steps to Reproduce, Expected Result, Actual Result) using the heading formats from bug-template-mock.md (Step 1)",
+      "passed": true,
+      "evidence": "bug-parsing.md contains all four required sections under '## Required Sections (parsed from description)': '### Issue Description' (lines 17-21), '### Steps to Reproduce' (lines 23-30), '### Expected Result' (lines 32-36), '### Actual Result' (lines 38-41). Content matches the bug description. The bug-template-mock.md specifies heading formats '### **Issue Description**', '### **Steps to Reproduce**', '### **Expected Result**', '### **Actual Result**' — the output uses the same section names without bold markers but successfully extracts all four required sections. The validation line (line 59) confirms: 'All four required sections (Issue Description, Steps to Reproduce, Expected Result, Actual Result) are present.'"
+    },
+    {
+      "text": "Bug validation confirms the issue type ID (10020) matches the Bug issue type ID from Bug Configuration (Step 1)",
+      "passed": true,
+      "evidence": "bug-parsing.md line 8: 'Issue Type: Bug (ID: 10020) — matches Bug Configuration (10020)'. The output explicitly confirms the issue type ID 10020 matches the Bug Configuration."
+    },
+    {
+      "text": "Investigation identifies the trailing-whitespace heading extraction as the root cause — line[3:] does not strip whitespace (Steps 2-3)",
+      "passed": true,
+      "evidence": "investigation.md lines 11-16 trace the root cause: 'The heading text is extracted using line[3:], which takes the substring after ## but does not strip trailing whitespace.' Line 43 shows the code: 'section_name = line[3:]  # BUG: no .strip() call'. Line 47 confirms: 'The fix point is line[3:] which should be line[3:].strip() to normalize trailing whitespace.'"
+    },
+    {
+      "text": "Root cause comment includes: what is broken (heading extraction does not strip trailing whitespace), where it is broken (plan-feature convention lookup), and how to verify the fix (reproducer test with whitespace in heading) (Step 4)",
+      "passed": true,
+      "evidence": "root-cause.md contains all three elements. WHAT: 'extracts CONVENTIONS.md section headings using line[3:] without stripping trailing whitespace' (line 9). WHERE: 'plugins/sdlc-workflow/skills/plan-feature/SKILL.md — convention heading extraction (line[3:] missing .strip())' (line 13). HOW TO VERIFY: 'Create a test fixture CONVENTIONS.md with trailing whitespace on a section heading (e.g., ## Migration Patterns   with two trailing spaces). Run the convention extraction logic and assert that the section name is stored as \"Migration Patterns\" (without trailing spaces).' (lines 20-22, Reproducer Strategy section)."
+    },
+    {
+      "text": "Task description has reproducer test as the FIRST acceptance criterion — before any fix criteria (Step 5 Acceptance Criteria ordering)",
+      "passed": true,
+      "evidence": "task-description.md Acceptance Criteria section (lines 48-51): First criterion (line 48) is: 'A reproducer test demonstrates that CONVENTIONS.md headings with trailing whitespace are correctly matched: the test creates a conventions file with trailing whitespace on a heading... The test must fail before the fix and pass after.' This appears before the fix criterion on line 49 ('The convention extraction logic strips trailing whitespace...') and regression criteria on lines 50-51."
+    },
+    {
+      "text": "Task description has reproducer test as the FIRST test requirement — with explicit assertion guidance derived from the Steps to Reproduce (Step 5 Test Requirements ordering)",
+      "passed": true,
+      "evidence": "task-description.md Test Requirements section (lines 53-55): First test requirement (line 54) is the 'Reproducer test' which includes explicit assertion guidance derived from Steps to Reproduce: 'Create a test fixture CONVENTIONS.md with trailing whitespace on a section heading (e.g., ## Migration Patterns   with two trailing spaces followed by content Add Index::create() for all FK columns.)' and asserts 'the section name \"Migration Patterns\" (clean, without trailing spaces) is present in the conventions dictionary and that the generated task’s Implementation Notes include Per CONVENTIONS.md §Migration Patterns: add Index::create() for all FK columns.' This is derived from the Steps to Reproduce in the bug report. It appears before the regression test on line 55."
+    },
+    {
+      "text": "Task description includes a Bug Context section with Bug key (ACME-500), Steps to Reproduce, Expected/Actual Result, and Root Cause summary (Step 5 Bug Context extension)",
+      "passed": true,
+      "evidence": "task-description.md lines 60-66 contain '## Bug Context' section with all required elements: Bug key: 'ACME-500' with link (line 62), Steps to Reproduce (line 63), Expected Result (line 64), Actual Result (line 65), Root Cause summary: 'The convention heading extraction uses line[3:] without .strip(), so trailing whitespace on CONVENTIONS.md headings is preserved in the dictionary key. Downstream exact-match lookup against the clean name fails silently.' (line 66)."
+    },
+    {
+      "text": "Task description sets Target Branch to main (Step 5 Target Branch)",
+      "passed": true,
+      "evidence": "task-description.md line 12: '## Target Branch' followed by line 13: 'main'."
+    },
+    {
+      "text": "Task description output includes ai-generated-jira in the Jira API metadata block showing it would be passed as a label to jira.create_issue (Step 5 Task creation)",
+      "passed": true,
+      "evidence": "task-description.md lines 1-8 contain '# Jira API Metadata' with 'Parameters for jira.create_issue:' and line 7: 'Labels: ai-generated-jira'. This explicitly shows ai-generated-jira as a label in the jira.create_issue metadata block."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

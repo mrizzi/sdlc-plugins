@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md states: 'Feature-branch -- The feature's non-functional requirements mandate atomicity (\"Migration must be atomic: if any step fails, the entire migration rolls back\") and co-landing (\"All changes must land together: merging the migration without the code changes would break all advisory queries\"). These constraints require a feature branch so all intermediate changes are merged together into main as a single unit.' Correctly identifies feature-branch mode based on atomicity constraints."
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md is the first task and contains '## Bookend Type\\ncreate-branch'. The impact map confirms Task 1 is 'Create feature branch TC-9005 from main'."
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md is the last task (7 of 7) and contains '## Bookend Type\\nmerge-branch'. The impact map confirms Task 7 is 'Merge feature branch TC-9005 to main' as the final entry."
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All five intermediate tasks (2-6) have '## Target Branch\\nTC-9005': task-2-migration-enum-column.md, task-3-update-entity-definitions.md, task-4-update-advisory-service-endpoints.md, task-5-update-ingestion-pipeline.md, task-6-update-integration-tests.md."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Target Branch\\nmain' (lines 6-7)."
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md contains '## Target Branch\\nmain' (lines 6-7)."
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All five intermediate tasks list Task 1 as a dependency: Task 2: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 3: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 4: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 5: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'; Task 6: 'Depends on: Task 1 -- Create feature branch TC-9005 from main'."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md Dependencies section lists all five intermediate tasks: 'Depends on: Task 2 -- Add database migration for advisory status enum', 'Depends on: Task 3 -- Update SeaORM entity definitions for advisory status enum', 'Depends on: Task 4 -- Update advisory service and endpoints to use status enum', 'Depends on: Task 5 -- Update advisory ingestion pipeline to write enum status', 'Depends on: Task 6 -- Update advisory integration tests for enum status'."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "Bookend tasks (1, 7) are exempt from Files to Modify/Create and Implementation Notes per grading rule 7. Task 1 has: Repository, Target Branch, Bookend Type, Description, Acceptance Criteria, Test Requirements, Dependencies. Task 7 has: Repository, Target Branch, Bookend Type, Description, Acceptance Criteria, Test Requirements, Dependencies. Intermediate tasks all have required sections: Task 2 has Repository, Target Branch, Description, Files to Create, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Task 3 has Repository, Target Branch, Description, Files to Modify, Files to Create (listed as 'None'), Implementation Notes, Acceptance Criteria, Test Requirements. Task 4 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Task 5 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements. Task 6 has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Acceptance Criteria, Test Requirements."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": true,
+      "evidence": "impact-map.md contains '**Label**: `workflow:feature-branch`' on line 7 under the Workflow Mode section."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": false,
+      "evidence": "All seven tasks contain digest markers with the correct format '[sdlc-workflow] Description digest: sha256-md:<64-hex-chars>' and each hex string is exactly 64 lowercase hex characters. However, the hash values are fabricated placeholders, not real SHA-256 hashes computed by scripts/sha256-digest.py. The values show obvious sequential cycling patterns: Task 7 hash is 'a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2' -- a repeating letter-digit pair cycle. Tasks 4-6 use the same pattern at different offsets (Task 4 starts at e5, Task 5 at f7, Task 6 at b9). Real SHA-256 hashes have uniformly random nibbles and would never exhibit such systematic patterns. The assertion requires digests that are 'not a placeholder' and are 'computed by re-fetching the description from the API and running scripts/sha256-digest.py' -- these are clearly fabricated values."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All intermediate tasks that modify .rs files include properly formatted convention rationales where applicable. Task 3: 'Per CONVENTIONS.md §Framework: Axum for HTTP, SeaORM for database. Applies: task modifies `entity/src/advisory.rs` matching the convention's SeaORM entity scope.' Task 4 includes four conventions, all with correct format, e.g., 'Per CONVENTIONS.md §Error handling: all handlers return `Result<T, AppError>` with `.context()` wrapping. Applies: task modifies `modules/fundamental/src/advisory/service/advisory.rs` matching the convention's handler scope.' Task 5: 'Per CONVENTIONS.md §Error handling... Applies: task modifies `modules/ingestor/src/graph/advisory/mod.rs` matching the convention's error handling scope.' Task 6: 'Per CONVENTIONS.md §Testing... Applies: task modifies `tests/api/advisory.rs` matching the convention's integration test scope.' No inapplicable conventions are listed with 'Not applicable' annotations. All rationales use the prescribed format 'Applies: task modifies <file> matching the convention's <scope>'. Task 2 (migration) has no convention rationales, which is correct if no CONVENTIONS.md conventions have migration-file scope."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 1,
+    "total": 12,
+    "pass_rate": 0.917
+  }
+}

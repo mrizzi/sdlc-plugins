@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact-map.md explicitly identifies 5 ambiguities: (1) No Performance Targets for 'Faster' Search, (2) No Definition of 'Relevance', (3) No Specification of Filter Types, (4) No Concrete Non-Functional Requirements, (5) Scope of 'Better UI' Is Undefined. All are detailed under 'Ambiguities Identified' with specific missing details enumerated. Multiple task descriptions also reference these ambiguities with 'Ambiguity note' paragraphs."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "Impact-map.md Ambiguity 5 states: 'The non-MVP requirement \"Better UI — Make it look nicer\" cannot be planned because: There is no frontend repository in scope (only trustify-backend), No design mockups or wireframes are referenced, \"Look nicer\" has no actionable specification.' Decision: '\"Better UI\" is excluded from this plan. It requires a frontend repository, design mockups, and a separate feature ticket. This plan covers backend-only changes.' Also listed under 'Out of Scope': 'Frontend/UI changes (\"Better UI\" requirement) — no frontend repository available'."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 8 task files follow the template format with the required sections: Repository, Target Branch, Description, Files to Modify (and Files to Create where applicable), Implementation Notes, Acceptance Criteria (checkbox format), Test Requirements (checkbox format). Optional sections like Reuse Candidates, Verification Commands, API Changes, and Dependencies are included where applicable and omitted where not, consistent with the template rule 'Omit sections that don't apply'."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Every task description includes explicit assumption documentation. Task-1: 'Ambiguity note: The feature description does not specify which fields should be searchable per entity. This task assumes the following fields are indexed for search (pending product owner clarification)'. Task-2: 'Ambiguity note: The feature description does not clarify whether search vectors should be exposed in API responses. This task assumes the search_vector column is internal... (pending clarification)'. Task-3 (both versions), Task-4 (both versions), Task-5, Task-6 all contain similar 'Assumption (pending clarification)' labels."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 8 task files contain '## Repository' followed by 'trustify-backend' as a single repository name. No task lists multiple repositories. Verified in: task-1-fts-migration.md (line 3-4), task-2-entity-search-vectors.md (line 3-4), task-3-query-builder-fts.md (line 3-4), task-3-add-search-filters.md (line 3-4), task-4-search-service-fts.md (line 3-4), task-4-search-integration-tests.md (line 3-4), task-5-search-filters.md (line 3-4), task-6-search-integration-tests.md (line 3-4)."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 8 task files contain all four required sections: '## Target Branch' (set to 'main'), '## Description' (detailed paragraph), '## Acceptance Criteria' (checkbox items), and '## Test Requirements' (checkbox items). Verified across all task files: task-1 through task-6 including duplicate-numbered tasks."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All paths in Files to Modify sections reference valid paths from repo-backend.md: migration/src/lib.rs, entity/src/sbom.rs, entity/src/advisory.rs, entity/src/package.rs, common/src/db/query.rs, common/src/db/mod.rs, modules/search/src/endpoints/mod.rs, modules/search/src/service/mod.rs, tests/api/search.rs. The one Files to Create entry is 'migration/src/m0002_fts_indexes/mod.rs' which follows the existing migration directory pattern (migration/src/m0001_initial/mod.rs exists in the manifest) and is a legitimate new file in an existing directory structure. No invented paths were found."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "All task Implementation Notes reference specific file paths and code patterns: Task-1 references 'migration/src/m0001_initial/mod.rs' for structure, SeaORM migration patterns. Task-2 references 'entity/src/sbom.rs' for entity field patterns, serde attributes. Task-3 (query-builder) references 'common/src/db/query.rs' for existing helpers, SeaORM Expr::cust_with_values(). Task-3 (filters) references 'modules/search/src/endpoints/mod.rs', 'common/src/db/query.rs', 'modules/fundamental/src/advisory/model/summary.rs', 'common/src/error.rs'. Task-4 (service) references 'common/src/db/query.rs' helpers, 'common/src/model/paginated.rs::PaginatedResults<T>', 'common/src/error.rs::AppError'. Task-4 (tests) references 'tests/api/search.rs', 'tests/api/sbom.rs', 'tests/api/advisory.rs' patterns. Task-5 references 'modules/fundamental/src/sbom/endpoints/list.rs', 'modules/fundamental/src/advisory/model/summary.rs'. Task-6 references 'tests/api/search.rs', 'tests/api/sbom.rs', 'tests/api/advisory.rs'."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 8 task files contain '## Target Branch' followed by 'main': task-1-fts-migration.md (line 7-8), task-2-entity-search-vectors.md (line 7-8), task-3-query-builder-fts.md (line 7-8), task-3-add-search-filters.md (line 7-8), task-4-search-service-fts.md (line 7-8), task-4-search-integration-tests.md (line 7-8), task-5-search-filters.md (line 7-8), task-6-search-integration-tests.md (line 7-8)."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": false,
+      "evidence": "FAIL for two reasons: (1) Four of eight task files have hashes that are NOT exactly 64 hex characters: task-3-query-builder-fts.md hash is 63 chars ('c4e8f2a6d1b73c9e5f0a2d4b8c6e1f3a7d9b2c4e6f8a0c2d4e6b8a1c3f5d7e9'), task-4-search-service-fts.md hash is 63 chars, task-5-search-filters.md hash is 63 chars, task-6-search-integration-tests.md hash is 63 chars. (2) All hashes exhibit suspiciously patterned alternating character sequences (e.g., 'a3f1c7e9d4b8', 'b7d29a4e6f18', 'c4e8f2a6d1b7') characteristic of LLM-fabricated values rather than real SHA-256 digests computed by scripts/sha256-digest.py. The assertion requires the digest to be computed by re-fetching the description from the API and running the script, but these appear to be hallucinated hashes embedded directly in the markdown files."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All 8 task files include convention rationales in the prescribed format. Examples: Task-1: 'Applies: task modifies `migration/src/m0002_fts_indexes/mod.rs` matching the convention's `.rs` file scope.' Task-2: 'Applies: task modifies `entity/src/sbom.rs` matching the convention's `.rs` file scope.' Task-3 (filters): 'Applies: task modifies `modules/search/src/endpoints/mod.rs` matching the convention's endpoint module scope.' and 'Applies: task modifies `common/src/db/query.rs` matching the convention's shared query helper scope.' No task files contain 'Not applicable' annotations for excluded conventions. No free-form prose rationales were found — all follow the 'Applies: task modifies <file> matching the convention's <scope>' format."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 1,
+    "total": 11,
+    "pass_rate": 0.91
+  }
+}

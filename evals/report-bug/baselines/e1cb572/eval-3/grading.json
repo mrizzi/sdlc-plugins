@@ -1,0 +1,16 @@
+{
+  "assertion_results": [
+    {"text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step", "passed": true, "evidence": "File contains 'Please run `/setup` first to configure your project, then re-run this skill.'"},
+    {"text": "outputs/response.md contains 'Bug Configuration' indicating what is missing", "passed": true, "evidence": "File contains 'This skill requires a **Bug Configuration** section in your CLAUDE.md.'"},
+    {"text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)", "passed": true, "evidence": "Directory listing shows only response.md exists; no preview.md file present."},
+    {"text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)", "passed": true, "evidence": "Directory listing shows only response.md exists; no jira-create.md file present."},
+    {"text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)", "passed": true, "evidence": "Directory listing shows only response.md exists; no jira-comment.md file present."},
+    {"text": "outputs/response.md does NOT contain any of the template section headings ('### **Issue Description**', '### **Steps to Reproduce**', etc.) — the skill must not proceed to collect section content", "passed": true, "evidence": "The 6-line file contains only a stop message about missing Bug Configuration and a /setup recommendation; no template section headings are present."}
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

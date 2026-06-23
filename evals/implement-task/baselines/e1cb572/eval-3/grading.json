@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 29: \"Implement license filtering using `apply_filter` from `common/src/db/query.rs`: When the license parameter is `Some`, call `apply_filter` to parse the comma-separated values and generate the appropriate SQL `IN` clause. This is the same function used by the advisory service for severity filtering.\" Also reuse-analysis.md section 1 states: \"Call `apply_filter` directly in `PackageService::list()` when the `license` parameter is `Some`. Pass the raw query string value from the endpoint handler. This eliminates the need to write any custom comma-splitting or SQL `IN` clause generation logic.\""
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 5: \"The implementation follows the existing advisory severity filter pattern and reuses the shared `apply_filter` query helper.\" plan.md line 15: \"This mirrors the `severity` field in the advisory endpoint's query struct at `modules/fundamental/src/advisory/endpoints/list.rs`.\" reuse-analysis.md section 2 explicitly describes the advisory endpoint as a structural template with three specific sub-patterns (Query struct pattern, Handler pattern, Service pattern)."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md line 31: \"Join through the `package_license` entity: Use the `package_license` entity from `entity/src/package_license.rs` to join the package table with the license table. Apply the filter condition on the license SPDX identifier column via this join. Use SeaORM's relation/join API rather than raw SQL, consistent with existing query patterns in the codebase.\""
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md contains three clearly labeled sections: (1) common/src/db/query.rs::apply_filter, (2) modules/fundamental/src/advisory/endpoints/list.rs (severity filter pattern), and (3) entity/src/package_license.rs (package-license join entity). Each section includes 'What it provides', 'How it would be reused', 'Reuse type', and 'Without reuse, we would need to' subsections with detailed explanations."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "The plan's 'Files to Modify' section lists: (1) modules/fundamental/src/package/endpoints/list.rs, (2) modules/fundamental/src/package/service/mod.rs. The plan's 'Files to Create' section lists: (1) tests/api/package_license_filter.rs. The plan explicitly states in 'Module Registration': 'No changes to modules/fundamental/src/package/endpoints/mod.rs or server/src/main.rs are needed.' No files outside these three are proposed for modification or creation."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan consistently states to call apply_filter directly rather than writing new parsing logic. plan.md line 29: 'call `apply_filter` to parse the comma-separated values'. reuse-analysis.md summary states: 'All three reuse candidates are used. No new utility functions or helpers are created that would duplicate existing functionality.' No section of the plan proposes creating any new utility function for comma parsing or filter generation."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

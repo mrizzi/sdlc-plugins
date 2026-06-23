@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md line 19: \"Search all returned comments for those whose body starts with the marker string `[sdlc-workflow] Description digest:`.\" This exactly matches the required marker string from the protocol."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md lines 44-48: describes extracting the description, writing to a temp file, and running \"python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt\". Lines 62-67 show explicit comparison of stored hex vs computed hex digests, both identified as SHA-256 tagged format (sha256-md)."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md line 68: \"Result: MATCH.\" Lines 72-75: \"The digests match. Per the SKILL.md specification (Step 1.5, item 4e): Match: proceed silently -- no additional user prompt, no added latency.\""
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md line 76: \"The skill proceeds directly to Step 2 (Verify Dependencies) without any user interaction, warnings, or prompts.\" plan.md line 53: \"Proceed silently -- no user prompt needed.\" The plan then immediately proceeds to Step 2 (line 58) with no intervening alerts or pauses."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}
