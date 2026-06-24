@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "Line 45 of claude-md-result.md contains '## Security Configuration'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Product Lifecycle' subsection with all 5 fields: Product pages URL (https://access.example.com/product-lifecycle), Jira version prefix (MYPRODUCT), Vulnerability issue type ID (10200), Component label pattern (pscomponent:), and VEX Justification custom field (customfield_12345)",
+      "passed": true,
+      "evidence": "Lines 47-53 of claude-md-result.md contain '### Product Lifecycle' with all 5 required fields: 'Product pages URL: https://access.example.com/product-lifecycle' (line 49), 'Jira version prefix: MYPRODUCT' (line 50), 'Vulnerability issue type ID: 10200' (line 51), 'Component label pattern: pscomponent:' (line 52), 'VEX Justification custom field: customfield_12345' (line 53)."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Version Streams' subsection with a table containing at least one row for stream 2.1.x with the Konflux release repo URL",
+      "passed": true,
+      "evidence": "Lines 58-62 of claude-md-result.md contain '### Version Streams' with a table. Line 62 has a row for stream '2.1.x' with Konflux Release Repo 'git.downstream.example.com/my-org/product-release.2.1.z'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Source Repositories' subsection with a table containing entries for backend and frontend-ui with their GitHub URLs",
+      "passed": true,
+      "evidence": "Lines 64-69 of claude-md-result.md contain '### Source Repositories' with a table. Line 68: 'backend | https://github.com/example/backend'. Line 69: 'frontend-ui | https://github.com/example/frontend-ui'."
+    },
+    {
+      "text": "outputs/claude-md-result.md also contains the standard Project Configuration sections: Repository Registry, Jira Configuration, Code Intelligence with Limitations, and Bug Configuration",
+      "passed": true,
+      "evidence": "claude-md-result.md contains: '## Repository Registry' (line 3), '## Jira Configuration' (line 10), '## Code Intelligence' (line 18), '### Limitations' (line 31), and '## Bug Configuration' (line 35)."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Bug Configuration' section with three fields: Bug issue type ID (10001), Bug template (docs/bug-template.md), Bug-to-Task link type (Blocks)",
+      "passed": true,
+      "evidence": "Lines 35-39 of claude-md-result.md contain '## Bug Configuration' with: 'Bug issue type ID: 10001' (line 37), 'Bug template: docs/bug-template.md' (line 38), 'Bug-to-Task link type: Blocks' (line 39)."
+    },
+    {
+      "text": "outputs/discovery-log.md mentions Security Configuration being opted in by the user and fields being collected",
+      "passed": true,
+      "evidence": "Lines 65-83 of discovery-log.md, under 'Step 10 — Security Configuration', state: 'User accepted security triage enablement' (line 67) and 'Product Lifecycle fields collected:' (line 68) followed by a list of all fields collected including Product pages URL, Jira version prefix, Vulnerability issue type ID, Component label pattern, VEX Justification custom field, Version Streams, and Source Repositories."
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration and Bug Configuration were newly added along with the other Project Configuration sections",
+      "passed": true,
+      "evidence": "changes-log.md states 'All sections were created new' (line 5). Section '### 5. Created ## Bug Configuration' (line 39) with 'Action: Created section with all three required fields'. Section '### 7. Created ## Security Configuration' (line 57) with 'Action: Created section with all subsections'. Other standard sections also listed as created: Repository Registry (line 16), Jira Configuration (line 23), Code Intelligence (line 34), Hierarchy Configuration (line 49)."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

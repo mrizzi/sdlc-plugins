@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md line 4: 'Feature-branch workflow (workflow:feature-branch label applied to TC-9005). All changes land on the TC-9005 feature branch and merge to main atomically via a single PR.' The risk assessment section also references atomicity: 'Atomicity: All changes must land together. The feature-branch workflow ensures this by merging a single PR from TC-9005 to main.'"
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Bookend Type\\ncreate-branch' (lines 7-8). It is the first task in the plan as confirmed by the impact-map.md task summary table (Task 1: Create feature branch TC-9005 from main)."
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-8-merge-feature-branch.md contains '## Bookend Type\\nmerge-branch' (lines 7-8). It is the last task (Task 8) in the plan as confirmed by impact-map.md task summary table."
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-7) have '## Target Branch\\nTC-9005': task-2 line 5, task-3 line 5, task-4 line 5, task-5 line 5, task-6 line 5, task-7 line 5."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md lines 4-5: '## Target Branch\\nmain'"
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-8-merge-feature-branch.md lines 4-5: '## Target Branch\\nmain'"
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "All intermediate tasks (2-7) list Task 1 in their Dependencies section: task-2 line 57 'Depends on: Task 1', task-3 line 44 'Depends on: Task 1', task-4 line 51 'Depends on: Task 1', task-5 line 46 'Depends on: Task 1', task-6 line 39 'Depends on: Task 1', task-7 line 39 'Depends on: Task 1'."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-8-merge-feature-branch.md lines 20-26 lists all 6 intermediate tasks: 'Depends on: Task 2', 'Depends on: Task 3', 'Depends on: Task 4', 'Depends on: Task 5', 'Depends on: Task 6', 'Depends on: Task 7'. This covers all intermediate tasks (2 through 7)."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "Bookend tasks (task-1, task-8) contain the bookend-required sections: Repository, Target Branch, Bookend Type, Description, Acceptance Criteria, Test Requirements. They correctly omit Files to Modify/Create and Implementation Notes. Intermediate tasks (2-7) all contain: Repository, Target Branch, Description, at least one of Files to Modify/Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements. Verified for each: task-2 has Files to Create and Files to Modify; task-3 has Files to Modify and Files to Create; task-4 has Files to Modify; task-5 has Files to Modify; task-6 has Files to Modify; task-7 has Files to Modify. All intermediate tasks have Implementation Notes, Acceptance Criteria, and Test Requirements sections."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": true,
+      "evidence": "impact-map.md line 80-81: '## Labels\\n- workflow:feature-branch — applied to TC-9005 feature issue'. Also stated in the Workflow Mode section line 4: 'workflow:feature-branch label applied to TC-9005'."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": true,
+      "evidence": "All 8 task files contain a properly formatted digest line: task-1: 'sha256-md:7b2018d25b820cec9cf9c1a113ca0c2e03a062a3c455a38b35541935c923e7ce' (64 hex chars), task-2: 'sha256-md:99b15079075034459ccc5519e70e357972e965a1b3de70443c8d0de9dc43ea2e' (64 hex chars), task-3: 'sha256-md:b2b130f3923a9cde8e5cae067972af70a6a2e70102410375dfa06c20654749f2' (64 hex chars), task-4: 'sha256-md:79dc8009905fdc80c2fb7f9d69c5fd96bded2dd5c401ccad1f693e537bf658d8' (64 hex chars), task-5: 'sha256-md:1102f2b1e4381914d9d4733e95365ff7042159616b16840f5abfa31add782ede' (64 hex chars), task-6: 'sha256-md:12ec904ffe31e92430384f032f3dfdf6971c5e947c71665b04bc6a5f428f777e' (64 hex chars), task-7: 'sha256-md:c49f6e5099f9dde5adf0782eec95fefa273efc78fda562b2a6a095c1f55d7719' (64 hex chars), task-8: 'sha256-md:c661e202f89f44600d208dfddca61e1ca81112b7ccae742782af0b6a3e12e429' (64 hex chars). All use the format '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' and all hashes are unique 64-character lowercase hex strings."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All intermediate tasks include conventions with prescribed-format rationales. Task-2: 'Per Key Conventions (Framework): Use SeaORM migration API... Applies: task creates migration/src/m0002_advisory_status_enum/mod.rs matching the migration module scope.' Task-3: 'Per Key Conventions (Framework): Use SeaORM's DeriveActiveEnum... Applies: task modifies entity/src/advisory.rs and creates entity/src/advisory_status_enum.rs matching the entity scope.' Task-4 includes multiple conventions, each with 'Applies: task modifies <specific file> matching the <scope>' format. Task-5 similarly includes conventions with the prescribed rationale format. Task-6: 'Applies: task modifies modules/ingestor/src/graph/advisory/mod.rs and modules/ingestor/src/service/mod.rs matching the service/graph scope.' Task-7: 'Applies: task modifies tests/api/advisory.rs matching the integration test scope.' No tasks list conventions with 'Not applicable' annotations. All rationales follow the 'Applies: task modifies/creates <file> matching the convention's <scope>' format rather than free-form prose."
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 0,
+    "total": 12,
+    "pass_rate": 1.0
+  }
+}

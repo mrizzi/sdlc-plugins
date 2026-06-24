@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "Bug parsing correctly extracts all four required sections (Description, Steps to Reproduce, Expected Result, Actual Result) using the heading formats from bug-template-mock.md (Step 1)",
+      "passed": true,
+      "evidence": "bug-parsing.md contains all 4 required sections extracted with correct heading formats: '### **Issue Description**' (line 18), '### **Steps to Reproduce**' (line 25), '### **Expected Result**' (line 38), '### **Actual Result**' (line 43). The Parsing Summary (lines 55-59) confirms all 4 required sections were successfully extracted with checkmarks."
+    },
+    {
+      "text": "Bug validation confirms the issue type ID (10020) matches the Bug issue type ID from Bug Configuration (Step 1)",
+      "passed": true,
+      "evidence": "bug-parsing.md line 7 states 'Issue type on ACME-500: Bug (ID: 10020) -- matches Bug Configuration' and line 3 states 'Bug issue type ID: 10020 (from CLAUDE.md Bug Configuration)'. Line 11 confirms 'Configuration is valid. Issue type ID 10020 on the bug matches the configured Bug issue type ID 10020.'"
+    },
+    {
+      "text": "Investigation identifies the trailing-whitespace heading extraction as the root cause — line[3:] does not strip whitespace (Steps 2-3)",
+      "passed": true,
+      "evidence": "investigation.md Step 2 (lines 13-21) shows the heading extraction code 'section_name = line[3:]' and explains: 'line[3:] slices the string from index 3 onward but does NOT strip trailing whitespace. When the heading line is ## Migration Patterns  \\n, the extracted key becomes \"Migration Patterns  \" (with two trailing spaces).' The root cause classification on line 50 identifies this as an 'Input sanitization defect'."
+    },
+    {
+      "text": "Root cause comment includes: what is broken (heading extraction does not strip trailing whitespace), where it is broken (plan-feature convention lookup), and how to verify the fix (reproducer test with whitespace in heading) (Step 4)",
+      "passed": true,
+      "evidence": "root-cause.md has three sections: (1) 'What is broken' (line 5): 'convention conformance analysis silently drops conventions from CONVENTIONS.md when heading lines contain trailing whitespace'; (2) 'Where it is broken' (line 9): 'plan-feature convention lookup logic in plugins/sdlc-workflow/skills/plan-feature/SKILL.md' with 'line[3:]' identified; (3) 'How to verify the fix' (line 27-34): describes creating a CONVENTIONS.md fixture with trailing whitespace and asserting the convention is matched."
+    },
+    {
+      "text": "Task description has reproducer test as the FIRST acceptance criterion — before any fix criteria (Step 5 Acceptance Criteria ordering)",
+      "passed": true,
+      "evidence": "task-description.md line 29: first acceptance criterion is '[ ] Reproducer test: a test with trailing whitespace on a CONVENTIONS.md heading (e.g., ## Migration Patterns  ) correctly matches the convention and includes it in the generated task's Implementation Notes'. This precedes fix criteria on lines 30-33."
+    },
+    {
+      "text": "Task description has reproducer test as the FIRST test requirement — with explicit assertion guidance derived from the Steps to Reproduce (Step 5 Test Requirements ordering)",
+      "passed": true,
+      "evidence": "task-description.md line 36: first test requirement is '[ ] Reproducer test: create a CONVENTIONS.md fixture with trailing whitespace on the ## Migration Patterns   heading, run convention conformance analysis, and assert the output contains Per CONVENTIONS.md Migration Patterns: add Index::create() for all FK columns.' This includes explicit assertion guidance derived from the Steps to Reproduce."
+    },
+    {
+      "text": "Task description includes a Bug Context section with Bug key (ACME-500), Steps to Reproduce, Expected/Actual Result, and Root Cause summary (Step 5 Bug Context extension)",
+      "passed": true,
+      "evidence": "task-description.md lines 41-49 contain a '## Bug Context' section with: Bug key 'ACME-500' (line 42), Steps to Reproduce (lines 43-46), Expected Result (line 47), Actual Result (line 48), and Root Cause summary (line 49) explaining 'line[3:]' does not strip trailing whitespace causing exact-match comparison failure."
+    },
+    {
+      "text": "Task description sets Target Branch to main (Step 5 Target Branch)",
+      "passed": true,
+      "evidence": "task-description.md line 10: '## Target Branch' followed by line 11: 'main'."
+    },
+    {
+      "text": "Task description output includes ai-generated-jira in the Jira API metadata block showing it would be passed as a label to jira.create_issue (Step 5 Task creation)",
+      "passed": true,
+      "evidence": "task-description.md lines 1-5 contain a Jira API metadata block: '<!-- Jira API metadata: jira.create_issue -->' with '<!-- labels: [\"ai-generated-jira\"] -->' on line 4. The label 'ai-generated-jira' is present in the metadata."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

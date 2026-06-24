@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact map flags 5 ambiguities: (1) 'Search should be faster' — no performance baseline or target defined, (2) 'Results should be more relevant' — no definition of relevance, (3) 'Add filters — some kind of filtering capability' — no filter fields specified, (4) 'Don't break existing functionality' — no regression test baseline, (5) Scope of 'search' is undefined. Tasks 1-3 also individually flag ambiguities in their Description sections. Well exceeds the 3 minimum."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "Impact map contains explicit section: '\"Better UI\" (Non-MVP) is explicitly excluded from this plan. This requirement cannot be planned without design mockups, a frontend repository, and UX specifications. No frontend repository is in scope.'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 4 tasks follow the template format with required sections: Repository, Target Branch, Description, Files to Modify (and/or Files to Create), Implementation Notes, Acceptance Criteria, Test Requirements, and Dependencies. Optional sections (API Changes, Verification Commands) are included only where relevant and omitted otherwise, consistent with template rules."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "All 4 tasks contain explicit assumption labels: Task 1: 'ASSUMPTION pending clarification: We index the primary text fields...'; Task 2: 'ASSUMPTION pending clarification: Relevance is defined as PostgreSQL ts_rank score...'; Task 3: 'ASSUMPTION pending clarification: We implement server-side filters for: entity type, severity, and date range...'; Impact map also labels all 5 ambiguities with 'ASSUMPTION pending clarification'."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 4 tasks contain '## Repository\\ntrustify-backend' — a single repository name. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 4 tasks contain: '## Target Branch' (set to 'main'), '## Description' (with substantive content), '## Acceptance Criteria' (with checkbox items), and '## Test Requirements' (with checkbox items). Verified in task-1-search-indexes-migration.md, task-2-search-relevance-ranking.md, task-3-search-filters.md, and task-4-search-integration-tests.md."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": false,
+      "evidence": "Task 3 Files to Create lists 'modules/search/src/model/mod.rs' but the repo-backend.md manifest does not include a model/ directory under modules/search/src/. The manifest shows modules/search/src/ contains only lib.rs, service/, and endpoints/ — no model/ subdirectory. While the convention says modules follow 'model/ + service/ + endpoints/' structure, the actual manifest for the search module does not include model/. Task 1 Files to Create lists 'migration/src/m0002_search_indexes/mod.rs' which is a new migration directory following the existing m0001_initial pattern — this is a reasonable extension. However, task 3's model/ path is not from the manifest."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references 'migration/src/m0001_initial/mod.rs' and the m{NNNN}_{name} naming convention. Task 2 references 'modules/search/src/service/mod.rs', 'common/src/db/query.rs', 'common/src/model/paginated.rs', and PaginatedResults<T>. Task 3 references 'common/src/db/query.rs', 'modules/search/src/endpoints/mod.rs', 'modules/search/src/service/mod.rs'. Task 4 references 'tests/api/search.rs' and the assert_eq!(resp.status(), StatusCode::OK) test pattern. All tasks cite specific file paths and code patterns from the repository."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "All 4 tasks contain '## Target Branch\\nmain': task-1 line 6, task-2 line 5, task-3 line 5, task-4 line 5."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": true,
+      "evidence": "All 4 tasks contain properly formatted digest lines: Task 1: '[sdlc-workflow] Description digest: sha256-md:0123164515a2ed90643f13b0a7428510c25302500cbd1c77fd59d4d22cace74d'; Task 2: 'sha256-md:f1310ec6325fd4b0b363090e6120d9f5cc364ae7eecba04991b38297334bed4b'; Task 3: 'sha256-md:977948257be0122e2fe146a983539e84554d1cc04f19ea1b827e18719cddaa84'; Task 4: 'sha256-md:65424122df210d5b8a854559e5421b52179829c596c2ffbcbfc9ca3fe515b038'. All hashes are exactly 64 lowercase hex characters, verified with regex match."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All convention references across all 4 tasks use the prescribed format. Examples: Task 1: 'Applies: task creates `migration/src/m0002_search_indexes/mod.rs` matching the convention's migration file scope.'; Task 2: 'Applies: task modifies `modules/search/src/service/mod.rs` matching the convention's endpoint response scope.'; Task 3: 'Applies: task creates `modules/search/src/model/mod.rs` matching the convention's module structure scope.'; Task 4: 'Applies: task modifies `tests/api/search.rs` matching the convention's test file scope.' No conventions are listed with 'Not applicable', 'N/A', or similar annotations (grep confirmed only match for 'excluded' was in impact map scope decision, not convention applicability). All rationales follow the prescribed format, not free-form prose."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 1,
+    "total": 11,
+    "pass_rate": 0.91
+  }
+}

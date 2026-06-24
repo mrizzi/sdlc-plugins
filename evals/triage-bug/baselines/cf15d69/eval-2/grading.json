@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 29 states: 'Steps to Reproduce (`### **Steps to Reproduce**`) -- This section is entirely absent from the bug description. There are no reproduction steps provided.' The required sections check table (lines 14-19) shows Steps to reproduce as 'No -- MISSING'."
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 30 states: 'Expected Result (`### **Expected Result**`) -- This section is entirely absent from the bug description. The expected behavior is not documented.' The required sections check table shows Expected Result as 'No -- MISSING'."
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "validation-result.md line 36 states: 'Execution stops at Step 1. Steps 2 through 5 (severity/priority assessment, task decomposition, effort estimation, and Jira updates) are not performed.' No investigation, root cause, or task description outputs were produced."
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "validation-result.md lines 28-30 list the two specific missing sections (Steps to Reproduce and Expected Result) with their heading formats. Line 7 references the bug template path: 'Bug template path (from Bug Configuration): docs/templates/bug-template.md'. Line 38 states: 'The reporter must update ACME-501 to include the missing sections per the bug template (docs/templates/bug-template.md) before triage can proceed.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}
