@@ -282,6 +282,101 @@ Ask about documentation impact. Prompt with the standard categories:
 
 Also ask about user purpose, reference material, and source material for tech writers. The user may skip this section.
 
+## Step 3.5 – Select Priority and Fix Version
+
+This step lets the user set optional metadata fields (priority and fixVersion) before
+the assignee step. Both fields are optional and skippable.
+
+### Step 3.5.1 – Read Jira Field Defaults
+
+Check the project's CLAUDE.md for a `### Jira Field Defaults` subsection under
+`## Jira Configuration`. If present, extract:
+
+- **Default priority** — the priority name to pre-select (or empty/none for no default)
+- **Prompt for priority** — `true` or `false` (whether to show the priority prompt)
+- **Prompt for fixVersion** — `true` or `false` (whether to show the fixVersion prompt)
+
+If the `### Jira Field Defaults` subsection is absent, treat all fields as:
+- Default priority: _(none)_
+- Prompt for priority: `true`
+- Prompt for fixVersion: `true`
+
+This ensures backward compatibility — projects without the subsection see both prompts.
+
+### Step 3.5.2 – Fetch Available Priorities and Fix Versions
+
+Call `getJiraIssueTypeMetaWithFields` once to retrieve the available field values for
+the Feature issue type:
+
+```
+getJiraIssueTypeMetaWithFields(cloudId, projectIdOrKey, issueTypeId)
+```
+
+Where:
+- `cloudId` is from the Jira Configuration
+- `projectIdOrKey` is the Project key from the Jira Configuration
+- `issueTypeId` is the Feature issue type ID from the Jira Configuration
+
+From the response, extract:
+- **Available priorities** from `priority.allowedValues` — array of `{id, name}`
+- **Available fixVersions** from `fixVersions.allowedValues` — array of `{id, name, released, archived}`
+
+For fixVersions, filter to show only **unreleased, non-archived** versions by default
+(where `released` is `false` and `archived` is `false`).
+
+If MCP fails, follow the same REST API fallback pattern from Step 0.5. If REST API
+is also unavailable, skip this step and inform the user:
+
+> "Could not fetch available priorities and fixVersions. Skipping metadata fields."
+
+### Step 3.5.3 – Priority Prompt
+
+If `Prompt for priority` is `false` (from Jira Field Defaults), skip the priority prompt
+entirely. If a Default priority is configured, record it silently. If no default is
+configured, leave priority unset.
+
+If `Prompt for priority` is `true` (or unset), present the available priorities as a
+numbered list. If a Default priority is configured, mark it with `(default)` in the list.
+Include a "Skip" option as the last entry.
+
+Example:
+
+```
+Select priority for this Feature (or skip):
+1. Blocker
+2. Critical
+3. Major
+4. Normal (default)
+5. Minor
+6. Skip — leave unset
+```
+
+Record the user's choice for use in Step 5 (preview) and Step 6.2 (issue creation).
+
+### Step 3.5.4 – Fix Version Prompt
+
+If `Prompt for fixVersion` is `false` (from Jira Field Defaults), skip the fixVersion
+prompt entirely. Leave fixVersion unset.
+
+If `Prompt for fixVersion` is `true` (or unset), present the unreleased, non-archived
+fixVersions as a numbered list. Include a "Skip" option as the last entry.
+
+Example:
+
+```
+Select target fix version for this Feature (or skip):
+1. 1.5.0
+2. 1.6.0
+3. 2.0.0
+4. Skip — leave unset
+```
+
+If no unreleased, non-archived fixVersions are available, inform the user:
+
+> "No unreleased fixVersions found for this project. Skipping fixVersion selection."
+
+Record the user's choice for use in Step 5 (preview) and Step 6.2 (issue creation).
+
 ## Step 4 – Offer Assignee
 
 Retrieve the current user's identity:
@@ -315,6 +410,8 @@ Compose the full Feature description from all collected sections. Format it usin
 Present the full preview to the user, including:
 - **Summary (title):** the collected summary
 - **Description:** the composed description
+- **Priority:** the selected priority name, or "Not set" if skipped
+- **Fix Version:** the selected fixVersion name, or "Not set" if skipped
 - **Assignee:** the chosen assignee or "Unassigned"
 - **Labels:** `ai-generated-jira`
 
@@ -372,6 +469,29 @@ If the user chose self-assignment in Step 4, include the assignee:
 additional_fields: { "labels": ["ai-generated-jira"], "assignee": { "accountId": "<user-account-id>" } }
 ```
 
+If the user selected a priority in Step 3.5, include it in `additional_fields`:
+```
+"priority": {"name": "<selected-priority>"}
+```
+
+If the user selected a fixVersion in Step 3.5, include it in `additional_fields`:
+```
+"fixVersions": [{"name": "<selected-version>"}]
+```
+
+Omit `priority` from `additional_fields` if the user skipped priority selection.
+Omit `fixVersions` from `additional_fields` if the user skipped fixVersion selection.
+
+Combined example with all optional fields selected:
+```
+additional_fields: {
+  "labels": ["ai-generated-jira"],
+  "assignee": { "accountId": "<user-account-id>" },
+  "priority": {"name": "<selected-priority>"},
+  "fixVersions": [{"name": "<selected-version>"}]
+}
+```
+
 **On MCP failure, if REST API chosen (Step 0.5):**
 
 First, if self-assignment was chosen, get the current user's account ID:
@@ -388,7 +508,10 @@ python3 scripts/jira-client.py create_issue \
   --description-md "<composed-description>" \
   --issue-type "<feature-issue-type-id>" \
   --labels ai-generated-jira \
-  --assignee-id "$ACCOUNT_ID"  # omit if no self-assignment
+  --assignee-id "$ACCOUNT_ID" \         # omit if no self-assignment
+  --fields-json '{"priority": {"name": "<selected-priority>"}, "fixVersions": [{"name": "<selected-version>"}]}'
+  # omit priority from --fields-json if skipped
+  # omit fixVersions from --fields-json if skipped
 ```
 
 The Python client automatically converts markdown to ADF.

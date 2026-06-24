@@ -3,8 +3,8 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Define a Jira Feature using the define-feature skill. The project's CLAUDE.md is in claude-md-configured.md. The user input for all 9 template sections is in user-input-complete.md — read each section from the file as if the user provided it during the interactive walkthrough. The Feature summary is 'Add SBOM dependency graph visualization'. The user chooses self-assignment. Do NOT call any actual MCP tools or Jira APIs. Instead, write the following outputs: outputs/preview.md (the composed Feature description preview exactly as it would be shown to the user before creation), outputs/jira-create.md (the Jira create_issue call parameters: project key, summary, issue type ID, description, labels, assignee), outputs/jira-comment.md (the comment that would be posted to the created issue, including the Comment Footnote with version from plugins/sdlc-workflow/.claude-plugin/plugin.json). Do NOT modify any files outside outputs/.",
-      "expected_output": "A complete Feature description preview containing all 9 section headings with the content from user-input-complete.md. The Jira create parameters should reference project key TC, issue type ID 10142, and include the ai-generated-jira label. The comment should include the Comment Footnote with sdlc-workflow/define-feature link and version.",
+      "prompt": "Define a Jira Feature using the define-feature skill. The project's CLAUDE.md is in claude-md-configured.md. The user input for all 9 template sections is in user-input-complete.md — read each section from the file as if the user provided it during the interactive walkthrough. The Feature summary is 'Add SBOM dependency graph visualization'. The user chooses self-assignment. For Step 3.5, the user selects priority 'Major' and fixVersion '1.5.0'. Do NOT call any actual MCP tools or Jira APIs. Instead, write the following outputs: outputs/preview.md (the composed Feature description preview exactly as it would be shown to the user before creation), outputs/jira-create.md (the Jira create_issue call parameters: project key, summary, issue type ID, description, labels, assignee, priority, fixVersions), outputs/jira-comment.md (the comment that would be posted to the created issue, including the Comment Footnote with version from plugins/sdlc-workflow/.claude-plugin/plugin.json). Do NOT modify any files outside outputs/.",
+      "expected_output": "A complete Feature description preview containing all 9 section headings with the content from user-input-complete.md. The preview should show Priority: Major and Fix Version: 1.5.0. The Jira create parameters should reference project key TC, issue type ID 10142, include the ai-generated-jira label, priority Major, and fixVersions 1.5.0. The comment should include the Comment Footnote with sdlc-workflow/define-feature link and version.",
       "files": ["files/claude-md-configured.md", "files/user-input-complete.md"],
       "assertions": [
         "outputs/preview.md contains the heading '## Feature Overview'",
@@ -16,10 +16,14 @@
         "outputs/preview.md contains the heading '## Customer Considerations'",
         "outputs/preview.md contains the heading '## Customer Information/Supportability'",
         "outputs/preview.md contains the heading '## Documentation Considerations'",
+        "outputs/preview.md contains 'Major' in the priority field display",
+        "outputs/preview.md contains '1.5.0' in the fix version field display",
         "outputs/jira-create.md references project key 'TC'",
         "outputs/jira-create.md references issue type ID '10142'",
         "outputs/jira-create.md includes the label 'ai-generated-jira'",
         "outputs/jira-create.md includes an assignee (self-assignment was chosen)",
+        "outputs/jira-create.md includes priority with name 'Major' in additional_fields",
+        "outputs/jira-create.md includes fixVersions with name '1.5.0' in additional_fields",
         "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
         "outputs/jira-comment.md contains 'https://github.com/mrizzi/sdlc-plugins'",
         "outputs/jira-comment.md contains a version string (e.g., 'v0.' or version from plugin.json)"
@@ -27,8 +31,8 @@
     },
     {
       "id": 2,
-      "prompt": "Define a Jira Feature using the define-feature skill. The project's CLAUDE.md is in claude-md-configured.md. The user input is in user-input-partial.md — it provides content for only the 2 Required sections (Feature Overview and Requirements) and explicitly marks all other sections as 'SKIP'. The Feature summary is 'Add bulk SBOM delete endpoint'. The user leaves the Feature unassigned. Do NOT call any actual MCP tools or Jira APIs. Instead, write the following outputs: outputs/preview.md (the composed Feature description preview exactly as it would be shown to the user before creation), outputs/jira-create.md (the Jira create_issue call parameters), outputs/jira-comment.md (the comment with Comment Footnote). Do NOT modify any files outside outputs/.",
-      "expected_output": "A Feature description preview containing only the 2 Required section headings (Feature Overview and Requirements). Skipped sections must NOT appear as empty headings in the preview. The Jira create parameters should not include an assignee.",
+      "prompt": "Define a Jira Feature using the define-feature skill. The project's CLAUDE.md is in claude-md-configured.md. The user input is in user-input-partial.md — it provides content for only the 2 Required sections (Feature Overview and Requirements) and explicitly marks all other sections as 'SKIP'. The Feature summary is 'Add bulk SBOM delete endpoint'. The user leaves the Feature unassigned. For Step 3.5, the user skips both priority and fixVersion. Do NOT call any actual MCP tools or Jira APIs. Instead, write the following outputs: outputs/preview.md (the composed Feature description preview exactly as it would be shown to the user before creation), outputs/jira-create.md (the Jira create_issue call parameters), outputs/jira-comment.md (the comment with Comment Footnote). Do NOT modify any files outside outputs/.",
+      "expected_output": "A Feature description preview containing only the 2 Required section headings (Feature Overview and Requirements). Skipped sections must NOT appear as empty headings in the preview. Priority and Fix Version should show 'Not set' in the preview. The Jira create parameters should not include an assignee, priority, or fixVersions.",
       "files": ["files/claude-md-configured.md", "files/user-input-partial.md"],
       "assertions": [
         "outputs/preview.md contains the heading '## Feature Overview'",
@@ -40,8 +44,12 @@
         "outputs/preview.md does NOT contain the heading '## Customer Considerations'",
         "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'",
         "outputs/preview.md does NOT contain the heading '## Documentation Considerations'",
+        "outputs/preview.md contains 'Not set' for priority (user skipped priority selection)",
+        "outputs/preview.md contains 'Not set' for fix version (user skipped fixVersion selection)",
         "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'",
-        "outputs/jira-create.md includes the label 'ai-generated-jira'"
+        "outputs/jira-create.md includes the label 'ai-generated-jira'",
+        "outputs/jira-create.md does NOT include priority in additional_fields (user skipped)",
+        "outputs/jira-create.md does NOT include fixVersions in additional_fields (user skipped)"
       ]
     },
     {
@@ -101,6 +109,22 @@
         "outputs/api-claim-verification.md indicates the claim could not be verified (e.g., 'unverified', 'unavailable', 'cannot verify', or 'web tools unavailable')",
         "outputs/api-claim-verification.md contains a prompt or indication that the user was asked to decide (e.g., 'proceed as-is', 'verify manually', or 'Would you like to')",
         "outputs/preview.md contains the heading '## Requirements'",
+        "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Define a Jira Feature using the define-feature skill. The project's CLAUDE.md is in claude-md-with-field-defaults.md — it has a '### Jira Field Defaults' subsection with 'Prompt for priority: false', 'Default priority: Normal', and 'Prompt for fixVersion: false'. The user input is in user-input-partial.md — it provides content for only the 2 Required sections. All other sections are marked SKIP. The Feature summary is 'Add bulk SBOM delete endpoint'. The user leaves the Feature unassigned. Do NOT call any actual MCP tools or Jira APIs. Instead, write the following outputs: outputs/preview.md (the composed Feature description preview), outputs/jira-create.md (the Jira create_issue call parameters), outputs/jira-comment.md (the comment with Comment Footnote). Do NOT modify any files outside outputs/.",
+      "expected_output": "The skill reads Jira Field Defaults from CLAUDE.md and does NOT prompt the user for priority or fixVersion (both prompts suppressed). Because Default priority is 'Normal', the preview shows Priority: Normal (applied silently). Because no default fixVersion is configured, Fix Version shows 'Not set'. The Jira create call includes priority Normal but omits fixVersions.",
+      "files": ["files/claude-md-with-field-defaults.md", "files/user-input-partial.md"],
+      "assertions": [
+        "outputs/preview.md contains the heading '## Feature Overview'",
+        "outputs/preview.md contains the heading '## Requirements'",
+        "outputs/preview.md contains 'Normal' in the priority field display (default priority applied silently)",
+        "outputs/preview.md contains 'Not set' for fix version (no default fixVersion configured, prompt suppressed)",
+        "outputs/jira-create.md includes priority with name 'Normal' in additional_fields (default applied)",
+        "outputs/jira-create.md does NOT include fixVersions in additional_fields (no default, prompt suppressed)",
+        "outputs/jira-create.md includes the label 'ai-generated-jira'",
         "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'"
       ]
     }
