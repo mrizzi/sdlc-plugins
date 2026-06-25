@@ -1,3 +1,4 @@
+role: verify-pr
 agent: agents/verify-pr.md
 model: opus
 image: ghcr.io/mrizzi/sdlc-plugins/sdlc-base:latest-run-in-fullsend
