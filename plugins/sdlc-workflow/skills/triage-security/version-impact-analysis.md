@@ -226,7 +226,45 @@ for the stream.
    - **In a `dnf install` / `yum install` command** → **explicit install**.
    - **Not in any install command** → **base image**.
 
-3. **Base image reference** (when origin is base image) — extract the `FROM`
+3. **Optional SBOM verification** (requires cosign CLI) — when available, compare
+   the final container image SBOM against the base image SBOM to cross-check the
+   rpms.lock.yaml classification. This step supplements but does not replace the
+   lock file classification above.
+
+   1. Check if `cosign` is available:
+      ```bash
+      which cosign
+      ```
+   2. If available, download the final image SBOM using the image reference and
+      digest from the supportability matrix:
+      ```bash
+      cosign download sbom <image-reference>@<image-digest> > /tmp/final-sbom.json
+      ```
+   3. Extract the base image reference from the Dockerfile's `FROM` line (already
+      available from the classification step above).
+   4. Download the base image SBOM:
+      ```bash
+      cosign download sbom <base-image-reference> > /tmp/base-sbom.json
+      ```
+   5. Compare the package presence in both SBOMs:
+      - **In final SBOM but NOT in base SBOM** → explicit install (confirms
+        rpms.lock.yaml classification of "in lock file")
+      - **In both SBOMs** → base image package (confirms rpms.lock.yaml
+        classification of "not in lock file")
+      - **If SBOM result disagrees with rpms.lock.yaml classification**, flag the
+        discrepancy to the engineer:
+        > "⚠️ SBOM classification disagrees with rpms.lock.yaml — lock file says
+        > [explicit install / base image] but SBOM comparison says [base image /
+        > explicit install]. Investigate manually."
+   6. Present the SBOM classification result alongside the rpms.lock.yaml result
+      in the dependency chain output (see example output below).
+
+   If `cosign` is not available or any SBOM download fails, skip with a warning
+   and use the rpms.lock.yaml classification alone:
+   > "⚠️ SBOM verification skipped — cosign not available / SBOM download failed.
+   > Using rpms.lock.yaml classification only."
+
+4. **Base image reference** (when origin is base image) — extract the `FROM`
    reference from the Dockerfile to identify the update path:
    ```bash
    git show <commit>:Dockerfile | grep -i '^FROM'
@@ -250,20 +288,39 @@ for the stream.
    depends on the base image vendor's errata pipeline. Include the current reference
    in the remediation task so the engineer or `/implement-task` can research it.
 
-4. **Introduction point** — check if the package origin differs across versions
+5. **Introduction point** — check if the package origin differs across versions
    (e.g., moved from explicit install to base image inheritance between streams).
 
-Example output (RPM, base image origin):
+Example output (RPM, base image origin with SBOM verification):
 ```
 Dependency chain for openssl (RPM):
   SBOM confirms: openssl-libs-3.0.7-27.el9.x86_64
   rpms.lock.yaml: NOT present → base image
+  SBOM verification: present in both final and base image SBOMs → base image (confirms lock file)
   Dockerfile: FROM registry.access.redhat.com/ubi9/ubi-minimal:9.4-1227
   Origin: base image (openssl-libs inherited from ubi9-minimal)
   Pinning: version tag (9.4-1227)
 
 Remediation: update base image tag to a version with patched openssl.
 Check base image errata or container catalog for available updates.
+```
+
+Example output (RPM, explicit install with SBOM verification):
+```
+Dependency chain for custom-rpm (RPM):
+  rpms.lock.yaml: present → explicit install
+  SBOM verification: present in final SBOM but NOT in base image SBOM → explicit install (confirms lock file)
+  Origin: explicit install (custom-rpm specified in rpms.in.yaml)
+
+Remediation: update the package spec in rpms.in.yaml / rpms.lock.yaml.
+```
+
+Example output (RPM, SBOM verification skipped):
+```
+Dependency chain for openssl (RPM):
+  rpms.lock.yaml: NOT present → base image
+  SBOM verification: ⚠️ skipped — cosign not available
+  Origin: base image (openssl-libs inherited from ubi9-minimal)
 ```
 
 Note that the lock file contents and base image can differ across streams — always

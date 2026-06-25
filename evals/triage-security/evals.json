@@ -68,7 +68,8 @@
         "Version impact table includes ALL versions from the 2.2.x stream supportability matrix (2.2.0 through 2.2.4) and uses rpms.lock.yaml data for version extraction (Step 2.3)",
         "Dependency chain context classifies the package origin as explicit install because openssl-libs is present in rpms.lock.yaml, not inherited from the base image (Step 2.3.5)",
         "Remediation creates a single task for the Konflux release repo — not the two-task upstream backport + downstream propagation flow used for source dependency ecosystems (Step 7 Remediation Task Creation — system package path)",
-        "Remediation task description follows task-description-template.md format with Repository, Target Branch, Description, Implementation Notes, and Acceptance Criteria sections — Files to Modify is intentionally omitted per remediation-templates.md (Step 7 Remediation Task Creation)"
+        "Remediation task description follows task-description-template.md format with Repository, Target Branch, Description, Implementation Notes, and Acceptance Criteria sections — Files to Modify is intentionally omitted per remediation-templates.md (Step 7 Remediation Task Creation)",
+        "Dependency chain context includes an SBOM verification line — either showing the cosign comparison result or noting that SBOM verification was skipped because cosign is not available (Step 2.3.5 Optional SBOM verification)"
       ]
     },
     {
@@ -174,6 +175,19 @@
         "A digest comment with marker '[sdlc-workflow] Description digest:' is posted on each remediation task — both upstream and downstream (§1.66)",
         "Digest comments are posted BEFORE creating issue links (Depend, Blocks) or other comments on the tasks (§1.66, shared/description-digest-protocol.md Rules)",
         "The digest is computed using scripts/sha256-digest.py with the re-fetched description, not the description string passed to create_issue (shared/description-digest-protocol.md Hashing)"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Triage Vulnerability issue TC-8005. The issue details are in vuln-issue-rpm.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] so triage is scoped to the 2.2.x stream. Assume cosign IS available (which cosign returns /usr/bin/cosign). Use the following mock SBOM comparison results for the affected versions: for versions 2.2.0 through 2.2.2, openssl-libs appears in BOTH the final image SBOM and the base image SBOM (confirming base image origin); the rpms.lock.yaml for these versions also lists openssl-libs (explicit install). This means the SBOM classification DISAGREES with the rpms.lock.yaml classification for these versions. Do NOT actually call Jira MCP, git show, cosign, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2, and write outputs/sbom-verification.md with the SBOM verification results from Step 2.3.5 showing both rpms.lock.yaml and SBOM signals side by side.",
+      "expected_output": "A triage analysis for an RPM system package (openssl-libs) where cosign SBOM verification is available. The dependency chain output presents both rpms.lock.yaml classification (explicit install) and SBOM comparison result (base image) side by side. Because the two signals disagree, the discrepancy is flagged to the engineer for manual investigation.",
+      "files": ["files/vuln-issue-rpm.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "assertions": [
+        "Dependency chain output includes both the rpms.lock.yaml classification AND the SBOM verification result for the affected versions (Step 2.3.5 Optional SBOM verification)",
+        "SBOM verification uses cosign download sbom to compare the final container image SBOM against the base image SBOM (Step 2.3.5 sub-steps 2 and 4)",
+        "When SBOM classification (base image) disagrees with rpms.lock.yaml classification (explicit install), the discrepancy is flagged to the engineer with a warning (Step 2.3.5 sub-step 5 disagreement handling)",
+        "The rpms.lock.yaml classification remains the primary signal — the SBOM result supplements but does not override it (Step 2.3.5 non-MVP enhancement)",
+        "The SBOM verification result is presented alongside the rpms.lock.yaml result in the dependency chain output, not as a separate section (Step 2.3.5 sub-step 6)"
       ]
     },
     {
