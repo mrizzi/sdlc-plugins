@@ -533,8 +533,13 @@ When triage concludes "needs fix" (Case A above), create Jira Tasks
 following `task-description-template.md` so that `/implement-task` can parse them
 directly. Only create tasks for streams within the current issue's scope.
 
+After creating each remediation task, post a description digest comment per
+`shared/description-digest-protocol.md`. This ensures `/implement-task` can
+verify description integrity in its Step 1.5.
+
 Read `remediation-templates.md` for the full task description templates, Jira
-issue creation API calls, and linkage procedures. The key distinction:
+issue creation API calls, digest comment procedures, and linkage procedures.
+The key distinction:
 
 - **Source dependency ecosystems** (Cargo, npm, Go modules): create **two** tasks —
   an upstream backport task (fix in the source repo) and a downstream propagation

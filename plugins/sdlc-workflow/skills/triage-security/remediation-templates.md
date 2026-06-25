@@ -189,6 +189,10 @@ These depend on repository structure that the triage skill does not have context
 
 ## Jira Issue Creation
 
+After creating each remediation task, post a description digest comment per
+`shared/description-digest-protocol.md`. The digest comment MUST be posted
+before creating issue links or other comments on the task.
+
 ### Source dependency ecosystems — create two tasks:
 
 ```
@@ -201,6 +205,12 @@ upstream_task = jira.create_issue(
   labels: ["ai-generated-jira", "Security", "<CVE-ID>"]
 )
 
+# 1a. Post description digest comment (before links or other comments)
+upstream_desc = jira.get_issue(<upstream-task-key>, fields=["description"])
+# Write description to temp file and compute digest
+python3 scripts/sha256-digest.py /tmp/task-desc.md  # → sha256-md:<hex> or sha256-adf:<hex>
+jira.add_comment(<upstream-task-key>, "[sdlc-workflow] Description digest: <tagged-digest>")
+
 # 2. Downstream propagation subtask
 downstream_task = jira.create_issue(
   projectKey: "<project-key>",
@@ -209,6 +219,11 @@ downstream_task = jira.create_issue(
   description: <downstream-task-description>,
   labels: ["ai-generated-jira", "Security", "<CVE-ID>"]
 )
+
+# 2a. Post description digest comment (before links or other comments)
+downstream_desc = jira.get_issue(<downstream-task-key>, fields=["description"])
+python3 scripts/sha256-digest.py /tmp/task-desc.md
+jira.add_comment(<downstream-task-key>, "[sdlc-workflow] Description digest: <tagged-digest>")
 ```
 
 ### System package ecosystems — create one task:
@@ -221,6 +236,11 @@ task = jira.create_issue(
   description: <system-package-task-description>,
   labels: ["ai-generated-jira", "Security", "<CVE-ID>"]
 )
+
+# Post description digest comment (before links or other comments)
+task_desc = jira.get_issue(<task-key>, fields=["description"])
+python3 scripts/sha256-digest.py /tmp/task-desc.md
+jira.add_comment(<task-key>, "[sdlc-workflow] Description digest: <tagged-digest>")
 ```
 
 ## Preemptive Task Variant
@@ -274,6 +294,11 @@ upstream_task = jira.create_issue(
   labels: ["ai-generated-jira", "Security", "<CVE-ID>", "security-preemptive"]
 )
 
+# Post description digest comment (before links or other comments)
+upstream_desc = jira.get_issue(<upstream-task-key>, fields=["description"])
+python3 scripts/sha256-digest.py /tmp/task-desc.md
+jira.add_comment(<upstream-task-key>, "[sdlc-workflow] Description digest: <tagged-digest>")
+
 # System package ecosystems — preemptive variant
 task = jira.create_issue(
   projectKey: "<project-key>",
@@ -282,11 +307,16 @@ task = jira.create_issue(
   description: <system-package-task-description-with-preemptive-prefix>,
   labels: ["ai-generated-jira", "Security", "<CVE-ID>", "security-preemptive"]
 )
+
+# Post description digest comment (before links or other comments)
+task_desc = jira.get_issue(<task-key>, fields=["description"])
+python3 scripts/sha256-digest.py /tmp/task-desc.md
+jira.add_comment(<task-key>, "[sdlc-workflow] Description digest: <tagged-digest>")
 ```
 
 Downstream propagation subtasks (for source dependency ecosystems) also receive
-the `security-preemptive` label and use the same "Related" link to the
-originating CVE Jira.
+the `security-preemptive` label, the description digest comment, and use the
+same "Related" link to the originating CVE Jira.
 
 ## Jira Linkage
 
