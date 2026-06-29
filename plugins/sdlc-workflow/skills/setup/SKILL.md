@@ -516,6 +516,15 @@ Ask the user for the following fields:
 
     If the user skips, leave the placeholder empty in the template.
 
+11. **Embargo policy URL** _(optional)_ — link to the organization's coordinated
+    vulnerability disclosure or embargo policy. When configured, triage-security
+    presents a warning gate before proceeding with triage on Critical or Important
+    severity CVEs. Ask the user:
+
+    > "Embargo policy URL (optional, for coordinated vulnerability disclosure guidance)?"
+
+    If the user skips, leave the placeholder empty in the template.
+
 ### Step 10.2 – Collect Version Streams
 
 Ask the user for one or more version streams. For each stream, collect:

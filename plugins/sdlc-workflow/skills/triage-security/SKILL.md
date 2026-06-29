@@ -38,6 +38,7 @@ Do **not** use for:
 | 0.5 | Jira Access | -- | MCP or REST API connection |
 | 1 | Data Extraction | Vulnerability issue key | CVE ID, library, affected range, remote links |
 | 1.5 | External CVE Data Enrichment | CVE ID | Structured version ranges, cross-validated fix thresholds |
+| 1.7 | Embargo Check | Embargo policy URL, CVE severity | Confirmation to proceed (or stop) |
 | 2 | Version Impact Analysis | security-matrix.md, lock files | Version impact table |
 | 3 | Affects Versions Correction | Version impact table, Jira versions | Corrected Affects Versions |
 | 4 | Duplicate, Sibling, Overlap, and Reconciliation Check | JQL search (sibling issues), component field search, preemptive task search | Duplicate detection, issue links, cross-CVE overlap, preemptive task reconciliation |
@@ -132,6 +133,9 @@ Extract the following from the configuration for use in later steps:
 - **ProdSec Jira account ID** _(optional)_ — from Security Configuration. If configured,
   used for @mentions in Affects Versions correction (Step 3) and cross-CVE overlap (Step 4.3)
   comments. If not configured, skip @mentions silently.
+- **Embargo policy URL** _(optional)_ — from Security Configuration. If configured,
+  used in Step 1.7 to present an embargo warning gate for Critical/Important severity CVEs.
+  If not configured, Step 1.7 is skipped entirely.
 - **Version Streams** — Konflux release repo URLs and local paths from Security Configuration
 - **Source Repositories** — source repo names and URLs from Security Configuration
 
@@ -405,6 +409,42 @@ in Step 1:
 
 The enriched fix threshold (from this step) is passed to Step 2.3 for use in version
 impact comparisons.
+
+## Step 1.7 – Embargo Check
+
+This step is an advisory warning gate for high-severity vulnerabilities that may
+be under embargo. It does not enforce embargo procedures — it surfaces a warning
+and links to the organization's embargo policy for the engineer to verify.
+
+1. **Check configuration**: if no Embargo policy URL is configured in Security
+   Configuration, skip this step silently and proceed to Step 2.
+2. **Evaluate severity**: determine the vulnerability severity from the CVSS score
+   extracted in Step 1.5 or the Jira priority field from Step 1. The trigger
+   threshold is Critical or Important severity (CVSS >= 7.0).
+3. **Below threshold**: if the severity is Low or Moderate (CVSS < 7.0), skip this
+   step silently and proceed to Step 2.
+4. **Present warning gate**: if severity meets the threshold, present a warning to
+   the engineer:
+
+   ```
+   ⚠️ EMBARGO CHECK — <CVE-ID> (<severity> severity)
+
+   High-severity vulnerabilities may be under embargo.
+   Before proceeding, verify with your security team that this CVE
+   is cleared for public triage.
+
+   Embargo policy: <configured-embargo-url>
+
+   Proceed with triage? (Yes / No)
+   ```
+
+5. **If "No"**: stop execution and inform the user to check embargo status before
+   re-running triage. Do not proceed to Step 2.
+6. **If "Yes"**: proceed to Step 2 (Version Impact Analysis) as normal.
+
+This gate is consistent with the existing guardrail pattern (every Jira mutation
+requires confirmation). No Jira mutations occur at this step — the gate fires
+before any triage output, so stopping is safe.
 
 ## Step 2 – Version Impact Analysis
 

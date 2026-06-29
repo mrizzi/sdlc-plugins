@@ -217,6 +217,19 @@
         "The Ready for QA section includes a Remediation Tasks column showing the linked tasks and their statuses",
         "For each Ready for QA issue, the output suggests transitioning to ON_QA"
       ]
+    },
+    {
+      "id": 17,
+      "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config-embargo.md. Note that the CLAUDE.md includes an Embargo policy URL (https://example.com/security/embargo-policy). The CVE (CVE-2026-31812) has CVSS 7.5 (High severity). Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/embargo-check.md with the Step 1.7 embargo check analysis showing the severity evaluation and the warning gate presented to the engineer, write outputs/version-impact.md with the version impact table from Step 2, and write outputs/remediation.md with the remediation task descriptions.",
+      "expected_output": "A triage analysis demonstrating the embargo warning gate behavior: Step 0 extracts the Embargo policy URL from the Security Configuration, Step 1.7 evaluates the CVE severity (CVSS 7.5, High — meets the Critical/Important threshold), presents the embargo warning gate with the configured URL, and proceeds only after the engineer confirms. The rest of the triage follows the standard flow.",
+      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config-embargo.md"],
+      "assertions": [
+        "Step 0 extracts the Embargo policy URL from the Security Configuration as an optional field without raising an error (§1.71 — backward compatible extraction)",
+        "Step 1.7 evaluates the CVE severity — CVSS 7.5 (High) meets the Critical/Important threshold (CVSS >= 7.0) and triggers the embargo warning gate (§1.70)",
+        "Step 1.7 presents a warning gate to the engineer including the CVE ID (CVE-2026-31812), severity level, a statement about embargo risk, and a link to the configured embargo policy URL (https://example.com/security/embargo-policy) (§1.70)",
+        "Step 1.7 requires explicit engineer confirmation (Yes/No) before proceeding to Step 2 — the gate is a confirmation prompt, not an informational message (§1.70)",
+        "The embargo warning gate does NOT trigger for Low or Moderate severity CVEs (CVSS < 7.0) — it is skipped silently when severity is below threshold (§1.70)"
+      ]
     }
   ]
 }

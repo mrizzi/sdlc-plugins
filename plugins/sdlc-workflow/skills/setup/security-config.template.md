@@ -42,6 +42,12 @@
        "557058:abc123"). Used for @mentions in triage comments (Affects Versions
        corrections, cross-CVE overlap notifications). Leave blank to skip @mentions.
 
+     Optional field for coordinated vulnerability disclosure:
+     - Embargo policy URL: link to the organization's coordinated vulnerability
+       disclosure or embargo policy (e.g., "https://example.com/security/embargo-policy").
+       When configured and a CVE has Critical or Important severity, triage-security
+       presents a warning gate before proceeding. Leave blank to skip the embargo check.
+
      Example:
        Product pages URL: https://lifecycle.example.com/products/myproduct
        Jira version prefix: MYPRODUCT
@@ -50,7 +56,8 @@
        VEX Justification custom field: customfield_00000
        Upstream Affected Component custom field: customfield_10632
        PS Component custom field: customfield_10669
-       Stream custom field: customfield_10832 -->
+       Stream custom field: customfield_10832
+       Embargo policy URL: https://example.com/security/embargo-policy -->
 
 - Product pages URL: {{product-pages-url}}
 - Jira version prefix: {{jira-version-prefix}}
@@ -62,6 +69,7 @@
 - Stream custom field: {{stream-field-id}}
 - ProdSec contact email: {{prodsec-email}}
 - ProdSec Jira account ID: {{prodsec-jira-account-id}}
+- Embargo policy URL: {{embargo-policy-url}}
 
 ### Version Streams
 
