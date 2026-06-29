@@ -3,6 +3,8 @@
 **Key**: TC-9003
 **Summary**: SBOM comparison view
 **Status**: New
+**Priority**: Critical
+**Fix Versions**: RHTPA 1.5.0
 **Labels**: ai-generated-jira
 **Linked Issues**: None
 **Figma**: https://www.figma.com/design/mock123/SBOMCompare (see figma-context.md for extracted design context)

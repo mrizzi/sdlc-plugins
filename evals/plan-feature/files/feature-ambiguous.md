@@ -3,6 +3,8 @@
 **Key**: TC-9002
 **Summary**: Improve search experience
 **Status**: New
+**Priority**: Normal
+**Fix Versions**: RHTPA 1.6.0
 **Labels**: ai-generated-jira
 **Linked Issues**: None
 

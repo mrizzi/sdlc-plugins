@@ -3,6 +3,8 @@
 **Key**: TC-9004
 **Summary**: Add license compliance report endpoint
 **Status**: New
+**Priority**: Major
+**Fix Versions**: RHTPA 1.5.0
 **Labels**: ai-generated-jira
 **Linked Issues**: None
 
