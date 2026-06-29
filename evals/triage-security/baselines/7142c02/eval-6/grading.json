@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "JQL queries use the project key (TC) and vulnerability issue type ID (10024) from the Security Configuration in claude-md-security-config.md — not hardcoded values (§1.49)",
+      "passed": true,
+      "evidence": "In discovery-listing.md, all three JQL queries use 'project = TC AND issuetype = 10024'. The header states 'Project: TC | Vulnerability Issue Type ID: 10024'. These match the Security Configuration in claude-md-security-config.md which specifies 'Project key: TC' (line 19) and 'Vulnerability issue type ID: 10024' (line 49). The output explicitly references these as sourced values rather than hardcoded."
+    },
+    {
+      "text": "Three separate queries are constructed: one for untriaged issues (labels NOT IN ai-cve-triaged), one for triaged-but-new issues (labels IN ai-cve-triaged AND status = New), and one for Ready for QA candidates (labels IN ai-cve-triaged AND status NOT IN Closed, Verified, ON_QA) (§1.48)",
+      "passed": true,
+      "evidence": "discovery-listing.md contains three separate queries: Query 1 (line 9): 'project = TC AND issuetype = 10024 AND labels NOT IN (ai-cve-triaged)'; Query 2 (line 34): 'project = TC AND issuetype = 10024 AND labels IN (ai-cve-triaged) AND status = New'; Query 3 (line 51): 'project = TC AND issuetype = 10024 AND labels IN (ai-cve-triaged) AND status NOT IN (Closed, Verified, 'ON_QA')'. All three match the required patterns exactly."
+    },
+    {
+      "text": "Results are grouped into three clearly separated lists: Untriaged issues, Triaged but still New issues, and Ready for QA issues",
+      "passed": true,
+      "evidence": "discovery-listing.md has three clearly separated sections with horizontal rules between them: 'Query 1: Untriaged Issues' (line 7), 'Query 2: Triaged but still New (stale issues)' (line 32), and 'Query 3: Ready for QA (triaged CVEs with remediation tasks completed)' (line 49). Each section contains its own results table."
+    },
+    {
+      "text": "Each listed issue shows: issue key, status, CVE ID (from labels), summary, and created date",
+      "passed": true,
+      "evidence": "All issue tables in discovery-listing.md include columns for Issue (key), Status, CVE, Summary, and Created. For example, in Query 1 table (lines 18-28): 'TC-9003 | In Progress | CVE-2026-40455 | tokio - Race condition in task cancellation [rhtpa-2.2] | 2026-06-05'. Query 2 (line 45): 'TC-9010 | New | CVE-2026-39874 | quinn-proto - Panic on malformed QUIC frame [rhtpa-2.2] | 2026-05-28'. Query 3 Ready for QA table (line 70): 'TC-9020 | Modified | CVE-2026-38901 | hyper - HTTP request smuggling [rhtpa-2.2] | 2026-05-15'. Excluded table also shows issue key, status, CVE, and summary."
+    },
+    {
+      "text": "Status-aware handling: New issues (TC-9001, TC-9002, TC-9004) are presented for full triage, while the In Progress issue (TC-9003) triggers a warning about active work",
+      "passed": true,
+      "evidence": "In status-handling.md: TC-9001 (line 19-20): 'Status: New, Handling: Proceed with full triage'; TC-9002 (line 24-25): 'Status: New, Handling: Proceed with full triage'; TC-9004 (line 37-38): 'Status: New, Handling: Proceed with full triage'. TC-9003 (line 29-34): 'Status: In Progress, Handling: **Warning** -- This issue is already in `In Progress`. It may be actively worked on. Before triaging, ask the user: 1. Proceed with triage anyway 2. Skip this issue'."
+    },
+    {
+      "text": "Ready for QA filtering: TC-9020 appears in Ready for QA (all linked Tasks Done/Closed), TC-9023 is excluded (TC-9025 still In Progress), TC-9026 is excluded (no Depend links)",
+      "passed": true,
+      "evidence": "In discovery-listing.md lines 62-64: 'TC-9020: ALL linked remediation Tasks completed (TC-9021 Done, TC-9022 Closed) -- Qualifies'; 'TC-9023: TC-9025 still In Progress -- Excluded (remediation in progress)'; 'TC-9026: No linked Tasks with type \"Depend\" -- Excluded (no remediation to verify)'. TC-9020 appears in the Ready for QA table (line 70), while TC-9023 and TC-9026 appear in the Excluded table (lines 78-79)."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "The output explicitly identifies Steps to Reproduce as missing in the table (line 32: '| 2 | Steps to Reproduce | `### **Steps to Reproduce**` | **NO -- MISSING** |') and again in the 'Sections missing from ACME-501 description' list (line 52: '**Steps to Reproduce** (`### **Steps to Reproduce**`) -- This section is entirely absent from the bug description.')."
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "The output explicitly identifies Expected Result as missing in the table (line 33: '| 3 | Expected Result | `### **Expected Result**` | **NO -- MISSING** |') and again in the 'Sections missing from ACME-501 description' list (line 53: '**Expected Result** (`### **Expected Result**`) -- This section is entirely absent from the bug description.')."
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "The output has a 'Stop Decision' section (line 57) stating '**Execution STOPPED at Step 1.**' and explicitly confirms on line 65: 'Steps 2 through 5 (Reproduce/Trace, Codebase Investigation, Root Cause Analysis, Task Creation) were NOT executed.' No Steps 2-5 content appears in the output."
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "The error message on line 63 reads: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**. The bug description does not follow the template at `docs/templates/bug-template.md`.' This lists both specific missing sections by name and references the template path from Bug Configuration (line 11 confirms Bug template path: `docs/templates/bug-template.md`)."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

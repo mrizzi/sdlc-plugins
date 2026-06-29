@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing trustify-backend entry in the Repository Registry unchanged (same Role, Serena Instance, Path values as in claude-md-configured.md)",
+      "passed": true,
+      "evidence": "claude-md-result.md line 7: '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' — Role, Serena Instance, and Path all match the original claude-md-configured.md values exactly."
+    },
+    {
+      "text": "outputs/claude-md-result.md adds a new trustify-ui entry to the Repository Registry with serena_ui as the Serena Instance",
+      "passed": true,
+      "evidence": "claude-md-result.md line 8: '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |' — new row added with serena_ui as the Serena Instance."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged — Project key remains TC, Cloud ID, Feature issue type ID remain as in claude-md-configured.md",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 12-16: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747 — all match the original values exactly."
+    },
+    {
+      "text": "outputs/changes-log.md explicitly identifies which entries were preserved (existing) and which were added (new)",
+      "passed": true,
+      "evidence": "changes-log.md has two clearly labeled sections: '## Preserved (unchanged)' (lines 7-28) listing trustify-backend, Jira Configuration, Code Intelligence, and Bug Configuration; and '## Added (new)' (lines 29-35) listing the trustify-ui row and serena_ui limitation entry."
+    },
+    {
+      "text": "outputs/discovery-log.md notes that serena_backend was already configured and serena_ui is newly discovered",
+      "passed": true,
+      "evidence": "discovery-log.md line 31: 'Status: **already configured** in Repository Registry' for serena_backend; line 34: 'Status: **newly discovered** -- not in Repository Registry' for serena_ui."
+    },
+    {
+      "text": "The existing Code Intelligence section content (naming convention, example, serena_backend limitations) is preserved — only new serena_ui content is added",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-33: naming convention ('Tools are prefixed by Serena instance name: `mcp__<instance>__<tool>`'), serena_backend example (mcp__serena_backend__find_symbol), and serena_backend limitation ('rust-analyzer may take 30-60 seconds to index on first use') all preserved. Only addition is line 34: '- `serena_ui`: No known limitations'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with Bug issue type ID (10001), Bug template (docs/bug-template.md), and Bug-to-Task link type (Blocks) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 37-40: Bug issue type ID: 10001, Bug template: docs/bug-template.md, Bug-to-Task link type: Blocks — all match original. discovery-log.md lines 48-52: 'Bug Configuration is up to date. All three required fields are populated' with matching values."
+    },
+    {
+      "text": "The skill offers Security Configuration opt-in since the existing CLAUDE.md has no '## Security Configuration' section, and respects the user's decline — no Security Configuration section appears in the output",
+      "passed": true,
+      "evidence": "discovery-log.md line 23: '## Security Configuration: **not present**' (detected as missing). Line 56: 'User declined to enable security triage for this project. Security Configuration section will not be created.' claude-md-result.md contains no '## Security Configuration' section — the file ends after Bug Configuration at line 41."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

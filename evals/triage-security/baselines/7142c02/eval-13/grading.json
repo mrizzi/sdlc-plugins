@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "After creating the upstream backport task, the skill re-fetches the task description from Jira and computes a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
+      "passed": true,
+      "evidence": "remediation.md lines 79-96 describe the digest steps for the upstream backport task (TC-8002): Step 1 re-fetches via 'jira.get_issue(\"TC-8002\", fields=[\"description\"])', Step 3 computes the digest via 'python3 scripts/sha256-digest.py /tmp/task-desc.md'. The same pattern is repeated for the 2.1.x preemptive upstream backport task (TC-8004) at lines 287-305. The Description Digest Protocol Summary at lines 439-451 also confirms: 'Re-fetch the task description from Jira (do NOT use the description string passed to create_issue)' and 'Compute the digest via python3 scripts/sha256-digest.py /tmp/task-desc.md'."
+    },
+    {
+      "text": "After creating the downstream propagation subtask, the skill re-fetches the task description and computes a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
+      "passed": true,
+      "evidence": "remediation.md lines 159-177 describe the digest steps for the downstream propagation subtask (TC-8003): Step 1 re-fetches via 'jira.get_issue(\"TC-8003\", fields=[\"description\"])', Step 3 computes the digest via 'python3 scripts/sha256-digest.py /tmp/task-desc.md'. The same pattern is repeated for the 2.1.x preemptive downstream propagation task (TC-8005) at lines 372-390."
+    },
+    {
+      "text": "A digest comment with marker '[sdlc-workflow] Description digest:' is posted on each remediation task — both upstream and downstream (§1.66)",
+      "passed": true,
+      "evidence": "remediation.md shows digest comments posted on all four remediation tasks. For TC-8002 (line 95): 'jira.add_comment(\"TC-8002\", \"[sdlc-workflow] Description digest: <tagged-digest-output>\")'. For TC-8003 (line 175): 'jira.add_comment(\"TC-8003\", \"[sdlc-workflow] Description digest: <tagged-digest-output>\")'. For TC-8004 (line 303): 'jira.add_comment(\"TC-8004\", \"[sdlc-workflow] Description digest: <tagged-digest-output>\")'. For TC-8005 (line 388): 'jira.add_comment(\"TC-8005\", \"[sdlc-workflow] Description digest: <tagged-digest-output>\")'."
+    },
+    {
+      "text": "Digest comments are posted BEFORE creating issue links (Depend, Blocks) or other comments on the tasks (§1.66, shared/description-digest-protocol.md Rules)",
+      "passed": true,
+      "evidence": "remediation.md explicitly states ordering for each task. For TC-8002 (line 97): 'Only after posting the digest comment, proceed to create issue links (Depend link to TC-8001).' For TC-8003 (line 177): 'Only after posting the digest comment, proceed to create issue links (Blocks link from TC-8002, Depend link to TC-8001).' For TC-8004 (line 305): 'Only after posting the digest comment, proceed to create issue links (Related link to TC-8001).' For TC-8005 (line 390): 'Only after posting the digest comment, proceed to create issue links (Blocks link from TC-8004, Related link to TC-8001).' Additionally, the Jira Linkage sections (lines 183-198 for 2.2.x, lines 394-410 for 2.1.x) are placed after the digest steps and state 'After digest comments are posted on both tasks'. The summary at line 448 also confirms: 'The digest comment is posted before any issue links or other comments.'"
+    },
+    {
+      "text": "The digest is computed using scripts/sha256-digest.py with the re-fetched description, not the description string passed to create_issue (shared/description-digest-protocol.md Hashing)",
+      "passed": true,
+      "evidence": "remediation.md explicitly distinguishes between the description passed to create_issue and the re-fetched description. For each task, the protocol is: (1) create the task, (2) re-fetch the description from Jira, (3) write the re-fetched description to a temp file, (4) compute digest via scripts/sha256-digest.py on the temp file. The summary at lines 444-445 explicitly states: 'Re-fetch the task description from Jira (do NOT use the description string passed to create_issue, because Jira normalizes content during storage)' and 'The digest is computed from the re-fetched description, not the original string passed to create_issue.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

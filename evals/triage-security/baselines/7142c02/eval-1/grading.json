@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction correctly identifies CVE-2026-31812, library quinn-proto, affected range < 0.11.14, and fixed version 0.11.14 from the Vulnerability issue (Step 1)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 7-13 contain: CVE ID = CVE-2026-31812, Vulnerable library = quinn-proto, Affected version range = 'versions before 0.11.14 (< 0.11.14)', Fixed version = 0.11.14. All four fields are correctly identified."
+    },
+    {
+      "text": "Data extraction identifies the ecosystem as Cargo based on the library name and component context (Step 1 Ecosystem detection)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 29-38 contain an 'Ecosystem Detection' section stating: 'The vulnerable library quinn-proto is a Rust crate. Based on the Ecosystem Mappings tables in the security matrix, this falls under the Cargo ecosystem' with Lock file: Cargo.lock, Check command: git show <tag>:Cargo.lock, Repository: backend."
+    },
+    {
+      "text": "Version impact table includes ALL versions from the security-matrix.md supportability matrix — no versions are skipped (Important Rule 4)",
+      "passed": true,
+      "evidence": "The security-matrix-mock.md defines 7 versions total: 2.1.0 (v0.3.8), 2.1.1 (v0.3.12), 2.2.0 (v0.4.5), 2.2.1 (v0.4.8), 2.2.2 (v0.4.9), 2.2.3 (v0.4.11), 2.2.4 (v0.4.12). The version-impact.md table (lines 13-19) lists all 7 versions with matching build tags. No version is skipped."
+    },
+    {
+      "text": "Version impact analysis uses pinned commit tags from the supportability matrix for each version, not branch HEAD (Important Rule 13)",
+      "passed": true,
+      "evidence": "version-impact.md table uses Build Tag column with pinned tags: v0.3.8, v0.3.12, v0.4.5, v0.4.8, v0.4.9, v0.4.11, v0.4.12. These match exactly the backend column values from the security-matrix-mock.md supportability matrices. The quinn-proto versions (0.11.9, 0.11.9, 0.11.9, 0.11.12, retag, 0.11.14, 0.11.14) also match the mock lock file data keyed by tag. No branch HEAD was used."
+    },
+    {
+      "text": "Version impact table identifies retag versions and carries forward the affected status from the original version (Important Rule 5)",
+      "passed": true,
+      "evidence": "version-impact.md line 17: '2.2.2 | 2.2.x | v0.4.9 | -- | YES | retag of 2.2.1 (same as v0.4.8)'. The version is identified as a retag, the quinn-proto column shows '--' (no independent lookup), and the affected status is YES, carried forward from 2.2.1 which has quinn-proto 0.11.12 (affected). This matches the security-matrix-mock.md which notes v0.4.9 as 'backend retag of 2.2.1' with the same backend tag v0.4.8."
+    },
+    {
+      "text": "Affects Versions correction proposes replacing PSIRT-assigned versions with lock-file-verified versions, showing the diff (Step 3.2)",
+      "passed": true,
+      "evidence": "affects-versions.md shows: Current PSIRT-assigned: 'RHTPA 2.0.0' (lines 4-5). Proposed Correction section (lines 32-40): 'Remove: RHTPA 2.0.0 (does not exist as a configured stream)' and 'Add: RHTPA 2.2.0, RHTPA 2.2.1, RHTPA 2.2.2'. A lock file evidence table (lines 18-26) shows the quinn-proto versions per release version justifying the correction. The diff between current and proposed is clearly shown."
+    },
+    {
+      "text": "Affects Versions correction references version names from the supportability matrix rather than hardcoded Jira version IDs (Important Rule 6)",
+      "passed": true,
+      "evidence": "affects-versions.md lines 44-52 show the Proposed Jira Mutation using version names: { 'name': 'RHTPA 2.2.0' }, { 'name': 'RHTPA 2.2.1' }, { 'name': 'RHTPA 2.2.2' }. These are string names, not numeric Jira version IDs. The names correspond to the Version column in the security-matrix-mock.md supportability matrix (2.2.0, 2.2.1, 2.2.2) with the 'RHTPA' prefix."
+    },
+    {
+      "text": "Remediation tasks include Repository, Target Branch, acceptance criteria, and dependency linkage between upstream and downstream tasks (Important Rule 9)",
+      "passed": true,
+      "evidence": "remediation.md Task 1 (upstream backport): Repository = 'backend' (line 43), Target Branch = 'release/0.3.z' (line 47), Acceptance Criteria section (lines 69-73) with checkboxes. Task 2 (downstream propagation): Repository = 'rhtpa-release.0.3.z' (line 100), Target Branch = 'main' (line 104), Acceptance Criteria (lines 121-123). Dependency linkage: Task 2 states 'Depends on: upstream backport task (upstream backport must merge first)' (line 132). The Proposed Jira Linkage section (lines 137-162) shows Blocks link type between upstream and downstream tasks."
+    },
+    {
+      "text": "For Cargo ecosystem, remediation creates two tasks: upstream backport task and downstream propagation subtask with Blocks dependency (Important Rule 8)",
+      "passed": true,
+      "evidence": "remediation.md line 7 states: 'each affected stream requires two tasks: an upstream backport task and a downstream propagation subtask.' Task 1 (line 28): 'Upstream Backport (2.1.x stream)'. Task 2 (line 85): 'Downstream Propagation (2.1.x stream)'. The Blocks dependency is established in the Proposed Jira Linkage (lines 156-160): 'Link downstream as blocked by upstream' with type: 'Blocks'."
+    },
+    {
+      "text": "The analysis presents triage recommendations as proposed actions — framing Affects Versions changes, label additions, and status transitions as proposals rather than executed mutations (Guardrails)",
+      "passed": false,
+      "evidence": "Mixed framing. affects-versions.md correctly uses 'Proposed Correction' (line 32) and 'Proposed Jira Mutation' (line 42). remediation.md uses 'Proposed Jira Linkage' (line 137) and 'Proposed Cross-Stream Impact Comment' (line 164). However, remediation.md lines 182-190 list 'Post-Triage Actions' as imperative directives: '1. Add ai-cve-triaged label to TC-8001', '3. Transition TC-8001 to In Progress', '4. Assign TC-8001 to current user'. These are framed as actions to take, not proposals. Additionally, line 17 states 'The Affects Versions field has been corrected' using past tense suggesting the mutation was already executed rather than proposed. The label additions and status transitions in the Post-Triage Actions section are not framed as proposals."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 1,
+    "total": 10,
+    "pass_rate": 0.9
+  }
+}

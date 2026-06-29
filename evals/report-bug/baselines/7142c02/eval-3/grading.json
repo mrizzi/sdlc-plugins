@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 1: \"Please run /setup first to configure your project, then re-run this skill.\" — contains both '/setup' and 'setup'."
+    },
+    {
+      "text": "outputs/response.md contains 'Bug Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 1: \"This skill requires Bug Configuration in your CLAUDE.md.\" — contains the exact phrase 'Bug Configuration'."
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "Directory listing of /tmp/report-bug-eval-baseline/eval-3/outputs/ shows only one file: response.md. No preview.md exists."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "Directory listing of /tmp/report-bug-eval-baseline/eval-3/outputs/ shows only one file: response.md. No jira-create.md exists."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "Directory listing of /tmp/report-bug-eval-baseline/eval-3/outputs/ shows only one file: response.md. No jira-comment.md exists."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the template section headings ('### **Issue Description**', '### **Steps to Reproduce**', etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "response.md contains only one line: \"This skill requires Bug Configuration in your CLAUDE.md. Please run /setup first to configure your project, then re-run this skill.\" — no template section headings are present."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

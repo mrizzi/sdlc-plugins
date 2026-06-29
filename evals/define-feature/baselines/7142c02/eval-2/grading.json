@@ -1,0 +1,85 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "Line 11 of preview.md contains '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "Line 14 of preview.md contains '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "The heading '## Background and Strategic Fit' does not appear anywhere in preview.md. The only headings are '# Feature Preview', '## Feature Overview', and '## Requirements'."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Goals'",
+      "passed": true,
+      "evidence": "The heading '## Goals' does not appear anywhere in preview.md."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "The heading '## Non-Functional Requirements' does not appear anywhere in preview.md."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Use Cases'",
+      "passed": true,
+      "evidence": "The heading '## Use Cases' does not appear anywhere in preview.md."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "The heading '## Customer Considerations' does not appear anywhere in preview.md."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "The heading '## Customer Information/Supportability' does not appear anywhere in preview.md."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "The heading '## Documentation Considerations' does not appear anywhere in preview.md."
+    },
+    {
+      "text": "outputs/preview.md contains 'Not set' for priority (user skipped priority selection)",
+      "passed": true,
+      "evidence": "Line 4 of preview.md: '**Priority:** Not set'"
+    },
+    {
+      "text": "outputs/preview.md contains 'Not set' for fix version (user skipped fixVersion selection)",
+      "passed": true,
+      "evidence": "Line 5 of preview.md: '**Fix Version:** Not set'"
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'",
+      "passed": true,
+      "evidence": "jira-create.md does not contain any 'assignee' field in its parameters or additional_fields. The assignee is absent from the Jira create call entirely."
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "Lines 30-32 of jira-create.md show additional_fields containing: '\"labels\": [\"ai-generated-jira\"]'"
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include priority in additional_fields (user skipped)",
+      "passed": true,
+      "evidence": "The additional_fields JSON in jira-create.md (lines 30-32) contains only '\"labels\": [\"ai-generated-jira\"]'. No 'priority' field is present."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include fixVersions in additional_fields (user skipped)",
+      "passed": true,
+      "evidence": "The additional_fields JSON in jira-create.md (lines 30-32) contains only '\"labels\": [\"ai-generated-jira\"]'. No 'fixVersions' field is present."
+    }
+  ],
+  "summary": {
+    "passed": 15,
+    "failed": 0,
+    "total": 15,
+    "pass_rate": 1.0
+  }
+}
