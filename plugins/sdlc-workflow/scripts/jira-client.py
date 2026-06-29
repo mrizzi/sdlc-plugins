@@ -486,7 +486,7 @@ def create_issue(
         data["fields"]["priority"] = {"name": priority}
 
     if fix_versions:
-        data["fields"]["fixVersions"] = [{"name": v} for v in fix_versions]
+        data["fields"]["fixVersions"] = [{"name": v} for v in fix_versions if v]
 
     if custom_fields:
         data["fields"].update(custom_fields)
@@ -733,7 +733,7 @@ def main(argv=None):
         result = get_issue(args.issue_key, args.fields)
 
     elif args.command == 'create_issue':
-        labels = args.labels.split(',') if args.labels else None
+        labels = [l.strip() for l in args.labels.split(',')] if args.labels else None
         fix_versions = [v.strip() for v in args.fix_versions.split(',')] if args.fix_versions else None
         result = create_issue(
             args.project,

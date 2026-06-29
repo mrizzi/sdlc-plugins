@@ -392,77 +392,168 @@ def test_get_versions_unreleased_only_filters_correctly():
         {"id": "5", "name": "1.2.0", "released": False, "archived": True},
     ]
 
-    # When filtering with unreleased_only=True (test the filtering logic directly)
-    filtered = [v for v in all_versions if not v.get('released') and not v.get('archived')]
+    original_make_request = jira_client.make_request
+    jira_client.make_request = lambda method, endpoint, data=None: all_versions
+    try:
+        # When calling get_versions with unreleased_only=True
+        filtered = get_versions("TEST", unreleased_only=True)
 
-    # Then only non-released, non-archived versions remain
-    assert len(filtered) == 2, f"Expected 2 versions, got {len(filtered)}"
-    assert filtered[0]["name"] == "1.1.0"
-    assert filtered[1]["name"] == "2.0.0"
+        # Then only non-released, non-archived versions remain
+        assert len(filtered) == 2, f"Expected 2 versions, got {len(filtered)}"
+        assert filtered[0]["name"] == "1.1.0"
+        assert filtered[1]["name"] == "2.0.0"
+
+        # When calling with unreleased_only=False, no filtering happens
+        unfiltered = get_versions("TEST", unreleased_only=False)
+        assert len(unfiltered) == 5, f"Expected 5 versions, got {len(unfiltered)}"
+    finally:
+        jira_client.make_request = original_make_request
 
     print("✓ get_versions unreleased_only filter test passed")
 
 
 def test_create_issue_priority_field_mapping():
     """Verifies that create_issue maps priority parameter to correct Jira field structure."""
-    # Given a priority name
-    priority_name = "Major"
+    captured = {}
+    original_make_request = jira_client.make_request
 
-    # When building fields (test the field construction logic)
-    data = {"fields": {}}
-    if priority_name:
-        data["fields"]["priority"] = {"name": priority_name}
+    def fake_make_request(method, endpoint, data=None):
+        captured["data"] = data
+        return {"key": "TEST-1", "id": "1"}
 
-    # Then the field structure matches Jira's expected format
-    assert data["fields"]["priority"] == {"name": "Major"}
+    jira_client.make_request = fake_make_request
+    try:
+        # When creating an issue with a priority
+        create_issue("TC", "Test", "desc", "Task", priority="Major")
+
+        # Then the priority field is correctly mapped
+        assert captured["data"]["fields"]["priority"] == {"name": "Major"}
+    finally:
+        jira_client.make_request = original_make_request
 
     print("✓ create_issue priority field mapping test passed")
 
 
 def test_create_issue_fix_versions_field_mapping():
     """Verifies that create_issue maps fix_versions list to correct Jira fixVersions array."""
-    # Given a list of version names
-    fix_versions = ["RHTPA 1.5.0", "RHTPA 1.6.0"]
+    captured = {}
+    original_make_request = jira_client.make_request
 
-    # When building fields (test the field construction logic)
-    data = {"fields": {}}
-    if fix_versions:
-        data["fields"]["fixVersions"] = [{"name": v} for v in fix_versions]
+    def fake_make_request(method, endpoint, data=None):
+        captured["data"] = data
+        return {"key": "TEST-1", "id": "1"}
 
-    # Then each version is wrapped in a name object
-    assert len(data["fields"]["fixVersions"]) == 2
-    assert data["fields"]["fixVersions"][0] == {"name": "RHTPA 1.5.0"}
-    assert data["fields"]["fixVersions"][1] == {"name": "RHTPA 1.6.0"}
+    jira_client.make_request = fake_make_request
+    try:
+        # When creating an issue with fix_versions
+        create_issue("TC", "Test", "desc", "Task", fix_versions=["RHTPA 1.5.0", "RHTPA 1.6.0"])
+
+        # Then each version is wrapped in a name object
+        fv = captured["data"]["fields"]["fixVersions"]
+        assert len(fv) == 2, f"Expected 2 fixVersions, got {len(fv)}"
+        assert fv[0] == {"name": "RHTPA 1.5.0"}
+        assert fv[1] == {"name": "RHTPA 1.6.0"}
+    finally:
+        jira_client.make_request = original_make_request
 
     print("✓ create_issue fix_versions field mapping test passed")
 
 
 def test_create_issue_omits_priority_when_none():
     """Verifies that create_issue omits priority field when not provided."""
-    # Given no priority
-    data = {"fields": {}}
-    priority = None
-    if priority:
-        data["fields"]["priority"] = {"name": priority}
+    captured = {}
+    original_make_request = jira_client.make_request
 
-    # Then priority is not in fields
-    assert "priority" not in data["fields"]
+    def fake_make_request(method, endpoint, data=None):
+        captured["data"] = data
+        return {"key": "TEST-1", "id": "1"}
+
+    jira_client.make_request = fake_make_request
+    try:
+        create_issue("TC", "Test", "desc", "Task")
+        assert "priority" not in captured["data"]["fields"]
+    finally:
+        jira_client.make_request = original_make_request
 
     print("✓ create_issue omits priority when None test passed")
 
 
 def test_create_issue_omits_fix_versions_when_none():
     """Verifies that create_issue omits fixVersions field when not provided."""
-    # Given no fix_versions
-    data = {"fields": {}}
-    fix_versions = None
-    if fix_versions:
-        data["fields"]["fixVersions"] = [{"name": v} for v in fix_versions]
+    captured = {}
+    original_make_request = jira_client.make_request
 
-    # Then fixVersions is not in fields
-    assert "fixVersions" not in data["fields"]
+    def fake_make_request(method, endpoint, data=None):
+        captured["data"] = data
+        return {"key": "TEST-1", "id": "1"}
+
+    jira_client.make_request = fake_make_request
+    try:
+        create_issue("TC", "Test", "desc", "Task")
+        assert "fixVersions" not in captured["data"]["fields"]
+    finally:
+        jira_client.make_request = original_make_request
 
     print("✓ create_issue omits fix_versions when None test passed")
+
+
+def test_create_issue_all_optional_fields_together():
+    """Verifies that create_issue correctly merges all optional fields into the payload."""
+    captured = {}
+    original_make_request = jira_client.make_request
+
+    def fake_make_request(method, endpoint, data=None):
+        captured["data"] = data
+        return {"key": "TEST-1", "id": "1"}
+
+    jira_client.make_request = fake_make_request
+    try:
+        # When creating an issue with all optional fields
+        create_issue(
+            "TC", "Test", "desc", "Task",
+            labels=["ai-generated-jira", "feature"],
+            assignee_id="user-123",
+            priority="Major",
+            fix_versions=["1.5.0", "1.6.0"],
+            custom_fields={"customfield_10010": "value"},
+        )
+
+        # Then all fields are present and correctly structured
+        fields = captured["data"]["fields"]
+        assert fields["labels"] == ["ai-generated-jira", "feature"]
+        assert fields["assignee"] == {"id": "user-123"}
+        assert fields["priority"] == {"name": "Major"}
+        assert fields["fixVersions"] == [{"name": "1.5.0"}, {"name": "1.6.0"}]
+        assert fields["customfield_10010"] == "value"
+    finally:
+        jira_client.make_request = original_make_request
+
+    print("✓ create_issue all optional fields together test passed")
+
+
+def test_create_issue_fix_versions_filters_empty_names():
+    """Verifies that create_issue filters out empty version names from fixVersions."""
+    captured = {}
+    original_make_request = jira_client.make_request
+
+    def fake_make_request(method, endpoint, data=None):
+        captured["data"] = data
+        return {"key": "TEST-1", "id": "1"}
+
+    jira_client.make_request = fake_make_request
+    try:
+        # When creating an issue with empty version names mixed in
+        create_issue("TC", "Test", "desc", "Task", fix_versions=["1.0", "", "2.0"])
+
+        # Then empty names are filtered out
+        fv = captured["data"]["fields"]["fixVersions"]
+        assert len(fv) == 2, f"Expected 2 fixVersions (empty filtered), got {len(fv)}"
+        assert fv[0] == {"name": "1.0"}
+        assert fv[1] == {"name": "2.0"}
+    finally:
+        jira_client.make_request = original_make_request
+
+    print("✓ create_issue fix_versions filters empty names test passed")
 
 
 def run_all_tests():
@@ -485,6 +576,8 @@ def run_all_tests():
         test_create_issue_fix_versions_field_mapping,
         test_create_issue_omits_priority_when_none,
         test_create_issue_omits_fix_versions_when_none,
+        test_create_issue_all_optional_fields_together,
+        test_create_issue_fix_versions_filters_empty_names,
     ]
 
     failed = []
