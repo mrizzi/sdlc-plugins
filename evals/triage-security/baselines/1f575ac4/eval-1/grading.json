@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction correctly identifies CVE-2026-31812, library quinn-proto, affected range < 0.11.14, and fixed version 0.11.14 from the Vulnerability issue (Step 1)",
+      "passed": true,
+      "evidence": "data-extraction.md contains a table with: CVE ID = CVE-2026-31812, Vulnerable library = quinn-proto, Affected version range = 'versions before 0.11.14 (< 0.11.14)', Fixed version = 0.11.14. All four fields are correctly extracted."
+    },
+    {
+      "text": "Data extraction identifies the ecosystem as Cargo based on the library name and component context (Step 1 Ecosystem detection)",
+      "passed": true,
+      "evidence": "data-extraction.md section 'Ecosystem Detection' states: 'The vulnerable library quinn-proto is a Rust crate. Based on the Ecosystem Mappings tables in the security matrix, this falls under the Cargo ecosystem' with Lock file: Cargo.lock and Source repository: backend."
+    },
+    {
+      "text": "Version impact table includes ALL versions from the security-matrix.md supportability matrix — no versions are skipped (Important Rule 4)",
+      "passed": true,
+      "evidence": "version-impact.md lists all 7 versions from the supportability matrix: 2.1.0 (v0.3.8), 2.1.1 (v0.3.12), 2.2.0 (v0.4.5), 2.2.1 (v0.4.8), 2.2.2 (v0.4.9), 2.2.3 (v0.4.11), 2.2.4 (v0.4.12). The mock matrix defines exactly these 7 versions across the 2.1.x and 2.2.x streams. No versions are skipped."
+    },
+    {
+      "text": "Version impact analysis uses pinned commit tags from the supportability matrix for each version, not branch HEAD (Important Rule 13)",
+      "passed": true,
+      "evidence": "version-impact.md Build Tag column uses the exact pinned tags from the supportability matrix: v0.3.8, v0.3.12, v0.4.5, v0.4.8, v0.4.9, v0.4.11, v0.4.12. The affects-versions.md rationale section also confirms: 'Based on lock file analysis at pinned commits from security-matrix.md. The Cargo.lock at each build tag was inspected.' The upstream fix status table separately shows branch tip data but this is in addition to (not instead of) the per-version pinned tag analysis."
+    },
+    {
+      "text": "Version impact table identifies retag versions and carries forward the affected status from the original version (Important Rule 5)",
+      "passed": true,
+      "evidence": "version-impact.md row for version 2.2.2 shows: Build Tag = v0.4.9, quinn-proto version = '(retag of v0.4.8)', Affected = YES, Notes = 'same as 2.2.1'. This correctly identifies 2.2.2 as a retag and carries forward the affected status from 2.2.1."
+    },
+    {
+      "text": "Affects Versions correction proposes replacing PSIRT-assigned versions with lock-file-verified versions, showing the diff (Step 3.2)",
+      "passed": true,
+      "evidence": "affects-versions.md shows the current value 'RHTPA 2.0.0' and the proposed correction to 'RHTPA 2.2.0, RHTPA 2.2.1, RHTPA 2.2.2'. It includes a clear diff: 'Current: [RHTPA 2.0.0]' vs 'Proposed: [RHTPA 2.2.0, RHTPA 2.2.1, RHTPA 2.2.2]' and a Remove/Add table detailing each change with rationale."
+    },
+    {
+      "text": "Affects Versions correction references version names from the supportability matrix rather than hardcoded Jira version IDs (Important Rule 6)",
+      "passed": true,
+      "evidence": "affects-versions.md Jira Update section uses version names: {\"name\": \"RHTPA 2.2.0\"}, {\"name\": \"RHTPA 2.2.1\"}, {\"name\": \"RHTPA 2.2.2\"}. No hardcoded Jira version IDs (numeric IDs) appear anywhere in the file. All references use the name field from the supportability matrix."
+    },
+    {
+      "text": "Remediation tasks include Repository, Target Branch, acceptance criteria, and dependency linkage between upstream and downstream tasks (Important Rule 9)",
+      "passed": true,
+      "evidence": "remediation.md Task 1 includes Repository (rhtpa-release.0.4.z), Target Branch (main), Acceptance Criteria (2 items), Dependencies (TC-8001). Task 2 includes Repository (rhtpa-backend), Target Branch (release/0.3.z), Acceptance Criteria (3 items), Dependencies (TC-8001). Task 3 includes Repository (rhtpa-release.0.3.z), Target Branch (main), Acceptance Criteria (2 items), Dependencies ('Depends on: Task 2 (upstream backport must merge first)' and TC-8001). Dependency linkage between upstream Task 2 and downstream Task 3 is explicit: 'Blocked by: Task 2 (upstream backport for 2.1.x must merge first)'."
+    },
+    {
+      "text": "For Cargo ecosystem, remediation creates two tasks: upstream backport task and downstream propagation subtask with Blocks dependency (Important Rule 8)",
+      "passed": true,
+      "evidence": "remediation.md creates upstream backport (Task 2) and downstream propagation (Task 3) for the 2.1.x stream where an upstream fix is needed. Task 3 states 'Blocked by: Task 2 (upstream backport for 2.1.x must merge first)' and the Jira Operations Summary states 'Link Task 3 as \"Blocks\" by Task 2 (downstream blocked by upstream)'. For the 2.2.x stream, only a downstream propagation task (Task 1) is created because the upstream fix already exists at tag v0.4.11+, which is a valid optimization. The two-task pattern (upstream + downstream with Blocks dependency) is correctly applied for the Cargo ecosystem."
+    },
+    {
+      "text": "The analysis presents triage recommendations as proposed actions — framing Affects Versions changes, label additions, and status transitions as proposals rather than executed mutations (Guardrails)",
+      "passed": false,
+      "evidence": "affects-versions.md section 'Proposed Correction' uses proposal framing ('Proposed:', 'Remove', 'Add'). However, remediation.md 'Post-triage' section (lines 196-200) uses imperative executed-action framing: 'Add ai-cve-triaged label to TC-8001', 'Post summary comment on TC-8001', 'Transition TC-8001 to In Progress', 'Assign TC-8001 to current user'. These are stated as actions to execute, not proposals. The Jira Update section in affects-versions.md also shows a concrete jira.edit_issue() call rather than framing it as a proposal. The status transition 'Transition TC-8001 to In Progress' is presented as an action to take, not a recommended proposal."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 1,
+    "total": 10,
+    "pass_rate": 0.9
+  }
+}

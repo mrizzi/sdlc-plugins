@@ -1,0 +1,110 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "Line 17 of preview.md: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "Line 27 of preview.md: '## Background and Strategic Fit'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Goals'",
+      "passed": true,
+      "evidence": "Line 37 of preview.md: '## Goals'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "Line 54 of preview.md: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "Line 66 of preview.md: '## Non-Functional Requirements'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Use Cases' or '## Use Cases (User Experience & Workflow)'",
+      "passed": true,
+      "evidence": "Line 76 of preview.md: '## Use Cases (User Experience & Workflow)'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "Line 109 of preview.md: '## Customer Considerations'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "Line 118 of preview.md: '## Customer Information/Supportability'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "Line 128 of preview.md: '## Documentation Considerations'"
+    },
+    {
+      "text": "outputs/preview.md contains 'Major' in the priority field display",
+      "passed": true,
+      "evidence": "Line 6 of preview.md: '**Priority:** Major'"
+    },
+    {
+      "text": "outputs/preview.md contains '1.5.0' in the fix version field display",
+      "passed": true,
+      "evidence": "Line 8 of preview.md: '**Fix Version:** 1.5.0'"
+    },
+    {
+      "text": "outputs/jira-create.md references project key 'TC'",
+      "passed": true,
+      "evidence": "Line 8 of jira-create.md: 'projectKey = \"TC\"' and line 28: '| projectKey | `TC` |'"
+    },
+    {
+      "text": "outputs/jira-create.md references issue type ID '10142'",
+      "passed": true,
+      "evidence": "Line 9 of jira-create.md: 'issueTypeId = \"10142\"' and line 29: '| issueTypeId | `10142` |'"
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "Line 14 of jira-create.md: '\"labels\": [\"ai-generated-jira\"]' and line 32: '| labels | `[\"ai-generated-jira\"]` |'"
+    },
+    {
+      "text": "outputs/jira-create.md includes an assignee (self-assignment was chosen)",
+      "passed": true,
+      "evidence": "Line 15 of jira-create.md: '\"assignee\": { \"accountId\": \"<self-account-id>\" }' and line 33: '| assignee | `{ \"accountId\": \"<self-account-id>\" }` |'"
+    },
+    {
+      "text": "outputs/jira-create.md includes priority with name 'Major' in additional_fields",
+      "passed": true,
+      "evidence": "Line 16 of jira-create.md: '\"priority\": { \"name\": \"Major\" }' within additional_fields block"
+    },
+    {
+      "text": "outputs/jira-create.md includes fixVersions with name '1.5.0' in additional_fields",
+      "passed": true,
+      "evidence": "Line 17 of jira-create.md: '\"fixVersions\": [{ \"name\": \"1.5.0\" }]' within additional_fields block"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "Line 123 of jira-comment.md: '\"text\": \"sdlc-workflow/define-feature\"'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'https://github.com/mrizzi/sdlc-plugins'",
+      "passed": true,
+      "evidence": "Line 128 of jira-comment.md: '\"href\": \"https://github.com/mrizzi/sdlc-plugins\"'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains a version string (e.g., 'v0.' or version from plugin.json)",
+      "passed": true,
+      "evidence": "Line 135 of jira-comment.md: '\"text\": \" v0.11.0.\"'"
+    }
+  ],
+  "summary": {
+    "passed": 20,
+    "failed": 0,
+    "total": 20,
+    "pass_rate": 1.0
+  }
+}

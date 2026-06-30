@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The remediation output describes the digest protocol for the upstream backport task: re-fetching the task description from Jira after create_issue and computing a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
+      "passed": true,
+      "evidence": "remediation.md lines 78-98: 'Description Digest Comment (Post-Creation)' section for upstream backport task shows step 1 re-fetching via 'jira.get_issue(<upstream-task-key>, fields=[\"description\"])' and step 2 computing digest via 'python3 scripts/sha256-digest.py /tmp/task-desc.md'."
+    },
+    {
+      "text": "The remediation output describes the digest protocol for the downstream propagation subtask: re-fetching the task description from Jira after create_issue and computing a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
+      "passed": true,
+      "evidence": "remediation.md lines 168-185: 'Description Digest Comment (Post-Creation)' section for downstream propagation task shows step 1 re-fetching via 'jira.get_issue(<downstream-task-key>, fields=[\"description\"])' and step 2 computing digest via 'python3 scripts/sha256-digest.py /tmp/task-desc.md'."
+    },
+    {
+      "text": "The remediation output includes the digest comment marker '[sdlc-workflow] Description digest:' in the described steps for each remediation task — both upstream and downstream (§1.66)",
+      "passed": true,
+      "evidence": "Upstream (remediation.md line 97): jira.add_comment includes '[sdlc-workflow] Description digest: sha256-md:<64-char-hex-digest>'. Downstream (line 184): jira.add_comment includes '[sdlc-workflow] Description digest: sha256-md:<64-char-hex-digest>'. Both tasks include the exact marker."
+    },
+    {
+      "text": "The remediation output sequences digest comments BEFORE issue links (Depend, Blocks) or other comments in the described procedure for each task (§1.66, shared/description-digest-protocol.md Rules)",
+      "passed": true,
+      "evidence": "Upstream: Step 3 (line 93) posts the digest comment, Step 4 (line 100) creates the Depend link to TC-8001. Downstream: Step 3 (line 183) posts the digest comment, Step 4 (line 187) creates the Depend and Blocks links. In both cases, digest comment is explicitly sequenced before issue links."
+    },
+    {
+      "text": "The remediation output specifies that the digest is computed from the re-fetched description (via Jira API after create_issue), not from the description string passed to create_issue (shared/description-digest-protocol.md Hashing)",
+      "passed": true,
+      "evidence": "Upstream (line 80-81): 'Re-fetch the description from Jira to get the stored representation: upstream_desc = jira.get_issue(<upstream-task-key>, fields=[\"description\"])'. Downstream (line 170-171): 'Re-fetch the description from Jira: downstream_desc = jira.get_issue(<downstream-task-key>, fields=[\"description\"])'. Both explicitly specify re-fetching from Jira after create_issue rather than using the original description string."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

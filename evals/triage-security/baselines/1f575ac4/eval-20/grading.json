@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment",
+      "passed": true,
+      "evidence": "staleness-check.md lines 46 and 52 show the Last-Updated timestamp was read: 'Last-Updated timestamp: 2026-06-28T10:00:00Z' for both streams (2.1.x and 2.2.x). The age was calculated as 2 days from the current date of 2026-06-30."
+    },
+    {
+      "text": "Step 0.3 determines the matrix is within the 14-day threshold and proceeds without displaying a staleness warning",
+      "passed": true,
+      "evidence": "staleness-check.md lines 49 and 56 show 'Result: FRESH — matrix is within the 14-day threshold' for both streams. Line 62 states 'No refresh is needed. Proceeding with triage using the current matrix data.' No staleness warning is displayed anywhere in the output."
+    },
+    {
+      "text": "No user prompt or options are presented for a fresh matrix — the check is silent on success",
+      "passed": true,
+      "evidence": "staleness-check.md contains no user prompts, no options to choose from, and no warnings. The check documents the FRESH result and concludes with 'Proceeding with triage using the current matrix data' (line 62). No interactive elements or staleness alerts are presented to the user."
+    },
+    {
+      "text": "The triage continues to Step 0.5 and beyond without interruption from the staleness check",
+      "passed": true,
+      "evidence": "data-extraction.md is titled 'Step 1 — Data Extraction' and contains a full CVE data extraction for TC-8001 (CVE-2026-31812), including parsed CVE data, stream scope resolution, ecosystem detection, vulnerability description, and version impact analysis. This confirms the triage continued past the staleness check through Step 0.5 and into Step 1 without interruption."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

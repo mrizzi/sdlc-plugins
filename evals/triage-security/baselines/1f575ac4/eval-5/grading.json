@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction identifies the ecosystem as RPM based on the library name (openssl-libs) and component context, not Cargo (Step 1 Ecosystem detection — read ecosystems from Ecosystem Mappings config)",
+      "passed": true,
+      "evidence": "In data-extraction.md, the Ecosystem Detection section explicitly states: \"Ecosystem: RPM (not Cargo)\" and explains: \"openssl-libs is a system-level RPM package, not a source dependency (Cargo/npm/Go). The ecosystem is determined by the package type: openssl-libs is an RPM distributed via Red Hat repositories, present in rpms.lock.yaml. The Ecosystem Mappings table in the 2.2.x stream's security-matrix.md confirms RPM ecosystem with lock file rpms.lock.yaml.\""
+    },
+    {
+      "text": "Version impact table includes ALL versions from the 2.2.x stream supportability matrix (2.2.0 through 2.2.4) and uses rpms.lock.yaml data for version extraction (Step 2.3)",
+      "passed": true,
+      "evidence": "In version-impact.md, the version impact table lists all five versions: 2.2.0 (v0.4.5, openssl-libs 3.0.7-25.el9_3, YES), 2.2.1 (v0.4.8, 3.0.7-27.el9_4, YES), 2.2.2 (v0.4.9, 3.0.7-27.el9_4, YES), 2.2.3 (v0.4.11, 3.0.7-28.el9_4, NO), 2.2.4 (v0.4.12, 3.0.7-28.el9_4, NO). The data source is explicitly stated as: \"Data source: rpms.lock.yaml at each pinned tag in the 2.2.x supportability matrix.\""
+    },
+    {
+      "text": "Dependency chain context classifies the package origin as explicit install because openssl-libs is present in rpms.lock.yaml, not inherited from the base image (Step 2.3.5)",
+      "passed": true,
+      "evidence": "In version-impact.md, the Dependency Chain Context section states: \"rpms.lock.yaml: present -> explicit install\" and \"Origin: explicit install (openssl-libs is listed in rpms.lock.yaml)\". The explanatory text further confirms: \"openssl-libs is classified as an explicit install because it is present in rpms.lock.yaml. It is not inherited solely from the base image -- it is explicitly pinned in the RPM lock file.\""
+    },
+    {
+      "text": "Remediation creates a single task for the Konflux release repo — not the two-task upstream backport + downstream propagation flow used for source dependency ecosystems (Step 7 Remediation Task Creation — system package path)",
+      "passed": true,
+      "evidence": "In remediation.md, the heading states \"Task: Single System Package Remediation Task\". The file explicitly explains: \"A single remediation task is created because openssl-libs is an RPM system package ecosystem (not a source dependency). RPM packages do not require an upstream backport task -- the fix happens directly in the Konflux release repo.\" The section \"Why a Single Task (Not Two)\" further confirms: \"RPM is a system package ecosystem. The remediation happens directly in the Konflux release repo (rhtpa-release.0.4.z)... unlike Cargo/npm/Go source dependencies which require a two-task flow (upstream backport + downstream propagation), RPM system packages need only one task targeting the Konflux release repo.\" The task targets repository \"rhtpa-release.0.4.z\" which is the Konflux release repo."
+    },
+    {
+      "text": "Remediation task description follows task-description-template.md format with Repository, Target Branch, Description, Implementation Notes, and Acceptance Criteria sections — Files to Modify is intentionally omitted per remediation-templates.md (Step 7 Remediation Task Creation)",
+      "passed": true,
+      "evidence": "In remediation.md, the task description contains all required sections: \"## Repository\" (rhtpa-release.0.4.z), \"## Target Branch\" (main), \"## Description\" (remediation details with affected/fixed versions), \"## Implementation Notes\" (update openssl-libs in rpms.in.yaml, regenerate rpms.lock.yaml, verify Konflux build), \"## Acceptance Criteria\" (two checklist items), \"## Test Requirements\", and \"## Dependencies\". There is no \"## Files to Modify\" section. The output explicitly notes: \"Files to Modify section is intentionally omitted per remediation-templates.md. These depend on repository structure that the triage skill does not have context for -- /implement-task discovers them via code analysis.\""
+    },
+    {
+      "text": "Dependency chain context includes an SBOM verification line — either showing the cosign comparison result or noting that SBOM verification was skipped because cosign is not available (Step 2.3.5 Optional SBOM verification)",
+      "passed": true,
+      "evidence": "In version-impact.md, the Dependency Chain Context block includes the line: \"SBOM verification: skipped -- cosign not available in eval environment\". This satisfies the assertion's alternative of noting that SBOM verification was skipped because cosign is not available."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

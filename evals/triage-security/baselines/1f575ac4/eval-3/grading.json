@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Duplicate check searches for sibling issues using JQL with the CVE label and excludes the current issue key (Step 4)",
+      "passed": true,
+      "evidence": "In duplicate-check.md, the JQL search is explicitly documented: `project = TC AND labels = 'CVE-2026-31812' AND issuetype = 10024 AND key != TC-8003`. This query searches for sibling issues using the CVE label (CVE-2026-31812) and excludes the current issue key (TC-8003) via `key != TC-8003`."
+    },
+    {
+      "text": "Duplicate check correctly classifies TC-7999 as a same-stream sibling (both have stream suffix [rhtpa-2.2]) and identifies it as a duplicate (Step 4.1)",
+      "passed": true,
+      "evidence": "In duplicate-check.md, the Sibling Analysis table shows both TC-7999 and TC-8003 have stream suffix [rhtpa-2.2]. Under 'Step 4.1 — Same-Stream Duplicate Classification', it states: 'TC-7999 has the **same stream suffix** `[rhtpa-2.2]` as TC-8003. Both issues track CVE-2026-31812 for the 2.2.x stream.' and concludes '**Classification: Same-stream duplicate.**'"
+    },
+    {
+      "text": "Triage outcome recommends closing TC-8003 as Duplicate with resolution 'Duplicate', referencing TC-7999 as the original (Step 4.1)",
+      "passed": true,
+      "evidence": "In duplicate-check.md: '**Close TC-8003 as Duplicate of TC-7999.**' and Proposed Jira Actions include '**Transition TC-8003 to Closed** with resolution \"Duplicate\"'. In triage-outcome.md: 'Decision: Close as Duplicate' and '**TC-8003** is a duplicate of **TC-7999**' and 'Transition TC-8003 to **Closed** with resolution **Duplicate**'."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting why it is a duplicate — same CVE tracked for the same stream (Step 4.1)",
+      "passed": true,
+      "evidence": "In duplicate-check.md, Proposed Jira Actions item 1 includes a comment: 'Duplicate of TC-7999 -- same CVE (CVE-2026-31812) tracked for the same stream [rhtpa-2.2]. TC-7999 is already In Progress with Affects Versions [RHTPA 2.2.0, RHTPA 2.2.1]. Version impact analysis confirms overlap: both issues cover the 2.2.x stream where quinn-proto < 0.11.14 is vulnerable in versions 2.2.0, 2.2.1, and 2.2.2 (retag).' This explicitly documents the same CVE and same stream rationale."
+    },
+    {
+      "text": "The analysis does NOT proceed to remediation task creation — duplicate detection short-circuits the triage flow",
+      "passed": true,
+      "evidence": "In duplicate-check.md: 'Steps 4.2 (cross-stream coordination), 4.3 (cross-CVE overlap), and 4.4 (preemptive task reconciliation) are not applicable since this issue is being closed as a duplicate. Steps 5, 6, and 7 are also skipped -- the existing sibling TC-7999 handles remediation for this stream.' In triage-outcome.md: 'Steps 5-7 — Skipped: Steps 5 (Version Lifecycle Check), 6 (Already Fixed Check), and 7 (Remediation) are skipped because TC-8003 is being closed as a duplicate.' and 'No Remediation Tasks Created: No new remediation tasks are needed.' There are no remediation task files in the outputs directory."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

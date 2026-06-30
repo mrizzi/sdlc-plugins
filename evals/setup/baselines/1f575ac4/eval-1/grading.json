@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with a table listing both 'trustify-backend' (serena_backend) and 'trustify-ui' (serena_ui) as entries",
+      "passed": true,
+      "evidence": "Lines 3-8 of claude-md-result.md contain '## Repository Registry' with a table listing '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' and '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with all 5 fields: Project key (TC), Cloud ID, Feature issue type ID (10142), Git Pull Request custom field (customfield_10875), GitHub Issue custom field (customfield_10747)",
+      "passed": true,
+      "evidence": "Lines 10-16 of claude-md-result.md contain '## Jira Configuration' with all 5 fields: 'Project key: TC', 'Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432', 'Feature issue type ID: 10142', 'Git Pull Request custom field: customfield_10875', 'GitHub Issue custom field: customfield_10747'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that documents the mcp__<instance>__<tool> naming convention",
+      "passed": true,
+      "evidence": "Lines 18-29 of claude-md-result.md contain '## Code Intelligence' with the text 'Tools are prefixed by Serena instance name: `mcp__<instance>__<tool>`.' and a concrete example using mcp__serena_backend__find_symbol."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Limitations' subheading under Code Intelligence",
+      "passed": true,
+      "evidence": "Line 31 of claude-md-result.md contains '### Limitations' which appears under the '## Code Intelligence' section (line 18), with content 'No limitations known — no Serena instance limitations were reported.'"
+    },
+    {
+      "text": "outputs/discovery-log.md mentions discovering 2 Serena instances (serena_backend and serena_ui) from the MCP tool listing",
+      "passed": true,
+      "evidence": "Line 5 of discovery-log.md states 'Discovered 2 Serena instances from the MCP tool listing:' followed by details for 'serena_backend' (line 7) and 'serena_ui' (line 9), both identified from tools prefixed with their respective mcp__ prefixes."
+    },
+    {
+      "text": "outputs/changes-log.md indicates all Project Configuration sections (Repository Registry, Jira Configuration, Code Intelligence, Bug Configuration) were newly added — pre-existing non-configuration content from the CLAUDE.md (like the project heading and Documentation section) may appear as preserved, which is expected since only Project Configuration was missing",
+      "passed": true,
+      "evidence": "changes-log.md 'Preserved' section (lines 5-9) lists pre-existing content: '# my-project', '## Documentation', '## Getting Started'. The 'Added' section (lines 13-19) explicitly states 'The CLAUDE.md had no Project Configuration section. All of the following were added as new content:' and lists all four: '## Repository Registry', '## Jira Configuration', '## Code Intelligence', '## Bug Configuration'."
+    },
+    {
+      "text": "The Repository Registry table contains columns: Repository, Role, Serena Instance, Path — matching project-config.template.md structure",
+      "passed": true,
+      "evidence": "Line 5 of claude-md-result.md shows the table header: '| Repository | Role | Serena Instance | Path |' which exactly matches the required column structure."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Bug Configuration' section with three fields: Bug issue type ID (10001), Bug template (docs/bug-template.md), Bug-to-Task link type (Blocks)",
+      "passed": true,
+      "evidence": "Lines 35-39 of claude-md-result.md contain '## Bug Configuration' with all three fields: 'Bug issue type ID: 10001', 'Bug template: docs/bug-template.md', 'Bug-to-Task link type: Blocks'."
+    },
+    {
+      "text": "The skill offers to enable security triage for the project (Step 9 opt-in prompt) and respects the user's decline — outputs/claude-md-result.md does NOT contain a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "claude-md-result.md does not contain any '## Security Configuration' section. discovery-log.md line 29 confirms 'User declined to enable security triage — section omitted from output.' changes-log.md line 23 confirms 'Security Configuration — user declined to enable security triage, so this section was not added'."
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

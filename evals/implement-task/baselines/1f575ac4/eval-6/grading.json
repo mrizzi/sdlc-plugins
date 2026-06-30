@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "In digest-match.md, lines 13-14: 'Search through all returned comments for those whose body starts with the marker string `[sdlc-workflow] Description digest:`. This exact marker prefix is defined in `shared/description-digest-protocol.md` and is used by plan-feature to record a content digest at task creation time.' The marker string and its source file are both explicitly named."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "In digest-match.md, lines 38-44: 'Extract the description field from the TC-9201 issue response, write it to a temporary file, and compute the digest using the project’s script: `python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt`' and lines 50-52: 'The format-tagged digest from `scripts/sha256-digest.py` produces the same `sha256-md:a1b2c3d4e5f67890...` value as the one stored in the comment.' The output explicitly describes using scripts/sha256-digest.py (SHA-256) to compute the digest and comparing it with the stored digest."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "In digest-match.md, lines 54 and 58-60: 'Result: MATCH.' and 'The digests match. Per Step 1.5 rule 4e of the SKILL.md: when the hex digests match, proceed silently -- no additional user prompt, no added latency. The description has not been modified since plan-feature created it.' Also in plan.md lines 39-40: 'Digest comment found with matching `sha256-md` tagged digest. Created and updated timestamps are identical (no edit detected). Hex digests match. Proceeding silently.'"
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "In digest-match.md, line 60: 'No user alert is issued. No pause in execution. Proceeding directly to Step 2 (Verify Dependencies) and subsequent steps.' The plan.md also confirms this at line 40: 'Proceeding silently.' and the plan continues directly to Step 2 (Verify Dependencies) at line 43 with no intervening user interaction."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "preview.md line 7: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 13: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md contains 'Normal' in the priority field display (default priority applied silently)",
+      "passed": true,
+      "evidence": "preview.md line 20: '**Priority:** Normal'"
+    },
+    {
+      "text": "outputs/preview.md contains 'Not set' for fix version (no default fixVersion configured, prompt suppressed)",
+      "passed": true,
+      "evidence": "preview.md line 21: '**Fix Version:** Not set'"
+    },
+    {
+      "text": "outputs/jira-create.md includes priority with name 'Normal' in additional_fields (default applied)",
+      "passed": true,
+      "evidence": "jira-create.md line 13: '\"priority\": {\"name\": \"Normal\"}' within additional_fields block"
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include fixVersions in additional_fields (no default, prompt suppressed)",
+      "passed": true,
+      "evidence": "jira-create.md additional_fields (lines 11-14) contains only 'labels' and 'priority' keys; fixVersions is absent"
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 12: '\"labels\": [\"ai-generated-jira\"]'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "jira-comment.md line 76: '\"text\": \"sdlc-workflow/define-feature\"'"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

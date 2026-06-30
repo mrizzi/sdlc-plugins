@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 4.4 searches for preemptive tasks using JQL with labels 'security-preemptive' and 'CVE-2026-55123' (§1.60)",
+      "passed": true,
+      "evidence": "reconciliation.md lines 13-16 show the JQL query: \"project = TC AND issuetype = Task AND labels = 'security-preemptive' AND labels = 'CVE-2026-55123' ORDER BY created DESC\". This searches for tasks with both the 'security-preemptive' and 'CVE-2026-55123' labels. triage-outcome.md line 61 confirms: \"A JQL search for tasks with labels `security-preemptive` and `CVE-2026-55123` returned TC-8022\"."
+    },
+    {
+      "text": "Step 4.4 filters results to match the current stream (rhtpa-2.1) by checking the task summary for the stream name",
+      "passed": true,
+      "evidence": "reconciliation.md lines 20-22 under '2. Filter to current stream': \"TC-8022 summary contains `(rhtpa-2.1)` which matches the current issue's stream suffix `[rhtpa-2.1]`. This is a matching preemptive task for this stream.\" This explicitly shows filtering by checking the task summary for the stream name."
+    },
+    {
+      "text": "Step 4.4 links the new CVE Jira TC-8021 to the preemptive task TC-8022 with 'Depend' link type (standard remediation linkage)",
+      "passed": true,
+      "evidence": "reconciliation.md lines 38-48 show the link creation: \"jira.create_link(inwardIssue: \"TC-8021\", outwardIssue: \"TC-8022\", type: \"Depend\")\" and describes it as \"the standard remediation linkage between the CVE Jira (TC-8021) and the remediation task (TC-8022)\". triage-outcome.md line 64 confirms: \"Linked TC-8021 to TC-8022 with link type \"Depend\" (standard remediation linkage)\"."
+    },
+    {
+      "text": "Step 4.4 removes the 'security-preemptive' label from TC-8022 — the task is now a standard remediation task linked to a proper CVE Jira",
+      "passed": true,
+      "evidence": "reconciliation.md lines 52-61 show the label removal: labels updated from [\"ai-generated-jira\", \"Security\", \"CVE-2026-55123\", \"security-preemptive\"] to [\"ai-generated-jira\", \"Security\", \"CVE-2026-55123\"], and states: \"The `security-preemptive` label is removed because the task is now linked to a proper CVE Jira (TC-8021). The task transitions from being a preemptive/proactive task to a standard remediation task.\" triage-outcome.md line 65 confirms the same."
+    },
+    {
+      "text": "Step 7 skips remediation task creation for this stream because Step 4.4 reconciliation already linked an existing task",
+      "passed": true,
+      "evidence": "triage-outcome.md lines 76-78 under 'Step 7 -- Remediation': \"Outcome: No new remediation tasks created. Because Step 4.4 reconciled the existing preemptive task TC-8022 with this CVE Jira, Step 7 skips task creation for stream 2.1.x.\" Also reconciliation.md line 80: \"Remediation already exists for stream 2.1.x via TC-8022. Step 7 will skip task creation for this stream.\" And triage-outcome.md line 99: \"New tasks created | None -- existing preemptive task reconciled\"."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
