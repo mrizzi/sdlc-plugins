@@ -167,14 +167,14 @@
     {
       "id": 13,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2, and write outputs/remediation.md with the remediation task descriptions AND the description digest comment steps you would perform after creating each task.",
-      "expected_output": "A triage analysis demonstrating the full remediation flow including description digest comments. After each jira.create_issue call, the skill re-fetches the created task description, computes a SHA-256 digest using scripts/sha256-digest.py, and posts a digest comment with the marker '[sdlc-workflow] Description digest:' before creating issue links or other comments.",
+      "expected_output": "A triage analysis whose remediation output describes the full description digest protocol for each created task. The output includes the digest steps for both the upstream backport task and the downstream propagation subtask: re-fetching the description after create_issue, computing a SHA-256 digest using scripts/sha256-digest.py, and posting a digest comment with the marker '[sdlc-workflow] Description digest:' before creating issue links or other comments. Since the eval prohibits actual Jira calls, the output describes these steps as planned procedures — the grader should verify the protocol is correctly described, not that API calls were executed.",
       "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
       "assertions": [
-        "After creating the upstream backport task, the skill re-fetches the task description from Jira and computes a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
-        "After creating the downstream propagation subtask, the skill re-fetches the task description and computes a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
-        "A digest comment with marker '[sdlc-workflow] Description digest:' is posted on each remediation task — both upstream and downstream (§1.66)",
-        "Digest comments are posted BEFORE creating issue links (Depend, Blocks) or other comments on the tasks (§1.66, shared/description-digest-protocol.md Rules)",
-        "The digest is computed using scripts/sha256-digest.py with the re-fetched description, not the description string passed to create_issue (shared/description-digest-protocol.md Hashing)"
+        "The remediation output describes the digest protocol for the upstream backport task: re-fetching the task description from Jira after create_issue and computing a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
+        "The remediation output describes the digest protocol for the downstream propagation subtask: re-fetching the task description from Jira after create_issue and computing a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
+        "The remediation output includes the digest comment marker '[sdlc-workflow] Description digest:' in the described steps for each remediation task — both upstream and downstream (§1.66)",
+        "The remediation output sequences digest comments BEFORE issue links (Depend, Blocks) or other comments in the described procedure for each task (§1.66, shared/description-digest-protocol.md Rules)",
+        "The remediation output specifies that the digest is computed from the re-fetched description (via Jira API after create_issue), not from the description string passed to create_issue (shared/description-digest-protocol.md Hashing)"
       ]
     },
     {
