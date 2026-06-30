@@ -267,6 +267,12 @@ for the stream.
    > "⚠️ SBOM verification skipped — cosign not available / SBOM download failed.
    > Using rpms.lock.yaml classification only."
 
+   **Output requirement:** the dependency chain output for RPM packages MUST
+   always include an SBOM verification status line — either the comparison
+   result (sub-step 6) or the skip notice above. This line is mandatory even
+   though the cosign verification itself is optional; omitting it leaves the
+   engineer without visibility into whether SBOM cross-validation was attempted.
+
 4. **Base image reference** (when origin is base image) — extract the `FROM`
    reference from the Dockerfile to identify the update path:
    ```bash
