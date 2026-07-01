@@ -235,6 +235,68 @@ entirely.
      Recommendation: Close this issue — the fix is already covered by [task-key].
      [ProdSec @mention if configured]
      ```
+
+     **After engineer confirms closure**, create traceability links and post an
+     explanatory comment before transitioning to Closed:
+
+     a. **Create Related link** between the current CVE and the related CVE
+        (idempotent — check existing `issuelinks` first, same pattern as
+        Step 4.2):
+
+        Check the current issue's `issuelinks` array (already fetched in
+        Step 1) for an existing link where `type.name` is `"Related"` and
+        `inwardIssue.key` or `outwardIssue.key` matches the related CVE key.
+
+        If a matching link exists, skip and log:
+        > "Related link to [related-cve-key] already exists — skipping"
+
+        If no matching link exists, create the link:
+        ```
+        jira.create_link(
+          inwardIssue: <current-cve-key>,
+          outwardIssue: <related-cve-key>,
+          type: "Related"
+        )
+        ```
+
+     b. **Create Depend link** from the covering remediation task to the
+        current CVE (same link type as standard remediation linkage in
+        `remediation-templates.md`):
+
+        Check the current issue's `issuelinks` array for an existing link
+        where `type.name` is `"Depend"` and `inwardIssue.key` or
+        `outwardIssue.key` matches the covering task key.
+
+        If a matching link exists, skip and log:
+        > "Depend link to [covering-task-key] already exists — skipping"
+
+        If no matching link exists, create the link:
+        ```
+        jira.create_link(
+          inwardIssue: <current-cve-key>,
+          outwardIssue: <covering-task-key>,
+          type: "Depend"
+        )
+        ```
+
+     c. **Post a comment** on the current CVE documenting the cross-CVE
+        overlap finding. If a ProdSec Jira account ID is configured, include
+        an @mention before the Comment Footnote:
+        ```
+        Cross-CVE overlap: existing remediation task [covering-task-key] (from
+        [related-CVE-ID] / [related-cve-key]) already bumps [library] to
+        [version], which meets or exceeds this CVE's fix threshold
+        ([fix-version]).
+
+        Links created:
+        - Related: [current-cve-key] ↔ [related-cve-key] (same upstream component)
+        - Depend: [current-cve-key] → [covering-task-key] (covering remediation)
+
+        [ProdSec @mention if configured]
+        [Comment Footnote]
+        ```
+
+        MUST include the Comment Footnote (see SKILL.md).
    - **If related CVEs exist but no covering remediation:**
      ```
      Related CVE Jiras found for [component] in the same stream:

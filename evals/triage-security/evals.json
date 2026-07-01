@@ -110,7 +110,10 @@
         "Step 4.3 filters search results by matching PS Component (customfield_10669 = pscomponent:org/rhtpa-ui) and Stream (customfield_10832 = rhtpa-2.2)",
         "Step 4.3 traverses issuelinks on TC-8008 to find remediation task TC-8009 via the 'Depend' link type",
         "Step 4.3 compares the remediation task's bump version (1.9.0) against the current CVE's fix threshold (1.8.2) and determines the fix is already covered",
-        "Triage outcome recommends closing the issue because existing remediation task TC-8009 already bumps axios past the fix threshold — no new remediation task is created"
+        "Triage outcome recommends closing the issue because existing remediation task TC-8009 already bumps axios past the fix threshold — no new remediation task is created",
+        "After engineer confirms closure, Step 4.3 creates a Related link between the current CVE (TC-8010) and the related CVE (TC-8008) with an idempotency check on existing issuelinks before creating",
+        "After engineer confirms closure, Step 4.3 creates a Depend link from the covering remediation task (TC-8009) to the current CVE (TC-8010) with an idempotency check on existing issuelinks before creating",
+        "A comment is posted on the current CVE documenting the cross-CVE overlap finding — including the related CVE key (TC-8008), covering task key (TC-8009), library (axios), bump version (1.9.0), and fix threshold (1.8.2)"
       ]
     },
     {
