@@ -5,6 +5,49 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.1] - 2026-07-01
+
+### Added
+
+- Deployment context classification for remediation tasks in `triage-security`
+- Concurrent triage detection before remediation task creation in `triage-security`
+- Staleness detection for `security-matrix.md` in `triage-security`
+- Embargo warning gate for high-severity CVEs in `triage-security`
+- Optional SBOM-based base image verification via cosign in `triage-security`
+- Ready for QA discovery category with remediation task completion check in `triage-security`
+- ProdSec contact config and vulnerability creator @mention in `triage-security`
+- Description digest comment on remediation task creation in `triage-security`
+- External CVE data enrichment from MITRE and OSV.dev in `triage-security`
+- Proactive cross-stream remediation with `security-preemptive` label in `triage-security`
+- Cross-CVE overlap detection via Upstream Affected Component in `triage-security`
+- `get_remote_links` command in `jira-client`
+- Priority and `fixVersion` REST API fallback in `jira-client`
+- Priority and `fixVersion` inheritance in `plan-feature` task creation
+- Priority and `fixVersion` prompts in `define-feature`
+- Dynamic issue type discovery and hierarchy mapping in `plan-feature`
+- Jira Field Defaults configuration step in `setup`
+- Bug and Hierarchy configuration in `setup`
+- Hierarchy preferences step and configuration contract in `setup`
+- Priority and `fixVersion` field handling constraints
+
+### Changed
+
+- Cross-CVE overlap fields made configurable via `/setup` in `triage-security`
+- Unsupported ecosystem message generalized to use placeholder in `triage-security`
+
+### Fixed
+
+- Step numbering consistency (7.0/7 → 7/8) in `triage-security`
+- SBOM verification output line made mandatory for RPM packages in `triage-security`
+- Created column added to Ready for QA table template in `triage-security`
+- `get_remote_links` guarded against non-dict responses in `jira-client`
+- ADF `taskList`/`taskItem` node sanitization to prevent `INVALID_INPUT` errors in `jira-client`
+- Field handling and test review feedback addressed in `jira-client`
+- Feature-branch label included in workflow mode decision output in `plan-feature`
+- Convention enrichment completeness check and verification pass in `plan-feature`
+- Baseline comparison gate added to eval failure subtask creation in `verify-pr`
+- Idempotent sibling link check documented in `triage-security` Step 4.2
+
 ## [0.11.0] - 2026-06-19
 
 ### Added
