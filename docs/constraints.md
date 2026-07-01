@@ -88,6 +88,9 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 | 1.76 | `plan-feature` MUST NOT set priority on created tasks when the parent Feature has priority "Undefined" or unset. | `plan-feature/SKILL.md` — Step 1, Step 6 |
 | 1.77 | `triage-security` MUST extract the Deployment Context column from the Source Repositories table in Security Configuration and use it to annotate remediation task descriptions with context-appropriate coordination guidance (internal, upstream, or customer-shipped). | `triage-security/SKILL.md` — Step 0, `triage-security/remediation-templates.md` — Coordination Guidance |
 | 1.78 | `triage-security` MUST default all repositories to `upstream` deployment context when the Deployment Context column is absent from the Source Repositories table (backward compatibility). | `triage-security/SKILL.md` — Step 0 |
+| 1.79 | `plan-feature` MUST create Epics between Feature and Tasks when a level-1 issue type is discovered in Step 2.5. | `plan-feature/SKILL.md` — Step 6, sub-step 6a.0 |
+| 1.80 | `plan-feature` MUST fall back to Feature → Task hierarchy when no level-1 type exists, without error or user prompting. | `plan-feature/SKILL.md` — Step 6, graceful degradation |
+| 1.81 | `plan-feature` Epic grouping strategy MUST be configurable via interactive prompt or CLAUDE.md Hierarchy Configuration. | `plan-feature/SKILL.md` — Step 5 |
 
 ### Prior Art — Cross-phase integrity (§1.33–1.35)
 
@@ -168,7 +171,7 @@ existing instruction in a SKILL.md or CLAUDE.md file.
 
 Each constraint above references its source. The full source files are:
 
-- `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Step 1 Priority/fixVersion extraction (§1.74, §1.76), Step 2.5 Discover Project Issue Types (§1.62–1.64), Step 4.5 Determine Workflow Mode (§1.27), Step 5 Convention-aware task enrichment (§4.11, §4.13), Step 5 Target Branch assignment (§4.12), Step 5 Bookend task generation (§3.4), Step 6 Priority/fixVersion inheritance (§1.74, §1.75, §1.76), Step 6a Digest posting (§1.33), Task Description Template (§4.1–4.10)
+- `plugins/sdlc-workflow/skills/plan-feature/SKILL.md` — Guardrails (§1.1–1.3), Step 1 Priority/fixVersion extraction (§1.74, §1.76), Step 2.5 Discover Project Issue Types (§1.62–1.64), Step 4.5 Determine Workflow Mode (§1.27), Step 5 Epic grouping (§1.79, §1.81), Step 5 Convention-aware task enrichment (§4.11, §4.13), Step 5 Target Branch assignment (§4.12), Step 5 Bookend task generation (§3.4), Step 6 sub-step 6a.0 Epic creation (§1.79), Step 6 graceful degradation (§1.80), Step 6 Priority/fixVersion inheritance (§1.74, §1.75, §1.76), Step 6a Digest posting (§1.33), Task Description Template (§4.1–4.10)
 - `plugins/sdlc-workflow/skills/implement-task/SKILL.md` — Important Rules (§1.4–1.6, §5.1–5.3), Step 1 (§1.6), Step 1.5 Digest verification (§1.34, §1.35), Step 4/6/9 (§5.4), Step 5 (§1.15, §3.1, §3.4), Step 7 (§5.9–5.13), Step 9 (§2.1–2.3, §5.6–5.8), Step 10 (§3.2, §3.3)
 - `plugins/sdlc-workflow/shared/task-description-template.md` — Rules (§4.12)
 - `plugins/sdlc-workflow/shared/description-digest-protocol.md` — Digest format and verification procedure (§1.33, §1.34, §1.35)

@@ -111,6 +111,28 @@
         "When the Feature issue has a non-empty fixVersions array and the fixVersion scope config (from ### Jira Field Defaults in CLAUDE.md) is 'task' or 'both' (or absent, defaulting to 'both'), every created task's additional_fields includes 'fixVersions' with the inherited version(s). When fixVersion scope is 'feature' or the Feature has no fixVersions, the fixVersions key is omitted entirely from additional_fields",
         "The summary comment on the feature issue (Step 6c) includes the inherited priority and fixVersion values that were propagated to tasks, or states they were omitted and why"
       ]
+    },
+    {
+      "id": 6,
+      "prompt": "Plan the implementation for feature TC-9006. The feature description is in feature-epic-hierarchy.md, the backend repository structure is in repo-backend.md, and the frontend repository structure is in repo-frontend.md. The project has a level-1 issue type named 'Epic' available (hierarchyLevel 1). The default Epic grouping strategy in CLAUDE.md Hierarchy Configuration is 'by-repository'. Write all outputs to the workspace outputs/ directory. For each task you would create, write a markdown file named task-N-slug.md with the full task description. Write the impact map to impact-map.md.",
+      "expected_output": "A structured implementation plan that creates Epics between the Feature and Tasks, grouped by repository (one Epic for trustify-backend, one for trustify-ui). Each task specifies its parent Epic. The hierarchy is Feature → Epic(s) → Tasks with Incorporates links from Feature to Epics.",
+      "files": ["files/feature-epic-hierarchy.md", "files/repo-backend.md", "files/repo-frontend.md"],
+      "assertions": [
+        "Epics are generated between Feature and Tasks — at least 2 Epics are created (one per repository) when by-repository grouping is used",
+        "Each Epic summary follows the format '<feature-key>: <repository-name>' (e.g., 'TC-9006: trustify-backend', 'TC-9006: trustify-ui')",
+        "Each task specifies its parent Epic key in the output — tasks targeting trustify-backend are assigned to the backend Epic, tasks targeting trustify-ui are assigned to the frontend Epic",
+        "Incorporates links are created from the Feature to each Epic (not from Feature to individual Tasks)",
+        "Task dependency ordering is preserved within and across Epics — backend tasks have lower task numbers than dependent frontend tasks",
+        "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+        "Epics are created with the level-1 issue type name ('Epic') and parent set to the feature issue key",
+        "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+        "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+        "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+        "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+        "When the Feature issue has a priority set (not 'Undefined'), every created task's additional_fields includes 'priority' with the inherited priority name. When the Feature's priority is 'Undefined', the priority key is omitted entirely from additional_fields (not set to null or 'Undefined')",
+        "When the Feature issue has a non-empty fixVersions array and the fixVersion scope config (from ### Jira Field Defaults in CLAUDE.md) is 'task' or 'both' (or absent, defaulting to 'both'), every created task's additional_fields includes 'fixVersions' with the inherited version(s). When fixVersion scope is 'feature' or the Feature has no fixVersions, the fixVersions key is omitted entirely from additional_fields",
+        "The summary comment on the feature issue (Step 6c) includes the inherited priority and fixVersion values that were propagated to tasks, or states they were omitted and why"
+      ]
     }
   ]
 }

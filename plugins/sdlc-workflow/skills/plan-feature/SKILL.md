@@ -552,6 +552,49 @@ Before generating task descriptions, read `docs/constraints.md` from the project
 
 Create implementation tasks for each unit of work. Each task description MUST follow the template defined in [`shared/task-description-template.md`](../shared/task-description-template.md) exactly — read the template and rules from that file before generating tasks.
 
+### Epic grouping (when available)
+
+If Step 2.5 discovered a level-1 type (Epic role), group tasks into Epics before
+generating individual task descriptions. If no level-1 type was found, skip this
+section entirely — generate tasks as before (Feature → Task hierarchy).
+
+#### Determine grouping strategy
+
+Check if CLAUDE.md `## Hierarchy Configuration` has a `Default epic grouping strategy`
+setting:
+
+- If set to a valid strategy (`by-repository`, `by-sub-feature`, or `trivial`), use it.
+- If set to `none`, or if the setting is absent, present an interactive prompt:
+
+  ```
+  How should tasks be grouped into Epics?
+
+  1. by-repository — one Epic per repository in the impact map
+  2. by-sub-feature — group by logical sub-features (I'll suggest groupings)
+  3. trivial — single Epic wrapping all tasks (1:1 with Feature)
+
+  Choose (1/2/3):
+  ```
+
+#### Generate Epic descriptions
+
+For each Epic group, generate:
+
+- **Summary**: `<feature-key>: <group-label>` (e.g., "TC-4866: sdlc-plugins" for
+  by-repository, "TC-4866: Dynamic issue type discovery" for by-sub-feature,
+  "TC-4866: Implementation" for trivial)
+- **Description**: brief plain-text summary of the tasks in this group. Epics use
+  plain text, not the structured task template.
+
+#### Assign tasks to Epics
+
+Annotate each task with its Epic group assignment:
+
+- **by-repository**: group by the task's Repository section.
+- **by-sub-feature**: present suggested groupings to the user for approval before
+  finalizing.
+- **trivial**: all tasks belong to the single Epic.
+
 ### Documentation task guidance
 
 When a feature introduces significant new behavior (new user-facing capabilities, new APIs, or major architectural changes), consider generating a **dedicated documentation-only task** to cover cross-cutting documentation updates that span multiple implementation tasks. Use this when the documentation work is substantial enough to warrant its own task rather than being spread across individual implementation tasks.
@@ -769,6 +812,50 @@ that already has bookend tasks from a previous run.
 
 ## Step 6 – Create Tasks in Jira
 
+### 6a.0 – Create Epics (when available)
+
+When Step 2.5 discovered a level-1 type and Epic grouping was performed in Step 5,
+create the Epic issues before creating tasks. If no level-1 type was found (the
+no-Epic flag was set), skip this sub-step entirely.
+
+For each Epic group defined in Step 5:
+
+1. **Create the Epic issue:**
+
+   ```
+   jira.create_issue(
+     projectKey=<project-key>,
+     issueTypeName=<level-1-type-name>,
+     summary="<feature-key>: <group-label>",
+     description=<epic-plain-text-description>,
+     parent=<feature-issue-key>,
+     additional_fields={
+       "labels": ["ai-generated-jira"],
+       "priority": {"name": "<inherited-priority>"},
+       "fixVersions": [{"name": "<inherited-version>"}]
+     }
+   )
+   ```
+
+   Apply the same conditional inclusion rules for `priority` and `fixVersions` as
+   defined in sub-step 6a (include only when set on the Feature; respect `fixVersion
+   scope` from Jira Field Defaults).
+
+2. **Record the Epic key:** map each Epic group label to its created Jira key (e.g.,
+   "sdlc-plugins" → PROJ-240). This mapping is used in sub-step 6a to set task
+   parents.
+
+#### Graceful degradation
+
+When no level-1 type is available (Step 2.5 set the no-Epic flag):
+
+- Skip sub-step 6a.0 entirely.
+- Tasks are created with no `parent` field (or with Feature as parent if the project
+  supports it).
+- "Incorporates" links go from Feature to Tasks as before.
+- This ensures backward compatibility: projects without hierarchy configuration
+  continue to work with the current Feature → Task behavior.
+
 ### 6a – Create the tasks
 
 Use:
@@ -801,6 +888,12 @@ additional_fields: {
   If either condition is not met, omit the `fixVersions` key entirely from `additional_fields`.
 
 **On MCP failure, if REST API chosen (Step 0.5):** use the `--priority` and `--fix-versions` flags on `create_issue` (see REST API equivalents in Step 0.5). Omit the flag entirely when the value should not be propagated.
+
+**Epic-aware parent field:** when Epics were created in sub-step 6a.0, set each task's
+`parent` field to its assigned Epic key (from the Epic group mapping built in 6a.0).
+This establishes the Task → Epic hierarchy. When no Epics are available, omit the
+`parent` field (or set it to the Feature key if the project supports it) — preserving
+the existing behavior.
 
 As each task is created, record a mapping of **task number/title → Jira key** (e.g. "Task 1 — Add CSV endpoint" → PROJ-231). This mapping is needed for link creation below.
 
@@ -874,21 +967,31 @@ including consumer verification behavior and common mistakes to avoid.
 
 ### 6b – Create issue links
 
-After **all** tasks are created (so all Jira keys are known), create two kinds of links:
+After **all** tasks (and Epics, if applicable) are created, create the following links:
 
-**Feature "incorporates" each task:**
+**Feature "incorporates" links:**
 
-For every created task, call:
+- **When Epics are available:** create "Incorporates" links from the Feature to each
+  **Epic** (not to individual Tasks). Tasks inherit hierarchy through their Epic parent.
 
-```
-jira.create_issue_link(
-  link_type="Incorporates",
-  inward_issue_key=<feature-issue-key>,
-  outward_issue_key=<created-task-key>
-)
-```
+  ```
+  jira.create_issue_link(
+    link_type="Incorporates",
+    inward_issue_key=<feature-issue-key>,
+    outward_issue_key=<created-epic-key>
+  )
+  ```
 
-This makes the feature show "incorporates TASK-X" and the task show "is incorporated by FEATURE-Y".
+- **When no Epics are available (graceful degradation):** create "Incorporates" links
+  from the Feature to each **Task** as before:
+
+  ```
+  jira.create_issue_link(
+    link_type="Incorporates",
+    inward_issue_key=<feature-issue-key>,
+    outward_issue_key=<created-task-key>
+  )
+  ```
 
 **Task "depends on" other tasks:**
 
