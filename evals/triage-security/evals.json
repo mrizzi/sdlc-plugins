@@ -303,6 +303,18 @@
         "The triage proceeds normally through all steps without errors from the missing Deployment Context column",
         "Backward compatibility is maintained — existing eval behavior is unaffected by the absence of the Deployment Context column"
       ]
+    },
+    {
+      "id": 25,
+      "prompt": "Triage Vulnerability issue TC-8040. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. However, assume the Ecosystem detection in Step 1 resolves to 'Go modules' — an ecosystem that is NOT listed in the Ecosystem Mappings table. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data including the ecosystem detection result, and write outputs/unsupported-ecosystem.md with the unsupported ecosystem notification you would present to the user.",
+      "expected_output": "A triage analysis where Step 1 Ecosystem detection resolves to Go modules, which is not in the Ecosystem Mappings table. The skill presents the unsupported ecosystem message using the detected ecosystem name ('Go modules') in the notification, and stops automated triage for that ecosystem.",
+      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "assertions": [
+        "The unsupported ecosystem notification uses the detected ecosystem name ('Go modules') — not a hard-coded ecosystem name (Step 5.3 unsupported ecosystem handling)",
+        "The notification follows the template pattern: the message contains the actual ecosystem name substituted into the placeholder, matching the angle-bracket placeholder convention used by other user-facing messages in the skill",
+        "Automated triage stops after the unsupported ecosystem notification — no version impact analysis or remediation task creation is performed for the unsupported ecosystem",
+        "The notification includes both the ecosystem name and the instruction that manual assessment is required"
+      ]
     }
   ]
 }

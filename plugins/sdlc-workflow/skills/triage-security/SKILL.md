@@ -374,7 +374,7 @@ assuming a fixed set. Common ecosystems include:
 If the detected ecosystem is not listed in the stream's Ecosystem Mappings table (e.g.,
 Go modules), inform the user and stop automated triage for that ecosystem:
 
-> "**Unsupported ecosystem**: Go is not yet supported for automated triage.
+> "**Unsupported ecosystem**: <ecosystem> is not yet supported for automated triage.
 > Manual assessment is required."
 
 The ecosystem determines which lock file to inspect and which parsing command to use.
