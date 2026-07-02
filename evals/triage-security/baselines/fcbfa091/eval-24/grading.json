@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 detects the absence of the Deployment Context column in the Source Repositories table and defaults all repositories to upstream (§1.78)",
+      "passed": true,
+      "evidence": "data-extraction.md, Deployment Context section (line 36): 'Source Repositories table does not include a Deployment Context column. Per backward compatibility rules, all repositories default to `upstream`.' The absence is explicitly detected and all repositories are defaulted to upstream."
+    },
+    {
+      "text": "Remediation task descriptions do NOT include a Coordination Guidance subsection — the section is omitted entirely when no Deployment Context column exists",
+      "passed": true,
+      "evidence": "grep for 'Coordination Guidance' in remediation.md returns no matches (exit code 1). All four task descriptions contain only: Repository, Target Branch, Description, Implementation Notes, Acceptance Criteria, Test Requirements, Dependencies sections. No Coordination Guidance subsection is present. data-extraction.md (line 36) also confirms the intent: 'Coordination Guidance subsection is omitted from remediation task descriptions.'"
+    },
+    {
+      "text": "The triage proceeds normally through all steps without errors from the missing Deployment Context column",
+      "passed": true,
+      "evidence": "Both output files complete successfully: data-extraction.md (Step 1) produces a full version impact table with 7 versions analyzed, ecosystem detection, cross-stream impact analysis, and affects-versions correction. remediation.md (Step 8) produces 4 well-formed remediation tasks (2 for Case A stream 2.2.x, 2 for Case B stream 2.1.x). grep for error/fail/exception/warning in remediation.md returns no matches (exit code 1). No error indicators or truncated outputs in either file."
+    },
+    {
+      "text": "Backward compatibility is maintained — existing eval behavior is unaffected by the absence of the Deployment Context column",
+      "passed": true,
+      "evidence": "data-extraction.md (line 36) explicitly invokes backward compatibility rules: 'Per backward compatibility rules, all repositories default to `upstream`.' The triage output structure is fully intact: CVE data extraction, ecosystem detection, version impact table, cross-stream analysis, affects-versions correction, and 4 remediation tasks with standard sections (Repository, Target Branch, Description, Implementation Notes, Acceptance Criteria, Test Requirements, Dependencies). The missing column causes no structural degradation or behavioral deviation."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

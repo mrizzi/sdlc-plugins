@@ -1,0 +1,35 @@
+{
+  "assertions": [
+    {
+      "assertion": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "pass": true,
+      "evidence": "File contains 'Please run `/setup` first to initialize the project configuration'."
+    },
+    {
+      "assertion": "outputs/response.md contains 'Bug Configuration' indicating what is missing",
+      "pass": true,
+      "evidence": "File begins with '**Bug Configuration** section is missing from the project's CLAUDE.md.'"
+    },
+    {
+      "assertion": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "pass": true,
+      "evidence": "ls reports 'No such file or directory' for preview.md."
+    },
+    {
+      "assertion": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "pass": true,
+      "evidence": "ls reports 'No such file or directory' for jira-create.md."
+    },
+    {
+      "assertion": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "pass": true,
+      "evidence": "ls reports 'No such file or directory' for jira-comment.md."
+    },
+    {
+      "assertion": "outputs/response.md does NOT contain any of the template section headings ('### **Issue Description**', '### **Steps to Reproduce**', etc.) — the skill must not proceed to collect section content",
+      "pass": true,
+      "evidence": "The entire response is 3 lines about missing Bug Configuration and recommending /setup. No template section headings are present."
+    }
+  ],
+  "pass_rate": 1.0
+}

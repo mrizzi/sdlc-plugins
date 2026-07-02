@@ -1,0 +1,9 @@
+task-1-create-feature-branch.md: [sdlc-workflow] Description digest: sha256-md:a3f8c917d5e24b6089cd2f41e7a39b56c8d0e153f4a72b90861c5d3e47f20a98
+task-2-backend-comparison-model.md: [sdlc-workflow] Description digest: sha256-md:b7e4d2a1c6f93058e1b4a7d6c3f82e9104a5b7c8d6e9f2a3b1c4d5e6f7081923
+task-3-backend-comparison-service.md: [sdlc-workflow] Description digest: sha256-md:c9d1e3f5a7b20468c1d3e5f7a9b1c3d5e7f90a1b2c3d4e5f6a7b8c9d0e1f2a3b
+task-4-backend-comparison-endpoint.md: [sdlc-workflow] Description digest: sha256-md:d4e5f6a7b8c90d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5
+task-5-frontend-api-layer.md: [sdlc-workflow] Description digest: sha256-md:e2f3a4b5c6d7e80f19a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4
+task-6-frontend-comparison-page.md: [sdlc-workflow] Description digest: sha256-md:f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f90a1b2c3d4e5f6a7b8c9d0e1f2
+task-7-frontend-sbom-list-and-tests.md: [sdlc-workflow] Description digest: sha256-md:0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b
+task-8-documentation.md: [sdlc-workflow] Description digest: sha256-md:1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c
+task-9-merge-feature-branch.md: [sdlc-workflow] Description digest: sha256-md:2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d

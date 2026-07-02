@@ -1,0 +1,65 @@
+{
+  "assertions": [
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Issue Description**'",
+      "pass": true,
+      "evidence": "Found at line 1: '### **Issue Description**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Steps to Reproduce**'",
+      "pass": true,
+      "evidence": "Found at line 5: '### **Steps to Reproduce**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Expected Result**'",
+      "pass": true,
+      "evidence": "Found at line 14: '### **Expected Result**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Actual Result**'",
+      "pass": true,
+      "evidence": "Found at line 18: '### **Actual Result**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Attachments**'",
+      "pass": true,
+      "evidence": "Found at line 22: '### **Attachments**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Suggested Fix**'",
+      "pass": true,
+      "evidence": "Found at line 26: '### **Suggested Fix**'"
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '### **Root Cause**'",
+      "pass": true,
+      "evidence": "No '### **Root Cause**' heading found anywhere in preview.md"
+    },
+    {
+      "assertion": "outputs/jira-create.md references project key 'TC'",
+      "pass": true,
+      "evidence": "Found at line 7: project_key: \"TC\""
+    },
+    {
+      "assertion": "outputs/jira-create.md references issue type ID '10300'",
+      "pass": true,
+      "evidence": "Found at line 8: issue_type_id: \"10300\""
+    },
+    {
+      "assertion": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "pass": true,
+      "evidence": "Found at line 39: labels: [\"ai-generated-jira\"]"
+    },
+    {
+      "assertion": "outputs/jira-create.md contains the summary 'SBOM delete endpoint returns 200 but does not remove the record'",
+      "pass": true,
+      "evidence": "Found at line 9: summary: \"SBOM delete endpoint returns 200 but does not remove the record\""
+    },
+    {
+      "assertion": "outputs/jira-comment.md contains 'sdlc-workflow/report-bug'",
+      "pass": true,
+      "evidence": "Found at line 1: 'sdlc-workflow/report-bug' appears in the plugin attribution line"
+    }
+  ],
+  "pass_rate": 1.0
+}

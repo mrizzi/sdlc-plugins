@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 8 detects existing remediation tasks TC-8100 and TC-8101 via the Depend links on the issue and skips remediation task creation — does NOT create duplicate tasks (idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 44-45 enumerate existing Depend links to TC-8100 ('Backport quinn-proto fix to >= 0.11.14 on release/0.4.z [rhtpa-2.2]') and TC-8101 ('Propagate quinn-proto bump to rhtpa-server release branch [rhtpa-2.2]'). idempotency-check.md items 3 and 4 (lines 47-75) explicitly detect each task via issuelinks with type Depend, confirm matching summary/labels/CVE ID, and record 'Skip -- do not create task' for both. triage-outcome.md lines 21-22 confirm Step 8 Case A skipped both upstream backport and downstream propagation task creation because Depend links already exist."
+    },
+    {
+      "text": "The ai-cve-triaged label is already present on the issue — the triage does NOT attempt to add it again (label idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md line 21 lists labels including 'ai-cve-triaged'. idempotency-check.md item 1 (lines 21-29) detects the label in the issue's labels field and records 'Skip -- do not add label'. triage-outcome.md line 24 confirms Post-Triage step skipped adding the label because it is already present in the issue labels array."
+    },
+    {
+      "text": "The issue is already In Progress — the triage does NOT attempt to transition the status again or warns that the issue is already in a post-triage state (status idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md line 20 shows issue status is 'In Progress'. idempotency-check.md item 2 (lines 32-45) detects the status, records 'Skip -- do not transition', and explicitly warns: 'Per the Status-aware handling section of the skill, issues in In Progress trigger a warning that the issue may be actively worked on -- in a re-run context this is expected because the prior triage already advanced the status.' triage-outcome.md lines 19 and 27 confirm both Step 0.7 and Post-Triage skip status transitions."
+    },
+    {
+      "text": "The existing description digest comment is detected — no duplicate digest comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md line 39 identifies the description digest comment with marker '[sdlc-workflow] Description digest: sha256-md:a1b2c3d4...' posted 2026-07-01. idempotency-check.md item 5 (lines 77-91) scans comments for the digest marker prefix, finds the existing comment, and records 'Skip -- do not post digest'. triage-outcome.md line 25 confirms Post-Triage skipped posting the digest comment."
+    },
+    {
+      "text": "The existing post-triage summary comment is detected — no duplicate summary comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 40-41 identify the post-triage summary comment documenting version impact, Affects Versions correction, and remediation tasks, posted 2026-07-01. idempotency-check.md item 6 (lines 93-112) scans comments for the triage summary marker ('sdlc-workflow/triage-security' footer), finds the existing comment with full triage outcome, and records 'Skip -- do not post summary'. triage-outcome.md line 26 confirms Post-Triage skipped posting the summary comment."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

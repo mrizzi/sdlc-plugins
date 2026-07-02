@@ -1,0 +1,70 @@
+{
+  "assertions": [
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Issue Description**'",
+      "pass": true,
+      "evidence": "Found '### **Issue Description**' on line 1 of preview.md"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Steps to Reproduce**'",
+      "pass": true,
+      "evidence": "Found '### **Steps to Reproduce**' on line 9 of preview.md"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Expected Result**'",
+      "pass": true,
+      "evidence": "Found '### **Expected Result**' on line 17 of preview.md"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Actual Result**'",
+      "pass": true,
+      "evidence": "Found '### **Actual Result**' on line 23 of preview.md"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Attachments**'",
+      "pass": true,
+      "evidence": "Found '### **Attachments**' on line 36 of preview.md"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Root Cause**'",
+      "pass": true,
+      "evidence": "Found '### **Root Cause**' on line 42 of preview.md"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Suggested Fix**'",
+      "pass": true,
+      "evidence": "Found '### **Suggested Fix**' on line 50 of preview.md"
+    },
+    {
+      "assertion": "outputs/jira-create.md references project key 'TC'",
+      "pass": true,
+      "evidence": "Line 3 of jira-create.md contains '**Project key**: TC'"
+    },
+    {
+      "assertion": "outputs/jira-create.md references issue type ID '10300'",
+      "pass": true,
+      "evidence": "Line 5 of jira-create.md contains '**Issue type ID**: 10300'"
+    },
+    {
+      "assertion": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "pass": true,
+      "evidence": "Line 6 of jira-create.md contains '**Labels**: ai-generated-jira'"
+    },
+    {
+      "assertion": "outputs/jira-comment.md contains 'sdlc-workflow/report-bug'",
+      "pass": true,
+      "evidence": "Line 1 of jira-comment.md contains 'sdlc-workflow/report-bug' in the link text"
+    },
+    {
+      "assertion": "outputs/jira-comment.md contains 'https://github.com/mrizzi/sdlc-plugins'",
+      "pass": true,
+      "evidence": "Line 1 of jira-comment.md contains 'https://github.com/mrizzi/sdlc-plugins' as the link URL"
+    },
+    {
+      "assertion": "outputs/jira-comment.md contains a version string (e.g., 'v0.' or version from plugin.json)",
+      "pass": true,
+      "evidence": "Line 1 of jira-comment.md contains 'v0.12.0'"
+    }
+  ],
+  "pass_rate": 1.0
+}

@@ -1,0 +1,50 @@
+{
+  "assertions": [
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Issue Description**'",
+      "pass": true,
+      "evidence": "Line 1 contains exactly '### **Issue Description**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Steps to Reproduce**'",
+      "pass": true,
+      "evidence": "Line 5 contains exactly '### **Steps to Reproduce**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Expected Result**'",
+      "pass": true,
+      "evidence": "Line 13 contains exactly '### **Expected Result**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Actual Result**'",
+      "pass": true,
+      "evidence": "Line 17 contains exactly '### **Actual Result**'"
+    },
+    {
+      "assertion": "outputs/preview.md contains the heading '### **Attachments**'",
+      "pass": true,
+      "evidence": "Line 21 contains exactly '### **Attachments**'"
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '### **Root Cause**'",
+      "pass": true,
+      "evidence": "No line in preview.md contains '### **Root Cause**'; the file has only 5 headings: Issue Description, Steps to Reproduce, Expected Result, Actual Result, Attachments"
+    },
+    {
+      "assertion": "outputs/preview.md does NOT contain the heading '### **Suggested Fix**'",
+      "pass": true,
+      "evidence": "No line in preview.md contains '### **Suggested Fix**'; the file has only 5 headings: Issue Description, Steps to Reproduce, Expected Result, Actual Result, Attachments"
+    },
+    {
+      "assertion": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "pass": true,
+      "evidence": "Line 13 contains '\"labels\": `[\"ai-generated-jira\"]`'"
+    },
+    {
+      "assertion": "outputs/jira-create.md references issue type ID '10300'",
+      "pass": true,
+      "evidence": "Line 10 contains '\"issue_type_id\": `10300`'"
+    }
+  ],
+  "pass_rate": 1.0
+}

@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 4.3 extracts the Upstream Affected Component (axios) from customfield_10632 and uses it to search for related CVE Jiras (§1.59)",
+      "passed": true,
+      "evidence": "overlap-check.md Section 1: 'Extracted from TC-8010's customfield_10632: axios'. Section 2 uses JQL 'cf[10632] ~ \"axios\"' to search for related CVE Jiras. data-extraction.md also confirms customfield_10632 = axios."
+    },
+    {
+      "text": "Step 4.3 filters search results by matching PS Component (customfield_10669 = pscomponent:org/rhtpa-ui) and Stream (customfield_10832 = rhtpa-2.2)",
+      "passed": true,
+      "evidence": "overlap-check.md Section 3 explicitly filters TC-8008 by comparing PS Component (customfield_10669): 'pscomponent:org/rhtpa-ui -- matches' and Stream (customfield_10832): 'rhtpa-2.2 -- matches'. Both field IDs and values are correct."
+    },
+    {
+      "text": "Step 4.3 traverses issuelinks on TC-8008 to find remediation task TC-8009 via the 'Depend' link type",
+      "passed": true,
+      "evidence": "overlap-check.md Section 4 shows TC-8008's issuelinks table with link type 'Depend', direction 'outward', linked issue 'TC-8009'. States: 'TC-8009 is a remediation Task linked to TC-8008 via the \"Depend\" link type.'"
+    },
+    {
+      "text": "Step 4.3 compares the remediation task's bump version (1.9.0) against the current CVE's fix threshold (1.8.2) and determines the fix is already covered",
+      "passed": true,
+      "evidence": "overlap-check.md Section 5: 'Bump version (from TC-8009 description): axios 1.9.0', 'Current CVE's fix threshold: axios >= 1.8.2', 'Comparison: 1.9.0 >= 1.8.2', 'Result: COVERED.'"
+    },
+    {
+      "text": "Triage outcome recommends closing the issue because existing remediation task TC-8009 already bumps axios past the fix threshold — no new remediation task is created",
+      "passed": true,
+      "evidence": "triage-outcome.md: 'Decision: Close -- Covered by Existing Remediation'. States 'TC-8010 requires no new remediation task' and 'No new remediation tasks are created.' Recommendation: 'Close as covered by existing remediation. The fix in TC-8009 (axios bump to 1.9.0) resolves CVE-2026-44492.'"
+    },
+    {
+      "text": "Step 4.3 creates a Related link between the current CVE (TC-8010) and the related CVE (TC-8008) with an idempotency check on existing issuelinks before creating",
+      "passed": true,
+      "evidence": "overlap-check.md Section 6a: Idempotency check performed -- 'Check TC-8010's existing issuelinks array for a link where type.name is \"Related\" and inwardIssue.key or outwardIssue.key matches TC-8008. TC-8010 has no existing issue links. No matching link exists -- create the link.' Then creates jira.create_link with type Related between TC-8010 and TC-8008."
+    },
+    {
+      "text": "Step 4.3 creates a Depend link from the covering remediation task (TC-8009) to the current CVE (TC-8010) with an idempotency check on existing issuelinks before creating",
+      "passed": true,
+      "evidence": "overlap-check.md Section 6b: Idempotency check performed -- 'Check TC-8010's existing issuelinks array for a link where type.name is \"Depend\" and inwardIssue.key or outwardIssue.key matches TC-8009. TC-8010 has no existing issue links. No matching link exists -- create the link.' Then creates jira.create_link with inwardIssue TC-8010, outwardIssue TC-8009, type Depend."
+    },
+    {
+      "text": "A comment is posted on the current CVE documenting the cross-CVE overlap finding — including the related CVE key (TC-8008), covering task key (TC-8009), library (axios), bump version (1.9.0), and fix threshold (1.8.2)",
+      "passed": true,
+      "evidence": "overlap-check.md Section 6 'Overlap Comment' and triage-outcome.md Section 2 both show the comment text: 'Cross-CVE overlap: existing remediation task TC-8009 (from CVE-2026-42035 / TC-8008) already bumps axios to 1.9.0, which meets or exceeds this CVE's fix threshold (1.8.2).' All five required elements present: TC-8008, TC-8009, axios, 1.9.0, 1.8.2."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

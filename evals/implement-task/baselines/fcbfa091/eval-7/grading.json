@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, section '2. Locate the digest comment' (lines 15-23): 'I search through all returned comments for any whose body starts with the marker string `[sdlc-workflow] Description digest:`. This marker is defined in `shared/description-digest-protocol.md`.' The exact marker string and its source file are both explicitly named."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, section '7. Compare hex digests -- MISMATCH DETECTED' (lines 67-71): 'The stored hex digest and the computed hex digest do not match' with Expected (sha256-md:000...000) and Actual (sha256-md:a3f8b2c1...) values shown. The process of computing the current digest (section 5, lines 42-58) and comparing it to the stored digest (section 7) is fully described."
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, lines 79-86: 'WARNING: Task description modified after planning' followed by 'The description for TC-9201 has been modified since plan-feature created this task.' and explicit display of Expected digest (sha256-md:000...000) and Actual digest (sha256-md:a3f8b2c1...) values."
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, lines 88-93: 'Options: 1. Proceed -- implement using the current (modified) description as-is 2. Stop -- halt implementation so you can re-run plan-feature to regenerate tasks from the updated feature description Choose (1/2):'"
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "In digest-mismatch.md, lines 97-102: 'Execution State: Execution is stopped. I do not proceed to Step 2 (Verify Dependencies), Step 3 (Transition to In Progress), or any subsequent implementation steps until the user responds with their choice.' The response explicitly halts at the digest check and waits for user input before continuing."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

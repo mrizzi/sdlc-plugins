@@ -1,0 +1,49 @@
+{
+  "assertions": [
+    {
+      "id": 1,
+      "assertion": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "pass": true,
+      "evidence": "Security Configuration section present at lines 51-73 with all three subsections: Product Lifecycle (5 fields: Product pages URL, Jira version prefix, Vulnerability issue type ID, Component label pattern, VEX Justification custom field), Version Streams (1 row for 2.1.x), and Source Repositories (2 rows for backend and frontend-ui). All values match the fixture description."
+    },
+    {
+      "id": 2,
+      "assertion": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "pass": true,
+      "evidence": "discovery-log.md lines 55-65 show Security Configuration with Status 'Up to date', enumerates all subsections as present and populated, and concludes 'Security Configuration is up to date'."
+    },
+    {
+      "id": 3,
+      "assertion": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "pass": true,
+      "evidence": "changes-log.md line 15 shows 'Security Configuration | Preserved | No changes — Product Lifecycle, Version Streams, and Source Repositories all present and populated'. Overall summary states 'No changes were made. All sections are already fully configured.'"
+    },
+    {
+      "id": 4,
+      "assertion": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "pass": true,
+      "evidence": "Neither discovery-log.md nor changes-log.md mention offering a Security Configuration opt-in prompt. Discovery log reports 'Up to date' status; changes log reports 'Preserved' with no changes. The skill correctly detected the existing fully-populated section and skipped the opt-in flow."
+    },
+    {
+      "id": 5,
+      "assertion": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "pass": true,
+      "evidence": "Repository Registry table at lines 14-17 contains both entries: 'backend | Rust backend service | serena_backend | /home/user/backend' and 'frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui', matching the fixture."
+    },
+    {
+      "id": 6,
+      "assertion": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "pass": true,
+      "evidence": "Jira Configuration at lines 21-25 contains all 5 fields matching the fixture: Project key TC, Cloud ID 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID 10142, Git Pull Request custom field customfield_10875, GitHub Issue custom field customfield_10747."
+    },
+    {
+      "id": 7,
+      "assertion": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with all three fields (Bug issue type ID, Bug template, Bug-to-Task link type) unchanged — the skill reports Bug Configuration is up to date",
+      "pass": true,
+      "evidence": "Bug Configuration section at lines 46-49 contains all 3 fields: Bug issue type ID 10001, Bug template docs/bug-template.md, Bug-to-Task link type Blocks. Discovery log confirms 'Bug Configuration is up to date' with all 3 required fields populated."
+    }
+  ],
+  "pass_rate": 1.0,
+  "total": 7,
+  "passed": 7
+}

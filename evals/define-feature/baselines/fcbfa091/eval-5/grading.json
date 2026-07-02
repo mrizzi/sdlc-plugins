@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/api-claim-verification.md exists",
+      "passed": true,
+      "evidence": "File exists at /tmp/define-feature-eval-baseline/eval-5/outputs/api-claim-verification.md with 45 lines of content."
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains the detected claim text (e.g., 'PR reviews cannot be updated' or 'does not support modifying a submitted review')",
+      "passed": true,
+      "evidence": "Line 7: '\"PR reviews cannot be updated after initial submission\"' and line 8: '\"The GitHub API does not support modifying a submitted review\"'. Both phrasings are present."
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains a reference to the GitHub REST API endpoint PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id} or equivalent evidence that the claim is incorrect",
+      "passed": true,
+      "evidence": "Line 21: 'PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}' is explicitly referenced, along with a documentation link on line 26 and the statement on line 14: 'The claim is **incorrect**. The GitHub REST API does support updating a submitted pull request review.'"
+    },
+    {
+      "text": "outputs/api-claim-verification.md contains suggested corrected language for the Requirement",
+      "passed": true,
+      "evidence": "Lines 32-44 contain a '## Suggested Corrected Language' section with corrected requirement: 'Create a new review for each eval run rather than updating a previous review' and corrected notes: 'Preserves review history so reviewers can compare results across runs. Note: the GitHub API does support updating reviews via PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}, but creating new reviews provides better auditability.'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "Line 17 of preview.md: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "Line 21 of preview.md: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "The file preview.md has 28 lines and does not contain '## Background and Strategic Fit' anywhere. The only headings are '# Feature Preview' (line 1), '## Feature Overview' (line 17), and '## Requirements' (line 21)."
+    },
+    {
+      "text": "outputs/jira-create.md references project key 'TC'",
+      "passed": true,
+      "evidence": "Line 8 of jira-create.md: 'projectKey=\"TC\"'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "Line 162 of jira-comment.md: '\"text\": \"sdlc-workflow/define-feature\"'"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

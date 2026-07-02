@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The unsupported ecosystem notification uses the detected ecosystem name ('Go modules') — not a hard-coded ecosystem name (Step 5.3 unsupported ecosystem handling)",
+      "passed": true,
+      "evidence": "In unsupported-ecosystem.md line 3: '**Unsupported ecosystem**: Go modules is not yet supported for automated triage.' The ecosystem name 'Go modules' matches the detected ecosystem from data-extraction.md line 29: 'Detected ecosystem: **Go modules**'. The name is dynamically used, not a hard-coded alternative ecosystem name."
+    },
+    {
+      "text": "The notification follows the template pattern: the message contains the actual ecosystem name substituted into the placeholder, matching the angle-bracket placeholder convention used by other user-facing messages in the skill",
+      "passed": true,
+      "evidence": "The SKILL.md template (lines 416-419) defines: '**Unsupported ecosystem**: <ecosystem> is not yet supported for automated triage. Manual assessment is required.' The output in unsupported-ecosystem.md line 3 reads: '**Unsupported ecosystem**: Go modules is not yet supported for automated triage. Manual assessment is required.' This correctly substitutes 'Go modules' into the <ecosystem> placeholder, matching the angle-bracket placeholder convention used throughout the skill (e.g., <stream>, <date>, <CVE-ID>, <severity> in other templates)."
+    },
+    {
+      "text": "Automated triage stops after the unsupported ecosystem notification — no version impact analysis or remediation task creation is performed for the unsupported ecosystem",
+      "passed": true,
+      "evidence": "In unsupported-ecosystem.md lines 6-9: 'Automated triage has stopped at Step 1 (Data Extraction / Ecosystem Detection). The detected ecosystem \"Go modules\" does not appear in the Ecosystem Mappings table for any configured version stream. Without a matching ecosystem entry, the skill cannot determine the lock file path or check command needed for version impact analysis.' And line 9: 'No version impact analysis, Affects Versions correction, or remediation task creation was performed.' There are no output files for version impact analysis, remediation tasks, or any subsequent triage steps. The outputs directory contains only data-extraction.md and unsupported-ecosystem.md, confirming triage stopped."
+    },
+    {
+      "text": "The notification includes both the ecosystem name and the instruction that manual assessment is required",
+      "passed": true,
+      "evidence": "In unsupported-ecosystem.md line 3: '**Unsupported ecosystem**: Go modules is not yet supported for automated triage. Manual assessment is required.' The ecosystem name ('Go modules') and the manual assessment instruction ('Manual assessment is required') are both present in the notification message."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}
