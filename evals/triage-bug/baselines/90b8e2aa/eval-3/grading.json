@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Investigation identifies two independent root causes: (1) convention reference formatter using wrong case transform, (2) task creation using Feature issue type ID instead of Task (Steps 2-4)",
+      "passed": true,
+      "evidence": "investigation.md Step 2 Trace 1 identifies 'Convention Reference Formatting' where 'The formatter incorrectly lowercases and hyphenates the heading'; Trace 2 identifies 'Task Issue Type Selection' where 'the task creation logic reads the Feature issue type ID (10142) from Jira Configuration instead of...the correct Task issue type ID'. Step 3 labels them 'Root Cause 1: Convention Reference Formatter (Wrong Case Transform)' in shared/convention-utils.md and 'Root Cause 2: Task Creation Issue Type (Wrong ID)' in plan-feature/SKILL.md. Step 4 states 'This bug has two independent root causes located in different modules/code paths'."
+    },
+    {
+      "text": "Decomposition Guard is triggered because the two root causes are in different modules/code paths (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md opens with 'The investigation of ACME-502 identified **two independent root causes** located in **different modules and code paths**. Per Step 6 of the triage-bug workflow, this triggers the Decomposition Guard.' The Rationale section lists 'Different modules: Root cause 1 is in shared/convention-utils.md (shared utility); root cause 2 is in plan-feature/SKILL.md' and 'Different code paths: Root cause 1 involves string formatting/case transformation logic; root cause 2 involves Jira API issue creation and configuration field lookup'."
+    },
+    {
+      "text": "Decomposition Guard presents both issues with their affected files/modules (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md 'Prompt to User' section presents: '1. Convention reference formatter uses wrong case transform (in shared/convention-utils.md)' with description, and '2. Task creation uses wrong issue type ID (in plan-feature/SKILL.md Step 6a)' with description. Both issues include their affected file paths and module-level context."
+    },
+    {
+      "text": "Decomposition Guard offers the user two options: Proceed with single Task or Split into separate Bugs (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md presents 'Options: 1. **Proceed** -- create a single Task covering all fixes 2. **Split** -- I recommend creating separate Bugs for each independent issue, then triaging each one individually' followed by 'Choose (1/2):'."
+    },
+    {
+      "text": "The skill does NOT silently create a single Task bundling both fixes — it waits for user input (Step 6 stop rule)",
+      "passed": true,
+      "evidence": "decomposition-guard.md explicitly states 'A single Task must NOT be silently created bundling both fixes' at the top. The 'Awaiting User Input' section states 'Execution is **stopped** at Step 6. No Task has been created. The workflow will resume based on the user's choice'. No task creation output appears anywhere in the outputs."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

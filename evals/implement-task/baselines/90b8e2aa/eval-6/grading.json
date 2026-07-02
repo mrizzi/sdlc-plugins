@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md line 11: 'Search through the returned comments for any whose body starts with the marker string `[sdlc-workflow] Description digest:`.' plan.md line 54: 'Located one comment matching marker `[sdlc-workflow] Description digest:`'. Both files explicitly describe locating the digest comment using the exact marker string."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md lines 35-48: describes writing the description to '/tmp/desc-TC-9201.txt' then computing the digest via 'python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt', noting 'The script auto-detects the input format.' Lines 43-48 describe comparing format tags (sha256-md == sha256-md) and then comparing hex digests. plan.md line 57: 'Computed current digest via `python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt`' and line 58: 'Format tags match (`sha256-md` == `sha256-md`), hex digests match'."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md lines 51-60: 'Outcome: match -- proceed silently' followed by explicit enumeration: 'No user prompt or confirmation is displayed', 'No warning message is logged', 'No additional latency is introduced', 'Execution continues directly to Step 2 (Verify Dependencies) without interruption'. plan.md line 59: 'Result: match -- proceed silently. No user prompt, no warning, no added latency.'"
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md line 58: 'Execution continues directly to Step 2 (Verify Dependencies) without interruption'. plan.md transitions seamlessly from Step 1.5 (line 59: 'proceed silently') to Step 2 (line 62: 'Verify Dependencies') with no user alert or pause. No contradictory evidence exists in either file — neither file contains any user prompt, warning, or pause related to the digest check."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

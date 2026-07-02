@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Repository Registry' section with the table headers (Repository, Role, Serena Instance, Path) but no data rows, or explicitly notes that no repositories are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 3-6 contain '## Repository Registry' followed by a table with headers '| Repository | Role | Serena Instance | Path |' and separator '|---|---|---|---|' with no data rows after it."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Jira Configuration' section with Project key (MYPROJ), Cloud ID (abc123), and Feature issue type ID (10001)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 8-11 contain '## Jira Configuration' with '- Project key: MYPROJ', '- Cloud ID: abc123', '- Feature issue type ID: 10001'. All three values match exactly."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Code Intelligence' section that indicates no Serena instances are configured",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 14-16 contain '## Code Intelligence' followed by 'No Serena MCP servers are configured. Code intelligence is not available.' and a Limitations subsection stating 'No limitations known — no Serena instances configured.'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Serena MCP tools were discovered among the available tools",
+      "passed": true,
+      "evidence": "discovery-log.md lines 9-15 document scanning for Serena instances and conclude with '**Result: No Serena MCP tools discovered.** The `mcp__github__*` tools are GitHub tools, not Serena instances.'"
+    },
+    {
+      "text": "outputs/discovery-log.md documents that no Atlassian MCP tools were discovered and Jira fields were provided via manual entry",
+      "passed": true,
+      "evidence": "discovery-log.md lines 27-29: '**Result: No Atlassian MCP tools discovered.** No tools matching `mcp__atlassian__*` are available in the tool listing.' Lines 35: '**User chose: Manual entry (option 2 — skip auto-discovery, provide fields manually).**'"
+    },
+    {
+      "text": "The output or discovery log mentions prompting the user about continuing without code intelligence (the skill should ask whether to continue or set up Serena first)",
+      "passed": true,
+      "evidence": "discovery-log.md line 17: 'Prompted the user: \"No Serena MCP servers were found. Would you like to continue without code intelligence, or set up Serena first?\"' Line 19: '**User chose: Continue without code intelligence.**'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Bug Configuration' section with three fields: Bug issue type ID (10001), Bug template (docs/bug-template.md), Bug-to-Task link type (Blocks)",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 22-26 contain '## Bug Configuration' with '- Bug issue type ID: 10001', '- Bug template: docs/bug-template.md', '- Bug-to-Task link type: Blocks'. All three fields match exactly."
+    },
+    {
+      "text": "The skill offers Security Configuration opt-in and respects the user's decline — outputs/claude-md-result.md does NOT contain a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "discovery-log.md lines 72-76 document the opt-in prompt and user's decline: '**User chose: Decline.** Security Configuration will not be created.' claude-md-result.md contains no '## Security Configuration' section — the file ends after Bug Configuration at line 26."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

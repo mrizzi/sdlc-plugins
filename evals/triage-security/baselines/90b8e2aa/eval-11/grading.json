@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 4.4 searches for preemptive tasks using JQL with labels 'security-preemptive' and 'CVE-2026-55123' (§1.60)",
+      "passed": true,
+      "evidence": "reconciliation.md lines 11-13 show JQL query: \"project = TC AND issuetype = Task AND labels = 'security-preemptive' AND labels = 'CVE-2026-55123' ORDER BY created DESC\" — both required labels are present in the search."
+    },
+    {
+      "text": "Step 4.4 filters results to match the current stream (rhtpa-2.1) by checking the task summary for the stream name",
+      "passed": true,
+      "evidence": "reconciliation.md section 4.4.2 (lines 27-29): \"Current issue stream suffix: `[rhtpa-2.1]`\", \"TC-8022 summary contains: `(rhtpa-2.1)`\", \"Match confirmed -- TC-8022 is the preemptive task for this CVE and this stream.\" The filtering explicitly checks the task summary for the stream name."
+    },
+    {
+      "text": "Step 4.4 links the new CVE Jira TC-8021 to the preemptive task TC-8022 with 'Depend' link type (standard remediation linkage)",
+      "passed": true,
+      "evidence": "reconciliation.md section 4.4.3a (lines 36-45) shows: jira.create_link(inwardIssue: TC-8021, outwardIssue: TC-8022, type: \"Depend\") and states: \"This establishes the standard remediation linkage between the CVE Vulnerability issue and the remediation task.\" Also confirmed in triage-outcome.md line 40: \"Link created | TC-8021 --[Depend]--> TC-8022\"."
+    },
+    {
+      "text": "Step 4.4 removes the 'security-preemptive' label from TC-8022 — the task is now a standard remediation task linked to a proper CVE Jira",
+      "passed": true,
+      "evidence": "reconciliation.md section 4.4.3b (lines 48-58) shows labels updated from [\"ai-generated-jira\", \"Security\", \"CVE-2026-55123\", \"security-preemptive\"] to [\"ai-generated-jira\", \"Security\", \"CVE-2026-55123\"] via jira.edit_issue, and states: \"The `security-preemptive` label is removed because TC-8022 is now linked to a proper CVE Jira (TC-8021) via the standard \"Depend\" link. It is no longer a preemptive task -- it is a standard remediation task.\" Also confirmed in triage-outcome.md line 41: \"Label change | Removed `security-preemptive` from TC-8022\"."
+    },
+    {
+      "text": "Step 8 skips remediation task creation for this stream because Step 4.4 reconciliation already linked an existing task",
+      "passed": true,
+      "evidence": "reconciliation.md section 4.4.3d (line 76): \"Step 8 will skip task creation for this stream.\" triage-outcome.md line 26: \"Step 8 task creation was skipped for the rhtpa-2.1 stream because TC-8022 already covers the required remediation (bump tokio to 1.42.0).\" triage-outcome.md line 39: \"New tasks created | 0 (skipped -- remediation already exists)\"."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

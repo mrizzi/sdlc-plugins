@@ -1,0 +1,85 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan determines feature-branch workflow mode (not direct-to-main) based on the atomicity constraints in the feature description",
+      "passed": true,
+      "evidence": "impact-map.md states 'Selected mode: feature-branch' with rationale citing two atomicity indicators: 'Coordinated schema migrations' (migration creates enum column while dropping FK and lookup table; code depends on new column existing) and 'Breaking API changes' (service/endpoint/ingestion code references new enum column). summary-comment.md confirms 'Feature-branch (workflow:feature-branch label applied to TC-9005)' with rationale about mutual dependencies."
+    },
+    {
+      "text": "A bookend task with Bookend Type create-branch is generated as the first task in the plan",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md contains '## Bookend Type\\ncreate-branch' and is the first task in the plan. summary-comment.md confirms Task 1 type is 'Bookend (create-branch)'."
+    },
+    {
+      "text": "A bookend task with Bookend Type merge-branch is generated as the last task in the plan",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md contains '## Bookend Type\\nmerge-branch' and is the last task (7 of 7). summary-comment.md confirms Task 7 type is 'Bookend (merge-branch)'."
+    },
+    {
+      "text": "All intermediate tasks (between the create-branch and merge-branch bookend tasks) have Target Branch set to TC-9005",
+      "passed": true,
+      "evidence": "All five intermediate tasks have '## Target Branch\\nTC-9005': task-2 (line 8), task-3 (line 8), task-4 (line 8), task-5 (line 8), task-6 (line 8)."
+    },
+    {
+      "text": "The create-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-1-create-feature-branch.md line 7: '## Target Branch\\nmain'."
+    },
+    {
+      "text": "The merge-branch bookend task has Target Branch set to main",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md line 7: '## Target Branch\\nmain'."
+    },
+    {
+      "text": "All intermediate tasks list the create-branch bookend task as a dependency",
+      "passed": true,
+      "evidence": "Each intermediate task lists Task 1 as a dependency: task-2 line 62 'Depends on: Task 1', task-3 line 58 'Depends on: Task 1', task-4 line 58 'Depends on: Task 1', task-5 line 54 'Depends on: Task 1', task-6 line 45 'Depends on: Task 1'."
+    },
+    {
+      "text": "The merge-branch bookend task lists all intermediate tasks as dependencies",
+      "passed": true,
+      "evidence": "task-7-merge-feature-branch.md lists all 5 intermediate tasks as dependencies: 'Depends on: Task 2', 'Depends on: Task 3', 'Depends on: Task 4', 'Depends on: Task 5', 'Depends on: Task 6' (lines 26-30)."
+    },
+    {
+      "text": "Each task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements",
+      "passed": true,
+      "evidence": "Bookend tasks (1,7) contain required bookend sections: Repository, Target Branch, Bookend Type, Description, Acceptance Criteria, Test Requirements, Dependencies. Intermediate tasks (2-6) contain all required sections: Repository, Target Branch, Description, Files to Modify (all 5 have this), Implementation Notes, Acceptance Criteria, Test Requirements. Task 2 additionally has Files to Create. All sections verified present in each file."
+    },
+    {
+      "text": "The plan includes a workflow:feature-branch label decision to be applied to the feature issue",
+      "passed": true,
+      "evidence": "impact-map.md states: 'Label: The `workflow:feature-branch` label will be applied to the feature issue TC-9005.' summary-comment.md states: 'Feature-branch (`workflow:feature-branch` label applied to TC-9005)'."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": true,
+      "evidence": "digest-comments.md contains 7 digests, one for each task, all in format '[sdlc-workflow] Description digest: sha256-md:<64-hex>'. Each hash is exactly 64 lowercase hex characters: Task 1: fed2c5ac...b282, Task 2: 8627df88...db22, Task 3: a99a6037...e407, Task 4: d7aa95f9...8ebd, Task 5: 26cdfabb...d357, Task 6: 9472aea6...e42a, Task 7: 9452a652...15e3. None are placeholders or abbreviated."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All intermediate tasks include convention rationales in the prescribed format. Task 2: 'Applies: task creates `migration/src/m0002_advisory_status_enum/mod.rs` matching the convention's database framework scope.' Task 3: 'Applies: task modifies `entity/src/advisory.rs` matching the convention's database framework scope.' Task 4 has 4 conventions, all with 'Applies: task modifies <file> matching the convention's <scope>' format. Task 5: 'Applies: task modifies `modules/ingestor/src/graph/advisory/mod.rs` matching the convention's database framework scope.' Task 6: 'Applies: task modifies `tests/api/advisory.rs` matching the convention's integration test file scope.' No 'Not applicable' annotations appear. Only relevant conventions are included per task."
+    },
+    {
+      "text": "When the Feature issue has a priority set (not 'Undefined'), every created task's additional_fields includes 'priority' with the inherited priority name. When the Feature's priority is 'Undefined', the priority key is omitted entirely from additional_fields (not set to null or 'Undefined')",
+      "passed": true,
+      "evidence": "summary-comment.md states: 'Priority: High (propagated from TC-9005 to all created tasks)'. This documents that the Feature's priority of 'High' was inherited by all created tasks in their additional_fields."
+    },
+    {
+      "text": "When the Feature issue has a non-empty fixVersions array and the fixVersion scope config (from ### Jira Field Defaults in CLAUDE.md) is 'task' or 'both' (or absent, defaulting to 'both'), every created task's additional_fields includes 'fixVersions' with the inherited version(s). When fixVersion scope is 'feature' or the Feature has no fixVersions, the fixVersions key is omitted entirely from additional_fields",
+      "passed": true,
+      "evidence": "summary-comment.md states: 'Fix Versions: RHTPA 2.0.0 (propagated from TC-9005 to all created tasks; `fixVersion scope` defaults to \"both\" since no Jira Field Defaults configuration is present)'. This correctly identifies that the scope defaults to 'both' when absent, and propagates the fixVersion to all tasks."
+    },
+    {
+      "text": "The summary comment on the feature issue (Step 6c) includes the inherited priority and fixVersion values that were propagated to tasks, or states they were omitted and why",
+      "passed": true,
+      "evidence": "summary-comment.md includes under 'Inherited Fields': 'Priority: High (propagated from TC-9005 to all created tasks)' and 'Fix Versions: RHTPA 2.0.0 (propagated from TC-9005 to all created tasks; `fixVersion scope` defaults to \"both\" since no Jira Field Defaults configuration is present)'. Both values are explicitly documented with propagation details."
+    }
+  ],
+  "summary": {
+    "passed": 15,
+    "failed": 0,
+    "total": 15,
+    "pass_rate": 1.0
+  }
+}

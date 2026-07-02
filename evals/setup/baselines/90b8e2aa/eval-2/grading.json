@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing trustify-backend entry in the Repository Registry unchanged (same Role, Serena Instance, Path values as in claude-md-configured.md)",
+      "passed": true,
+      "evidence": "claude-md-result.md line 7: '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' — identical to claude-md-configured.md line 16."
+    },
+    {
+      "text": "outputs/claude-md-result.md adds a new trustify-ui entry to the Repository Registry with serena_ui as the Serena Instance",
+      "passed": true,
+      "evidence": "claude-md-result.md line 8: '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |' — new entry with serena_ui as Serena Instance."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged — Project key remains TC, Cloud ID, Feature issue type ID remain as in claude-md-configured.md",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 12-16 match claude-md-configured.md lines 19-23 exactly: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747."
+    },
+    {
+      "text": "outputs/changes-log.md explicitly identifies which entries were preserved (existing) and which were added (new)",
+      "passed": true,
+      "evidence": "changes-log.md uses explicit Status column throughout: trustify-backend marked 'Preserved', trustify-ui marked 'Added' (lines 11-12); all Jira fields marked 'Preserved' (lines 18-22); serena_backend limitation 'Preserved', serena_ui limitation 'Added' (lines 29-30); all Bug Config fields 'Preserved' (lines 35-37)."
+    },
+    {
+      "text": "outputs/discovery-log.md notes that serena_backend was already configured and serena_ui is newly discovered",
+      "passed": true,
+      "evidence": "discovery-log.md line 9: 'serena_backend | Already configured in Repository Registry | No action needed'; line 10: 'serena_ui | Newly discovered, not in Repository Registry | Added to Registry'."
+    },
+    {
+      "text": "The existing Code Intelligence section content (naming convention, example, serena_backend limitations) is preserved — only new serena_ui content is added",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-33 preserve the naming convention ('Tools are prefixed by Serena instance name'), the serena_backend find_symbol example, and the serena_backend limitation ('rust-analyzer may take 30-60 seconds to index on first use') — all identical to claude-md-configured.md lines 27-41. Only addition is line 34: '- `serena_ui`: No known limitations'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with Bug issue type ID (10001), Bug template (docs/bug-template.md), and Bug-to-Task link type (Blocks) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 36-40: '## Bug Configuration' with Bug issue type ID: 10001, Bug template: docs/bug-template.md, Bug-to-Task link type: Blocks — identical to original. discovery-log.md line 41: 'No changes needed'. changes-log.md lines 35-37 mark all three Bug Config fields as 'Preserved'."
+    },
+    {
+      "text": "The skill offers Security Configuration opt-in since the existing CLAUDE.md has no '## Security Configuration' section, and respects the user's decline — no Security Configuration section appears in the output",
+      "passed": true,
+      "evidence": "claude-md-result.md contains no '## Security Configuration' section. discovery-log.md lines 46-49: 'No existing Security Configuration section found', 'User was offered the opt-in prompt for security triage', 'User declined to enable security triage', 'Security Configuration section not created'. changes-log.md line 44: 'Security Configuration section | Not created | User declined opt-in when prompted'."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

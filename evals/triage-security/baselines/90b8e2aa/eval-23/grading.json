@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 extracts the Deployment Context column from the Source Repositories table and parses rhtpa-backend as customer-shipped (§1.77)",
+      "passed": true,
+      "evidence": "In data-extraction.md, the 'Deployment Context Lookup' section (lines 27-35) extracts the Deployment Context column from the Source Repositories table. It maps the affected component to 'rhtpa-backend' and shows the full table row with Deployment Context = 'customer-shipped'. Line 35 concludes: 'Deployment context for this CVE triage: **customer-shipped**'. The extraction step is embedded within the file labeled 'Step 1 -- Data Extraction' rather than a separate Step 0 output, but the extraction of the column and parsing of customer-shipped are explicitly performed."
+    },
+    {
+      "text": "Step 1 looks up the deployment context for the affected repository and records customer-shipped as part of the CVE metadata",
+      "passed": true,
+      "evidence": "In data-extraction.md (titled 'Step 1 -- Data Extraction: TC-8001'), the 'Deployment Context Lookup' section at lines 27-37 performs a lookup of rhtpa-backend in the Source Repositories table and records the result: 'Deployment context for this CVE triage: **customer-shipped**'. Line 37 additionally records the implication: 'This means coordination with Product Security is required for CVE assignment, advisory preparation, and formal disclosure.' The deployment context is recorded alongside other CVE metadata (CVE ID, CVSS, affected versions, etc.)."
+    },
+    {
+      "text": "Remediation task descriptions include a Coordination Guidance subsection in Implementation Notes with customer-shipped guidance text",
+      "passed": true,
+      "evidence": "All four remediation tasks in remediation.md contain a 'Coordination Guidance' subsection nested under 'Implementation Notes'. Specifically: Task 1 (upstream backport 2.2.x) at lines 51-53; Task 2 (downstream propagation 2.2.x) at lines 103-104; Preemptive Task 1 (upstream backport 2.1.x) at lines 170-172; Preemptive Task 2 (downstream propagation 2.1.x) at lines 229-231. Each contains: 'This component is shipped to customers. Coordinate with Product Security for CVE assignment, advisory preparation, and formal disclosure.'"
+    },
+    {
+      "text": "The customer-shipped guidance mentions coordinating with Product Security for CVE assignment, advisory preparation, and formal disclosure",
+      "passed": true,
+      "evidence": "The Coordination Guidance subsection in all four remediation tasks contains the exact text: 'This component is shipped to customers. Coordinate with Product Security for CVE assignment, advisory preparation, and formal disclosure. Fix must be released via a security advisory with explicit CVE-to-component mapping.' This explicitly mentions all three required elements: (1) CVE assignment, (2) advisory preparation, and (3) formal disclosure, all in the context of coordinating with Product Security. For example, see remediation.md line 53 and line 104."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

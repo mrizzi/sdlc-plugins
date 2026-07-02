@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The unsupported ecosystem notification uses the detected ecosystem name ('Go modules') — not a hard-coded ecosystem name (Step 5.3 unsupported ecosystem handling)",
+      "passed": true,
+      "evidence": "data-extraction.md line 58 detects the ecosystem as 'Go modules'. unsupported-ecosystem.md line 5 uses this same detected name: '**Unsupported ecosystem**: Go modules is not yet supported for automated triage.' The name is consistent with what was detected, not hard-coded."
+    },
+    {
+      "text": "The notification follows the template pattern: the message contains the actual ecosystem name substituted into the placeholder, matching the angle-bracket placeholder convention used by other user-facing messages in the skill",
+      "passed": true,
+      "evidence": "unsupported-ecosystem.md line 5: 'Go modules is not yet supported for automated triage. Manual assessment is required.' This reads as a template pattern (e.g., '<ecosystem> is not yet supported for automated triage. Manual assessment is required.') with 'Go modules' substituted into the placeholder position."
+    },
+    {
+      "text": "Automated triage stops after the unsupported ecosystem notification — no version impact analysis or remediation task creation is performed for the unsupported ecosystem",
+      "passed": true,
+      "evidence": "Only two output files exist: data-extraction.md (covering Steps 0-1) and unsupported-ecosystem.md. No output files contain version impact analysis (Step 2), dependency version extraction (Step 2.3), or remediation task creation (Step 8). unsupported-ecosystem.md line 24 explicitly confirms: 'Automated version impact analysis (Step 2), dependency version extraction (Step 2.3), and remediation task creation (Step 8) all depend on the ecosystem mapping configuration.'"
+    },
+    {
+      "text": "The notification includes both the ecosystem name and the instruction that manual assessment is required",
+      "passed": true,
+      "evidence": "unsupported-ecosystem.md line 5: '**Unsupported ecosystem**: Go modules is not yet supported for automated triage. Manual assessment is required.' Contains both the ecosystem name ('Go modules') and the manual assessment instruction ('Manual assessment is required')."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment and parses the ISO 8601 value",
+      "passed": true,
+      "evidence": "staleness-check.md lines 34-40 show extraction of the Last-Updated timestamp from an HTML comment: '<!-- Last-Updated: 2026-05-01T10:00:00Z -->' and explicitly states 'Parsed ISO 8601 value: 2026-05-01T10:00:00Z'."
+    },
+    {
+      "text": "Step 0.3 detects that the matrix is older than the 14-day default threshold and displays a staleness warning",
+      "passed": true,
+      "evidence": "staleness-check.md lines 43-48 show the staleness evaluation: Age is 62 days, Threshold is 14 days (default), Result is STALE. Lines 50-72 display staleness warnings for both streams."
+    },
+    {
+      "text": "The staleness warning includes the stream name, the last-updated date, and the number of days since the last update",
+      "passed": true,
+      "evidence": "staleness-check.md lines 52-53 show for stream 2.1.x: 'Security matrix for stream **2.1.x** was last updated on 2026-05-01 (62 days ago).' Lines 64-65 show the same for stream 2.2.x. All three elements (stream name, last-updated date, days since update) are present."
+    },
+    {
+      "text": "The warning presents three options: refresh now (re-run setup Step 10.6), proceed anyway, or stop",
+      "passed": true,
+      "evidence": "staleness-check.md lines 55-58 present three options: '1. **Refresh now** -- re-run matrix population (setup Step 10.6) for this stream', '2. **Proceed anyway** -- continue triage with the current matrix', '3. **Stop** -- halt triage so I can investigate'. Same options repeated for stream 2.2.x at lines 67-70."
+    },
+    {
+      "text": "Step 0.3 runs before Step 0.5 (JIRA Access Initialization) — no Jira operations are attempted before the staleness check",
+      "passed": true,
+      "evidence": "staleness-check.md line 26 states: 'Step 0.3 runs after Step 0 (Validate Project Configuration) and before Step 0.5 (JIRA Access Initialization). No Jira operations are attempted before the staleness check completes.' Lines 76-77 reinforce: 'No Jira API calls, MCP operations, or external tool invocations have been made at this point. The staleness check is a local-only operation.' No Jira operations appear anywhere in the output."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

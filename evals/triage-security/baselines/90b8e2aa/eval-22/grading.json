@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 executes the concurrent triage check for upstream component quinn-proto",
+      "passed": true,
+      "evidence": "concurrent-triage.md is titled '# Step 7 -- Concurrent Triage Detection for TC-8021'. It states the Upstream Affected Component custom field is populated with 'quinn-proto' and 'Step 7 is therefore applicable (not skipped).' A JQL search is executed with 'cf[10632] ~ \"quinn-proto\"' filtering for Vulnerability issues in active triage states."
+    },
+    {
+      "text": "No concurrent triages are detected — the JQL search returns zero results",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 19 states: '**Zero results returned.** No other Vulnerability issues targeting the same upstream component (quinn-proto) are currently in an active triage state (In Progress or Code Review).' Line 23 confirms: 'No concurrent triages are in progress for the `quinn-proto` component.'"
+    },
+    {
+      "text": "The analysis proceeds directly to Case A/B/C branching without a concurrent triage warning",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 27 states: '**Proceed silently** to Case A/B/C branching in Step 8. No user intervention or waiting is required.' triage-outcome.md confirms the analysis moved directly to Case A (scoped stream 2.2.x, line 28) and Case B (cross-stream 2.1.x, line 42) without any concurrent triage warning. Line 73 of triage-outcome.md reiterates: 'No concurrent triages detected for quinn-proto. Proceeded to remediation without conflict.'"
+    },
+    {
+      "text": "The output does not present wait/skip/proceed options since no conflict exists",
+      "passed": true,
+      "evidence": "No wait/skip/proceed options appear anywhere in the three output files. concurrent-triage.md explicitly states 'No user intervention or waiting is required' (line 27) and 'No concurrent-triage-overlap label is needed on TC-8021' (line 29). The triage-outcome.md proceeds directly to case determination and remediation actions without presenting any conflict-resolution choices."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

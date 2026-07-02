@@ -1,0 +1,80 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "impact-map.md lists 5 ambiguities: (1) 'Search should be faster' — no performance baseline or target, (2) 'Results should be more relevant' — no relevance criteria specified, (3) 'Add filters — some kind of filtering capability' — filter fields/operations/behavior unspecified, (4) 'Should be fast enough' — no quantifiable metric, (5) 'Don't break existing functionality' — no regression criteria. All 5 exceed the minimum of 3."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "impact-map.md Scope Exclusion section: '\"Better UI\" (non-MVP): This requirement is excluded from the implementation plan. It cannot be planned without design mockups or a frontend repository. The Repository Registry in CLAUDE.md lists only sdlc-plugins (this plugin repo); no frontend repository is configured.' summary-comment.md also states: '\"Better UI\" excluded from scope. This non-MVP requirement cannot be planned — no frontend repository is configured in the Repository Registry and no design mockups (Figma) are available.'"
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All 4 task files follow the template structure. Each contains: Repository, Target Branch, Description, Files to Modify/Create, Implementation Notes, Acceptance Criteria, Test Requirements, and Verification Commands sections. Task 1 includes Files to Create and Files to Modify. Tasks 2-3 include Files to Modify. Task 3 includes API Changes. Tasks 2 and 4 include Dependencies. All use the prescribed section headings and formatting from task-description-template.md."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Task 1: 'Assumption (pending clarification): the performance target is p95 latency under 500ms for search queries, as no specific threshold was provided in the feature description.' Task 2: 'Assumption (pending clarification): \"more relevant\" means applying PostgreSQL ts_rank scoring to order results by text match quality. No specific ranking algorithm, field weighting scheme, or relevance scoring formula was provided in the feature description.' Task 3: 'Assumption (pending clarification): the feature description specifies \"some kind of filtering capability\" without defining which fields, operations, or filter combination logic.' All use the exact label 'Assumption (pending clarification)'."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "All 4 tasks have '## Repository' followed by a single value 'trustify-backend': task-1-add-search-indexes.md line 1-2, task-2-implement-relevance-ranking.md line 1-2, task-3-add-search-filters.md line 1-2, task-4-search-integration-tests.md line 1-2. No task lists multiple repositories."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "Task 1: Target Branch (line 5), Description (line 7), Acceptance Criteria (line 35), Test Requirements (line 42). Task 2: Target Branch (line 5), Description (line 7), Acceptance Criteria (line 29), Test Requirements (line 35). Task 3: Target Branch (line 5), Description (line 7), Acceptance Criteria (line 38), Test Requirements (line 47). Task 4: Target Branch (line 5), Description (line 7), Acceptance Criteria (line 26), Test Requirements (line 33). All four required sections present in every task."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "Task 1 Files to Modify: 'migration/src/lib.rs' — exists in repo-backend.md. Task 1 Files to Create: 'migration/src/m0002_search_indexes/mod.rs' — new file following established pattern of migration/src/m0001_initial/mod.rs. Task 2 Files to Modify: 'modules/search/src/service/mod.rs' and 'modules/search/src/endpoints/mod.rs' — both exist in repo-backend.md. Task 3 Files to Modify: same two search module files. Task 4 Files to Modify: 'tests/api/search.rs' — exists in repo-backend.md. All paths verified against the repository structure manifest."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1: references entity/src/sbom.rs, entity/src/advisory.rs, entity/src/package.rs, migration/src/m0001_initial/mod.rs, SeaORM Index::create() API. Task 2: references common/src/model/paginated.rs (PaginatedResults<T>), common/src/db/query.rs (sorting helpers), PostgreSQL ts_rank functions. Task 3: references common/src/db/query.rs (query builder helpers), modules/search/src/endpoints/mod.rs, common/src/model/paginated.rs, Axum query parameter extraction. Task 4: references tests/api/search.rs, tests/api/sbom.rs, tests/api/advisory.rs, assert_eq!(resp.status(), StatusCode::OK) pattern."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "Task 1 line 5: '## Target Branch\\nmain'. Task 2 line 5: '## Target Branch\\nmain'. Task 3 line 5: '## Target Branch\\nmain'. Task 4 line 5: '## Target Branch\\nmain'. All four tasks set Target Branch to 'main'."
+    },
+    {
+      "text": "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
+      "passed": true,
+      "evidence": "digest-comments.md contains 4 digest entries, one per task, all using correct format: Task 1: '[sdlc-workflow] Description digest: sha256-md:cfb1987cb1a29a56b8bd4d67aefb6d6be6c3625296cc017f04ee315303e88b82', Task 2: 'sha256-md:1e63373818afb5188fecfe3a3097dc37e5315a809f12047272711b67612651fa', Task 3: 'sha256-md:f5676d8c9ed8a2920ce66069992c36eae6a55a1b666477c3eb2651ad1ac443b1', Task 4: 'sha256-md:415e7beb39df2e98d9b60a11204213c7591ee62e80a4cf1d3bd5861caf5509aa'. All hashes are exactly 64 lowercase hex characters (verified). All use 'sha256-md:' prefix. None are placeholders or abbreviated."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "Each task includes convention rationales in the prescribed format: Task 1: 'Applies: task creates migration/src/m0002_search_indexes/mod.rs matching the convention's migration file scope.' Task 2: 'Applies: task modifies modules/search/src/service/mod.rs matching the convention's Rust source file scope.' Task 3: 'Applies: task modifies modules/search/src/endpoints/mod.rs matching the convention's Rust source file scope.' Task 4: 'Applies: task modifies tests/api/search.rs matching the convention's Rust test file scope.' No inapplicable conventions are listed with 'Not applicable' annotations anywhere in the task files. All rationales follow the prescribed format naming specific files and scope signals."
+    },
+    {
+      "text": "When the Feature issue has a priority set (not 'Undefined'), every created task's additional_fields includes 'priority' with the inherited priority name. When the Feature's priority is 'Undefined', the priority key is omitted entirely from additional_fields (not set to null or 'Undefined')",
+      "passed": true,
+      "evidence": "summary-comment.md documents: 'Priority: Normal — propagated to all tasks (not \"Undefined\", so inheritance applies per Step 1/Step 6a rules)'. This is a metadata/summary file that documents the priority value ('Normal') that would be set in additional_fields for all tasks. Per the special grading notes for eval environments, this satisfies the assertion."
+    },
+    {
+      "text": "When the Feature issue has a non-empty fixVersions array and the fixVersion scope config (from ### Jira Field Defaults in CLAUDE.md) is 'task' or 'both' (or absent, defaulting to 'both'), every created task's additional_fields includes 'fixVersions' with the inherited version(s). When fixVersion scope is 'feature' or the Feature has no fixVersions, the fixVersions key is omitted entirely from additional_fields",
+      "passed": true,
+      "evidence": "summary-comment.md documents: 'fixVersions: RHTPA 1.6.0 — propagated to all tasks (Feature has non-empty fixVersions; no fixVersion scope setting found in Jira Field Defaults, so default \"both\" applies — propagate to tasks)'. This correctly identifies: (1) Feature has non-empty fixVersions (RHTPA 1.6.0), (2) no fixVersion scope setting found so default 'both' applies, (3) therefore fixVersions are propagated to all tasks. Per the special grading notes for eval environments, this satisfies the assertion."
+    },
+    {
+      "text": "The summary comment on the feature issue (Step 6c) includes the inherited priority and fixVersion values that were propagated to tasks, or states they were omitted and why",
+      "passed": true,
+      "evidence": "summary-comment.md 'Inherited Fields' section explicitly lists: 'Priority: Normal — propagated to all tasks (not \"Undefined\", so inheritance applies per Step 1/Step 6a rules)' and 'fixVersions: RHTPA 1.6.0 — propagated to all tasks (Feature has non-empty fixVersions; no fixVersion scope setting found in Jira Field Defaults, so default \"both\" applies — propagate to tasks)'. Both values are documented with their propagation status and reasoning."
+    }
+  ],
+  "summary": {
+    "passed": 14,
+    "failed": 0,
+    "total": 14,
+    "pass_rate": 1.0
+  }
+}

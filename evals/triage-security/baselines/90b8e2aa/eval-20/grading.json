@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment",
+      "passed": true,
+      "evidence": "staleness-check.md explicitly extracts the Last-Updated timestamp for both streams: 'Last-Updated timestamp: `2026-06-28T10:00:00Z`' (lines 7 and 17)."
+    },
+    {
+      "text": "Step 0.3 determines the matrix is within the 14-day threshold and proceeds without displaying a staleness warning",
+      "passed": true,
+      "evidence": "staleness-check.md states for both streams: 'Staleness threshold: 14 days' and 'Result: **Within threshold** -- matrix is fresh. No staleness warning displayed.' (lines 9-10 and 19-20). The computed age is 4 days, well within 14 days."
+    },
+    {
+      "text": "No user prompt or options are presented for a fresh matrix — the check is silent on success",
+      "passed": true,
+      "evidence": "staleness-check.md explicitly states 'No user prompt or options presented. Proceeding silently.' after each stream check (lines 12 and 23), and the summary confirms: 'The staleness check passed silently for all streams with no warnings or user prompts.' (line 27)."
+    },
+    {
+      "text": "The triage continues to Step 0.5 and beyond without interruption from the staleness check",
+      "passed": true,
+      "evidence": "staleness-check.md line 29 states 'Proceeding to Step 0.5 (JIRA Access Initialization) without interruption.' Additionally, data-extraction.md shows Step 1 (Data Extraction) was completed, demonstrating the triage progressed well beyond Step 0.5."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

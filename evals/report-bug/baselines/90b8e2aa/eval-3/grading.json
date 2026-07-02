@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 1: \"This skill requires Bug Configuration in your CLAUDE.md. Please run `/setup` first to configure your project, then re-run this skill.\" — contains both '/setup' and 'setup'."
+    },
+    {
+      "text": "outputs/response.md contains 'Bug Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 1: \"This skill requires Bug Configuration in your CLAUDE.md.\" — contains the exact phrase 'Bug Configuration'."
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/report-bug-eval-baseline/eval-3/outputs/preview.md — file does not exist. Directory listing confirms only response.md exists in the outputs directory."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/report-bug-eval-baseline/eval-3/outputs/jira-create.md — file does not exist. Directory listing confirms only response.md exists in the outputs directory."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "Attempted to read /tmp/report-bug-eval-baseline/eval-3/outputs/jira-comment.md — file does not exist. Directory listing confirms only response.md exists in the outputs directory."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the template section headings ('### **Issue Description**', '### **Steps to Reproduce**', etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "response.md contains only a single line: \"This skill requires Bug Configuration in your CLAUDE.md. Please run `/setup` first to configure your project, then re-run this skill.\" — no template section headings present."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

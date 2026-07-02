@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 46: '1. **Steps to Reproduce** (`### **Steps to Reproduce**`)' listed as missing. Also shown in the table at line 35: '| 2 | Steps to reproduce | `### **Steps to Reproduce**` | **NO — MISSING** |'"
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 47: '2. **Expected Result** (`### **Expected Result**`)' listed as missing. Also shown in the table at line 36: '| 3 | Expected Result | `### **Expected Result**` | **NO — MISSING** |'"
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "validation-result.md line 3: 'Outcome: STOPPED at Step 1 (Parse Bug Description)' and lines 5-6: 'Execution halted due to missing required sections in the Bug description. Steps 2 through 5 were not attempted.' Line 57 further confirms: '**Execution stopped.** Steps 2 (Reproduce/Trace), 3 (Codebase Investigation), 4 (Root Cause Analysis), 5 (Generate Task), 5b (Link Task to Bug), 5c (Post Digest), and 7 (Report Result) were not executed.'"
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "validation-result.md line 55 lists both missing sections and references the template path: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**. The bug description does not follow the template at `docs/templates/bug-template.md`.' The Bug Configuration template path 'docs/templates/bug-template.md' is explicitly referenced at lines 30 and 55."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

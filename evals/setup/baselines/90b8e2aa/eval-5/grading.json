@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "Line 41 of claude-md-result.md: '## Security Configuration'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Product Lifecycle' subsection with all 5 fields: Product pages URL (https://access.example.com/product-lifecycle), Jira version prefix (MYPRODUCT), Vulnerability issue type ID (10200), Component label pattern (pscomponent:), and VEX Justification custom field (customfield_12345)",
+      "passed": true,
+      "evidence": "Line 43: '### Product Lifecycle'. Line 45: '- Product pages URL: https://access.example.com/product-lifecycle'. Line 46: '- Jira version prefix: MYPRODUCT'. Line 47: '- Vulnerability issue type ID: 10200'. Line 48: '- Component label pattern: pscomponent:'. Line 49: '- VEX Justification custom field: customfield_12345'. All 5 fields present with correct values."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Version Streams' subsection with a table containing at least one row for stream 2.1.x with the Konflux release repo URL",
+      "passed": true,
+      "evidence": "Line 51: '### Version Streams'. Line 53: table header '| Stream | Konflux Release Repo | Local Path | Security Matrix Path |'. Line 55: '| 2.1.x | git.downstream.example.com/my-org/product-release.2.1.z | /home/user/product-release.2.1.z | security-matrix.md |'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Source Repositories' subsection with a table containing entries for backend and frontend-ui with their GitHub URLs",
+      "passed": true,
+      "evidence": "Line 57: '### Source Repositories'. Line 61: '| backend | https://github.com/example/backend | upstream |'. Line 62: '| frontend-ui | https://github.com/example/frontend-ui | upstream |'"
+    },
+    {
+      "text": "outputs/claude-md-result.md also contains the standard Project Configuration sections: Repository Registry, Jira Configuration, Code Intelligence with Limitations, and Bug Configuration",
+      "passed": true,
+      "evidence": "Line 1: '# Project Configuration'. Line 3: '## Repository Registry' with table. Line 10: '## Jira Configuration' with 5 fields. Line 18: '## Code Intelligence' with tool naming convention documentation. Line 31: '### Limitations' stating 'No known limitations for any Serena instance.' Line 35: '## Bug Configuration' with 3 fields."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Bug Configuration' section with three fields: Bug issue type ID (10001), Bug template (docs/bug-template.md), Bug-to-Task link type (Blocks)",
+      "passed": true,
+      "evidence": "Line 35: '## Bug Configuration'. Line 37: '- Bug issue type ID: 10001'. Line 38: '- Bug template: docs/bug-template.md'. Line 39: '- Bug-to-Task link type: Blocks'"
+    },
+    {
+      "text": "outputs/discovery-log.md mentions Security Configuration being opted in by the user and fields being collected",
+      "passed": true,
+      "evidence": "Line 46: 'No existing Security Configuration found. User was asked whether to enable security triage -- **user accepted the opt-in**.' Lines 50-55 document Product Lifecycle fields collected. Lines 58-63 document Version Streams fields collected. Lines 66-69 document Source Repositories fields collected."
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration and Bug Configuration were newly added along with the other Project Configuration sections",
+      "passed": true,
+      "evidence": "Line 3: 'The existing CLAUDE.md had no `# Project Configuration` section. All sections below were newly created and appended to the file.' Section 5 (line 37): Bug Configuration -- Action: Added. Section 6 (line 45): Security Configuration -- Action: Added (user accepted opt-in). Also lists Repository Registry (Added), Jira Configuration (Added), Code Intelligence (Added) as newly created sections."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

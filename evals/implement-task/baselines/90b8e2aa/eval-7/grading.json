@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-mismatch.md Section 2 (\"Locate the Digest Comment\") explicitly states: \"Search the returned comments for any whose body starts with the marker string `[sdlc-workflow] Description digest:`. This marker is defined in `shared/description-digest-protocol.md`.\" This matches the assertion exactly."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "digest-mismatch.md Section 7 (\"Compare Hex Digests — Mismatch Detected\") states: \"The stored hex digest (`0000000000000000000000000000000000000000000000000000000000000000`) does not match the computed hex digest (e.g., `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`). This means the task description was modified after plan-feature created it.\""
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "digest-mismatch.md Section 8 displays a warning alert stating: \"The task description has been modified since plan-feature created it.\" It shows both digest values: \"Expected digest (from plan-feature comment): sha256-md:0000000000000000000000000000000000000000000000000000000000000000\" and \"Actual digest (computed from current description): sha256-md:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"."
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "digest-mismatch.md Section 8 explicitly offers two numbered choices: \"1. **Proceed** — continue implementation using the current (modified) description as-is\" and \"2. **Stop** — halt execution so you can review the changes and re-run plan-feature to regenerate tasks if needed\"."
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "digest-mismatch.md Section 8 states: \"**Execution is stopped immediately.** No subsequent steps are performed — Step 2 (Verify Dependencies), Step 3 (Transition to In Progress), implementation planning, branching, code changes, and all later steps are blocked until the user responds.\" It also explicitly references the pattern: \"This follows the same pause-and-ask pattern used when the structured description is incomplete: present the issue, offer explicit choices, and wait for the user's decision before taking any further action.\""
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

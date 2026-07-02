@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '### **Issue Description**'",
+      "passed": true,
+      "evidence": "preview.md line 7: '### **Issue Description**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Steps to Reproduce**'",
+      "passed": true,
+      "evidence": "preview.md line 11: '### **Steps to Reproduce**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Expected Result**'",
+      "passed": true,
+      "evidence": "preview.md line 20: '### **Expected Result**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Actual Result**'",
+      "passed": true,
+      "evidence": "preview.md line 24: '### **Actual Result**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Attachments**'",
+      "passed": true,
+      "evidence": "preview.md line 28: '### **Attachments**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Suggested Fix**'",
+      "passed": true,
+      "evidence": "preview.md line 32: '### **Suggested Fix**'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '### **Root Cause**'",
+      "passed": true,
+      "evidence": "Searched entire preview.md (35 lines) — no heading matching '### **Root Cause**' is present. The jira-comment.md mentions 'Root Cause' in the skipped sections list, but preview.md does not contain it as a heading."
+    },
+    {
+      "text": "outputs/jira-create.md references project key 'TC'",
+      "passed": true,
+      "evidence": "jira-create.md line 4: projectKey=\"TC\""
+    },
+    {
+      "text": "outputs/jira-create.md references issue type ID '10300'",
+      "passed": true,
+      "evidence": "jira-create.md line 5: issueTypeId=\"10300\""
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 9: additional_fields={ \"labels\": [\"ai-generated-jira\"] }"
+    },
+    {
+      "text": "outputs/jira-create.md contains the summary 'SBOM delete endpoint returns 200 but does not remove the record'",
+      "passed": true,
+      "evidence": "jira-create.md line 6: summary=\"SBOM delete endpoint returns 200 but does not remove the record\""
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/report-bug'",
+      "passed": true,
+      "evidence": "jira-comment.md line 29: \"text\": \"sdlc-workflow/report-bug\""
+    }
+  ],
+  "summary": {
+    "passed": 12,
+    "failed": 0,
+    "total": 12,
+    "pass_rate": 1.0
+  }
+}

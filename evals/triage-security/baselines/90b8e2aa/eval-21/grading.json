@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 detects concurrent triage TC-8019 on the same upstream component (quinn-proto) with status In Progress",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 21-25: JQL search returned 1 result showing 'TC-8019 | In Progress | engineer-b@example.com'. Line 29: 'Concurrent triage detected on the same upstream component (`quinn-proto`).' The JQL query (lines 9-17) filters on cf[10632] ~ 'quinn-proto' and status IN ('In Progress', 'Code Review')."
+    },
+    {
+      "text": "The concurrent triage warning includes the conflicting CVE issue key (TC-8019) and its assignee",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 34-48 present the warning to the engineer, which includes a table with 'TC-8019 | In Progress | engineer-b@example.com'. Both the issue key (TC-8019) and assignee (engineer-b@example.com) are explicitly included in the warning."
+    },
+    {
+      "text": "The output presents three options: wait for the other triage to complete, skip remediation task creation, or proceed with a concurrent-triage-overlap label",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 44-48 list three options: '1. Wait -- pause until the other triage completes, then re-run Step 4.3 to detect any overlap', '2. Skip -- skip remediation task creation for this CVE', '3. Proceed -- create tasks anyway with a `concurrent-triage-overlap` label so the other engineer’s Step 4.3 catches the overlap'. Also confirmed in triage-outcome.md lines 57-59 with the same three options."
+    },
+    {
+      "text": "The concurrent triage check runs before Case A/B/C branching in Step 8",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 53: 'The engineer must choose one of three options before proceeding to Case A/B/C branching in Step 8'. triage-outcome.md line 51: 'Before creating any remediation tasks, Step 7 detected a concurrent triage'. triage-outcome.md uses conditional language in Case A ('Remediation tasks would be created') indicating they are gated by Step 7. Post-Triage Actions (line 61) are explicitly 'pending engineer choice on Step 7'."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

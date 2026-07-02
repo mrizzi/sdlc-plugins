@@ -1,0 +1,85 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "preview.md line 5: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 9: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "Searched preview.md — no '## Background and Strategic Fit' heading present anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Goals'",
+      "passed": true,
+      "evidence": "Searched preview.md — no '## Goals' heading present anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "Searched preview.md — no '## Non-Functional Requirements' heading present anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Use Cases'",
+      "passed": true,
+      "evidence": "Searched preview.md — no '## Use Cases' heading present anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "Searched preview.md — no '## Customer Considerations' heading present anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "Searched preview.md — no '## Customer Information/Supportability' heading present anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "Searched preview.md — no '## Documentation Considerations' heading present anywhere in the file."
+    },
+    {
+      "text": "outputs/preview.md contains 'Not set' for priority (user skipped priority selection)",
+      "passed": true,
+      "evidence": "preview.md line 18: '**Priority:** Not set'"
+    },
+    {
+      "text": "outputs/preview.md contains 'Not set' for fix version (user skipped fixVersion selection)",
+      "passed": true,
+      "evidence": "preview.md line 19: '**Fix Version:** Not set'"
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include an assignee or indicates 'unassigned'",
+      "passed": true,
+      "evidence": "The createJiraIssue call in jira-create.md has no assignee parameter. Notes on line 17 state: 'Assignee is omitted because the user chose to leave the Feature unassigned.'"
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 10: '\"labels\": [\"ai-generated-jira\"]' inside additional_fields."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include priority in additional_fields (user skipped)",
+      "passed": true,
+      "evidence": "additional_fields in jira-create.md contains only '\"labels\": [\"ai-generated-jira\"]' — no priority key. Line 18 confirms: 'Priority is omitted from additional_fields because the user skipped priority selection.'"
+    },
+    {
+      "text": "outputs/jira-create.md does NOT include fixVersions in additional_fields (user skipped)",
+      "passed": true,
+      "evidence": "additional_fields in jira-create.md contains only '\"labels\": [\"ai-generated-jira\"]' — no fixVersions key. Line 19 confirms: 'fixVersions is omitted from additional_fields because the user skipped fixVersion selection.'"
+    }
+  ],
+  "summary": {
+    "passed": 15,
+    "failed": 0,
+    "total": 15,
+    "pass_rate": 1.0
+  }
+}
