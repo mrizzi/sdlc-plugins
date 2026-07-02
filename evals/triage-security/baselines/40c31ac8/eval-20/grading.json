@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment",
+      "passed": true,
+      "evidence": "staleness-check.md line 13 shows the timestamp was extracted: 'Last-Updated timestamp: `2026-06-28T10:00:00Z`'. The ISO 8601 format with the 'Last-Updated' label is consistent with reading from an HTML comment in security-matrix.md."
+    },
+    {
+      "text": "Step 0.3 determines the matrix is within the 14-day threshold and proceeds without displaying a staleness warning",
+      "passed": true,
+      "evidence": "staleness-check.md line 14 shows 'Age: 4 days', line 18 states 'NOT STALE - The security matrix was last updated 4 days ago, which is within the 14-day staleness threshold. Proceeding with triage using the current matrix data.' The status table on lines 20-23 shows both streams as 'FRESH'. No staleness warning is displayed."
+    },
+    {
+      "text": "No user prompt or options are presented for a fresh matrix — the check is silent on success",
+      "passed": true,
+      "evidence": "staleness-check.md line 25 explicitly states 'No user intervention required. Proceeding to Step 1 (Data Extraction).' No user prompts, options, or interactive choices are presented anywhere in the staleness check output."
+    },
+    {
+      "text": "The triage continues to Step 0.5 and beyond without interruption from the staleness check",
+      "passed": true,
+      "evidence": "staleness-check.md line 25 confirms uninterrupted continuation: 'Proceeding to Step 1 (Data Extraction).' The data-extraction.md file confirms the workflow proceeded to Step 1 (Data Extraction), which is beyond Step 0.5. The data extraction completed fully with CVE parsing, stream scope resolution, ecosystem detection, and version impact analysis — no interruption from the staleness check."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

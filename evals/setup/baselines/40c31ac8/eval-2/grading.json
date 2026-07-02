@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing trustify-backend entry in the Repository Registry unchanged (same Role, Serena Instance, Path values as in claude-md-configured.md)",
+      "passed": true,
+      "evidence": "claude-md-result.md line 16: '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' — identical to claude-md-configured.md line 16."
+    },
+    {
+      "text": "outputs/claude-md-result.md adds a new trustify-ui entry to the Repository Registry with serena_ui as the Serena Instance",
+      "passed": true,
+      "evidence": "claude-md-result.md line 17: '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |' — new row with serena_ui as the Serena Instance."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged — Project key remains TC, Cloud ID, Feature issue type ID remain as in claude-md-configured.md",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-25 match claude-md-configured.md lines 19-24 exactly: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747."
+    },
+    {
+      "text": "outputs/changes-log.md explicitly identifies which entries were preserved (existing) and which were added (new)",
+      "passed": true,
+      "evidence": "changes-log.md has '## Preserved (unchanged)' section (lines 9-31) listing Repository Registry row, all Jira fields, Code Intelligence content, and Bug Configuration as 'preserved'. '## Added' section (lines 33-39) lists the new trustify-ui row and serena_ui limitation entry."
+    },
+    {
+      "text": "outputs/discovery-log.md notes that serena_backend was already configured and serena_ui is newly discovered",
+      "passed": true,
+      "evidence": "discovery-log.md lines 27-28: '- `serena_backend`: already in Repository Registry -- skipped' and '- `serena_ui`: NOT in Repository Registry -- NEW, needs user input'."
+    },
+    {
+      "text": "The existing Code Intelligence section content (naming convention, example, serena_backend limitations) is preserved — only new serena_ui content is added",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 28-43 preserve the full Code Intelligence section: naming convention ('Tools are prefixed by Serena instance name'), serena_backend find_symbol example, and serena_backend limitation ('rust-analyzer may take 30-60 seconds to index on first use'). Only addition is line 43: '- `serena_ui`: No known limitations'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with Bug issue type ID (10001), Bug template (docs/bug-template.md), and Bug-to-Task link type (Blocks) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 45-49: '## Bug Configuration' with Bug issue type ID: 10001, Bug template: docs/bug-template.md, Bug-to-Task link type: Blocks — identical to claude-md-configured.md lines 43-47. discovery-log.md line 98: 'Result: Bug Configuration is up to date -- skipped.'"
+    },
+    {
+      "text": "The skill offers Security Configuration opt-in since the existing CLAUDE.md has no '## Security Configuration' section, and respects the user's decline — no Security Configuration section appears in the output",
+      "passed": true,
+      "evidence": "discovery-log.md lines 102-105: '`## Security Configuration` does not exist in current CLAUDE.md. Asked user whether to enable security triage for this project. Result: User declined -- Security Configuration not scaffolded.' claude-md-result.md contains no '## Security Configuration' section (file ends at line 50 after Bug Configuration)."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

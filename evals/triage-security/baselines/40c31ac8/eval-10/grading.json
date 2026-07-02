@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 8 Case A creates standard remediation tasks for the current stream (rhtpa-2.2) with standard labels ['ai-generated-jira', 'Security', 'CVE-2026-55123'] and 'Depend' link to TC-8020",
+      "passed": true,
+      "evidence": "remediation.md Case A section creates two tasks for stream rhtpa-2.2. Task 1 (upstream backport) labels: 'ai-generated-jira', 'Security', 'CVE-2026-55123' (line 18). Task 2 (downstream propagation) labels: 'ai-generated-jira', 'Security', 'CVE-2026-55123' (line 74). Both tasks specify post-creation action: 'Link to TC-8020 with link type \"Depend\"' (lines 69 and 120)."
+    },
+    {
+      "text": "Step 8 Case B detects that stream rhtpa-2.1 is also affected but has no CVE Jira — creates proactive preemptive remediation tasks (§1.60)",
+      "passed": true,
+      "evidence": "remediation.md line 127: 'A JQL search for sibling CVE Jiras with label CVE-2026-55123 returned no results for stream rhtpa-2.1. No CVE Jira exists for that stream. Per Step 8 Case B, preemptive remediation tasks are created.' cross-stream.md confirms: 'No sibling Vulnerability issues found for CVE-2026-55123 in stream rhtpa-2.1.' Two preemptive tasks are created (upstream backport + downstream propagation) for rhtpa-2.1."
+    },
+    {
+      "text": "Preemptive tasks for stream rhtpa-2.1 include the 'security-preemptive' label alongside standard labels: ['ai-generated-jira', 'Security', 'CVE-2026-55123', 'security-preemptive']",
+      "passed": true,
+      "evidence": "remediation.md Preemptive Task 1 (line 135): Labels: 'ai-generated-jira', 'Security', 'CVE-2026-55123', 'security-preemptive'. Preemptive Task 2 (line 196): Labels: 'ai-generated-jira', 'Security', 'CVE-2026-55123', 'security-preemptive'. cross-stream.md confirms identical label sets for both preemptive tasks (lines 53 and 66)."
+    },
+    {
+      "text": "Preemptive tasks are linked to the originating CVE Jira TC-8020 with 'Related' link type (not 'Depend') because the originating CVE belongs to a different stream",
+      "passed": true,
+      "evidence": "remediation.md Preemptive Task 1 post-creation (line 191): 'Link to TC-8020 with link type \"Related\" (not \"Depend\", because this is a preemptive task for a different stream)'. Preemptive Task 2 post-creation (line 247): 'Link to TC-8020 with link type \"Related\" (not \"Depend\", because this is a preemptive task for a different stream)'. cross-stream.md line 56: 'Link type: \"Related\" to TC-8020 (not \"Depend\", because TC-8020 belongs to a different stream)' and line 69 same."
+    },
+    {
+      "text": "Preemptive task descriptions include a preemptive remediation prefix noting TC-8020 (stream rhtpa-2.2) as the originating CVE",
+      "passed": true,
+      "evidence": "remediation.md Preemptive Task 1 description (lines 150-153): '> **Preemptive remediation**: This task was created proactively from cross-stream > impact analysis of TC-8020 (stream rhtpa-2.2). > No stream-specific CVE Jira exists yet for this stream.' Preemptive Task 2 description (lines 211-214): identical prefix. cross-stream.md lines 58-61 and 72-75 confirm the same prefix text."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

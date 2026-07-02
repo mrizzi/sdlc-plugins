@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 detects concurrent triage TC-8019 on the same upstream component (quinn-proto) with status In Progress",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 33-37: '**WARNING** -- Concurrent triage detected on the same upstream component (quinn-proto):' with table showing '| TC-8019 | In Progress | engineer-b@example.com |'. The JQL search explicitly filters for the quinn-proto component and returns TC-8019 with status In Progress."
+    },
+    {
+      "text": "The concurrent triage warning includes the conflicting CVE issue key (TC-8019) and its assignee",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 35-37 show the warning table: '| TC-8019 | In Progress | engineer-b@example.com |'. Also confirmed in triage-outcome.md line 60: 'TC-8019 (status: In Progress, assignee: engineer-b@example.com) is actively being triaged on the same upstream component (quinn-proto).'"
+    },
+    {
+      "text": "The output presents three options: wait for the other triage to complete, skip remediation task creation, or proceed with a concurrent-triage-overlap label",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 43-47 under '## Options Presented to Engineer': (1) '**Wait** -- Pause triage until TC-8019's triage completes, then re-run from Step 4.3'; (2) '**Skip remediation task creation** -- Complete the triage analysis (Steps 1-6 results are retained) but skip Step 8 entirely'; (3) '**Proceed with `concurrent-triage-overlap` label** -- Create remediation tasks as normal, but add the `concurrent-triage-overlap` label to TC-8020'."
+    },
+    {
+      "text": "The concurrent triage check runs before Case A/B/C branching in Step 8",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 51: 'Step 7 runs **before** Case A/B/C branching in Step 8. The engineer must choose one of the three options above before the triage proceeds to determine the remediation outcome (Case A: create tasks, Case B: cross-stream impact, or Case C: close as not affected).' Also triage-outcome.md line 69: '## Step 8 -- Triage Decision (pending Step 7 resolution)' confirms Step 8 is gated on Step 7 completion."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

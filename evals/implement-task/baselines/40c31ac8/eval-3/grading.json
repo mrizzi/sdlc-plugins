@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 78: 'Do NOT create a new query parameter parsing function; the `apply_filter` function in `common/src/db/query.rs` (Reuse Candidate 1) handles comma-separated parsing downstream'. Also plan.md line 87: 'use `common::db::query::apply_filter` to generate the SQL `IN` clause. This function handles parsing the comma-separated string into individual values and generating the appropriate WHERE ... IN (...) clause.' And line 97: 'Use `common::db::query::apply_filter` directly for comma-separated parsing and IN clause generation (Reuse Candidate 1)'."
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "plan.md line 30-31: 'the advisory list endpoint already implements a `severity` query parameter filter using the same structural pattern we need.' Line 63: 'Add `license` field to the `Query` struct -- following the exact same pattern as the `severity` field in `modules/fundamental/src/advisory/endpoints/list.rs`.' Line 77: 'Follow the `Query` struct pattern from `modules/fundamental/src/advisory/endpoints/list.rs` (Reuse Candidate 2)'. Line 99: 'Follow the same service-layer filter pattern as `AdvisoryService` (Reuse Candidate 2)'."
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "plan.md line 88-90: 'use the `entity::package_license` SeaORM entity (Reuse Candidate 3) to perform the JOIN between the `package` table and the `package_license` table. Use SeaORM's relation-based join API (e.g., `.join()` with the relation defined on the entity) rather than writing raw SQL.' Line 98: 'Use `entity::package_license` entity for the JOIN rather than writing raw SQL (Reuse Candidate 3)'."
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "reuse-analysis.md has three dedicated sections: 'Reuse Candidate 1: common/src/db/query.rs::apply_filter' (lines 7-15, with 'What it provides', 'How it is reused', and 'Why not create new code' subsections), 'Reuse Candidate 2: modules/fundamental/src/advisory/endpoints/list.rs' (lines 17-32, same subsection structure), and 'Reuse Candidate 3: entity/src/package_license.rs' (lines 34-46, same subsection structure). Summary table on lines 48-53 confirms all three."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "plan.md Step 6 lists exactly two files to modify: 'modules/fundamental/src/package/endpoints/list.rs' and 'modules/fundamental/src/package/service/mod.rs'. Step 7 lists one file to create: 'tests/api/package_license_filter.rs'. The plan explicitly states at line 101: 'No other files to modify' and the self-verification checklist at line 153 confirms: 'only list.rs, service/mod.rs, and new test file are touched -- all within Files to Modify / Files to Create'. Line 139 mentions conditional test file registration in tests/Cargo.toml or mod.rs but this is a conditional note, not a definitive file in the plan scope."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "plan.md line 155: 'no new utility functions created -- all parsing/filtering logic reuses `apply_filter` from `common/src/db/query.rs`'. Line 78: 'Do NOT create a new query parameter parsing function'. reuse-analysis.md line 56: 'No new utility functions, helpers, or shared modules are created. All filtering, parsing, and database join logic is handled by existing code.' reuse-analysis.md line 13 explicitly explains why not: 'Creating a separate `parse_license_filter` or `build_license_in_clause` function would duplicate the exact behavior that `apply_filter` already provides.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

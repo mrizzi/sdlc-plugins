@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment and parses the ISO 8601 value",
+      "passed": true,
+      "evidence": "The output file staleness-check.md shows for each stream a parsed ISO 8601 timestamp: \"Last-Updated timestamp: `2026-05-01T10:00:00Z`\" (lines 14 and 29). The step is titled \"Step 0.3 -- Matrix Staleness Check\" confirming it is Step 0.3 performing this action."
+    },
+    {
+      "text": "Step 0.3 detects that the matrix is older than the 14-day default threshold and displays a staleness warning",
+      "passed": true,
+      "evidence": "The output explicitly states \"Staleness threshold: 14 days\" (line 7) and for each stream displays a WARNING: \"Security matrix for stream **2.1.x** was last updated on 2026-05-01 (62 days ago). The matrix may not reflect recent releases.\" (line 17) and similarly for stream 2.2.x (line 32). The age of 62 days exceeds the 14-day threshold."
+    },
+    {
+      "text": "The staleness warning includes the stream name, the last-updated date, and the number of days since the last update",
+      "passed": true,
+      "evidence": "Each warning includes all three elements: stream name (e.g., \"stream **2.1.x**\"), last-updated date (\"2026-05-01\"), and days since update (\"62 days ago\"). Example from line 17: \"Security matrix for stream **2.1.x** was last updated on 2026-05-01 (62 days ago).\""
+    },
+    {
+      "text": "The warning presents three options: refresh now (re-run setup Step 10.6), proceed anyway, or stop",
+      "passed": true,
+      "evidence": "Each staleness warning presents exactly three options (lines 19-22 and 34-37): 1. \"Refresh now -- re-run matrix population (setup Step 10.6) for this stream\" 2. \"Proceed anyway -- continue triage with the current matrix\" 3. \"Stop -- halt triage so I can investigate\""
+    },
+    {
+      "text": "Step 0.3 runs before Step 0.5 (JIRA Access Initialization) — no Jira operations are attempted before the staleness check",
+      "passed": true,
+      "evidence": "The only output file is staleness-check.md which covers Step 0.3. The summary (lines 41-43) states \"User action is required before triage can proceed,\" indicating the workflow halted at Step 0.3 awaiting user input. There are no other output files showing Jira operations, confirming no Jira access was attempted before the staleness check completed."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '### **Issue Description**'",
+      "passed": true,
+      "evidence": "Heading found at line 5: '### **Issue Description**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Steps to Reproduce**'",
+      "passed": true,
+      "evidence": "Heading found at line 13: '### **Steps to Reproduce**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Expected Result**'",
+      "passed": true,
+      "evidence": "Heading found at line 21: '### **Expected Result**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Actual Result**'",
+      "passed": true,
+      "evidence": "Heading found at line 27: '### **Actual Result**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Attachments**'",
+      "passed": true,
+      "evidence": "Heading found at line 40: '### **Attachments**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Root Cause**'",
+      "passed": true,
+      "evidence": "Heading found at line 46: '### **Root Cause**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Suggested Fix**'",
+      "passed": true,
+      "evidence": "Heading found at line 54: '### **Suggested Fix**'"
+    },
+    {
+      "text": "outputs/jira-create.md references project key 'TC'",
+      "passed": true,
+      "evidence": "Line 3: '**Project key:** TC'"
+    },
+    {
+      "text": "outputs/jira-create.md references issue type ID '10300'",
+      "passed": true,
+      "evidence": "Line 4: '**Issue type ID:** 10300'"
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "Line 5: '**Labels:** ai-generated-jira'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/report-bug'",
+      "passed": true,
+      "evidence": "Found at line 18: '[sdlc-workflow/report-bug](https://github.com/mrizzi/sdlc-plugins)'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'https://github.com/mrizzi/sdlc-plugins'",
+      "passed": true,
+      "evidence": "Found at line 18: 'https://github.com/mrizzi/sdlc-plugins'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains a version string (e.g., 'v0.' or version from plugin.json)",
+      "passed": true,
+      "evidence": "v0.11.1 found at line 18"
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "failed": 0,
+    "total": 13,
+    "pass_rate": 1.0
+  }
+}

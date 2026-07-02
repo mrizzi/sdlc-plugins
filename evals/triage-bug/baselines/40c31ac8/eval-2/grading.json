@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 56: '`### **Steps to Reproduce**` -- MISSING. No heading matching this format found in the description.' Also line 62: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**.'"
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 57: '`### **Expected Result**` -- MISSING. No heading matching this format found in the description.' Also line 62: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**.'"
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "validation-result.md line 64: 'Execution stopped at Step 1. Steps 2 through 7 (Reproduce/Trace, Codebase Investigation, Root Cause Analysis, Generate Task, Link Task, Post Digest, Decomposition Guard, Report Result) were not executed because the bug report is incomplete.' No Step 2-5 content appears anywhere in the output."
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "validation-result.md line 62: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**. The bug description does not follow the template at `docs/templates/bug-template.md`.' Both specific section names are listed and the template path is referenced."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

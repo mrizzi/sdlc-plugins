@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '### **Issue Description**'",
+      "passed": true,
+      "evidence": "Heading found at line 1: '### **Issue Description**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Steps to Reproduce**'",
+      "passed": true,
+      "evidence": "Heading found at line 5: '### **Steps to Reproduce**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Expected Result**'",
+      "passed": true,
+      "evidence": "Heading found at line 13: '### **Expected Result**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Actual Result**'",
+      "passed": true,
+      "evidence": "Heading found at line 17: '### **Actual Result**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Attachments**'",
+      "passed": true,
+      "evidence": "Heading found at line 21: '### **Attachments**'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '### **Root Cause**'",
+      "passed": true,
+      "evidence": "No '### **Root Cause**' heading found in preview.md — skipped optional section correctly omitted"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '### **Suggested Fix**'",
+      "passed": true,
+      "evidence": "No '### **Suggested Fix**' heading found in preview.md — skipped optional section correctly omitted"
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "Line 22: 'Labels | ai-generated-jira'"
+    },
+    {
+      "text": "outputs/jira-create.md references issue type ID '10300'",
+      "passed": true,
+      "evidence": "Line 20: 'Issue Type ID | 10300'"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

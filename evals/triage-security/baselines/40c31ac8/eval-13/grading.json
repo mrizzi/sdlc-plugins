@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The remediation output describes the digest protocol for the upstream backport task: re-fetching the task description from Jira after create_issue and computing a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
+      "passed": true,
+      "evidence": "remediation.md lines 79-96 (Task 1, upstream 2.2.x) and lines 269-285 (Task 3, upstream 2.1.x) both describe: (1) re-fetching description via jira.get_issue after create_issue, (2) computing digest via 'python3 scripts/sha256-digest.py /tmp/task-desc.md', and (3) posting the digest comment. Both upstream backport tasks include the full digest protocol."
+    },
+    {
+      "text": "The remediation output describes the digest protocol for the downstream propagation subtask: re-fetching the task description from Jira after create_issue and computing a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
+      "passed": true,
+      "evidence": "remediation.md lines 158-174 (Task 2, downstream 2.2.x) and lines 353-369 (Task 4, downstream 2.1.x) both describe: (1) re-fetching description via jira.get_issue after create_issue, (2) computing digest via 'python3 scripts/sha256-digest.py /tmp/task-desc.md', and (3) posting the digest comment. Both downstream propagation tasks include the full digest protocol."
+    },
+    {
+      "text": "The remediation output includes the digest comment marker '[sdlc-workflow] Description digest:' in the described steps for each remediation task — both upstream and downstream (§1.66)",
+      "passed": true,
+      "evidence": "All four tasks include the marker in their digest comment steps: Task 1 (line 94): 'jira.add_comment(<upstream-task-key>, \"[sdlc-workflow] Description digest: <tagged-digest>\")'; Task 2 (line 173): 'jira.add_comment(<downstream-task-key>, \"[sdlc-workflow] Description digest: <tagged-digest>\")'; Task 3 (line 284): 'jira.add_comment(<upstream-task-2-1-key>, \"[sdlc-workflow] Description digest: <tagged-digest>\")'; Task 4 (line 368): 'jira.add_comment(<downstream-task-2-1-key>, \"[sdlc-workflow] Description digest: <tagged-digest>\")'."
+    },
+    {
+      "text": "The remediation output sequences digest comments BEFORE issue links (Depend, Blocks) or other comments in the described procedure for each task (§1.66, shared/description-digest-protocol.md Rules)",
+      "passed": true,
+      "evidence": "For 2.2.x tasks: digest comments (Task 1 lines 79-96, Task 2 lines 158-174) appear before the 'Linkage (2.2.x tasks)' section (lines 176-187) which creates Depend/Blocks links. The linkage section explicitly states 'After creating both tasks and posting their digest comments:' (line 179). For 2.1.x tasks: digest comments (Task 3 lines 269-285, Task 4 lines 353-369) appear before the 'Linkage (2.1.x preemptive tasks)' section (lines 371-386), which similarly states 'After creating both preemptive tasks and posting their digest comments:' (line 373)."
+    },
+    {
+      "text": "The remediation output specifies that the digest is computed from the re-fetched description (via Jira API after create_issue), not from the description string passed to create_issue (shared/description-digest-protocol.md Hashing)",
+      "passed": true,
+      "evidence": "All four tasks explicitly specify re-fetching the description from Jira after create_issue: Task 1 (line 83-86): 'Re-fetch the description from Jira: jira.get_issue(<upstream-task-key>, fields=[\"description\"])'; Task 2 (line 162-165): 'Re-fetch the description from Jira: jira.get_issue(<downstream-task-key>, fields=[\"description\"])'; Task 3 (line 273-276): 'Re-fetch the description from Jira: jira.get_issue(<upstream-task-2-1-key>, fields=[\"description\"])'; Task 4 (line 358-361): 'Re-fetch the description from Jira: jira.get_issue(<downstream-task-2-1-key>, fields=[\"description\"])'. The digest is then computed from this re-fetched content, not from the description string passed to create_issue."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

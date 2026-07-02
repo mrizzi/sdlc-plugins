@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
+      "passed": true,
+      "evidence": "version-impact.md contains a table with 7 rows covering streams 2.1.x and 2.2.x. Every row shows 'NO' in the Affected? column: 2.1.0 (serde_json 1.0.137), 2.1.1 (1.0.137), 2.2.0 (1.0.138), 2.2.1 (1.0.138), 2.2.2 (retag of 2.2.1), 2.2.3 (1.0.139), 2.2.4 (1.0.139). All versions are >= 1.0.135 (the fix version). Summary states: 'No supported versions are affected.'"
+    },
+    {
+      "text": "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 8 Case C)",
+      "passed": true,
+      "evidence": "triage-outcome.md header states 'Decision: Case C -- No Supported Versions Affected'. Section '### Recommendation: Close as Not a Bug' explicitly recommends closing. Section '#### 4. Transition to Closed' states: 'Transition TC-8002 to Closed with resolution \"Not a Bug\"'. Under 'Steps Not Applicable': 'Step 8 Remediation Task Creation: No remediation tasks needed -- no versions are affected.'"
+    },
+    {
+      "text": "The close recommendation includes a comment documenting the version impact evidence — listing each version and its dependency version as proof of non-impact",
+      "passed": true,
+      "evidence": "triage-outcome.md section '#### 2. Post Triage Comment (Step 8, Case C)' contains a blockquoted comment with a table listing all 7 versions, their serde_json versions, and 'NO' for each. The comment concludes: 'All supported versions ship serde_json >= 1.0.137, which is outside the affected range (before 1.0.135). CVE-2026-28940 does not affect this product.'"
+    },
+    {
+      "text": "VEX Justification is set to 'Component not Present' or appropriate value when the VEX field is configured (Step 8 VEX Justification)",
+      "passed": true,
+      "evidence": "triage-outcome.md section '#### 3. Set VEX Justification' states: 'Set customfield_12345 (VEX Justification) to \"Component not Present\"'. data-extraction.md confirms the VEX Justification custom field is configured as customfield_12345."
+    },
+    {
+      "text": "The analysis does NOT create any remediation tasks — no upstream backport, no downstream propagation (Step 8 Case C closes the issue)",
+      "passed": true,
+      "evidence": "triage-outcome.md explicitly states under 'Steps Not Applicable': 'Step 8 Remediation Task Creation: No remediation tasks needed -- no versions are affected.' Under 'Cross-Stream Impact': 'No cross-stream remediation needed... No preemptive remediation tasks are required.' version-impact.md states: 'No upstream backport is required.' No remediation task creation appears anywhere in the outputs."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

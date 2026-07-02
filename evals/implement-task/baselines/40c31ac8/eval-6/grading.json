@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md lines 21-27: 'Search through the returned comments for any whose body starts with the marker string: [sdlc-workflow] Description digest: This exact marker prefix is defined in shared/description-digest-protocol.md and is fixed across all skills and invocations.'"
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md lines 59-68 describe computing the digest: 'Extract the description field from the issue response obtained in Step 1. Write it to a temporary file and compute the digest using the project script: python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt'. Lines 83-88 compare the stored and computed hex digests: 'Stored: a1b2c3d4... Computed: a1b2c3d4... Result: MATCH.'"
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md line 88: 'Result: MATCH.' Lines 90-98: 'Since the digests match, the description is confirmed to be unmodified since plan-feature created it. The skill proceeds silently to Step 2 (Verify Dependencies) with: No user prompt -- no confirmation dialog or interactive question; No warning message -- nothing logged about the digest check; No additional latency -- the happy path adds only the time for the API call to fetch comments and the script execution to compute the digest; no user interaction delays'"
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md lines 90-98 explicitly state 'No user prompt', 'No warning message', 'No additional latency'. plan.md line 52-53 confirms: 'Hex digests match -- proceed silently, no user prompt, no added latency' and immediately continues to 'Step 2 -- Verify Dependencies' on line 55 with no intervening user interaction."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

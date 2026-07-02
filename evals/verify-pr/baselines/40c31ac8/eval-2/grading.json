@@ -1,0 +1,65 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks at least 2 acceptance criteria as FAIL, identifying specific gaps between the diff and the task requirements",
+      "passed": true,
+      "evidence": "report.md line 12: 'Acceptance Criteria | FAIL | 3 of 6 criteria met'. The acceptance criteria table marks criteria 1 (inverted filtering logic), 3 (invalid threshold silently accepted), and 5 (threshold_applied field missing) as FAIL, each with specific gap descriptions referencing the diff code."
+    },
+    {
+      "text": "The report identifies that invalid threshold values are silently accepted (unwrap_or(0)) instead of returning 400 Bad Request as required",
+      "passed": true,
+      "evidence": "report.md line 67: 'AC 3: ?threshold=invalid returns 400 Bad Request | FAIL | .unwrap_or(0) silently accepts invalid values, treating them as critical instead of returning a 400 error via AppError.' Also report.md line 77: 'Invalid threshold silently accepted (AC 3): The code uses .unwrap_or(0) on the result of .position()'. criterion-3.md confirms with detailed code evidence."
+    },
+    {
+      "text": "The report identifies that the threshold_applied boolean field is missing from the response",
+      "passed": true,
+      "evidence": "report.md line 69: 'AC 5: Response includes threshold_applied boolean field | FAIL | Field is completely absent from the AdvisorySummary struct and response construction.' Also report.md line 79: 'Missing threshold_applied boolean (AC 5): The AdvisorySummary struct was not modified to include a threshold_applied: bool field.' criterion-5.md confirms: 'The threshold_applied boolean field is completely absent from the response.'"
+    },
+    {
+      "text": "The report identifies that the test file tests/api/advisory_summary.rs is absent from the diff — no tests were created",
+      "passed": true,
+      "evidence": "report.md line 7: 'Scope Containment | FAIL | Missing tests/api/advisory_summary.rs (specified in Files to Create)'. report.md line 13: 'Test Quality | FAIL | No test file created; tests/api/advisory_summary.rs is absent from the diff entirely.' Scope Containment detail (line 35): 'tests/api/advisory_summary.rs | Create | No -- MISSING'. Line 37: 'The test file tests/api/advisory_summary.rs is completely absent from the diff.'"
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only report files: report.md and criterion-1.md through criterion-6.md. All are verification/analysis documents. No source code files (.rs, .toml, etc.) were created or modified. The report is purely analytical -- it identifies code issues but does not patch them."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md ends with 'Overall: FAIL' and presents findings for review. There is no mention of merging, approving, or auto-merge anywhere in report.md or any criterion file. The report concludes with a descriptive summary paragraph explaining why the PR fails verification, leaving the decision to a human reviewer."
+    },
+    {
+      "text": "The overall result is FAIL, not PASS or WARN",
+      "passed": true,
+      "evidence": "report.md line 17: '### Overall: FAIL'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with N/A — no test files exist in the PR diff",
+      "passed": true,
+      "evidence": "report.md line 14: 'Test Change Classification | N/A | No test files exist in the PR diff'. Detail section (lines 85-87): '#### Test Change Classification: N/A' and 'No test files exist in the PR diff. The required file tests/api/advisory_summary.rs was not created. Without any test files, test change classification cannot be assessed.'"
+    },
+    {
+      "text": "The report includes detailed findings for each failing check with specific evidence from the diff — Scope Containment identifies the missing test file by comparing PR files against the task specification, Acceptance Criteria provides per-criterion analysis explaining each gap",
+      "passed": true,
+      "evidence": "Scope Containment (report.md lines 29-39): contains a table comparing 3 specified files against the diff with 'In Diff?' column, identifying tests/api/advisory_summary.rs as 'No -- MISSING'. Acceptance Criteria (report.md lines 63-71): per-criterion table with columns for criterion number, description, result, and evidence. Each FAIL criterion includes specific code-level evidence (e.g., criterion 1 quotes the inverted condition 'threshold_idx <= N', criterion 3 quotes '.unwrap_or(0)', criterion 5 states field is absent from struct)."
+    },
+    {
+      "text": "Acceptance criteria verification produces per-criterion PASS/FAIL analysis with code-level evidence — each criterion-N.md output file contains detailed reasoning about what was checked and what gap was found",
+      "passed": true,
+      "evidence": "All six criterion files (criterion-1.md through criterion-6.md) contain structured sections: Result (PASS/FAIL), 'What was checked', 'Evidence from the diff' with code snippets, and 'Gap identified'. Examples: criterion-1.md quotes the filtering code block and explains the inverted comparison; criterion-3.md quotes '.unwrap_or(0)' and explains silent acceptance; criterion-5.md quotes the AdvisorySummary construction showing the missing field. PASS criteria (2, 4, 6) also include code evidence and explain why no gap exists."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — no reviews match the eval result detection criteria, so Eval Quality does not affect the Test Quality combination",
+      "passed": true,
+      "evidence": "report.md line 13: 'Test Quality | FAIL | No test file created; tests/api/advisory_summary.rs is absent from the diff entirely. Eval Quality: N/A'. report.md lines 89-91: '#### Eval Quality: N/A' and 'No eval result reviews applicable.' Eval Quality is explicitly marked N/A and does not factor into the Test Quality result."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 0,
+    "total": 11,
+    "pass_rate": 1.0
+  }
+}

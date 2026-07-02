@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 executes the concurrent triage check for upstream component quinn-proto",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 1: 'Step 7 -- Concurrent Triage Detection: TC-8021'. Line 5 confirms the upstream component: 'The Upstream Affected Component custom field is configured in Security Configuration as customfield_10632. This field is populated on TC-8021 with the value quinn-proto. Step 7 proceeds (not skipped).' The JQL query on lines 9-14 includes 'cf[10632] ~ quinn-proto' confirming the check targets quinn-proto."
+    },
+    {
+      "text": "No concurrent triages are detected — the JQL search returns zero results",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 21: 'The JQL search returned **zero results**. No other Vulnerability issues targeting the quinn-proto upstream component are currently in \"In Progress\" or \"Code Review\" status.' Also confirmed in triage-outcome.md line 37: 'JQL search for in-progress triages with cf[10632] ~ quinn-proto returned zero results.'"
+    },
+    {
+      "text": "The analysis proceeds directly to Case A/B/C branching without a concurrent triage warning",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 25: 'No concurrent triages detected. Proceeding to Case A/B/C branching in Step 8 (Remediation) without any concurrent-triage warnings or labels.' triage-outcome.md proceeds directly to 'Triage Decision: Case A + Case B' on line 39 with no concurrent triage warning section or labels applied. No warning text appears anywhere in the outputs."
+    },
+    {
+      "text": "The output does not present wait/skip/proceed options since no conflict exists",
+      "passed": true,
+      "evidence": "No wait/skip/proceed options appear in any of the three output files. concurrent-triage.md states 'Proceeding to Case A/B/C branching' directly without presenting any choice. triage-outcome.md moves straight from the concurrent triage zero-result finding to the Case A + Case B triage decision. The word 'wait' does not appear in any file, nor do 'skip' or 'proceed' appear as options to choose from."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

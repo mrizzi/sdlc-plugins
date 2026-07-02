@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "plan.md Step 4 'Code Understanding' explicitly lists analyzing 3 of the 4 files: 'modules/fundamental/src/advisory/endpoints/get.rs -- GET handler pattern', 'modules/fundamental/src/advisory/model/summary.rs -- AdvisorySummary struct with severity field', and 'modules/fundamental/src/advisory/service/advisory.rs -- AdvisoryService with fetch, list, search methods'. conventions.md also references common/src/error.rs in the error handling convention: 'AppError enum in common/src/error.rs'."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "plan.md Step 6-7 lists exactly 3 files to create and 3 files to modify, all within the advisory module and tests directory. Step 9 'Scope Containment' explicitly states: 'git diff --name-only would list exactly the 6 files above. All are within the declared Files to Modify and Files to Create sections.' The docs/api.md mention in Step 9 is noted as needing an update but is not included in the actual modification list. The 'Files NOT Modified' section explicitly excludes server/src/main.rs."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md Step 6-7 'Files to Create' table lists: (1) modules/fundamental/src/advisory/model/severity_summary.rs - 'SeveritySummary response struct', (2) modules/fundamental/src/advisory/endpoints/severity_summary.rs - 'GET handler for /api/v2/sbom/{id}/advisory-summary', (3) tests/api/advisory_summary.rs - 'Integration tests for the new endpoint'. Corresponding file descriptions (file-1-description.md, file-4-description.md, file-6-description.md) all have Action: CREATE."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md Step 6-7 'Files to Modify' table lists: (4) modules/fundamental/src/advisory/model/mod.rs - 'Add pub mod severity_summary;', (5) modules/fundamental/src/advisory/service/advisory.rs - 'Add severity_summary method to AdvisoryService', (6) modules/fundamental/src/advisory/endpoints/mod.rs - 'Register the new route for the severity summary endpoint'. Corresponding file descriptions (file-2-description.md, file-3-description.md, file-5-description.md) all have Action: MODIFY."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md Step 10 shows the commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' (Conventional Commits format: type=feat, scope=advisory, description follows). The footer contains 'Implements TC-9201' referencing the Jira issue."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "plan.md Step 10 explicitly states: \"With trailer: `--trailer='Assisted-by: Claude Code'`\""
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "plan.md Step 5 shows: 'git checkout main / git pull / git checkout -b TC-9201' and states 'Branch named after the Jira issue ID, based on the target branch main.' The Task Summary section states 'Target Branch: main'. Step 10 confirms with 'git push -u origin TC-9201' and 'gh pr create --base main'."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md 'Discovered Conventions' section explicitly identifies both patterns: (1) 'Error handling: All endpoint handlers return Result<T, AppError> with .context() wrapping from the AppError enum in common/src/error.rs. No raw unwrap() or expect() in production code.' (2) 'Module structure: Each domain module follows the model/ + service/ + endpoints/ tripartite structure. New domain features must place code in the corresponding subdirectory.' Additionally identifies many more patterns including endpoint registration, handler patterns, service method patterns, and model struct patterns."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "plan.md Task Summary section states 'Target Branch: main'. Step 5 references it: 'based on the target branch main'. Step 10 uses it for PR creation: 'gh pr create --base main'."
+    },
+    {
+      "text": "The plan mentions checking for a description digest comment (Step 1.5) and notes that when no digest is found, it proceeds with a warning rather than blocking execution (backward compatibility per shared/description-digest-protocol.md)",
+      "passed": true,
+      "evidence": "plan.md has a dedicated 'Step 1.5 -- Description Integrity' section that states: 'No description digest found -- skipping integrity check. This task may have been created before digest tracking was introduced.' This shows the check was performed, no digest was found, and execution proceeded with a warning rather than blocking. conventions.md also includes the same Step 1.5 check with identical language."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

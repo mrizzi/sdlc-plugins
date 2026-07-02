@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 1: 'Please run `/setup` first'"
+    },
+    {
+      "text": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 1: 'requires Project Configuration in your CLAUDE.md'"
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "preview.md does not exist in outputs/"
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "jira-create.md does not exist in outputs/"
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "jira-comment.md does not exist in outputs/"
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "response.md contains only the stop message with '/setup' recommendation; none of the 9 Feature template headings appear"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

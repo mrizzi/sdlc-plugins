@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "Lines 5-6 reference 'the digest protocol defined in shared/description-digest-protocol.md'. Lines 19-22 describe searching comments for the marker string '[sdlc-workflow] Description digest:' verbatim, and lines 27-29 show a matched comment with that exact prefix."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "Lines 76-81 (Section '7. Compare Hex Digests -- MISMATCH DETECTED') explicitly compare the stored digest ('0000000000000000000000000000000000000000000000000000000000000000') with the computed digest ('b7e23ec29af22b0b4e41da31e868d57226121c84847a8048e8fcd1b1c37287f1') and conclude: 'The hex hashes differ. This means the task description was modified after plan-feature created the task.'"
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "Lines 87-92 show the alert: 'The task description for TC-9201 has been modified since plan-feature created it.' followed by 'Expected digest (from plan-feature comment): sha256-md:0000000000000000000000000000000000000000000000000000000000000000' and 'Actual digest (computed from current description): sha256-md:b7e23ec29af22b0b4e41da31e868d57226121c84847a8048e8fcd1b1c37287f1'."
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "Lines 98-99 offer two explicit choices: '1. Proceed -- implement the task using the current (modified) description as-is' and '2. Stop -- halt implementation so you can re-run plan-feature to regenerate tasks from the updated feature specification'. Line 101 prompts 'Please choose (1 or 2):'."
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "Lines 103-107: 'Execution stops immediately. The skill does not proceed to Step 2 (Verify Dependencies), Step 3 (Transition to In Progress), or any subsequent implementation step. No branch is created, no code is read or modified, and no Jira transitions occur. This follows the same pause-and-ask pattern used when a task description is incomplete -- the skill halts and waits for explicit user input before continuing.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
