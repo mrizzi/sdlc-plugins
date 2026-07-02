@@ -484,6 +484,20 @@ For each target repository, identify existing documentation files that may be im
 
 Use Glob, `list_dir`, or `search_for_pattern` to locate these files. Record them for use in Step 5 when determining whether tasks need a **Documentation Updates** section.
 
+### Testing readiness template discovery
+
+For each target repository, check for a testing readiness template at the
+conventional path `docs/testing-readiness.md`:
+
+1. Determine the repository root path from the **Repository Registry** in CLAUDE.md.
+2. Check for `docs/testing-readiness.md` at the repository root using Glob or Read
+   (Serena's `list_dir` if available).
+3. If found, read and parse the template. The template format uses `## <Category Name>`
+   headings followed by acceptance criteria as bullet points. Each category represents
+   a cross-cutting test type (e.g., "Smoke Tests", "Performance Benchmarks", "E2E Tests").
+4. Store the parsed categories and their acceptance criteria for use in Step 5.
+5. If not found, log silently and proceed — no testing tasks will be generated.
+
 ### Backend API discovery for manual REST calls
 
 When a feature involves a frontend repository making REST calls to a backend API — and
@@ -702,6 +716,40 @@ which doc files to update based on the description):
 - Implementation Notes
 - Reuse Candidates
 - Verification Commands
+
+### Testing task generation
+
+Generate cross-cutting testing tasks when a testing readiness template was
+discovered in Step 3.
+
+1. **Check for testing readiness template**: if no testing readiness template was
+   discovered in Step 3 for any target repository, skip testing task generation
+   silently.
+2. **Generate testing tasks**: if a template was found, generate one testing task
+   per test category (`## <Category Name>` heading) listed in the template.
+3. Each testing task follows the `task-description-template.md` format with:
+
+   - `## Repository` — same as the implementation tasks
+   - `## Target Branch` — follows the same Target Branch assignment rules as other
+     tasks (main for direct-to-main, feature issue ID for feature-branch)
+   - `## Description` — what to test, referencing the Feature issue and the test
+     category's acceptance criteria from the readiness template
+   - `## Acceptance Criteria` — the acceptance criteria from the readiness template
+     for that category
+   - `## Test Requirements` — specific test scenarios derived from the readiness
+     template
+   - `## Dependencies` — depends on all implementation tasks (testing tasks run
+     after implementation is complete)
+
+4. Testing tasks MUST omit the following sections (these are validation activities,
+   not code changes):
+
+   - Files to Modify
+   - Files to Create
+   - API Changes
+   - Implementation Notes
+   - Reuse Candidates
+   - Verification Commands
 
 ### Convention-aware task enrichment
 

@@ -3,12 +3,12 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Plan the implementation for feature TC-9001. The feature description is in feature-standard.md and the target repository structure is in repo-backend.md. Write all outputs to the workspace outputs/ directory. For each task you would create, write a markdown file named task-N-slug.md with the full task description. Write the impact map to impact-map.md.",
-      "expected_output": "A structured implementation plan with task decomposition, each task following task-description-template.md format, with clear dependency ordering. Tasks should reference real file paths from the repo manifest.",
-      "files": ["files/feature-standard.md", "files/repo-backend.md"],
+      "prompt": "Plan the implementation for feature TC-9001. The feature description is in feature-standard.md and the target repository structure is in repo-backend.md. The target repository has a testing readiness template at docs/testing-readiness.md (provided as testing-readiness.md). Write all outputs to the workspace outputs/ directory. For each task you would create, write a markdown file named task-N-slug.md with the full task description. Write the impact map to impact-map.md.",
+      "expected_output": "A structured implementation plan with task decomposition, each task following task-description-template.md format, with clear dependency ordering. Tasks should reference real file paths from the repo manifest. Testing tasks should be generated from the testing readiness template.",
+      "files": ["files/feature-standard.md", "files/repo-backend.md", "files/testing-readiness.md"],
       "assertions": [
-        "Each non-documentation task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements. Documentation tasks (tasks whose filename or description indicates doc-only scope) are exempt from requiring Files to Modify, Files to Create, and Implementation Notes — they must still include Repository, Target Branch, Description, Acceptance Criteria, and Test Requirements",
-        "Task count is between 3 and 10 inclusive",
+        "Each non-documentation, non-testing task file contains all required template sections: Repository, Target Branch, Description, at least one of Files to Modify or Files to Create, Implementation Notes, Acceptance Criteria, Test Requirements. Documentation tasks (tasks whose filename or description indicates doc-only scope) and testing tasks (tasks whose filename or description indicates cross-cutting testing scope) are exempt from requiring Files to Modify, Files to Create, and Implementation Notes — they must still include Repository, Target Branch, Description, Acceptance Criteria, and Test Requirements",
+        "Task count is between 3 and 12 inclusive",
         "All tasks reference repository 'trustify-backend'",
         "Task dependencies form a DAG with no circular dependencies",
         "Every task's Files to Modify and Files to Create reference paths plausible within the repo-backend.md structure",
@@ -16,14 +16,16 @@
         "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
         "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
         "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
-        "Implementation Notes in every non-documentation task reference specific file paths and code patterns from the repository, not abstract or generic guidance. Documentation tasks are exempt from this requirement as they intentionally omit Implementation Notes",
+        "Implementation Notes in every non-documentation, non-testing task reference specific file paths and code patterns from the repository, not abstract or generic guidance. Documentation tasks and testing tasks are exempt from this requirement as they intentionally omit Implementation Notes",
         "Every generated task description contains a Target Branch section set to 'main'",
         "After each task is created, a description digest comment is posted with a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string. Marker format: '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' (or sha256-adf). The digest is computed by re-fetching the description from the API and running scripts/sha256-digest.py",
         "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
         "When the Feature issue has a priority set (not 'Undefined'), every created task's additional_fields includes 'priority' with the inherited priority name. When the Feature's priority is 'Undefined', the priority key is omitted entirely from additional_fields (not set to null or 'Undefined')",
         "When the Feature issue has a non-empty fixVersions array and the fixVersion scope config (from ### Jira Field Defaults in CLAUDE.md) is 'task' or 'both' (or absent, defaulting to 'both'), every created task's additional_fields includes 'fixVersions' with the inherited version(s). When fixVersion scope is 'feature' or the Feature has no fixVersions, the fixVersions key is omitted entirely from additional_fields",
         "The summary comment on the feature issue (Step 6c) includes the inherited priority and fixVersion values that were propagated to tasks, or states they were omitted and why",
-        "A documentation task is generated because the feature description's Documentation Considerations section indicates doc impact (Updates — add endpoint to REST API reference). The documentation task includes Repository, Target Branch, Description, Acceptance Criteria, Test Requirements, and Dependencies sections, and omits Files to Modify, Files to Create, API Changes, Implementation Notes, Reuse Candidates, and Verification Commands"
+        "A documentation task is generated because the feature description's Documentation Considerations section indicates doc impact (Updates — add endpoint to REST API reference). The documentation task includes Repository, Target Branch, Description, Acceptance Criteria, Test Requirements, and Dependencies sections, and omits Files to Modify, Files to Create, API Changes, Implementation Notes, Reuse Candidates, and Verification Commands",
+        "Testing tasks are generated from the testing readiness template — exactly 2 testing tasks are created (one per test category: Smoke Tests and Performance Benchmarks). Each testing task includes Repository, Target Branch, Description, Acceptance Criteria, Test Requirements, and Dependencies sections, and omits Files to Modify, Files to Create, API Changes, Implementation Notes, Reuse Candidates, and Verification Commands",
+        "Each testing task depends on all implementation tasks (not on documentation or other testing tasks)"
       ]
     },
     {
@@ -46,7 +48,8 @@
         "When the Feature issue has a priority set (not 'Undefined'), every created task's additional_fields includes 'priority' with the inherited priority name. When the Feature's priority is 'Undefined', the priority key is omitted entirely from additional_fields (not set to null or 'Undefined')",
         "When the Feature issue has a non-empty fixVersions array and the fixVersion scope config (from ### Jira Field Defaults in CLAUDE.md) is 'task' or 'both' (or absent, defaulting to 'both'), every created task's additional_fields includes 'fixVersions' with the inherited version(s). When fixVersion scope is 'feature' or the Feature has no fixVersions, the fixVersions key is omitted entirely from additional_fields",
         "The summary comment on the feature issue (Step 6c) includes the inherited priority and fixVersion values that were propagated to tasks, or states they were omitted and why",
-        "No documentation task is generated because the feature description does not contain a Documentation Considerations section"
+        "No documentation task is generated because the feature description does not contain a Documentation Considerations section",
+        "No testing tasks are generated because no testing readiness template is present in the eval fixture files"
       ]
     },
     {
