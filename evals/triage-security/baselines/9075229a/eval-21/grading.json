@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 detects concurrent triage TC-8019 on the same upstream component (quinn-proto) with status In Progress",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 23-28: JQL search returned 1 result showing TC-8019 with status 'In Progress'. Lines 31-34: 'A concurrent triage has been detected on the same upstream component (quinn-proto)' with TC-8019 listed. The file is explicitly titled 'Step 7 -- Concurrent Triage Detection for TC-8020'."
+    },
+    {
+      "text": "The concurrent triage warning includes the conflicting CVE issue key (TC-8019) and its assignee",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 36-38: The warning table includes '| TC-8019 | In Progress | engineer-b@example.com |'. Both the issue key (TC-8019) and assignee (engineer-b@example.com) are present in the concurrent triage warning block (lines 34-49)."
+    },
+    {
+      "text": "The output presents three options: wait for the other triage to complete, skip remediation task creation, or proceed with a concurrent-triage-overlap label",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 44-48: '1. Wait -- pause until the other triage completes, then re-run Step 4.3 to detect any overlap' / '2. Skip -- skip remediation task creation for this CVE' / '3. Proceed -- create tasks anyway with a `concurrent-triage-overlap` label so the other engineer’s Step 4.3 catches the overlap'. All three options are present with the exact semantics required."
+    },
+    {
+      "text": "The concurrent triage check runs before Case A/B/C branching in Step 8",
+      "passed": true,
+      "evidence": "The concurrent triage check is explicitly Step 7 (concurrent-triage.md title: 'Step 7 -- Concurrent Triage Detection'). triage-outcome.md line 28 shows remediation tasks are 'pending Step 7 resolution'. triage-outcome.md lines 62-67: 'Step 7 -- Concurrent Triage Blocker: Remediation task creation (Step 8) is **blocked** by a concurrent triage detection'. Line 72: 'Until the engineer resolves this blocker... no remediation tasks... should be executed.' Step 7 clearly gates Step 8 Case A/B/C branching."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

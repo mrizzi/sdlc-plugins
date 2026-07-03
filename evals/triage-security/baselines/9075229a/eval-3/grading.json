@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Duplicate check searches for sibling issues using JQL with the CVE label and excludes the current issue key (Step 4)",
+      "passed": true,
+      "evidence": "duplicate-check.md shows the JQL query: \"project = TC AND labels = 'CVE-2026-31812' AND issuetype = 10024 AND key != TC-8003\" -- this searches by the CVE label (CVE-2026-31812) and explicitly excludes the current issue key (key != TC-8003)."
+    },
+    {
+      "text": "Duplicate check correctly classifies TC-7999 as a same-stream sibling (both have stream suffix [rhtpa-2.2]) and identifies it as a duplicate (Step 4.1)",
+      "passed": true,
+      "evidence": "duplicate-check.md states: \"Both issues have the **same stream suffix** `[rhtpa-2.2]` and track the same stream **2.2.x**.\" Classification is explicit: \"Classification: **Same-stream sibling** (Step 4.1)\" and \"TC-8003 is a **duplicate** of TC-7999.\""
+    },
+    {
+      "text": "Triage outcome recommends closing TC-8003 as Duplicate with resolution 'Duplicate', referencing TC-7999 as the original (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md states \"Decision: Close as Duplicate\" and \"TC-8003 is a **same-stream duplicate** of TC-7999 and should be closed.\" The proposed Jira mutations specify: Transition: **Closed**, Resolution: **Duplicate**. TC-7999 is referenced as the original throughout."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting why it is a duplicate -- same CVE tracked for the same stream (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md includes a proposed comment: \"Duplicate of TC-7999 -- same CVE tracked for the same stream [rhtpa-2.2]. Version impact analysis confirms overlap.\" This explicitly documents both the same-CVE and same-stream rationale."
+    },
+    {
+      "text": "The analysis does NOT proceed to remediation task creation -- duplicate detection short-circuits the triage flow",
+      "passed": true,
+      "evidence": "triage-outcome.md lists Step 8 (Remediation) under \"Steps Skipped\" as \"not needed; no remediation tasks to create\" and states: \"Because the issue is identified as a same-stream duplicate in Step 4.1, the following steps are short-circuited and not executed.\" duplicate-check.md also confirms: \"No further triage steps (Steps 5-8) are needed -- the duplicate closure short-circuits the remaining workflow.\" No remediation output file exists."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

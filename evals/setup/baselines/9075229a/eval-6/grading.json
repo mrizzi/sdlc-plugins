@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 42-63 contain the full '## Security Configuration' section with all three subsections intact: '### Product Lifecycle' (lines 44-50 with all 5 fields), '### Version Streams' (lines 52-56 with the 2.1.x stream table), and '### Source Repositories' (lines 58-63 with both backend and frontend-ui URLs). Content matches the reference fixture exactly."
+    },
+    {
+      "text": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "passed": true,
+      "evidence": "discovery-log.md lines 39-44: '### Security Configuration' with '**Status:** Up to date', followed by detailed confirmation that Product Lifecycle is 'fully populated', Version Streams '2.1.x stream configured', Source Repositories 'both backend and frontend-ui repositories listed', and concludes 'All subsections are fully populated; no opt-in prompt needed'."
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "passed": true,
+      "evidence": "changes-log.md lines 26-31: '### Security Configuration' with '**Action:** Preserved (no changes)', listing 'Product Lifecycle: all fields already populated', 'Version Streams: 2.1.x stream already configured', 'Source Repositories: both repositories already listed', and 'Section already exists and is fully populated; no opt-in prompt was triggered'."
+    },
+    {
+      "text": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "passed": true,
+      "evidence": "discovery-log.md line 44: 'All subsections are fully populated; no opt-in prompt needed'. changes-log.md line 31: 'Section already exists and is fully populated; no opt-in prompt was triggered'. No output file contains any opt-in prompt or user interaction request for Security Configuration."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 6-8 contain the Repository Registry table with both entries unchanged: '| backend | Rust backend service | serena_backend | /home/user/backend |' and '| frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui |'. These match the reference fixture exactly."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 12-16 contain all 5 Jira Configuration fields unchanged: 'Project key: TC', 'Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432', 'Feature issue type ID: 10142', 'Git Pull Request custom field: customfield_10875', 'GitHub Issue custom field: customfield_10747'. These match the reference fixture exactly."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with all three fields (Bug issue type ID, Bug template, Bug-to-Task link type) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 37-40: '## Bug Configuration' with all three fields preserved: 'Bug issue type ID: 10001', 'Bug template: docs/bug-template.md', 'Bug-to-Task link type: Blocks'. discovery-log.md line 33-37 reports Bug Configuration '**Status:** Up to date' with 'All fields are populated'. changes-log.md lines 22-24 reports '**Action:** Preserved (no changes)' with 'All three fields already populated'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}

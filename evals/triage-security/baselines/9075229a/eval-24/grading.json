@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 detects the absence of the Deployment Context column in the Source Repositories table and defaults all repositories to upstream (§1.78)",
+      "passed": true,
+      "evidence": "data-extraction.md contains a 'Deployment Context' section (lines 29-31) that explicitly states: 'Source Repositories table does not include a Deployment Context column. Per backward compatibility rules, all repositories default to **upstream**.' This shows the absence was detected and the upstream default was applied."
+    },
+    {
+      "text": "Remediation task descriptions do NOT include a Coordination Guidance subsection — the section is omitted entirely when no Deployment Context column exists",
+      "passed": true,
+      "evidence": "All four remediation task descriptions (Tasks 1-4 in remediation.md) contain only standard subsections (Repository, Target Branch, Description, Implementation Notes, Acceptance Criteria, Test Requirements, Dependencies) and none include a Coordination Guidance subsection. The document-level note at lines 240-242 explicitly confirms: 'the Coordination Guidance subsection is not added to any remediation task description.'"
+    },
+    {
+      "text": "The triage proceeds normally through all steps without errors from the missing Deployment Context column",
+      "passed": true,
+      "evidence": "Both output files show successful completion: data-extraction.md (Step 1) produced a complete CVE data extraction with parsed fields, stream scope, ecosystem, and version impact table; remediation.md (Step 8) produced four well-structured remediation tasks across two streams (Case A: 2.2.x, Case B: 2.1.x preemptive) with proper Jira linkage. No error messages, warnings, or processing failures appear anywhere in either file. The missing Deployment Context column was handled gracefully via the default-to-upstream fallback."
+    },
+    {
+      "text": "Backward compatibility is maintained — existing eval behavior is unaffected by the absence of the Deployment Context column",
+      "passed": true,
+      "evidence": "Both output files explicitly reference backward compatibility rules: data-extraction.md line 31 ('Per backward compatibility rules, all repositories default to **upstream**') and remediation.md line 242 ('Per backward compatibility rules, the Coordination Guidance subsection is not added'). The triage produced standard-format output: complete data extraction with version impact table, multi-stream remediation tasks (Case A standard + Case B preemptive), proper Jira linkage summary — all consistent with expected triage behavior. No structural deviations from normal triage output are present."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

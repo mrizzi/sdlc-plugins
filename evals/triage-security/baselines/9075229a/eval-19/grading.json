@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment and parses the ISO 8601 value",
+      "passed": true,
+      "evidence": "Lines 26-29 of staleness-check.md: 'Read the `<!-- Last-Updated: <ISO-8601> -->` HTML comment from the security matrix file.' Extracted timestamp shown as '2026-05-01T10:00:00Z' (ISO 8601 format) and parsed date as '2026-05-01'."
+    },
+    {
+      "text": "Step 0.3 detects that the matrix is older than the 14-day default threshold and displays a staleness warning",
+      "passed": true,
+      "evidence": "Lines 32-33: 'Staleness threshold: 14 days (default)' and 'Result: **STALE** (63 days > 14-day threshold)'. Staleness warnings are displayed on lines 40-54 for both streams."
+    },
+    {
+      "text": "The staleness warning includes the stream name, the last-updated date, and the number of days since the last update",
+      "passed": true,
+      "evidence": "Lines 40-41: 'Security matrix for stream **2.1.x** was last updated on 2026-05-01 (63 days ago).' Lines 48-49: 'Security matrix for stream **2.2.x** was last updated on 2026-05-01 (63 days ago).' Each warning includes: stream name (2.1.x/2.2.x), last-updated date (2026-05-01), and days since update (63 days ago)."
+    },
+    {
+      "text": "The warning presents three options: refresh now (re-run setup Step 10.6), proceed anyway, or stop",
+      "passed": true,
+      "evidence": "Lines 43-46 (repeated lines 51-54): '1. **Refresh now** -- re-run matrix population (setup Step 10.6) for this stream', '2. **Proceed anyway** -- continue triage with the current matrix', '3. **Stop** -- halt triage so I can investigate'. All three options present with explicit setup Step 10.6 reference."
+    },
+    {
+      "text": "Step 0.3 runs before Step 0.5 (JIRA Access Initialization) — no Jira operations are attempted before the staleness check",
+      "passed": true,
+      "evidence": "Lines 11-13: 'Step 0.3 executes **before** Step 0.5 (JIRA Access Initialization). No Jira operations have been attempted at this point.' Step ordering table (lines 62-68) shows Step 0.3 as 'Blocked -- awaiting user choice' while Step 0.5 is 'Not started -- depends on Step 0.3 resolution'. Lines 56-58 confirm: 'No further triage steps (including Step 0.5 JIRA Access Initialization) will execute until the user responds.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

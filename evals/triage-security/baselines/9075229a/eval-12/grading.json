@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 1 extracts imprecise affected range from the Jira description — the description lacks a specific version threshold (Step 1 Data Extraction)",
+      "passed": true,
+      "evidence": "data-extraction.md line 12: Affected version range = 'versions prior to the fix' (imprecise -- no exact threshold in Jira description). Line 13: Fixed version = 'see advisory' (imprecise -- no exact threshold in Jira description). Lines 44-46 explicitly note: 'The Jira description provides imprecise version information' with no exact version threshold and no specific version number."
+    },
+    {
+      "text": "Step 1.5 queries MITRE CVE API and extracts lessThan 0.4.8 as the fix threshold from the affected[].versions[] field (§1.62)",
+      "passed": true,
+      "evidence": "enrichment.md lines 3-10: MITRE CVE API section shows source URL https://cveawg.mitre.org/api/cve/CVE-2026-48901, extracts 'Affected version range: lessThan 0.4.8 (semver)', status: affected, and fix threshold: 0.4.8."
+    },
+    {
+      "text": "Step 1.5 queries OSV.dev API and extracts fixed version 0.4.8 from the affected[].ranges[].events field (§1.62)",
+      "passed": true,
+      "evidence": "enrichment.md lines 12-20: OSV.dev API section shows source URL https://api.osv.dev/v1/vulns/CVE-2026-48901, extracts 'Range type: SEMVER', 'Introduced: 0 (all versions from the beginning)', 'Fixed: 0.4.8', and fix threshold: 0.4.8."
+    },
+    {
+      "text": "Step 1.5 cross-validation shows agreement between MITRE and OSV.dev — the enriched fix threshold (0.4.8) is used as the authoritative value for Step 2.3",
+      "passed": true,
+      "evidence": "enrichment.md lines 22-48: Cross-Validation section includes comparison table showing MITRE (< 0.4.8) and OSV.dev (introduced 0, fixed 0.4.8) both report 0.4.8. Line 37: 'MITRE and OSV.dev agree: both report the fix threshold as 0.4.8'. Line 43: 'Authoritative fix threshold: 0.4.8'. Line 48: 'This enriched threshold replaces the imprecise Jira description data for Step 2.3 version impact comparisons'."
+    },
+    {
+      "text": "Step 2.3 version impact comparison uses the enriched fix threshold (0.4.8) from Step 1.5, not the imprecise Jira description data",
+      "passed": true,
+      "evidence": "version-impact.md line 5: 'Using cross-validated fix threshold from Step 1.5: h2 < 0.4.8 (affected), h2 >= 0.4.8 (not affected).' All version comparisons in the impact table use 0.4.8 as the threshold (e.g., 2.2.0 ships 0.4.8 = NO, 2.1.0 ships 0.4.5 = YES because 0.4.5 < 0.4.8). No reference to imprecise Jira description data for the comparison."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

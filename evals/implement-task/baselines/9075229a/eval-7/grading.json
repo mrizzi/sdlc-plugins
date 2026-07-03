@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "Lines 26-28 of digest-mismatch.md: 'Scan all returned comments for bodies starting with the marker string `[sdlc-workflow] Description digest:`. In this scenario, exactly one comment matches.' The output also shows the exact marker string in the comment body on line 8: '[sdlc-workflow] Description digest: sha256-md:0000...'."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "Lines 81-83 of digest-mismatch.md: 'The stored hex digest (`0000...0000`) does **not** match the computed hex digest. This is the critical decision point.' Also lines 13-15: 'The format tags match (both `sha256-md`) but the hex hashes differ, indicating the description was modified after `plan-feature` created the task.'"
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "Lines 86-91 of digest-mismatch.md: '1. **Alert the user** that the task description was modified after `plan-feature` created it. 2. **Display both digests** so the user can see the discrepancy: - Expected (from digest comment): `sha256-md:0000000000000000000000000000000000000000000000000000000000000000` - Actual (computed from current description): `sha256-md:<current-hex-digest>`'"
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "Lines 93-97 of digest-mismatch.md: '3. **Ask the user** to choose one of two options: - **(1) Proceed** -- continue with the current description as-is, accepting that it may differ from what was originally planned. - **(2) Stop** -- halt execution so the user can re-run `plan-feature` to regenerate tasks based on the updated feature description.'"
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds -- following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "Lines 99-101 of digest-mismatch.md: '4. **Stop execution immediately** -- the skill does **not** proceed with any subsequent steps (Step 2 onward) until the user responds. This is a blocking prompt, not a non-blocking warning.' Also lines 122-124: '**The mismatch is blocking**, unlike missing-digest or format-mismatch scenarios which are non-blocking warnings. This is the only path in Step 1.5 that halts execution and requires user input.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

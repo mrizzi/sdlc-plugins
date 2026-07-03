@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 8 detects existing remediation tasks TC-8100 and TC-8101 via the Depend links on the issue and skips remediation task creation — does NOT create duplicate tasks (idempotency)",
+      "passed": true,
+      "evidence": "idempotency-check.md Step 8 section explicitly states TC-8100 and TC-8101 are 'Detected' via existing Depend links in the issue's issuelinks array, with summaries matching expected remediation patterns. Action on re-run is 'Skipped -- existing tasks already cover the affected stream. Creating new tasks would produce duplicates.' Mutation ledger in triage-outcome.md confirms both 'Create TC-8100' and 'Create TC-8101' are marked Skipped on re-run."
+    },
+    {
+      "text": "The ai-cve-triaged label is already present on the issue — the triage does NOT attempt to add it again (label idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md lists 'ai-cve-triaged' as an existing label. idempotency-check.md Post-Triage Summary table states: 'ai-cve-triaged label | Already present in Labels array | Skipped -- label already exists on the issue.' Mutation ledger in triage-outcome.md confirms: 'Add ai-cve-triaged label | Executed | Skipped (label already present)'."
+    },
+    {
+      "text": "The issue is already In Progress — the triage does NOT attempt to transition the status again or warns that the issue is already in a post-triage state (status idempotency)",
+      "passed": true,
+      "evidence": "idempotency-check.md Status-Aware Handling section states current status is 'In Progress' and the skill warns: 'This issue is already in In Progress. It may be actively worked on.' Step 0.7 transition to Assigned is 'Skipped -- the skill says: If the issue is already in Assigned or any later status, skip the transition silently.' Mutation ledger confirms both 'Transition to Assigned' and 'Transition to In Progress' are Skipped on re-run."
+    },
+    {
+      "text": "The existing description digest comment is detected — no duplicate digest comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md identifies existing description digest comment with hash 'sha256-md:a1b2c3d4e5f6...' posted 2026-07-01T10:00:00Z. idempotency-check.md states: 'Description digest comment | Already posted (sha256-md:a1b2c3d4..., 2026-07-01T10:00:00Z) | Skipped -- digest comment already exists in the issue's comment history.' Mutation ledger confirms 'Post description digest comment' is Skipped on re-run."
+    },
+    {
+      "text": "The existing post-triage summary comment is detected — no duplicate summary comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md identifies existing post-triage summary comment posted 2026-07-01T10:01:00Z. idempotency-check.md states: 'Post-triage summary comment | Already posted (2026-07-01T10:01:00Z) | Skipped -- a post-triage summary already exists documenting the version impact, actions taken, and remediation task links. Posting a second summary would create a redundant comment.' Mutation ledger confirms 'Post triage summary comment' is Skipped on re-run."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

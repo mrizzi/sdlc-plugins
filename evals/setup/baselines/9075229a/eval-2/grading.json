@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing trustify-backend entry in the Repository Registry unchanged (same Role, Serena Instance, Path values as in claude-md-configured.md)",
+      "passed": true,
+      "evidence": "claude-md-result.md line 16: '| trustify-backend | Rust backend service | serena_backend | /home/user/trustify-backend |' — identical to claude-md-configured.md line 16."
+    },
+    {
+      "text": "outputs/claude-md-result.md adds a new trustify-ui entry to the Repository Registry with serena_ui as the Serena Instance",
+      "passed": true,
+      "evidence": "claude-md-result.md line 17: '| trustify-ui | TypeScript frontend | serena_ui | /home/user/trustify-ui |' — new row added with serena_ui as the Serena Instance."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged — Project key remains TC, Cloud ID, Feature issue type ID remain as in claude-md-configured.md",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 20-25 match claude-md-configured.md lines 19-24 exactly: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747."
+    },
+    {
+      "text": "outputs/changes-log.md explicitly identifies which entries were preserved (existing) and which were added (new)",
+      "passed": true,
+      "evidence": "changes-log.md has two top-level sections: '## Preserved (Existing)' (lines 3-23) listing trustify-backend, Jira Configuration, Code Intelligence, and Bug Configuration as preserved, and '## Added (New)' (lines 25-31) listing trustify-ui and serena_ui limitation as added."
+    },
+    {
+      "text": "outputs/discovery-log.md notes that serena_backend was already configured and serena_ui is newly discovered",
+      "passed": true,
+      "evidence": "discovery-log.md line 7: '### serena_backend — Already Configured' with 'Already present in Repository Registry' and 'No changes needed' (line 11). Line 13: '### serena_ui — Newly Discovered' with 'Not present in Repository Registry — prompted user for configuration details' (line 16)."
+    },
+    {
+      "text": "The existing Code Intelligence section content (naming convention, example, serena_backend limitations) is preserved — only new serena_ui content is added",
+      "passed": true,
+      "evidence": "claude-md-result.md preserves: naming convention 'mcp__<instance>__<tool>' (line 29), serena_backend example (lines 31-37), and serena_backend limitation 'rust-analyzer may take 30-60 seconds to index on first use' (line 42). Only new content is line 43: '- `serena_ui`: No known limitations'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with Bug issue type ID (10001), Bug template (docs/bug-template.md), and Bug-to-Task link type (Blocks) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 45-49: '## Bug Configuration' with Bug issue type ID: 10001, Bug template: docs/bug-template.md, Bug-to-Task link type: Blocks — identical to original. discovery-log.md line 29: 'Already up to date — no changes needed'. changes-log.md lines 21-23 list all three Bug Configuration items as preserved."
+    },
+    {
+      "text": "The skill offers Security Configuration opt-in since the existing CLAUDE.md has no '## Security Configuration' section, and respects the user's decline — no Security Configuration section appears in the output",
+      "passed": true,
+      "evidence": "claude-md-result.md contains no '## Security Configuration' section. discovery-log.md lines 32-34: 'User was asked whether to enable security triage' and 'User declined — no Security Configuration section added'. changes-log.md lines 35-36: 'User declined security triage — section omitted'."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

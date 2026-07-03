@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "digest-match.md line 25: \"Search returned comments for bodies starting with the marker string `[sdlc-workflow] Description digest:`.\" The exact marker string is used to locate the digest comment among issue comments."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "digest-match.md lines 43-56 describe writing the description to a temp file and computing the digest via `python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt`. Lines 64-70 describe comparing format tags (both `sha256-md`) and then comparing hex digests in Step 7."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "digest-match.md line 72: \"**Result: MATCH -- proceed silently.** No user prompt, no warning, no added latency. The description has not been modified since plan-feature created it.\" Line 84: \"The integrity verification passes cleanly. Implementation proceeds to Step 2 (Verify Dependencies) without any user interaction or warnings.\""
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "digest-match.md line 72: \"No user prompt, no warning, no added latency.\" plan.md line 47: \"The digest comment is found, uses format-tagged format (`sha256-md`), the comment has not been edited (created == updated), and the computed digest matches the stored digest. Proceed silently.\" The plan continues directly to Step 2 (Verify Dependencies) with no user interaction or pauses."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

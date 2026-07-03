@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response identifies that the Implementation Notes section is missing from the task description and flags this as a gap requiring clarification (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response explicitly identifies 'Implementation Notes | **Missing**' in the parsed task table (line 29) and elaborates in 'Gaps Requiring Clarification' item #2: 'Implementation Notes section is missing. I need guidance on: Which search mechanism to use..., What patterns to follow..., How should the search handler integrate with existing service code..., Are there reuse candidates...'"
+    },
+    {
+      "text": "The response identifies that the Acceptance Criteria are vague — specifically calling out 'search results are relevant' and 'performance is acceptable' as insufficiently specific for implementation",
+      "passed": true,
+      "evidence": "The response marks 'Acceptance Criteria | **Vague**' in the parsed task table (line 30) with: '\"Search results are relevant\" (what defines relevance?), \"Performance is acceptable\" (what threshold?)'. These two specific criteria are called out by name. Gap #3 further elaborates: 'Acceptance Criteria are too vague to verify. I need specific, testable criteria such as: Which fields are searchable..., What matching behavior is expected..., What constitutes \"acceptable performance\" (response time threshold, index requirements)?'"
+    },
+    {
+      "text": "The response identifies that the Test Requirements are vague — 'test that search works correctly' does not define what 'correctly' means",
+      "passed": true,
+      "evidence": "The response marks 'Test Requirements | **Vague**' in the parsed task table (line 31) with: 'Single criterion \"Test that search works correctly\" — does not specify which scenarios to test, expected response codes, edge cases, or error cases'. Gap #4 elaborates: 'Test Requirements are too vague to implement. I need specific test scenarios such as: Search by name returns matching packages, Search with no results returns empty paginated response...'"
+    },
+    {
+      "text": "The response asks the user for clarification rather than improvising implementation details — it does not proceed to write a full implementation plan (constraint 1.6)",
+      "passed": true,
+      "evidence": "The response explicitly states 'STOP — Execution halted. The task description does not follow the structured template and has critical gaps. The following clarifications are needed before implementation can proceed' (line 36). Steps 4-11 are listed only under 'What I Would Do Next' (line 65) prefaced with 'Once the user provides the missing information and the task description is updated to follow the structured template, I would proceed with:' — no actual implementation plan with code changes is produced."
+    },
+    {
+      "text": "The response asks at least 3 specific clarifying questions about: which fields to search, what relevance ranking means, and what performance threshold is required",
+      "passed": true,
+      "evidence": "The response asks 4 groups of clarifying questions: (1) API Changes — 'What query parameters does it accept? (e.g., q for free-text, name, purl, license, namespace?)'; (2) Implementation Notes — 'Which search mechanism to use'; (3) Acceptance Criteria — 'Which fields are searchable (package name, purl, license, namespace)?', 'What matching behavior is expected (exact match, prefix, substring, full-text)?', 'What constitutes \"acceptable performance\" (response time threshold, index requirements)?'; (4) Test Requirements — multiple specific test scenario questions. All three required topics are covered: which fields to search (gap #3 bullet 1), what relevance/matching means (gap #3 bullet 2), and performance threshold (gap #3 bullet 3)."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

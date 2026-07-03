@@ -1,0 +1,55 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '### **Issue Description**'",
+      "passed": true,
+      "evidence": "Line 1 of preview.md: '### **Issue Description**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Steps to Reproduce**'",
+      "passed": true,
+      "evidence": "Line 8 of preview.md: '### **Steps to Reproduce**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Expected Result**'",
+      "passed": true,
+      "evidence": "Line 16 of preview.md: '### **Expected Result**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Actual Result**'",
+      "passed": true,
+      "evidence": "Line 21 of preview.md: '### **Actual Result**'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '### **Attachments**'",
+      "passed": true,
+      "evidence": "Line 28 of preview.md: '### **Attachments**'"
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '### **Root Cause**'",
+      "passed": true,
+      "evidence": "The string '### **Root Cause**' does not appear anywhere in preview.md. The file contains only these headings: Issue Description, Steps to Reproduce, Expected Result, Actual Result, Attachments."
+    },
+    {
+      "text": "outputs/preview.md does NOT contain the heading '### **Suggested Fix**'",
+      "passed": true,
+      "evidence": "The string '### **Suggested Fix**' does not appear anywhere in preview.md. The file contains only these headings: Issue Description, Steps to Reproduce, Expected Result, Actual Result, Attachments."
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "Line 9 of jira-create.md: 'additional_fields={ \"labels\": [\"ai-generated-jira\"] }'"
+    },
+    {
+      "text": "outputs/jira-create.md references issue type ID '10300'",
+      "passed": true,
+      "evidence": "Line 4 of jira-create.md: 'issueTypeId=\"10300\"'"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}
