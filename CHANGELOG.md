@@ -5,6 +5,14 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.2] - 2026-07-03
+
+### Fixed
+
+- Non-plannable requirement flagging added to impact map step in `plan-feature`
+- Direct dependency requirement clarified for create-branch bookend in `plan-feature`
+- Eval assertions rewritten for file-based evidence in `plan-feature`
+
 ## [0.12.1] - 2026-07-02
 
 ### Added
