@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 extracts the Deployment Context column from the Source Repositories table and parses rhtpa-backend as customer-shipped (§1.77)",
+      "passed": true,
+      "evidence": "In data-extraction.md, lines 26-36, the 'Deployment Context Lookup' section states: 'The affected repository rhtpa-backend was looked up in the Source Repositories table from the project's CLAUDE.md Security Configuration' and shows a table with Deployment Context = 'customer-shipped'. Line 33 confirms: 'Result: Deployment context is customer-shipped.'"
+    },
+    {
+      "text": "Step 1 looks up the deployment context for the affected repository and records customer-shipped as part of the CVE metadata",
+      "passed": true,
+      "evidence": "In data-extraction.md (titled 'Step 1 -- Data Extraction'), lines 26-36 contain a 'Deployment Context Lookup' section that looks up rhtpa-backend in the Source Repositories table and records Deployment Context as 'customer-shipped'. Line 33: 'Result: Deployment context is customer-shipped. This means coordination with Product Security is required for CVE assignment, advisory preparation, and formal disclosure.'"
+    },
+    {
+      "text": "Remediation task descriptions include a Coordination Guidance subsection in Implementation Notes with customer-shipped guidance text",
+      "passed": true,
+      "evidence": "In remediation.md, Task 1 has '## Implementation Notes' (line 69) followed by '### Coordination Guidance' (line 79) stating 'This component is shipped to customers.' Task 2 has '## Implementation Notes' (line 133) followed by '### Coordination Guidance' (line 139) with identical customer-shipped guidance text. Both subsections are nested within Implementation Notes."
+    },
+    {
+      "text": "The customer-shipped guidance mentions coordinating with Product Security for CVE assignment, advisory preparation, and formal disclosure",
+      "passed": true,
+      "evidence": "In remediation.md, Task 1 Coordination Guidance (lines 80-82): 'Coordinate with Product Security for CVE assignment, advisory preparation, and formal disclosure.' Task 2 Coordination Guidance (lines 140-142) contains identical text. Additionally, the Coordination Guidance Reference section (lines 190-193) quotes the same guidance explicitly."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

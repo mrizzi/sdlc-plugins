@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 detects the absence of the Deployment Context column in the Source Repositories table and defaults all repositories to upstream (§1.78)",
+      "passed": false,
+      "evidence": "The detection of the missing Deployment Context column and defaulting to upstream IS present in data-extraction.md (lines 35-37: 'The Source Repositories table in CLAUDE.md does not have a Deployment Context column. Per backward compatibility rules, all repositories default to upstream.'). However, the assertion specifies 'Step 0' and the output file is labeled 'Step 1 -- Data Extraction' (line 1). There is no Step 0 output file in the outputs directory. Only two files exist: data-extraction.md (Step 1) and remediation.md (Step 8). The detection happens in Step 1, not Step 0 as required by the assertion."
+    },
+    {
+      "text": "Remediation task descriptions do NOT include a Coordination Guidance subsection — the section is omitted entirely when no Deployment Context column exists",
+      "passed": true,
+      "evidence": "Reviewed both remediation task descriptions in remediation.md. Task 1 (lines 29-80) contains subsections: Repository, Target Branch, Description, Implementation Notes, Acceptance Criteria, Test Requirements, Dependencies. Task 2 (lines 91-133) contains the same subsections. Neither task contains a 'Coordination Guidance' subsection. The string 'Coordination Guidance' does not appear anywhere in remediation.md. Additionally, data-extraction.md line 37 explicitly states: 'since the column is absent, coordination guidance is omitted from remediation task descriptions.'"
+    },
+    {
+      "text": "The triage proceeds normally through all steps without errors from the missing Deployment Context column",
+      "passed": true,
+      "evidence": "Both output files complete successfully with no error indicators. data-extraction.md produces complete output including: Parsed CVE Data table (lines 5-19), Stream Scope Resolution (lines 21-23), Ecosystem Detection (lines 25-33), Deployment Context handling (lines 35-37), Version Impact Table (lines 43-53), Upstream Fix Status (lines 57-60), Affects Versions Correction (lines 64-67), and Cross-Stream Impact analysis (lines 69-76). remediation.md produces complete output including: Triage Outcome Summary (lines 5-16) and two fully-formed remediation tasks (lines 19-133). No 'error', 'exception', 'failed', or 'missing column' error messages appear in either file. The missing Deployment Context column is handled gracefully as a default case."
+    },
+    {
+      "text": "Backward compatibility is maintained — existing eval behavior is unaffected by the absence of the Deployment Context column",
+      "passed": true,
+      "evidence": "data-extraction.md line 36 explicitly states: 'Per backward compatibility rules, all repositories default to upstream.' All standard triage behaviors function correctly: CVE data extraction is complete, version impact analysis produces a full table with 7 version entries, cross-stream impact detection identifies affected 2.1.x stream, remediation tasks are generated with standard structure (Repository, Target Branch, Description, Implementation Notes, Acceptance Criteria, Test Requirements, Dependencies). The only difference from a standard run is the omission of Coordination Guidance in task descriptions, which is the expected behavior when the column is absent — not a regression."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

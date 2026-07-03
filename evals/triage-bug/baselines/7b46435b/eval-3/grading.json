@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Investigation identifies two independent root causes: (1) convention reference formatter using wrong case transform, (2) task creation using Feature issue type ID instead of Task (Steps 2-4)",
+      "passed": true,
+      "evidence": "investigation.md Step 4 documents two root causes: 'Root Cause 1: Convention reference formatter uses wrong case transform' in 'shared/convention-utils.md' — applies kebab-case instead of preserving original case, producing '§migration-patterns' instead of '§Migration Patterns'. 'Root Cause 2: Task creation reads wrong issue type ID from configuration' in 'plan-feature/SKILL.md Step 6a' — reads Feature issue type ID (10142) instead of Task issue type ID (10050). Step 2 traces both code paths independently and Step 3 documents separate findings for each."
+    },
+    {
+      "text": "Decomposition Guard is triggered because the two root causes are in different modules/code paths (Step 6)",
+      "passed": true,
+      "evidence": "investigation.md Independence Assessment (lines 67-74) states: 'Different modules: Root Cause 1 is in `shared/convention-utils.md`; Root Cause 2 is in `plan-feature/SKILL.md Step 6a`' and 'Different code paths: Root Cause 1 affects convention reference formatting (string transformation of headings); Root Cause 2 affects Jira issue creation (issue type ID selection from configuration)', concluding 'This independence triggers the **Decomposition Guard** (Step 6).' The decomposition-guard.md file exists and opens with 'This bug appears to involve multiple independent issues' confirming the guard was triggered."
+    },
+    {
+      "text": "Decomposition Guard presents both issues with their affected files/modules (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md presents both issues with affected files: '1. **Convention reference formatter uses wrong case transform** (in `shared/convention-utils.md`)' with details about kebab-case vs original case, and '2. **Task creation uses wrong issue type ID** (in `plan-feature/SKILL.md Step 6a`)' with details about Feature vs Task issue type ID."
+    },
+    {
+      "text": "Decomposition Guard offers the user two options: Proceed with single Task or Split into separate Bugs (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md presents two options: '1. **Proceed** — create a single Task covering both fixes' and '2. **Split** — I recommend creating separate Bugs for each independent issue, then triaging each one individually with /triage-bug'. Ends with 'Choose (1/2):'."
+    },
+    {
+      "text": "The skill does NOT silently create a single Task bundling both fixes — it waits for user input (Step 6 stop rule)",
+      "passed": true,
+      "evidence": "decomposition-guard.md ends with 'Choose (1/2):' indicating a prompt for user input. No task-description.md or root-cause.md files exist in the eval-3 outputs directory — only investigation.md and decomposition-guard.md are present. No evidence anywhere in the outputs of a Jira issue being created."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

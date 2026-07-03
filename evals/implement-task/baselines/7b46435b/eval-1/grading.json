@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "conventions.md explicitly references analyzing all 4 files: 'from advisory/endpoints/get.rs' (line 31), 'from advisory/service/advisory.rs, sbom/service/sbom.rs' (line 24), 'from advisory/model/summary.rs, advisory/model/details.rs' (line 18), and 'matching the pattern in common/src/error.rs' (line 29). The plan.md also references model/summary.rs in the duplication check (line 101-102) and advisory/service/advisory.rs in the cross-section reference consistency check (line 36)."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "plan.md lines 99: 'All 6 files are listed in either \"Files to Modify\" or \"Files to Create\" in the task description. No out-of-scope changes.' The plan lists exactly 3 files to create (severity_summary.rs model, severity_summary.rs endpoint, advisory_summary.rs test) and 3 files to modify (advisory.rs service, endpoints/mod.rs, model/mod.rs). Line 82 explicitly states 'server/src/main.rs -- no changes needed'. While line 106 mentions docs/api.md, it is only a suggestion ('should be documented') not a planned modification."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "plan.md lists three files to create: File 1 'modules/fundamental/src/advisory/model/severity_summary.rs' (line 49), File 2 'modules/fundamental/src/advisory/endpoints/severity_summary.rs' (line 55), File 3 'tests/api/advisory_summary.rs' (line 62). Each has a corresponding detailed description file (file-1-description.md, file-2-description.md, file-3-description.md) all marked as 'Action: CREATE'."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "plan.md lists three files to modify: File 4 'modules/fundamental/src/advisory/service/advisory.rs' (line 69), File 5 'modules/fundamental/src/advisory/endpoints/mod.rs' (line 73), File 6 'modules/fundamental/src/advisory/model/mod.rs' (line 77). Each has a corresponding detailed description file (file-4-description.md, file-5-description.md, file-6-description.md) all marked as 'Action: MODIFY'."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "plan.md lines 111-119 show the commit message: 'feat(api): add advisory severity aggregation endpoint' which follows Conventional Commits format with type 'feat', scope '(api)', and description. The footer contains 'Implements TC-9201' referencing the Jira ticket."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": false,
+      "evidence": "No mention of '--trailer', 'Assisted-by', or 'Claude Code' trailer appears anywhere in plan.md, conventions.md, or any of the file description outputs. The commit message section (plan.md lines 109-119) shows only the commit message text without any trailer instructions."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "plan.md lines 42-45 show branch creation: 'git checkout main / git pull / git checkout -b TC-9201'. Line 18 explicitly states 'Target Branch: main'. The branch name matches the Jira ticket key TC-9201, and the target branch 'main' is correctly identified."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md identifies both patterns: (1) Module structure: line 15-16 'Each domain module (sbom, advisory, package) follows a strict model/ + service/ + endpoints/ directory structure.' (2) Error handling: lines 27-29 'Methods return Result<T, AppError> where T is the domain model type. Error wrapping uses .context(\"descriptive message\") from the anyhow ecosystem, matching the pattern in common/src/error.rs.' Additionally lines 38-41 in the Error Handling section reiterate: 'All handlers and service methods return Result<T, AppError>. Errors are wrapped with .context() for descriptive messages.'"
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "plan.md line 18 explicitly states 'Target Branch: main' under the Task Parsing (Step 1) section. Lines 42-43 show the branch is created from main: 'git checkout main / git pull'."
+    },
+    {
+      "text": "The plan mentions checking for a description digest comment (Step 1.5) and notes that when no digest is found, it proceeds with a warning rather than blocking execution (backward compatibility per shared/description-digest-protocol.md)",
+      "passed": false,
+      "evidence": "plan.md lines 26-27 mention Step 1.5: 'Description Integrity (Step 1.5) - Would fetch comments to verify description digest. Skipped per eval constraints.' While the step is referenced, the plan does NOT note the backward compatibility behavior of proceeding with a warning when no digest is found. It only says it was 'Skipped per eval constraints' without mentioning the warning-based fallback or the backward compatibility protocol from shared/description-digest-protocol.md."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 2,
+    "total": 10,
+    "pass_rate": 0.8
+  }
+}

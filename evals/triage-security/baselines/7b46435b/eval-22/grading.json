@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 executes the concurrent triage check for upstream component quinn-proto",
+      "passed": true,
+      "evidence": "concurrent-triage.md is titled '# Step 7 -- Concurrent Triage Detection for TC-8021'. Line 5 states: 'The field value on TC-8021 is `quinn-proto`. This step is applicable.' The JQL query on lines 9-16 explicitly filters on 'cf[10632] ~ \"quinn-proto\"' to check for concurrent triages on that upstream component."
+    },
+    {
+      "text": "No concurrent triages are detected — the JQL search returns zero results",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 21: '**Zero results returned.** No other Vulnerability issues targeting the `quinn-proto` upstream component are currently in an active triage state (In Progress or Code Review).'"
+    },
+    {
+      "text": "The analysis proceeds directly to Case A/B/C branching without a concurrent triage warning",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 29: 'Proceed silently to Case A/B/C branching in Step 8 (Remediation). No `concurrent-triage-overlap` label is required.' triage-outcome.md proceeds directly to 'Case A -- Affected (2.2.x stream)' (line 37) and 'Case B -- Cross-Stream Impact (2.1.x stream)' (line 59) with no concurrent triage warning interposed."
+    },
+    {
+      "text": "The output does not present wait/skip/proceed options since no conflict exists",
+      "passed": true,
+      "evidence": "No wait/skip/proceed options appear anywhere in the three output files. concurrent-triage.md line 25 explicitly states: 'No warning or user decision is needed.' Line 29 confirms: 'Proceed silently to Case A/B/C branching in Step 8 (Remediation).'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

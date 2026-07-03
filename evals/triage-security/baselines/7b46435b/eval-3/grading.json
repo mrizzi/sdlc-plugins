@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Duplicate check searches for sibling issues using JQL with the CVE label and excludes the current issue key (Step 4)",
+      "passed": true,
+      "evidence": "duplicate-check.md line 7: 'A JQL search for sibling Vulnerability issues with the same CVE label (`CVE-2026-31812`) in project TC, excluding the current issue TC-8003, returned one result'. This confirms both the CVE label search and the exclusion of the current issue key."
+    },
+    {
+      "text": "Duplicate check correctly classifies TC-7999 as a same-stream sibling (both have stream suffix [rhtpa-2.2]) and identifies it as a duplicate (Step 4.1)",
+      "passed": true,
+      "evidence": "duplicate-check.md line 15: 'TC-7999 is a same-stream sibling. Both TC-8003 and TC-7999 share the same stream suffix `[rhtpa-2.2]`, meaning they both track the same CVE for the same version stream (2.2.x).' Line 17: 'Per Step 4.1 (Same-stream duplicates): when a same-stream sibling exists and is open or in progress, the recommendation is to close the current issue as Duplicate.'"
+    },
+    {
+      "text": "Triage outcome recommends closing TC-8003 as Duplicate with resolution 'Duplicate', referencing TC-7999 as the original (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md line 4: 'Decision: Close as Duplicate'. Line 5: 'TC-8003 should be **closed as Duplicate** of TC-7999.' Line 45: 'Transition TC-8003 to Closed with resolution \"Duplicate\".' TC-7999 is explicitly referenced as the original throughout."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting why it is a duplicate — same CVE tracked for the same stream (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md lines 36-37 propose a comment: 'Duplicate of TC-7999 -- same CVE (CVE-2026-31812) tracked for the same stream [rhtpa-2.2]. TC-7999 is already In Progress with Affects Versions [RHTPA 2.2.0, RHTPA 2.2.1]. Version impact analysis confirms overlap.' The comment also includes a detailed version impact table (lines 39-43). duplicate-check.md line 31 contains the same proposed comment."
+    },
+    {
+      "text": "The analysis does NOT proceed to remediation task creation — duplicate detection short-circuits the triage flow",
+      "passed": true,
+      "evidence": "triage-outcome.md lines 59-64 show steps 3 (Affects Versions Correction), 5 (Version Lifecycle Check), and 6 (Already Fixed Check) all marked 'Skipped -- closing as duplicate'. Step 8 (Remediation): 'No remediation tasks created -- duplicate of TC-7999'. Lines 66-68: 'Since TC-8003 is a duplicate of TC-7999, no remediation tasks are created.' No remediation task file exists in the outputs directory."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

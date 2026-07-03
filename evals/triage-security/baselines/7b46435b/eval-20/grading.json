@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment",
+      "passed": true,
+      "evidence": "staleness-check.md line 14 shows the timestamp was extracted: '**Matrix timestamp:** `2026-06-28T10:00:00Z`'. The staleness check clearly read and parsed a Last-Updated timestamp from the security matrix."
+    },
+    {
+      "text": "Step 0.3 determines the matrix is within the 14-day threshold and proceeds without displaying a staleness warning",
+      "passed": true,
+      "evidence": "staleness-check.md line 17-18: '**Staleness threshold:** 14 days' and line 19: '## Result: FRESH -- Proceed'. Line 21: 'The security matrix was last updated on 2026-06-28 (5 days ago), which is within the 14-day staleness threshold. No staleness warning is triggered.' The matrix age (5 days) is correctly evaluated against the 14-day threshold and no warning is displayed."
+    },
+    {
+      "text": "No user prompt or options are presented for a fresh matrix — the check is silent on success",
+      "passed": true,
+      "evidence": "staleness-check.md line 30: 'Both streams pass the staleness check. Proceeding to Step 1 (Data Extraction) without user intervention.' No user prompts, options, or interactive choices are presented in the staleness check output. The check concludes with a proceed decision and no user action is requested."
+    },
+    {
+      "text": "The triage continues to Step 0.5 and beyond without interruption from the staleness check",
+      "passed": true,
+      "evidence": "staleness-check.md line 30 states 'Proceeding to Step 1 (Data Extraction) without user intervention.' The data-extraction.md file confirms the triage continued, containing a full 'Step 1 -- Data Extraction' with parsed CVE data, stream scope resolution, ecosystem detection, and version impact preview. The staleness check caused no interruption to the triage flow."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

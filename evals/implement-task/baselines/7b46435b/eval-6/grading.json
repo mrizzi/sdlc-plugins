@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "In digest-match.md, line 15: 'Search through the returned comments for any whose body starts with the marker string `[sdlc-workflow] Description digest:`.'. Also in plan.md line 49: 'Locate the digest comment: `[sdlc-workflow] Description digest: sha256-md:a1b2c3d4e5f67890...`'. Both files describe locating the digest comment using the exact marker string '[sdlc-workflow] Description digest:'. However, neither file references the source as 'shared/description-digest-protocol.md'. The assertion says 'from shared/description-digest-protocol.md' which implies the response should reference that file as the source of the marker string. The marker string itself is correctly used, and the protocol is clearly followed. The 'from' clause describes the origin of the marker string rather than requiring explicit citation. PASS based on the marker string being correctly identified and used."
+    },
+    {
+      "text": "The response describes computing a digest of the current description (using scripts/sha256-digest.py or SHA-256) and comparing it with the stored digest",
+      "passed": true,
+      "evidence": "In digest-match.md, lines 40-51 describe computing the current digest: 'Extract the description field from the TC-9201 issue response, write it to a temporary file /tmp/desc-TC-9201.txt, and compute the digest: python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt'. Lines 62-66 describe comparing: 'The stored hex digest and the computed hex digest are identical: Stored: a1b2c3d4e5f67890... Computed: a1b2c3d4e5f67890... Result: MATCH'. Also in plan.md lines 52-53: 'Compute current digest: write description to /tmp/desc-TC-9201.txt, run python3 scripts/sha256-digest.py /tmp/desc-TC-9201.txt' and line 54: 'Compare hex digests: MATCH'."
+    },
+    {
+      "text": "The response confirms the digests match and states it will proceed silently without prompting the user — no additional latency for the happy path",
+      "passed": true,
+      "evidence": "In digest-match.md, lines 69-71: 'Since the digests match, the description has not been modified since plan-feature created it. Proceed silently to the next step -- no additional user prompt, no added latency, no warning messages. The description integrity is confirmed.' Also in the decision path summary at line 81: 'Outcome: --> Proceed silently to Step 2'. In plan.md line 56: 'Outcome: Description integrity verified. No user prompt needed.'"
+    },
+    {
+      "text": "The response does not alert the user or pause execution due to the digest check — it proceeds directly to subsequent steps",
+      "passed": true,
+      "evidence": "In digest-match.md, line 71: 'Proceed silently to the next step -- no additional user prompt, no added latency, no warning messages.' The document explicitly contrasts this with the mismatch case (lines 84-87) where it would 'alert the user' and 'Execution would halt until the user responds.' In plan.md, Step 1.5 concludes with 'No user prompt needed' (line 56) and flow continues directly to 'Step 2 -- Verify Dependencies' (line 59) with no pause or user interaction between them."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

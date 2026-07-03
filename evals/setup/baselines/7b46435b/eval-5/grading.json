@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "Line 41 of claude-md-result.md: '## Security Configuration'"
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Product Lifecycle' subsection with all 5 fields: Product pages URL (https://access.example.com/product-lifecycle), Jira version prefix (MYPRODUCT), Vulnerability issue type ID (10200), Component label pattern (pscomponent:), and VEX Justification custom field (customfield_12345)",
+      "passed": true,
+      "evidence": "Lines 43-49 of claude-md-result.md: '### Product Lifecycle' heading on line 43, followed by '- Product pages URL: https://access.example.com/product-lifecycle' (line 45), '- Jira version prefix: MYPRODUCT' (line 46), '- Vulnerability issue type ID: 10200' (line 47), '- Component label pattern: pscomponent:' (line 48), '- VEX Justification custom field: customfield_12345' (line 49). All 5 required fields present with correct values."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Version Streams' subsection with a table containing at least one row for stream 2.1.x with the Konflux release repo URL",
+      "passed": true,
+      "evidence": "Line 57 of claude-md-result.md: '### Version Streams' heading. Line 61 contains a table row: '| 2.1.x | git.downstream.example.com/my-org/product-release.2.1.z | /home/user/product-release.2.1.z | security-matrix.md |' — stream 2.1.x is present with Konflux release repo URL."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Source Repositories' subsection with a table containing entries for backend and frontend-ui with their GitHub URLs",
+      "passed": true,
+      "evidence": "Line 63 of claude-md-result.md: '### Source Repositories' heading. Line 67: '| backend | https://github.com/example/backend | upstream |'. Line 68: '| frontend-ui | https://github.com/example/frontend-ui | upstream |'. Both repositories present with GitHub URLs."
+    },
+    {
+      "text": "outputs/claude-md-result.md also contains the standard Project Configuration sections: Repository Registry, Jira Configuration, Code Intelligence with Limitations, and Bug Configuration",
+      "passed": true,
+      "evidence": "claude-md-result.md contains: '## Repository Registry' (line 3), '## Jira Configuration' (line 10), '## Code Intelligence' (line 18) with '### Limitations' subsection (line 31), and '## Bug Configuration' (line 35). All four standard sections present."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Bug Configuration' section with three fields: Bug issue type ID (10001), Bug template (docs/bug-template.md), Bug-to-Task link type (Blocks)",
+      "passed": true,
+      "evidence": "Lines 35-39 of claude-md-result.md: '## Bug Configuration' (line 35), '- Bug issue type ID: 10001' (line 37), '- Bug template: docs/bug-template.md' (line 38), '- Bug-to-Task link type: Blocks' (line 39). All three fields present with correct values."
+    },
+    {
+      "text": "outputs/discovery-log.md mentions Security Configuration being opted in by the user and fields being collected",
+      "passed": true,
+      "evidence": "discovery-log.md line 45: '- Security Configuration was opted in by the user.' Line 46: '- Product Lifecycle fields collected from user:' followed by the specific field values on lines 47-57."
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration and Bug Configuration were newly added along with the other Project Configuration sections",
+      "passed": true,
+      "evidence": "changes-log.md shows all sections marked as ADDED: 'Repository Registry — ADDED' (line 9), 'Jira Configuration — ADDED' (line 15), 'Code Intelligence — ADDED' (line 22), 'Bug Configuration — ADDED' (line 29), 'Security Configuration — ADDED' (line 35). Summary on line 5 states: 'All Project Configuration sections were newly added to the CLAUDE.md, including Security Configuration which was opted in by the user.'"
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

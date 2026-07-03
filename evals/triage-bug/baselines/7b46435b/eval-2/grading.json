@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 34: Steps to Reproduce marked as '**No**' in the parsing results table. Line 45: '**Steps to Reproduce** (`### **Steps to Reproduce**`): This heading does not appear anywhere in the bug description.' Also listed in the validation outcome on line 53: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**.'"
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 35: Expected Result marked as '**No**' in the parsing results table. Line 47: '**Expected Result** (`### **Expected Result**`): This heading does not appear anywhere in the bug description.' Also listed in the validation outcome on line 53: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**.'"
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "validation-result.md line 57: '**Execution stopped at Step 1.** Steps 2 through 5 (Reproduce/Trace, Codebase Investigation, Root Cause Analysis, Generate Task) were not attempted because the skill requires a complete bug description before proceeding with investigation.' Only validation-result.md exists in the outputs directory — no investigation.md, root-cause.md, or task-description.md were created."
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "validation-result.md line 53: 'Bug ACME-501 is missing required sections: **Steps to Reproduce**, **Expected Result**. The bug description does not follow the template at `docs/templates/bug-template.md`.' This lists both specific missing sections by name and references the template path docs/templates/bug-template.md, which matches the Bug template path from Bug Configuration shown on line 8."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}
