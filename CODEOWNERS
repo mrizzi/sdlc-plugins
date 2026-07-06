@@ -2,8 +2,8 @@
 # When org teams are created, replace usernames with team references.
 
 # Plugin manifests — changes affect all users (Maintainers + Owners)
-/plugins/sdlc-workflow/.claude-plugin/ @mrizzi
-/.claude-plugin/marketplace.json @mrizzi
+/plugins/sdlc-workflow/.claude-plugin/ @mrizzi @ruromero
+/.claude-plugin/marketplace.json @mrizzi @ruromero
 
 # Core methodology — highest trust required (Owners)
 /docs/methodology.md @mrizzi
