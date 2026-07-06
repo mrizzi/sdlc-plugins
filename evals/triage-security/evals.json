@@ -358,6 +358,19 @@
         "The VEX justification prompt includes the library name (rustls) and the feature flag name (tls-rustls) so the user has context for the decision",
         "If the user chooses to skip remediation, the version is closed as not affected with the VEX justification — no remediation tasks are created for that version"
       ]
+    },
+    {
+      "id": 28,
+      "prompt": "Triage Vulnerability issue TC-8060. The issue details are in vuln-issue-transitive.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] so triage is scoped to the 2.2.x stream. The vulnerable library (h2) is a transitive dependency — the mock dependency chain data in the fixture shows h2 is pulled in through reqwest → hyper → h2 (3 levels deep). Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2 including the dependency chain context from Step 2.3.5, and write outputs/remediation.md with the remediation task descriptions showing the full dependency chain and two-tier remediation approach.",
+      "expected_output": "A triage analysis where Step 2.3.5 identifies h2 as a transitive dependency (3 levels deep: reqwest → hyper → h2). The remediation task descriptions include the full dependency chain in the Implementation Notes and use the two-tier remediation approach: preferred approach is to bump reqwest (the direct dependency) to a version whose transitive closure includes h2 >= 0.4.5; fallback approach is to pin h2 directly via cargo add h2@0.4.5.",
+      "files": ["files/vuln-issue-transitive.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "assertions": [
+        "Step 2.3.5 dependency chain context identifies h2 as a transitive dependency with the chain: backend → reqwest → hyper → h2 (3 levels deep)",
+        "The dependency chain output labels h2 as transitive (not direct) and includes the full chain path in the version impact output",
+        "Remediation task Implementation Notes include the dependency type as transitive with the dependency chain",
+        "Remediation task Implementation Notes describe the two-tier remediation approach: preferred is bumping reqwest (the direct dependency), fallback is pinning h2 directly",
+        "The fallback approach specifies the ecosystem-specific pinning mechanism: cargo add h2@0.4.5 for Cargo"
+      ]
     }
   ]
 }

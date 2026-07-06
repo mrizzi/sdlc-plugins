@@ -730,6 +730,12 @@ After creating each remediation task, post a description digest comment per
 `shared/description-digest-protocol.md`. This ensures `/implement-task` can
 verify description integrity in its Step 1.5.
 
+For transitive dependencies, the remediation task must document the full
+dependency chain (from Step 2.3.5) and specify the two-tier remediation
+approach: bump the direct dependency first, fall back to pinning the
+transitive dep. This may require coordination with intermediate package
+maintainers if they pin the vulnerable version.
+
 Read `remediation-templates.md` for the full task description templates, Jira
 issue creation API calls, digest comment procedures, and linkage procedures.
 The key distinction:

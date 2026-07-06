@@ -168,6 +168,10 @@ within the affected range), trace the dependency chain to give the engineer cont
 about how the vulnerable package entered the tree. This information helps assess
 remediation complexity — a direct dependency is a simple bump, while a deep
 transitive dependency may require coordinating updates across intermediate packages.
+The dependency chain also determines the remediation approach: direct dependencies
+use a straightforward version bump, while transitive dependencies require a two-tier
+strategy (bump the direct dep first; pin the transitive dep as a fallback) — see
+`remediation-templates.md` for the full remediation approach templates.
 
 For each affected version, trace how the vulnerable dependency entered the build
 to give the engineer remediation context.
@@ -179,9 +183,16 @@ The investigation method depends on the ecosystem:
 Inspect the lock file and manifest files to determine:
 
 1. **Direct vs transitive** — is the vulnerable package a direct dependency of a
-   workspace member, or pulled in transitively?
+   workspace member, or pulled in transitively? This distinction drives the
+   remediation approach in `remediation-templates.md`:
+   - **Direct**: bump the dependency version in the manifest/lock file
+   - **Transitive**: prefer bumping the direct dependency that pulls it in;
+     fall back to pinning the transitive dep directly if the direct dep bump
+     is not viable (breaking API changes, no compatible release available)
 2. **Dependency path** — the chain from a workspace root to the vulnerable package
-   (e.g., `workspace-root → reqwest → hyper → h2 → vulnerable-lib`)
+   (e.g., `workspace-root → reqwest → hyper → h2 → vulnerable-lib`). Record the
+   full chain — remediation tasks for transitive dependencies must include it so
+   the engineer knows which direct dependency to bump first.
 3. **Profile/scope** — whether the dependency is included in all build profiles or
    only specific ones:
    - **Cargo**: `[dev-dependencies]` (test/bench only, not shipped),
@@ -195,14 +206,28 @@ Inspect the lock file and manifest files to determine:
    another, note when it was introduced (helps identify which upgrade or feature
    addition brought it in)
 
-Example output:
+Example output (direct dependency):
 ```
-Dependency chain for quinn-proto:
-  backend (workspace) → reqwest [features: http3] → h3 → quinn → quinn-proto
+Dependency chain for serde:
+  backend (workspace) → serde
+  Type: direct dependency
+  Profile: production (serde is a runtime dependency)
+
+Remediation: bump serde to >= [fixed-version] in Cargo.toml
+```
+
+Example output (transitive dependency):
+```
+Dependency chain for vulnerable-lib:
+  backend (workspace) → reqwest → hyper → h2 → vulnerable-lib
+  Type: transitive (4 levels deep)
   Profile: production (reqwest is a runtime dependency)
 
 First appeared: 2.2.0 (commit 05a3af91 added reqwest http3 feature)
 Not present in: 2.1.x (reqwest used without http3 feature)
+
+Remediation: bump reqwest if a version with fixed vulnerable-lib is
+available; otherwise pin vulnerable-lib directly via cargo add
 ```
 
 #### Dependency scope decision tree

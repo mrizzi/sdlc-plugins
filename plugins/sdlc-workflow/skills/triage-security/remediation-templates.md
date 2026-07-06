@@ -38,15 +38,41 @@ Advisory: [advisory URL from remote links]
 
 ## Implementation Notes
 
-- Update [library] dependency to >= [fixed-version] in [lock-file-path]
 - Target branch: [upstream-branch from Ecosystem Mappings]
-- Check for pinned versions or transitive dependency constraints
-  that might prevent the bump
-- If a direct bump introduces breaking changes, assess whether a
-  code-level workaround is viable (see upstream changelog)
+- **Dependency type**: [direct | transitive (chain: [dependency-chain])]
 - If the vulnerable dependency is dev-only or build-only (identified
   in Step 2.3.5), the remediation priority is Normal regardless of CVE
   severity. Add `dev-dependency` label to the task.
+
+### Remediation approach (direct dependency)
+
+When the vulnerable package is a **direct** dependency of a workspace member:
+
+- Update [library] dependency to >= [fixed-version] in [lock-file-path]
+- If a direct bump introduces breaking changes, assess whether a
+  code-level workaround is viable (see upstream changelog)
+
+### Remediation approach (transitive dependency)
+
+When the vulnerable package is a **transitive** dependency (pulled in
+through intermediate packages), use a two-tier approach:
+
+**Preferred: bump the direct dependency**
+- Identify the direct dependency that pulls in [library] (see dependency
+  chain above)
+- Bump the direct dependency to a version whose transitive closure
+  includes [library] >= [fixed-version]
+- Verify the bump does not introduce breaking API changes to the
+  direct dependency
+
+**Fallback: pin the transitive dependency directly**
+If bumping the direct dependency is not viable (breaking API changes,
+no release available with the fix):
+- Cargo: `cargo add [library]@[fixed-version]` to add as a direct
+  dependency, overriding the transitive resolution
+- npm: add `"[library]": ">=[fixed-version]"` to `overrides` (npm)
+  or `resolutions` (yarn/pnpm) in `package.json`
+- Document why the direct dep bump was not viable in the PR description
 
 ## Acceptance Criteria
 
@@ -90,7 +116,11 @@ Konflux release repo so the next build ships the fix.
 ## Implementation Notes
 
 - Source pinning method: [from Source Pinning Method in security-matrix.md]
+- **Dependency type**: [direct | transitive] — carried forward from upstream task
 - Update the [source-repo] reference to the merged commit or new release tag
+- If the upstream fix pinned a transitive dependency directly (fallback
+  approach), verify the pinning is reflected in the downstream build's
+  lock file after the source reference update
 - Verify the Konflux build pipeline triggers successfully
 
 ## Acceptance Criteria
