@@ -72,7 +72,6 @@ jobs:
               return;
             }
             core.setOutput('pr_number', pr.number.toString());
-            core.setOutput('base_sha', pr.base.sha);
             core.setOutput('author', pr.user.login);
 
             let trusted = false;
@@ -98,9 +97,8 @@ jobs:
 
       - name: Discover changed skills
         id: discover
-        env:
-          BASE_SHA: ${{ steps.pr.outputs.base_sha }}
         run: |
+          BASE_SHA=$(git rev-parse HEAD^1)
           changed_files=$(git diff --name-only "$BASE_SHA"...HEAD)
           echo "Changed files:"
           echo "$changed_files"
