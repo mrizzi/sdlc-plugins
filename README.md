@@ -118,6 +118,12 @@ workflow.
 - [Conventions Template](docs/templates/conventions.md) — Template for
   documenting your project's coding conventions
 
+## Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+contributors ladder, promotion criteria, and workflows for issues and pull
+requests.
+
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).
