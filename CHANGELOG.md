@@ -5,6 +5,17 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.1] - 2026-07-09
+
+### Added
+
+- Format validation for Step 2.1 matrix loading in `triage-security`
+- Canonical security matrix template in `docs/templates`
+
+### Fixed
+
+- Release instructions use explicit repo name instead of hardcoded remote
+
 ## [0.13.0] - 2026-07-09
 
 ### Changed
