@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Duplicate check searches for sibling issues using JQL with the CVE label and excludes the current issue key (Step 4)",
+      "passed": true,
+      "evidence": "duplicate-check.md contains the JQL query: 'project = TC AND labels = 'CVE-2026-31812' AND issuetype = 10024 AND key != TC-8003'. This searches using the CVE label (CVE-2026-31812) and explicitly excludes the current issue key (key != TC-8003)."
+    },
+    {
+      "text": "Duplicate check correctly classifies TC-7999 as a same-stream sibling (both have stream suffix [rhtpa-2.2]) and identifies it as a duplicate (Step 4.1)",
+      "passed": true,
+      "evidence": "duplicate-check.md section 4.1 states 'Classification: SAME-STREAM DUPLICATE' and explains: 'Both TC-8003 and TC-7999 track CVE-2026-31812 for the same stream (2.2.x), with the same stream suffix [rhtpa-2.2].' TC-7999 is listed with stream suffix [rhtpa-2.2] matching TC-8003's [rhtpa-2.2]."
+    },
+    {
+      "text": "Triage outcome recommends closing TC-8003 as Duplicate with resolution 'Duplicate', referencing TC-7999 as the original (Step 4.1)",
+      "passed": true,
+      "evidence": "triage-outcome.md states 'Decision: Close as Duplicate' and 'TC-8003 should be closed as a Duplicate of TC-7999.' The proposed Jira actions include 'Transition TC-8003 to Closed with resolution Duplicate.' TC-7999 is explicitly referenced as the authoritative tracker."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting why it is a duplicate -- same CVE tracked for the same stream (Step 4.1)",
+      "passed": true,
+      "evidence": "Both duplicate-check.md and triage-outcome.md include the proposed comment: 'Duplicate of TC-7999 -- same CVE (CVE-2026-31812) tracked for the same stream [rhtpa-2.2]. Version impact analysis confirms overlap. TC-7999 is already In Progress with Affects Versions [RHTPA 2.2.0, RHTPA 2.2.1].' This documents both the same-CVE and same-stream rationale."
+    },
+    {
+      "text": "The analysis does NOT proceed to remediation task creation -- duplicate detection short-circuits the triage flow",
+      "passed": true,
+      "evidence": "triage-outcome.md shows Steps 3, 5, 6, 7, and 8 all marked 'Not reached' with notes 'Closing as duplicate'. Step 8 (Remediation) explicitly says 'Not reached | Closing as duplicate; no tasks needed'. A dedicated section 'No Remediation Tasks Created' states: 'Because TC-8003 is a duplicate of TC-7999, no new remediation tasks are needed.' duplicate-check.md section 4.4 also confirms: 'The issue is being closed as a duplicate in Step 4.1, so no remediation task creation will occur.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

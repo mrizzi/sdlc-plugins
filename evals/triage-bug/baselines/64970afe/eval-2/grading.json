@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md lines 39-41: Sections MISSING list includes '`### **Steps to Reproduce**` -- **MISSING**'."
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 42: Sections MISSING list includes '`### **Expected Result**` -- **MISSING**'."
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "validation-result.md lines 44-53: 'STOP: Required sections missing from bug description.' and 'Execution halted at Step 1.' Lines 55-66 enumerate Steps 2 through 7 as 'NOT Executed', concluding 'No investigation, root cause analysis, or task creation was performed.'"
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "validation-result.md lines 48-53: Lists the 2 missing sections (Steps to Reproduce, Expected Result) and states 'as defined by the bug template (`docs/templates/bug-template.md`)' referencing the Bug template path from Bug Configuration."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

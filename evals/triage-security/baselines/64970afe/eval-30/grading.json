@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 2.1.1 detects that the Ecosystem Mappings section is missing from the matrix file",
+      "passed": true,
+      "evidence": "Line 34 of matrix-validation.md shows the Section Presence Check entry: '`## Ecosystem Mappings` | **No** | FAIL -- critical section missing'. Line 58 reiterates in the Validation Summary: 'Missing required section: `## Ecosystem Mappings`'."
+    },
+    {
+      "text": "Step 2.1.1 emits a warning that halts processing for the affected stream — the warning includes the matrix file path and the missing section name",
+      "passed": true,
+      "evidence": "Lines 62-63 emit: 'Warning: Matrix file `security-matrix-missing-section-mock.md` is missing required section `## Ecosystem Mappings`. This stream cannot be processed.' The warning includes the matrix file path ('security-matrix-missing-section-mock.md') and missing section name ('## Ecosystem Mappings'). Processing is halted for the stream: line 42 shows Ecosystem Mappings table parsability as 'SKIP -- section missing' and line 46 shows column check as 'Skipped -- section not present'."
+    },
+    {
+      "text": "Step 2.1.1 presents the user with options: continue with partial data (skip the stream) or abort triage",
+      "passed": true,
+      "evidence": "Lines 69-74 present a 'User Decision Required' section with two options: '1. Continue with partial data (skip streams with critical warnings)' and '2. Abort triage to fix the matrix files first', followed by 'Choose (1/2):'."
+    },
+    {
+      "text": "The missing section is NOT auto-repaired — only Forward Pointer is eligible for auto-repair",
+      "passed": true,
+      "evidence": "Lines 49-50 state 'Auto-Repairs Applied: None. No auto-repairable issues detected (Forward Pointer section is present).' The Ecosystem Mappings section was not auto-repaired, and the parenthetical '(Forward Pointer section is present)' confirms that only Forward Pointer is eligible for auto-repair — had it been missing, it would have been the one auto-repaired, not Ecosystem Mappings."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

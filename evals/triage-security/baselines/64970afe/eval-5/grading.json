@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction identifies the ecosystem as RPM based on the library name (openssl-libs) and component context, not Cargo (Step 1 Ecosystem detection — read ecosystems from Ecosystem Mappings config)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 34-38: 'Vulnerable package: openssl-libs (RPM system package)', 'Ecosystem: **RPM**', 'Lock file: `rpms.lock.yaml` (configured in Ecosystem Mappings for both streams)'. The ecosystem is correctly identified as RPM based on the library name and Ecosystem Mappings config, not Cargo."
+    },
+    {
+      "text": "Version impact table includes ALL versions from the 2.2.x stream supportability matrix (2.2.0 through 2.2.4) and uses rpms.lock.yaml data for version extraction (Step 2.3)",
+      "passed": true,
+      "evidence": "version-impact.md lines 7-13: The 2.2.x stream table includes all five versions: 2.2.0 (openssl-libs 3.0.7-25.el9_3), 2.2.1 (3.0.7-27.el9_4), 2.2.2 (retag of 2.2.1), 2.2.3 (3.0.7-28.el9_4), and 2.2.4 (3.0.7-28.el9_4). Version data is sourced from rpms.lock.yaml as evidenced by the specific RPM version strings and the dependency chain section referencing rpms.lock.yaml presence."
+    },
+    {
+      "text": "Dependency chain context identifies openssl-libs as present in rpms.lock.yaml and uses this to determine the package origin — the lock file presence is the primary classification signal (Step 2.3.5)",
+      "passed": true,
+      "evidence": "version-impact.md lines 29-39: Dependency chain shows 'rpms.lock.yaml: present -> explicit install' and 'Origin: explicit install (openssl-libs specified in rpms.lock.yaml)'. Line 39 explicitly states: 'The rpms.lock.yaml classification is used as the sole basis for the package origin determination.' Lock file presence is clearly the primary classification signal."
+    },
+    {
+      "text": "Remediation creates a single task for the Konflux release repo — not the two-task upstream backport + downstream propagation flow used for source dependency ecosystems (Step 8 Remediation Task Creation — system package path)",
+      "passed": true,
+      "evidence": "remediation.md lines 15-16: 'Ecosystem: RPM (system package) -- single task, no upstream backport needed.' The primary 2.2.x stream remediation creates one task targeting the Konflux release repo (rhtpa-release.0.4.z, line 35). There is no upstream backport task. The preemptive 2.1.x task (line 86+) is a separate cross-stream task, not a second task in an upstream-backport + downstream-propagation flow."
+    },
+    {
+      "text": "Remediation task description follows task-description-template.md format with Repository, Target Branch, Description, Implementation Notes, and Acceptance Criteria sections — Files to Modify is intentionally omitted per remediation-templates.md (Step 8 Remediation Task Creation)",
+      "passed": true,
+      "evidence": "remediation.md lines 33-75: The task description contains all required sections: '## Repository' (line 33, value: rhtpa-release.0.4.z), '## Target Branch' (line 37, value: main), '## Description' (line 41), '## Implementation Notes' (line 59), '## Acceptance Criteria' (line 70). No '## Files to Modify' section is present anywhere in the task description, which is the correct omission per remediation-templates.md for the system package path."
+    },
+    {
+      "text": "The version impact output addresses SBOM verification in the dependency chain context — either noting that verification was skipped because cosign is not available or because external tools are prohibited, or presenting the SBOM classification result (Step 2.3.5 Optional SBOM verification)",
+      "passed": true,
+      "evidence": "version-impact.md line 32: 'SBOM verification: skipped -- cosign not available in this environment'. Lines 38-39 further elaborate: 'SBOM cross-validation via cosign was not performed because cosign is not available in this environment.' The output explicitly addresses SBOM verification and provides a reason for skipping it."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

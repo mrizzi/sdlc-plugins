@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 2.3.5 dependency chain context identifies rustls as a feature-gated optional dependency behind the non-default 'tls-rustls' feature flag",
+      "passed": true,
+      "evidence": "version-impact.md Step 2.3.5 states: 'Profile: feature-gated (optional = true, behind non-default feature \"tls-rustls\")' and 'rustls is declared as optional = true in Cargo.toml and is only included when the tls-rustls feature is explicitly enabled. The default feature set is [\"tls-native\"], which does NOT include \"tls-rustls\".' The key finding also confirms 'The vulnerable library is present in the Cargo.lock but is not compiled into the default build.'"
+    },
+    {
+      "text": "The dependency scope decision tree presents a VEX justification prompt to the user with two options: skip remediation or proceed with standard remediation",
+      "passed": true,
+      "evidence": "feature-gate-prompt.md presents two options: '1. Skip remediation -- apply VEX justification and close as not affected' and '2. Proceed with remediation -- create tasks despite the feature gate'. Both options are elaborated under 'Outcome Paths' with detailed descriptions."
+    },
+    {
+      "text": "The VEX justification prompt recommends 'Vulnerable Code not in Execute Path' as the justification for skipping remediation",
+      "passed": true,
+      "evidence": "feature-gate-prompt.md states: 'Recommended VEX justification: **Vulnerable Code not in Execute Path**.' This exact justification text is used in the prompt presented to the user."
+    },
+    {
+      "text": "The VEX justification prompt includes the library name (rustls) and the feature flag name (tls-rustls) so the user has context for the decision",
+      "passed": true,
+      "evidence": "feature-gate-prompt.md includes '**Library**: rustls' and '**Feature flag**: `tls-rustls`' in the Context section, and the prompt text itself says 'The vulnerable dependency `rustls` is gated behind the `tls-rustls` feature, which is not enabled by default.'"
+    },
+    {
+      "text": "If the user chooses to skip remediation, the version is closed as not affected with the VEX justification — no remediation tasks are created for that version",
+      "passed": true,
+      "evidence": "feature-gate-prompt.md Option 1 states: 'Action: Close as Not a Bug with VEX justification field (`customfield_12345`) set to \"Vulnerable Code not in Execute Path\".' No remediation tasks are described under Option 1. Remediation tasks (upstream backport and downstream propagation) only appear under Option 2."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

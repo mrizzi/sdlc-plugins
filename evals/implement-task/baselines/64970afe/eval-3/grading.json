@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan explicitly references reusing common/src/db/query.rs::apply_filter for comma-separated multi-value query parameter parsing rather than writing new parsing logic (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan explicitly references apply_filter multiple times. In the inspection step: \"common/src/db/query.rs -- read the apply_filter function signature and behavior. Confirm it accepts a comma-separated string, splits it, and generates a SQL IN clause. This is the function we will reuse directly for parsing and SQL generation.\" In the service modification step: \"Import and use apply_filter from common/src/db/query.rs: This is the critical reuse point. apply_filter already handles: Splitting a comma-separated string into individual values, Generating a SQL WHERE ... IN (...) clause, Handling the single-value case (no comma) as a simple equality check.\" The plan also explicitly states: \"No new utility functions: Do NOT create any new parsing or filtering helper.\""
+    },
+    {
+      "text": "The plan references following the filter pattern from modules/fundamental/src/advisory/endpoints/list.rs as a structural guide for implementing the license filter",
+      "passed": true,
+      "evidence": "The plan references the advisory list endpoint as a structural template throughout. In the inspection step: \"modules/fundamental/src/advisory/endpoints/list.rs -- the severity filter implementation here is the structural template.\" In the Query struct modification: \"Following the exact pattern from modules/fundamental/src/advisory/endpoints/list.rs, add an Option<String> field named license\" and \"The advisory endpoint's Query struct has an optional severity field that follows this same pattern -- mirror it exactly.\" In the handler modification: \"Follow the same call pattern used in the advisory list handler when it passes query.severity to AdvisoryService::list().\" In the service modification: \"mirroring how AdvisoryService::list accepts an optional severity parameter.\""
+    },
+    {
+      "text": "The plan references using entity/src/package_license.rs for the JOIN query rather than writing raw SQL or creating a new entity",
+      "passed": true,
+      "evidence": "The plan clearly references using the existing entity for JOIN queries. In the inspection step: \"entity/src/package_license.rs -- inspect the SeaORM entity to understand the table schema (columns, relations) for the package-license join table. This entity will be used in the JOIN query.\" In the service modification: \"Add a JOIN through entity/src/package_license.rs: Use the SeaORM entity package_license::Entity to construct a JOIN... use its Relation definitions to build the join rather than writing raw SQL.\" The code example shows: \"query.join(JoinType::InnerJoin, package_license::Relation::Package.def().rev())\". The out-of-scope section confirms: \"entity/src/package_license.rs -- the entity is used for JOIN queries but not modified.\""
+    },
+    {
+      "text": "The reuse analysis covers all 3 Reuse Candidates from the task description, explaining how each would be applied",
+      "passed": true,
+      "evidence": "The reuse-analysis.md covers all three candidates with dedicated sections, each containing \"What it provides\" and \"How it is reused\" subsections. Reuse Candidate 1: apply_filter from common/src/db/query.rs -- explains it is called directly in PackageService::list for comma-separated parsing and SQL generation. Reuse Candidate 2: advisory/endpoints/list.rs severity filter -- explains it is used as a structural pattern, mirrored step-by-step for the Query struct, handler wiring, and service-level filter application. Reuse Candidate 3: entity/src/package_license.rs -- explains the entity is used for type-safe JOIN construction via SeaORM relations. The summary states: \"All three Reuse Candidates identified in the task description are used.\" A summary table maps each candidate to its usage type and location."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections (constraint 5.1)",
+      "passed": true,
+      "evidence": "The plan's \"Files to Modify\" section (step 2) lists: modules/fundamental/src/package/endpoints/list.rs and modules/fundamental/src/package/service/mod.rs. The \"Files to Create\" section (step 3) lists: tests/api/package_license_filter.rs. The plan includes an explicit \"Files NOT modified (out of scope)\" section (step 4) listing files that are intentionally left unchanged: package/endpoints/mod.rs, package/model/summary.rs, common/src/db/query.rs, entity/src/package_license.rs, common/src/model/paginated.rs. The plan also mentions docs/api.md in a separate \"Documentation impact\" section (step 7) and tests/api/mod.rs for module registration, which are reasonable supporting changes that would typically be in scope for a feature implementation. The plan demonstrates scope discipline throughout."
+    },
+    {
+      "text": "The plan does not propose creating new utility functions that duplicate the functionality of apply_filter (constraint 5.4)",
+      "passed": true,
+      "evidence": "The plan explicitly states in the endpoint modification section: \"No new utility functions: Do NOT create any new parsing or filtering helper. The comma-separated string is passed as-is to the service layer, which delegates to apply_filter from common/src/db/query.rs.\" The reuse analysis reinforces this with a dedicated section \"New code that is NOT created (duplication avoidance)\" listing: \"No parse_comma_separated() function -- apply_filter in common/src/db/query.rs already handles comma-separated parsing internally. No build_license_filter() function -- apply_filter already generates the SQL condition (equality or IN clause) based on the input. No custom LicenseFilter struct -- the Option<String> pattern used by the advisory severity filter is sufficient.\""
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

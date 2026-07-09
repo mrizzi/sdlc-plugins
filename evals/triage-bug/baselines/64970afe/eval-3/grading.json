@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Investigation identifies two independent root causes: (1) convention reference formatter using wrong case transform, (2) task creation using Feature issue type ID instead of Task (Steps 2-4)",
+      "passed": true,
+      "evidence": "investigation.md lines 22-27: Root Cause 1 'Convention reference formatter uses wrong case transform' in shared/convention-utils.md. Lines 29-34: Root Cause 2 'Task creation uses Feature issue type ID instead of Task' in plan-feature/SKILL.md Step 6a. Lines 38-46 provide independence assessment table confirming different modules, different code paths, independent fixability."
+    },
+    {
+      "text": "Decomposition Guard is triggered because the two root causes are in different modules/code paths (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md line 2: 'Investigation of ACME-502 reveals **two independent root causes** in different modules and code paths. The Decomposition Guard requires your decision before proceeding.' investigation.md line 47: 'These two root causes are **fully independent**: they occur in different modules, affect different code paths, produce different symptoms, and can be fixed without any interaction between the changes.'"
+    },
+    {
+      "text": "Decomposition Guard presents both issues with their affected files/modules (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md lines 7-12: Issue 1 'Malformed convention references (wrong case transform)' with affected module `shared/convention-utils.md`. Lines 14-18: Issue 2 'Task creation uses wrong issue type ID' with affected module `plan-feature/SKILL.md` Step 6a."
+    },
+    {
+      "text": "Decomposition Guard offers the user two options: Proceed with single Task or Split into separate Bugs (Step 6)",
+      "passed": true,
+      "evidence": "decomposition-guard.md lines 24-27: '1. **Proceed** — Create a single Task under ACME-502 that addresses both root causes in one fix.' and '2. **Split** — Create two separate Bug issues, one for each root cause, so they can be tracked and fixed independently.' Ends with 'Choose (1/2):'."
+    },
+    {
+      "text": "The skill does NOT silently create a single Task bundling both fixes — it waits for user input (Step 6 stop rule)",
+      "passed": true,
+      "evidence": "decomposition-guard.md ends at line 28 with 'Choose (1/2):' — the skill stops and waits for user input. No Task is created; no subsequent steps (5, 5b, 5c, 7) are executed."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

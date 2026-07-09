@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Dependency chain output includes both the rpms.lock.yaml classification AND the SBOM verification result for the affected versions (Step 2.3.5 Optional SBOM verification)",
+      "passed": true,
+      "evidence": "In version-impact.md section 2.3.5, each affected version (2.2.0, 2.2.1, 2.2.2) has a dependency chain block that includes both: (1) rpms.lock.yaml classification (e.g., 'rpms.lock.yaml: present (3.0.7-25.el9_3) -> explicit install') and (2) SBOM verification result (e.g., 'SBOM verification (cosign available at /usr/bin/cosign): Final image SBOM: openssl-libs PRESENT / Base image SBOM: openssl-libs PRESENT / SBOM classification: base image'). Both signals are present for all three affected versions."
+    },
+    {
+      "text": "SBOM verification uses cosign download sbom to compare the final container image SBOM against the base image SBOM (Step 2.3.5 sub-steps 2 and 4)",
+      "passed": true,
+      "evidence": "In version-impact.md section 2.3.5, each affected version's dependency chain block shows 'SBOM verification (cosign available at /usr/bin/cosign)' indicating cosign was the tool used, followed by 'Final image SBOM: openssl-libs PRESENT' and 'Base image SBOM: openssl-libs PRESENT', demonstrating the comparison of the final container image SBOM against the base image SBOM. The classification 'base image (present in both final and base image SBOMs)' confirms the comparison logic was applied."
+    },
+    {
+      "text": "When SBOM classification (base image) disagrees with rpms.lock.yaml classification (explicit install), the discrepancy is flagged to the engineer with a warning (Step 2.3.5 sub-step 5 disagreement handling)",
+      "passed": true,
+      "evidence": "In version-impact.md section 2.3.5, each affected version (2.2.0, 2.2.1, 2.2.2) contains an explicit warning: 'WARNING: SBOM classification DISAGREES with rpms.lock.yaml -- lock file says explicit install but SBOM comparison says base image. Investigate manually.' The discrepancy between the SBOM classification (base image) and rpms.lock.yaml classification (explicit install) is clearly flagged with a WARNING label and a call to action for the engineer."
+    },
+    {
+      "text": "The rpms.lock.yaml classification remains the primary signal — the SBOM result supplements but does not override it (Step 2.3.5 non-MVP enhancement)",
+      "passed": true,
+      "evidence": "Throughout version-impact.md, the rpms.lock.yaml classification is consistently presented first and treated as primary: (1) In each dependency chain block, the rpms.lock.yaml line comes first before SBOM verification. (2) In the version impact table (section 2.4), the Notes column reads 'explicit install per rpms.lock.yaml; SBOM disagrees (base image)' -- rpms.lock.yaml is the stated classification and the SBOM is described as the one that 'disagrees.' (3) The Origin is marked 'DISPUTED' rather than overriding the rpms.lock.yaml classification with the SBOM result. (4) The remediation guidance says to 'investigate the discrepancy' rather than defaulting to the SBOM classification. The SBOM never overrides the rpms.lock.yaml classification; it supplements it by adding context that triggers investigation."
+    },
+    {
+      "text": "The SBOM verification result is presented alongside the rpms.lock.yaml result in the dependency chain output, not as a separate section (Step 2.3.5 sub-step 6)",
+      "passed": true,
+      "evidence": "In version-impact.md section 2.3.5, for each affected version, the SBOM verification result is presented within the same 'Dependency chain for openssl-libs (RPM):' code block as the rpms.lock.yaml result. The rpms.lock.yaml line and SBOM verification lines are indented together under the same dependency chain heading, forming a single integrated output block. There is no separate section for SBOM results -- they are inline alongside the rpms.lock.yaml classification."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 1: \"Please run `/setup` first to configure your project\" and line 8: \"Run `/setup` to add the Bug Configuration section, then re-run `/report-bug`.\""
+    },
+    {
+      "text": "outputs/response.md contains 'Bug Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 1: \"This skill requires Bug Configuration in your CLAUDE.md.\" and line 3: \"the required **Bug Configuration** section is missing.\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "Only file in outputs directory is response.md. preview.md does not exist."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "Only file in outputs directory is response.md. jira-create.md does not exist."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "Only file in outputs directory is response.md. jira-comment.md does not exist."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the template section headings ('### **Issue Description**', '### **Steps to Reproduce**', etc.) -- the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "grep for '### **Issue Description**' and '### **Steps to Reproduce**' returned 0 matches. The file contains only the setup instruction message with no template section headings."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

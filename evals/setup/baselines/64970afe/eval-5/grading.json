@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md contains a '## Security Configuration' section",
+      "passed": true,
+      "evidence": "Line 53 of claude-md-result.md contains '## Security Configuration' as a level-2 heading."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Product Lifecycle' subsection with all 5 fields: Product pages URL (https://access.example.com/product-lifecycle), Jira version prefix (MYPRODUCT), Vulnerability issue type ID (10200), Component label pattern (pscomponent:), and VEX Justification custom field (customfield_12345)",
+      "passed": true,
+      "evidence": "Line 54: '### Product Lifecycle'. Line 56: '- Product pages URL: https://access.example.com/product-lifecycle'. Line 57: '- Jira version prefix: MYPRODUCT'. Line 58: '- Vulnerability issue type ID: 10200'. Line 59: '- Component label pattern: pscomponent:'. Line 60: '- VEX Justification custom field: customfield_12345'. All 5 required fields are present with correct values."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Version Streams' subsection with a table containing at least one row for stream 2.1.x with the Konflux release repo URL",
+      "passed": true,
+      "evidence": "Line 62: '### Version Streams'. Lines 64-66 contain a table with headers (Stream, Konflux Release Repo, Local Path, Security Matrix Path) and a row: '| 2.1.x | git.downstream.example.com/my-org/product-release.2.1.z | /home/user/product-release.2.1.z | security-matrix.md |'."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '### Source Repositories' subsection with a table containing entries for backend and frontend-ui with their GitHub URLs",
+      "passed": true,
+      "evidence": "Line 68: '### Source Repositories'. Line 72: '| backend | https://github.com/example/backend | upstream |'. Line 73: '| frontend-ui | https://github.com/example/frontend-ui | upstream |'. Both repositories present with GitHub URLs."
+    },
+    {
+      "text": "outputs/claude-md-result.md also contains the standard Project Configuration sections: Repository Registry, Jira Configuration, Code Intelligence with Limitations, and Bug Configuration",
+      "passed": true,
+      "evidence": "Line 20: '## Repository Registry' with a table of 2 repos. Line 28: '## Jira Configuration' with project key TC and other fields. Line 35: '## Code Intelligence' with tool naming convention. Line 48: '### Limitations' subsection under Code Intelligence. Line 75: '## Bug Configuration' with 3 fields."
+    },
+    {
+      "text": "outputs/claude-md-result.md contains a '## Bug Configuration' section with three fields: Bug issue type ID (10001), Bug template (docs/bug-template.md), Bug-to-Task link type (Blocks)",
+      "passed": true,
+      "evidence": "Line 75: '## Bug Configuration'. Line 77: '- Bug issue type ID: 10001'. Line 78: '- Bug template: [docs/bug-template.md](docs/bug-template.md)'. Line 79: '- Bug-to-Task link type: Blocks'. All three fields present with correct values."
+    },
+    {
+      "text": "outputs/discovery-log.md mentions Security Configuration being opted in by the user and fields being collected",
+      "passed": true,
+      "evidence": "Line 64: 'No existing Security Configuration found. User accepted opt-in to enable security triage.' Lines 68-79 (Step 10.1) document Product Lifecycle fields being collected with user-provided values. Lines 83-86 (Step 10.2) document Version Streams collection. Lines 89-94 (Step 10.3) document Source Repositories collection."
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration and Bug Configuration were newly added along with the other Project Configuration sections",
+      "passed": true,
+      "evidence": "Line 5: 'All sections were created from scratch -- the source CLAUDE.md had no existing Project Configuration section.' Line 38: '### 5. Created `## Security Configuration`' with subsections Product Lifecycle, Version Streams, Source Repositories. Line 52: '### 6. Created `## Bug Configuration`' with all 3 fields. Also documents creation of Repository Registry (line 16), Jira Configuration (line 22), and Code Intelligence (line 31)."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 detects the absence of the Deployment Context column in the Source Repositories table and defaults all repositories to upstream (§1.78)",
+      "passed": true,
+      "evidence": "Step 0 Configuration Validation (data-extraction.md lines 26-28) shows the Source Repositories table with the note '_(column absent -- defaults to upstream; coordination guidance omitted)_' for rhtpa-backend. Step 1 Deployment Context subsection (lines 74-76) explicitly states: 'The Source Repositories table does not have a Deployment Context column. Per backward compatibility rules, all repositories default to upstream.' Detection occurs and the default is applied."
+    },
+    {
+      "text": "Remediation task descriptions do NOT include a Coordination Guidance subsection — the section is omitted entirely when no Deployment Context column exists",
+      "passed": true,
+      "evidence": "Remediation.md Task 1 (lines 37-98) contains sections: Repository, Target Branch, Description, Implementation Notes, Remediation approach, Acceptance Criteria, Test Requirements, Dependencies — no Coordination Guidance subsection. Task 2 (lines 101-155) contains sections: Repository, Target Branch, Description, Implementation Notes, Acceptance Criteria, Test Requirements, Dependencies — no Coordination Guidance subsection. The section is entirely absent from both task descriptions, consistent with the declaration at data-extraction.md line 76: 'Coordination guidance subsection will be omitted from remediation task descriptions.'"
+    },
+    {
+      "text": "The triage proceeds normally through all steps without errors from the missing Deployment Context column",
+      "passed": true,
+      "evidence": "All triage steps complete successfully: Step 0 Configuration Validation, Step 1 Data Extraction (with CVE parsing, stream scope resolution, ecosystem detection), Step 2 Version Impact Analysis (matrix loading, dependency extraction, impact table, upstream fix status), Step 3 Affects Versions Correction, Triage Outcome Summary, and full Remediation output with two tasks and post-triage actions. No error messages, no step failures, no aborted steps. The missing Deployment Context column is handled gracefully with a default and the workflow continues uninterrupted."
+    },
+    {
+      "text": "Backward compatibility is maintained — existing eval behavior is unaffected by the absence of the Deployment Context column",
+      "passed": true,
+      "evidence": "The output explicitly invokes backward compatibility rules (data-extraction.md line 75: 'Per backward compatibility rules, all repositories default to upstream'). All standard triage outputs are produced: version impact tables, affects versions corrections (RHTPA 2.0.0 removed, RHTPA 2.2.0/2.2.1/2.2.2 added), cross-stream Case B analysis for 2.1.x, two remediation tasks (upstream backport + downstream propagation) with proper labels/links, and complete post-triage Jira mutation plan. The structure and content match expected triage behavior — the absence of the column causes no deviation from normal output patterns."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

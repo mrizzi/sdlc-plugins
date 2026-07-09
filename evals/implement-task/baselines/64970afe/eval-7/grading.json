@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "Section '2. Locate the digest comment' states: \"Search all returned comments for those whose body starts with the marker string `[sdlc-workflow] Description digest:`. This exact marker prefix is defined in `shared/description-digest-protocol.md` and is fixed across all skills and invocations.\" This matches exactly what the protocol document specifies."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "Section '7. Compare hex digests -- MISMATCH DETECTED' explicitly states: \"The hex digests do NOT match. This means the task description was modified after plan-feature created it.\" It shows the expected digest from the comment (all zeros) vs the computed digest from the current description, confirming the mismatch detection."
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "The alert message states: \"The task description has been modified since plan-feature created this task. The content digest recorded at creation time does not match the current description.\" It displays both values: \"Expected digest (from plan-feature comment): sha256-md:0000000000000000000000000000000000000000000000000000000000000000\" and \"Actual digest (computed from current description): sha256-md:a3f7b2c1d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f5061728394a5b6c7d8e9\"."
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "The alert explicitly offers two choices: \"1. **Proceed** -- implement the task using the current (modified) description as-is\" and \"2. **Stop** -- halt execution so you can re-run plan-feature to regenerate tasks with a consistent plan\". It ends with \"Please choose (1 or 2):\"."
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "The 'Execution halted' section states: \"Execution stops immediately at this point. No subsequent steps are taken -- Step 2 (Verify Dependencies), Step 3 (Transition to In Progress), Step 4 (Understand the Code), Step 5 (Create Branch), Step 6 (Implement Changes), and all later steps are NOT initiated. The skill waits for the user's explicit response before taking any further action.\" This clearly demonstrates the pause-and-ask pattern with no progression to Step 2."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

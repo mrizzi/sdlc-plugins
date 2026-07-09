@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 2.1.1 loads the canonical template at docs/templates/security-matrix.template.md and extracts required section headings and Ecosystem Mappings column names",
+      "passed": true,
+      "evidence": "Line 3 of matrix-validation.md states 'Canonical template: docs/templates/security-matrix.template.md'. Lines 7-11 list the four extracted required section headings (Supportability Matrix, Source Pinning Method, Ecosystem Mappings, Forward Pointer). Lines 13-14 list the extracted Ecosystem Mappings columns (Ecosystem | Repository | Lock File | Check Command | Upstream Branch). All match the actual template at docs/templates/security-matrix.template.md."
+    },
+    {
+      "text": "Step 2.1.1 validates that all required sections (Supportability Matrix, Ecosystem Mappings, Source Pinning Method, Forward Pointer) are present in the mock matrix",
+      "passed": true,
+      "evidence": "For Stream 1 (lines 26-29) and Stream 2 (lines 62-65), all four required sections are validated and marked PASS: '## Supportability Matrix' PASS, '### Source Pinning Method' PASS, '## Ecosystem Mappings' PASS, '## Forward Pointer' PASS. Both streams show 4/4 PASS in the summary table (line 94-95)."
+    },
+    {
+      "text": "Step 2.1.1 validates that the Ecosystem Mappings columns match the template (Ecosystem, Repository, Lock File, Check Command, Upstream Branch)",
+      "passed": true,
+      "evidence": "For Stream 1 (lines 33-35): Expected columns 'Ecosystem | Repository | Lock File | Check Command | Upstream Branch' match actual columns exactly, result PASS. For Stream 2 (lines 69-71): same expected vs actual comparison, result PASS. Both streams show Columns PASS in summary table."
+    },
+    {
+      "text": "Step 2.1.1 validates that both tables are parsable (header row, separator row, data rows)",
+      "passed": true,
+      "evidence": "For Stream 1 (lines 39-42): Supportability Matrix has header row, separator row, 2 data rows — PASS; Ecosystem Mappings has header row, separator row, 2 data rows — PASS. For Stream 2 (lines 75-78): Supportability Matrix has header row, separator row, 5 data rows — PASS; Ecosystem Mappings has header row, separator row, 2 data rows — PASS. All four table parsability checks pass."
+    },
+    {
+      "text": "The validation result is Pass — no warnings, no auto-repairs, no user prompt — triage proceeds silently to aggregation",
+      "passed": true,
+      "evidence": "Stream 1 Auto-Repairs: 'None required' (line 48), verdict PASS (line 50). Stream 2 Auto-Repairs: 'None required' (line 84), verdict PASS (line 86). Overall result (line 97): 'PASS — no issues found. Both matrix files conform to the canonical template structure. Proceeding silently (no user interruption required per Step 2.1.1 spec).' No warnings appear anywhere in the output."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

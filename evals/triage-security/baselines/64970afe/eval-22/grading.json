@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 executes the concurrent triage check for upstream component quinn-proto",
+      "passed": true,
+      "evidence": "concurrent-triage.md is titled 'Step 7 -- Concurrent Triage Detection' and shows the JQL query searching for cf[10632] ~ 'quinn-proto' with the upstream affected component identified as quinn-proto from customfield_10632."
+    },
+    {
+      "text": "No concurrent triages are detected — the JQL search returns zero results",
+      "passed": true,
+      "evidence": "concurrent-triage.md states: 'Zero results returned. No other engineer is currently triaging a different CVE that affects the quinn-proto component.'"
+    },
+    {
+      "text": "The analysis proceeds directly to Case A/B/C branching without a concurrent triage warning",
+      "passed": true,
+      "evidence": "concurrent-triage.md states 'Proceeding silently to Case A/B/C branching in Step 8 (Remediation)' and 'No warning is presented to the engineer.' triage-outcome.md proceeds directly from concurrent triage check to 'Triage Decision: Case A + Case B' with no warning interposed."
+    },
+    {
+      "text": "The output does not present wait/skip/proceed options since no conflict exists",
+      "passed": true,
+      "evidence": "concurrent-triage.md states 'No user choice is required. The triage continues without interruption.' No wait/skip/proceed options appear in any of the three output files (concurrent-triage.md, data-extraction.md, triage-outcome.md)."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

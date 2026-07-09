@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 detects concurrent triage TC-8019 on the same upstream component (quinn-proto) with status In Progress",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 19-25: JQL search returned 1 result showing TC-8019 with status 'In Progress'. Line 28: 'Concurrent triage detected on the same upstream component (quinn-proto). Another engineer (engineer-b@example.com) is actively triaging TC-8019, which also affects the quinn-proto component.'"
+    },
+    {
+      "text": "The concurrent triage warning includes the conflicting CVE issue key (TC-8019) and its assignee",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 36-50: The 'Warning Presented to Engineer' section includes a table with 'TC-8019' as the CVE Issue and 'engineer-b@example.com' as the Assignee."
+    },
+    {
+      "text": "The output presents three options: wait for the other triage to complete, skip remediation task creation, or proceed with a concurrent-triage-overlap label",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 46-50: Three numbered options: '1. Wait -- pause until the other triage completes, then re-run Step 4.3 to detect any overlap', '2. Skip -- skip remediation task creation for this CVE', '3. Proceed -- create tasks anyway with a concurrent-triage-overlap label so the other engineer’s Step 4.3 catches the overlap'."
+    },
+    {
+      "text": "The concurrent triage check runs before Case A/B/C branching in Step 8",
+      "passed": true,
+      "evidence": "concurrent-triage.md line 1: 'Step 7 -- Concurrent Triage Detection' and line 63: 'The engineer must choose one of the three options before the triage can proceed to Step 8 (Remediation).' triage-outcome.md lines 22-29: 'Step 7 Gate: Concurrent Triage' section appears before Case A (line 40) and Case B (line 59) sections, with 'Remediation task creation (below) only proceeds if the engineer selects option 3.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

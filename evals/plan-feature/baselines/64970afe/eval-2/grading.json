@@ -1,0 +1,90 @@
+{
+  "assertion_results": [
+    {
+      "text": "Impact map or task descriptions explicitly flag at least 3 ambiguities from the feature description",
+      "passed": true,
+      "evidence": "The impact map 'Ambiguities Identified' section lists 4 ambiguities: (1) No performance targets specified, (2) Relevance criteria undefined, (3) Filter specification missing, (4) Non-functional requirements are unmeasurable. Each ambiguity directly references vague phrases from the feature description such as 'search should be faster', 'results should be more relevant', and 'some kind of filtering capability'."
+    },
+    {
+      "text": "Plan acknowledges that 'Better UI' (non-MVP) cannot be planned without design mockups or frontend repository and excludes it from scope",
+      "passed": true,
+      "evidence": "The impact map contains an 'Excluded Requirements' section stating: 'Better UI (Non-MVP) -- Cannot be planned: no design mockups or Figma URL were provided, and no frontend repository is listed in the Repository Registry. This requirement requires Figma designs and a frontend repository to decompose into actionable tasks.' The summary-comment.md reiterates this exclusion."
+    },
+    {
+      "text": "Tasks still follow the task-description-template.md format despite ambiguous requirements",
+      "passed": true,
+      "evidence": "All three tasks follow the template structure: each has Repository, Target Branch, Description, Files to Modify, Implementation Notes, Reuse Candidates, Acceptance Criteria, Test Requirements, Verification Commands, and Dependencies sections. Optional sections (Files to Create, API Changes) are included only where applicable, consistent with the template rule 'Omit sections that don't apply'."
+    },
+    {
+      "text": "Tasks document assumptions where they fill in missing details, labeled as assumptions pending clarification",
+      "passed": true,
+      "evidence": "Task 1 states 'assumption A1 -- pending clarification from product owner' for the p95 < 500ms target. Task 2 states 'assumption A2 -- pending clarification from product owner' for ts_rank scoring and 'assumption A3 -- pending clarification' for search scope. Task 3 states 'assumption A4 -- pending clarification from product owner' for filter dimensions and 'assumption A5 -- pending clarification' for AND semantics. The impact map also documents all 6 assumptions (A1-A6) in a dedicated 'Assumptions (Pending Clarification)' section."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": true,
+      "evidence": "Task 1 line 1-2: '## Repository\\ntrustify-backend'. Task 2 line 1-2: '## Repository\\ntrustify-backend'. Task 3 line 1-2: '## Repository\\ntrustify-backend'. Each contains exactly one repository name."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "Task 1: Target Branch (line 4), Description (line 7), Acceptance Criteria (line 39), Test Requirements (line 46). Task 2: Target Branch (line 4), Description (line 7), Acceptance Criteria (line 43), Test Requirements (line 51). Task 3: Target Branch (line 4), Description (line 7), Acceptance Criteria (line 52), Test Requirements (line 60). All four required sections are present in every task."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the repo-backend.md mock repository structure manifest, not invented paths",
+      "passed": true,
+      "evidence": "All Files to Modify paths exist in repo-backend.md: modules/search/src/service/mod.rs (line 91), common/src/db/query.rs (line 27), modules/search/src/endpoints/mod.rs (line 93), modules/search/src/lib.rs (line 89). Files to Create are new files in existing directories following established patterns: migration/src/m0002_search_indexes/mod.rs follows migration/src/m0001_initial/mod.rs pattern, modules/search/src/model/mod.rs follows modules/fundamental/src/sbom/model/ pattern."
+    },
+    {
+      "text": "Implementation Notes in every task reference specific file paths and code patterns from the repository, not abstract or generic guidance",
+      "passed": true,
+      "evidence": "Task 1 references: modules/search/src/service/mod.rs, entity/src/sbom.rs, entity/src/advisory.rs, entity/src/package.rs, common/src/db/query.rs, migration/src/m0001_initial/mod.rs, migration/src/lib.rs, common/src/error.rs. Task 2 references: modules/fundamental/src/sbom/model/, modules/fundamental/src/advisory/model/, modules/search/src/lib.rs, common/src/model/paginated.rs, common/src/error.rs. Task 3 references: modules/fundamental/src/advisory/model/summary.rs::AdvisorySummary, common/src/db/query.rs, modules/fundamental/src/sbom/endpoints/list.rs, common/src/error.rs, server/src/main.rs. All paths correspond to entries in repo-backend.md."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section set to 'main'",
+      "passed": true,
+      "evidence": "Task 1 line 4: 'main'. Task 2 line 4: 'main'. Task 3 line 4: 'main'. All three tasks have Target Branch set to 'main'."
+    },
+    {
+      "text": "For each task created, a description digest is produced — evidenced by a separate digest file (e.g., task-N-digest.md), a digest entry in the impact map, or a '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' marker in any output file. The digest must contain a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string",
+      "passed": true,
+      "evidence": "Three separate digest files exist: task-1-digest.md contains 'sha256-md:aee24d73b6a249904008ae4b63b2a061864d2de48d5846dcf2f7a7a5069ea5ef' (64 hex chars), task-2-digest.md contains 'sha256-md:fcc65365b1db450a2882bd26fb30184e05b15c189186e187285d713f997dcc72' (64 hex chars), task-3-digest.md contains 'sha256-md:8826dd91d42ddecd3f68ddb29ec152157eb1f7b32a561b4e4bdf8f17715a2275' (64 hex chars). All use the '[sdlc-workflow] Description digest: sha256-md:<hash>' format with valid 64-character lowercase hex hashes."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All convention enrichments follow the prescribed format. Task 1: 'Applies: task modifies `modules/search/src/service/mod.rs` matching the convention's `.rs` file scope.' and 'Applies: task modifies `common/src/db/query.rs` matching the convention's query helper scope.' Task 2: 'Applies: task creates `modules/search/src/model/mod.rs` matching the convention's module directory scope.' and two more with same format. Task 3: four conventions, all with 'Applies: task modifies <file> matching the convention's <scope>.' format. No inapplicable conventions are listed with 'Not applicable' annotations anywhere in the output files."
+    },
+    {
+      "text": "When the Feature issue has a priority set (not 'Undefined'), the plan documents that the Feature's priority is inherited by created tasks — evidenced by priority field values in the impact map, task creation log, or task description files. When the Feature's priority is 'Undefined', the plan documents that priority inheritance is skipped (not propagated as null or 'Undefined')",
+      "passed": true,
+      "evidence": "Feature TC-9002 has priority 'Normal'. The impact map documents: 'priority: {\"name\": \"Normal\"}' in the additional_fields JSON and states 'Priority: Normal -- inherited from Feature TC-9002 (priority is set and is not \"Undefined\")'. The summary-comment.md confirms: 'Feature value: Normal, Decision: Propagated to all 3 created tasks, Rationale: Feature priority is set and is not \"Undefined\", so it is inherited per plan-feature Step 6a rules'."
+    },
+    {
+      "text": "When the Feature issue has a non-empty fixVersions array and the fixVersion scope config (from ### Jira Field Defaults in CLAUDE.md) is 'task' or 'both' (or absent, defaulting to 'both'), the plan documents that fixVersions are inherited by created tasks — evidenced by fixVersion values in the impact map, task creation log, or task description files. When fixVersion scope is 'feature' or the Feature has no fixVersions, the plan documents that fixVersion inheritance is skipped",
+      "passed": true,
+      "evidence": "Feature TC-9002 has fixVersions: ['RHTPA 1.6.0']. CLAUDE.md has no '### Jira Field Defaults' section, so scope defaults to 'both'. The impact map documents: 'fixVersions: [{\"name\": \"RHTPA 1.6.0\"}]' in additional_fields and states 'fixVersions: RHTPA 1.6.0 -- inherited from Feature TC-9002 (Feature has fixVersions set; fixVersion scope is not configured in Jira Field Defaults, defaulting to \"both\" which includes task-level propagation)'. The summary-comment.md confirms with matching detail."
+    },
+    {
+      "text": "A summary of inherited field propagation is produced — evidenced by a summary-comment.md file in the outputs directory, or a summary section in the impact map that includes the inherited priority and fixVersion values propagated to tasks, or states they were omitted and why",
+      "passed": true,
+      "evidence": "summary-comment.md exists in the outputs directory and contains an 'Inherited Field Propagation' section (lines 28-42) documenting: Priority (Normal, propagated to all 3 tasks), fixVersions (RHTPA 1.6.0, propagated to all 3 tasks), and Labels (ai-generated-jira, applied to all tasks). Each includes Feature value, Decision, and Rationale."
+    },
+    {
+      "text": "No documentation task is generated because the feature description does not contain a Documentation Considerations section",
+      "passed": true,
+      "evidence": "The feature description (feature-ambiguous.md) has no 'Documentation Considerations' section. The three generated tasks are: (1) Optimize search query performance, (2) Improve search result relevance ranking, (3) Add filtering capability -- none are documentation tasks. The summary-comment.md explicitly confirms: 'No documentation task was generated (the feature description has no \"Documentation Considerations\" section)'."
+    },
+    {
+      "text": "No testing tasks are generated because no testing readiness template is present in the eval fixture files",
+      "passed": true,
+      "evidence": "All three tasks are implementation tasks, not dedicated testing tasks. The summary-comment.md explicitly confirms: 'No testing tasks were generated (no testing readiness template was found at docs/testing-readiness.md in the target repository)'. No task title or description indicates a standalone testing task."
+    }
+  ],
+  "summary": {
+    "passed": 16,
+    "failed": 0,
+    "total": 16,
+    "pass_rate": 1.0
+  }
+}

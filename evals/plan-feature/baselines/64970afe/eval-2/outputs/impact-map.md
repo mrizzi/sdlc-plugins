@@ -1,0 +1,67 @@
+# Repository Impact Map -- TC-9002: Improve search experience
+
+## Ambiguities Identified
+
+The following ambiguities in the feature description require clarification from the product owner. Assumptions have been documented (see below and in individual task descriptions) to enable planning, but these are pending confirmation.
+
+1. **No performance targets specified**: "Search should be faster" and "Should be fast enough" provide no quantitative baseline or target. Current search latency is unknown, and no target SLA (e.g., p95 < 500ms) is defined. Without measurable targets, acceptance criteria for performance improvements cannot be objectively verified.
+
+2. **Relevance criteria undefined**: "Results should be more relevant" does not define what constitutes relevance. It is unclear whether relevance means text match quality, entity-type prioritization, recency weighting, or some other ranking signal. The search scope (which entity types -- SBOMs, advisories, packages -- should be included and how they should be weighted) is also unspecified.
+
+3. **Filter specification missing**: "Add filters -- Some kind of filtering capability" does not specify which filter dimensions users need. Possible dimensions include entity type, date range, severity, license type, and package name, but no requirements exist to guide which filters provide value to users.
+
+4. **Non-functional requirements are unmeasurable**: "Should be fast enough" lacks a quantitative threshold, and "Don't break existing functionality" does not define the scope of backward compatibility (API contract stability, search result ordering, response shape, or all of these).
+
+## Assumptions (Pending Clarification)
+
+The following assumptions have been made to enable task decomposition. These should be confirmed with the product owner before implementation begins.
+
+- **A1**: Target search latency is p95 < 500ms for queries returning up to 100 results (assumption -- pending clarification on performance targets)
+- **A2**: Relevance ranking uses PostgreSQL full-text search ranking (ts_rank) with higher weight for exact matches (assumption -- pending clarification on relevance criteria)
+- **A3**: Search covers all indexed entity types: SBOMs, advisories, and packages (assumption -- pending clarification on search scope)
+- **A4**: Filters include entity type, date range, and severity as the initial set of filter dimensions (assumption -- pending clarification on filter requirements)
+- **A5**: Filters use AND semantics when multiple filters are applied simultaneously (assumption -- pending clarification)
+- **A6**: Existing search API response shape (PaginatedResults) is preserved; new fields and parameters are additive only (assumption -- pending clarification on backward compatibility requirements)
+
+## Impact Map
+
+```
+trustify-backend:
+  changes:
+    - Add database indexes for full-text search columns and optimize SearchService query execution for improved performance
+    - Implement relevance-based result ranking in SearchService using PostgreSQL full-text search scoring
+    - Add filter query parameters to the search endpoint and implement filter logic in SearchService
+```
+
+## Excluded Requirements
+
+- **Better UI** (Non-MVP) -- Cannot be planned: no design mockups or Figma URL were provided, and no frontend repository is listed in the Repository Registry. This requirement requires Figma designs and a frontend repository to decompose into actionable tasks. It should be revisited when design assets and frontend scope are available.
+
+## Workflow Mode
+
+**Selected mode:** `direct-to-main`
+
+**Rationale:** No atomicity indicators were identified:
+- No coordinated schema migrations -- each task's database changes are independently deployable (indexes are additive and do not require other code changes to land simultaneously)
+- No breaking API changes -- filter parameters are additive optional query parameters; relevance ranking changes result ordering but not the response shape
+- No cross-cutting refactors -- each task modifies different aspects of the search module independently
+- No tightly coupled components -- all changes are backend-only and each task produces a functional improvement that does not require the others to be present
+
+## Task-to-Issue Field Mapping (additional_fields)
+
+The following `additional_fields` values would be set on each created Jira issue:
+
+```json
+{
+  "labels": ["ai-generated-jira"],
+  "priority": {"name": "Normal"},
+  "fixVersions": [{"name": "RHTPA 1.6.0"}]
+}
+```
+
+- **Priority**: `Normal` -- inherited from Feature TC-9002 (priority is set and is not "Undefined")
+- **fixVersions**: `RHTPA 1.6.0` -- inherited from Feature TC-9002 (Feature has fixVersions set; `fixVersion scope` is not configured in Jira Field Defaults, defaulting to "both" which includes task-level propagation)
+- **Labels**: `ai-generated-jira` -- applied to all AI-generated issues per skill rules
+
+---
+This comment was AI-generated by [sdlc-workflow/plan-feature](https://github.com/RHEcosystemAppEng/sdlc-plugins) v0.13.0.

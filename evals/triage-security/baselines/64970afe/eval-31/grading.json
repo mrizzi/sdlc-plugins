@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 2.1.1 detects that the Ecosystem Mappings columns do not match the template — the actual columns (Ecosystem, Repo, Lock File Path, Command, Branch) differ from the expected columns (Ecosystem, Repository, Lock File, Check Command, Upstream Branch)",
+      "passed": true,
+      "evidence": "The output file matrix-validation.md contains an 'Ecosystem Mappings Column Validation' section with 'Status: WARNING — column mismatch detected'. It shows Expected columns as 'Ecosystem | Repository | Lock File | Check Command | Upstream Branch' and Actual columns as 'Ecosystem | Repo | Lock File Path | Command | Branch', with a per-position diff table marking positions 2-5 as NO match. This exactly matches the assertion's expected vs actual columns."
+    },
+    {
+      "text": "Step 2.1.1 emits a warning showing a diff of expected vs actual column names",
+      "passed": true,
+      "evidence": "The output contains a WARNING block: 'WARNING: Matrix file security-matrix-wrong-columns-mock.md has unexpected Ecosystem Mappings columns. Expected: Ecosystem | Repository | Lock File | Check Command | Upstream Branch. Actual: Ecosystem | Repo | Lock File Path | Command | Branch'. Additionally, a positional diff table is provided showing each column position, the expected name, the actual name, and whether they match (YES/NO)."
+    },
+    {
+      "text": "The column mismatch is NOT auto-repaired — it requires user decision",
+      "passed": true,
+      "evidence": "The Summary section explicitly states 'Matrix validation found issues that cannot be auto-repaired.' and presents a choice prompt 'Choose (1/2):' requiring user input. There is no indication that any automatic correction was applied to the column names."
+    },
+    {
+      "text": "Step 2.1.1 presents the user with options: continue with partial data or abort triage",
+      "passed": true,
+      "evidence": "The output ends with two numbered options: '1. Continue with partial data (skip streams with critical warnings)' and '2. Abort triage to fix the matrix files first', followed by 'Choose (1/2):'. This matches the assertion's requirement for presenting continue-with-partial-data and abort-triage options."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

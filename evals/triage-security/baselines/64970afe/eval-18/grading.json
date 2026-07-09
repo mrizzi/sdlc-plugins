@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 8 detects existing remediation tasks TC-8100 and TC-8101 via the Depend links on the issue and skips remediation task creation — does NOT create duplicate tasks (idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md documents existing Depend links to TC-8100 ('Backport quinn-proto fix to >= 0.11.14 on release/0.4.z [rhtpa-2.2]', In Progress) and TC-8101 ('Propagate quinn-proto bump to rhtpa-server release branch [rhtpa-2.2]', Open). idempotency-check.md Section 3 explicitly states: 'Skip remediation task creation. Creating duplicate tasks would produce redundant work items. Step 4.4 (Preemptive Task Reconciliation) would also detect these as existing remediation, preventing duplicate creation.' triage-outcome.md Step 8 row confirms: 'tasks TC-8100 and TC-8101 already exist and linked; skip creation' with Mutation? = No."
+    },
+    {
+      "text": "The ai-cve-triaged label is already present on the issue — the triage does NOT attempt to add it again (label idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md lists 'ai-cve-triaged' in the Labels field. idempotency-check.md Section 1 states: 'Skip label addition. The label is already present; adding it again would be a no-op in Jira but the skill avoids the unnecessary API call.' triage-outcome.md confirms: 'The ai-cve-triaged label on TC-8001 is the definitive marker that triage has already completed... On re-run, the skill detects this label and recognizes the issue as already triaged.' The step-by-step table shows 'Label ai-cve-triaged -- already present; skip' with Mutation? = No."
+    },
+    {
+      "text": "The issue is already In Progress — the triage does NOT attempt to transition the status again or warns that the issue is already in a post-triage state (status idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md records Status = 'In Progress'. idempotency-check.md Section 2 states: 'The status-aware handling in the Inputs section detects that the issue is already in \"In Progress\" status. Per the skill documentation: \"In Progress / Code Review / QA -- warn the user: This issue is already in <status>. It may be actively worked on.\"' Action: 'Skip transition. The issue is already past the \"Assigned\" state, so Step 0.7 s transition to Assigned is not needed.' triage-outcome.md confirms the warning is produced and Step 0.7 row shows Mutation? = No."
+    },
+    {
+      "text": "The existing description digest comment is detected — no duplicate digest comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md documents 'Description digest comment: sha256-md:a1b2c3d4e5f6... (posted 2026-07-01T10:00:00Z)'. idempotency-check.md Section 4 explicitly detects this comment and states: 'Skip digest comment posting. A digest comment already exists. If the description has not changed (hash matches), the prior extraction remains valid. Posting a second digest comment would create noise in the comment history.' triage-outcome.md step table confirms 'Description digest comment -- already present; skip' with Mutation? = No."
+    },
+    {
+      "text": "The existing post-triage summary comment is detected — no duplicate summary comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md documents 'Post-triage summary comment documenting version impact, Affects Versions correction, remediation tasks TC-8100 and TC-8101, and transition to In Progress (posted 2026-07-01T10:01:00Z)'. idempotency-check.md Section 5 explicitly detects this comment and states: 'Skip summary comment posting. A complete summary already exists. Posting a second summary would duplicate information and create confusion about which summary is authoritative.' triage-outcome.md step table confirms 'Summary comment -- already present; skip' with Mutation? = No."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
