@@ -46,6 +46,81 @@ If the user confirms, write the file to the local path using the Write tool.
 If the Version Streams table in Security Configuration is empty or incomplete, ask
 the user which streams to configure before proceeding.
 
+### 2.1.1 — Validate matrix format
+
+After loading each stream's matrix file (from local path or Konflux fallback),
+validate its structure against the canonical template at
+`docs/templates/security-matrix.template.md` before proceeding to aggregation.
+
+**Load the template**: read the template file and extract:
+- **Required section headings**: all `##` and `###` level headings in the
+  template (i.e., `## Supportability Matrix`, `## Ecosystem Mappings`,
+  `### Source Pinning Method`, `## Forward Pointer`)
+- **Ecosystem Mappings columns**: the column names from the template's
+  Ecosystem Mappings table header row
+
+**For each loaded matrix file, check:**
+
+1. **Required sections present**: verify that every section heading extracted
+   from the template exists in the matrix file. Compare heading text after
+   stripping leading/trailing whitespace. The `## Version Stream` heading is
+   informational and not enforced — only the four headings above are required.
+
+2. **Table column structure (Ecosystem Mappings)**: verify that the Ecosystem
+   Mappings table has the exact column names defined in the template, in the
+   same order. The Supportability Matrix columns are product-specific and vary
+   across deployments — validate only that the table is parsable, not that its
+   column names match the template.
+
+3. **Table parsability**: verify that both the Supportability Matrix and
+   Ecosystem Mappings tables have valid Markdown table syntax: a header row,
+   a separator row (containing `---`), and at least one data row.
+
+**Auto-repair** (safe fixes applied in place):
+
+- **Missing `## Forward Pointer` section**: append the section to the end of
+  the matrix file with content `None`. Log: "Auto-repaired: appended missing
+  Forward Pointer section to `<path>`."
+- **Extra whitespace in column headers**: normalize by trimming leading and
+  trailing whitespace from each column name in table header rows. Log:
+  "Auto-repaired: normalized whitespace in column headers in `<path>`."
+
+**Warnings** (cannot auto-fix — require user decision):
+
+- **Missing `## Supportability Matrix` or `## Ecosystem Mappings`**: these
+  are critical sections without which version lookups cannot proceed. Warn
+  and halt processing for that stream:
+  > "⚠️ Matrix file `<path>` is missing required section `<section>`.
+  > This stream cannot be processed."
+
+- **Wrong column count or names in Ecosystem Mappings**: warn with a diff
+  showing expected vs actual columns:
+  > "⚠️ Matrix file `<path>` has unexpected Ecosystem Mappings columns.
+  > Expected: `Ecosystem | Repository | Lock File | Check Command | Upstream Branch`
+  > Actual: `<actual-columns>`"
+
+- **Unparsable table**: a table section exists but lacks a valid header row
+  or separator row:
+  > "⚠️ Matrix file `<path>`: table in section `<section>` is malformed
+  > (missing header or separator row). This stream cannot be processed."
+
+**Present validation results** to the user before proceeding:
+
+- **Pass** (no issues found): proceed silently — no user interruption.
+- **Repaired** (only auto-fixable issues): report all auto-repairs performed
+  and proceed without prompting.
+- **Warnings** (non-repairable issues): present all warnings and ask the user:
+  > "Matrix validation found issues that cannot be auto-repaired.
+  >
+  > 1. Continue with partial data (skip streams with critical warnings)
+  > 2. Abort triage to fix the matrix files first
+  >
+  > Choose (1/2):"
+
+  If the user chooses to abort, stop the triage. If the user chooses to
+  continue, exclude streams with critical warnings from the aggregation
+  below and proceed with the remaining valid streams.
+
 Aggregate all versions from all streams into a single working matrix.
 
 ### On-demand matrix population

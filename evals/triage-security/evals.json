@@ -5,7 +5,11 @@
       "id": 1,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md beginning with the Step 0.7 early assignment actions (assigning the CVE issue to the current user and transitioning to Assigned status) followed by the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2, write outputs/affects-versions.md with the Affects Versions correction from Step 3, and write outputs/remediation.md with the remediation task descriptions you would create in Step 8.",
       "expected_output": "A structured triage analysis demonstrating: Step 0.7 early assignment (assigning the CVE issue and transitioning to Assigned status before data extraction), correct CVE data extraction (CVE-2026-31812, quinn-proto, affected range < 0.11.14), version impact table built from security-matrix.md pinned commits showing which versions ship the vulnerable dependency, Affects Versions correction from PSIRT-assigned values to lock-file-verified values, and remediation task descriptions following task-description-template.md format.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Data extraction correctly identifies CVE-2026-31812, library quinn-proto, affected range < 0.11.14, and fixed version 0.11.14 from the Vulnerability issue (Step 1)",
         "Data extraction identifies the ecosystem as Cargo based on the library name and component context (Step 1 Ecosystem detection)",
@@ -24,7 +28,11 @@
       "id": 2,
       "prompt": "Triage Vulnerability issue TC-8002. The issue details are in vuln-issue-already-fixed.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/version-impact.md with the version impact table, and write outputs/triage-outcome.md explaining the triage decision and proposed Jira actions.",
       "expected_output": "A triage analysis where the version impact table shows all supported versions ship a patched dependency version (outside the affected range). The triage outcome should recommend closing the issue as Not a Bug with appropriate justification, since no supported versions are affected.",
-      "files": ["files/vuln-issue-already-fixed.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-already-fixed.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
         "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 8 Case C)",
@@ -37,7 +45,11 @@
       "id": 3,
       "prompt": "Triage Vulnerability issue TC-8003. The issue details are in vuln-issue-duplicate.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. Assume a JQL search for sibling issues with the same CVE label returns one result: TC-7999 with status 'In Progress', same stream suffix [rhtpa-2.2], and Affects Versions [RHTPA 2.2.0, RHTPA 2.2.1]. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/duplicate-check.md with the duplicate analysis from Step 4, and write outputs/triage-outcome.md explaining the triage decision.",
       "expected_output": "A triage analysis where the duplicate check in Step 4 detects sibling issue TC-7999 with the same CVE and same stream scope. The triage outcome should recommend closing TC-8003 as Duplicate of TC-7999, since both track the same CVE for the same stream.",
-      "files": ["files/vuln-issue-duplicate.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-duplicate.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Duplicate check searches for sibling issues using JQL with the CVE label and excludes the current issue key (Step 4)",
         "Duplicate check correctly classifies TC-7999 as a same-stream sibling (both have stream suffix [rhtpa-2.2]) and identifies it as a duplicate (Step 4.1)",
@@ -50,7 +62,11 @@
       "id": 4,
       "prompt": "Triage Vulnerability issue TC-8004. The issue details are in vuln-issue-split.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has no stream suffix (unscoped) and affects versions across both 2.1.x and 2.2.x streams differently — 2.1.x versions ship the vulnerable dependency while 2.2.x versions ship a patched version. Assume no sibling issues exist (JQL returns empty). Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/version-impact.md with the version impact table showing mixed impact across streams, write outputs/affects-versions.md with the Affects Versions correction scoped to affected versions only, and write outputs/remediation.md with the remediation tasks for the affected stream(s) only.",
       "expected_output": "A triage analysis for an unscoped issue where the version impact table reveals mixed results: 2.1.x versions are affected while 2.2.x versions ship the fix. The Affects Versions should be corrected to include only the actually affected versions. Remediation tasks should be created only for the affected stream (2.1.x), not for 2.2.x which already ships the fix.",
-      "files": ["files/vuln-issue-split.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-split.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Version impact table shows mixed results: 2.1.x versions marked YES (affected) and 2.2.x versions marked NO (not affected) based on lock file evidence",
         "Affects Versions correction includes only the actually affected versions (2.1.x versions), not the unaffected 2.2.x versions (Step 3.2)",
@@ -63,7 +79,11 @@
       "id": 5,
       "prompt": "Triage Vulnerability issue TC-8005. The issue details are in vuln-issue-rpm.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] so triage is scoped to the 2.2.x stream. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2 using rpms.lock.yaml data, write outputs/affects-versions.md with the Affects Versions correction from Step 3, and write outputs/remediation.md with the remediation task description you would create in Step 8. The dependency chain section in version-impact.md should address Step 2.3.5 SBOM verification — noting whether cosign is available for SBOM comparison or that verification was skipped.",
       "expected_output": "A triage analysis for an RPM system package (openssl-libs) scoped to the 2.2.x stream. The ecosystem is detected as RPM (not Cargo). The version impact table uses rpms.lock.yaml data showing mixed impact: 2.2.0 through 2.2.2 ship the vulnerable openssl-libs version while 2.2.3 and 2.2.4 ship the patched version. Remediation creates a single task (not two-task upstream+downstream) because RPM is a system package ecosystem. The dependency chain classifies openssl-libs as an explicit install (present in rpms.lock.yaml).",
-      "files": ["files/vuln-issue-rpm.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-rpm.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Data extraction identifies the ecosystem as RPM based on the library name (openssl-libs) and component context, not Cargo (Step 1 Ecosystem detection — read ecosystems from Ecosystem Mappings config)",
         "Version impact table includes ALL versions from the 2.2.x stream supportability matrix (2.2.0 through 2.2.4) and uses rpms.lock.yaml data for version extraction (Step 2.3)",
@@ -77,7 +97,10 @@
       "id": 6,
       "prompt": "You are invoked without an issue key — run discovery mode. The project CLAUDE.md is in claude-md-security-config.md and the JQL search results are in discovery-mode-results.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your analysis to the workspace outputs/ directory: write outputs/discovery-listing.md with the formatted issue list grouped by query and status — include the actual JQL queries you constructed from the Security Configuration so the queries are visible in the output, and write outputs/status-handling.md with the status-aware handling decisions for each listed issue.",
       "expected_output": "A discovery mode analysis that constructs three JQL queries using the project key (TC) and vulnerability issue type ID (10024) from the project configuration, presents results in three clearly separated lists (Untriaged, Triaged but still New, and Ready for QA), and applies status-aware handling: New issues are presented for full triage, In Progress issues trigger a warning about active work. The Ready for QA section filters by linked remediation task completion status.",
-      "files": ["files/claude-md-security-config.md", "files/discovery-mode-results.md"],
+      "files": [
+        "files/claude-md-security-config.md",
+        "files/discovery-mode-results.md"
+      ],
       "assertions": [
         "JQL queries use the project key (TC) and vulnerability issue type ID (10024) from the Security Configuration in claude-md-security-config.md — not hardcoded values (§1.49)",
         "Three separate queries are constructed: one for untriaged issues (labels NOT IN ai-cve-triaged), one for triaged-but-new issues (labels IN ai-cve-triaged AND status = New), and one for Ready for QA candidates (labels IN ai-cve-triaged AND status NOT IN Closed, Verified, ON_QA) (§1.48)",
@@ -91,7 +114,11 @@
       "id": 7,
       "prompt": "Triage Vulnerability issue TC-8006. The issue details are in vuln-issue-sibling-prelinked.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.1] and a pre-existing 'Related' link to sibling TC-8001 (stream [rhtpa-2.2]). Assume a JQL search for sibling issues with the same CVE label returns one result: TC-8001 with status 'In Progress', stream suffix [rhtpa-2.2], and Affects Versions [RHTPA 2.2.0, RHTPA 2.2.1]. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/sibling-check.md with the Step 4 sibling and link analysis, and write outputs/triage-outcome.md explaining how Step 4.2 handled the pre-existing link.",
       "expected_output": "A triage analysis where Step 4 detects sibling TC-8001 as a different-stream companion (not a duplicate). Step 4.2 checks the issue's existing issuelinks, finds a pre-existing 'Related' link to TC-8001, and skips link creation instead of creating a duplicate. The output explicitly states that the link was skipped because it already exists.",
-      "files": ["files/vuln-issue-sibling-prelinked.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-sibling-prelinked.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Sibling check correctly classifies TC-8001 as a different-stream companion (stream [rhtpa-2.2] vs current issue's [rhtpa-2.1]), not a same-stream duplicate (Step 4)",
         "Step 4.2 checks the current issue's existing issuelinks before attempting to create a 'Related' link to TC-8001 (§1.58)",
@@ -104,7 +131,11 @@
       "id": 8,
       "prompt": "Triage Vulnerability issue TC-8010. The issue details are in vuln-issue-overlap-covered.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] and customfield_10632 (Upstream Affected Component) set to 'axios'. A JQL search for related CVE Jiras with cf[10632] ~ 'axios' returns TC-8008 (CVE-2026-42035), which has a linked remediation task TC-8009 that bumps axios to 1.9.0. The current CVE's fix threshold is 1.8.2. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/overlap-check.md with the Step 4.3 cross-CVE overlap analysis, and write outputs/triage-outcome.md explaining the triage decision.",
       "expected_output": "A triage analysis where Step 4.3 detects that the related CVE TC-8008 has a remediation task TC-8009 that bumps axios to 1.9.0, which exceeds the current CVE's fix threshold of 1.8.2. The triage outcome recommends closing the issue because the existing remediation already covers this CVE.",
-      "files": ["files/vuln-issue-overlap-covered.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-overlap-covered.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 4.3 extracts the Upstream Affected Component (axios) from customfield_10632 and uses it to search for related CVE Jiras (§1.59)",
         "Step 4.3 filters search results by matching PS Component (customfield_10669 = pscomponent:org/rhtpa-ui) and Stream (customfield_10832 = rhtpa-2.2)",
@@ -120,7 +151,11 @@
       "id": 9,
       "prompt": "Triage Vulnerability issue TC-8011. The issue details are in vuln-issue-overlap-not-covered.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] and customfield_10632 (Upstream Affected Component) set to 'webpack'. A JQL search for related CVE Jiras with cf[10632] ~ 'webpack' returns TC-8012 (CVE-2026-43210), which has a linked remediation task TC-8013 that bumps webpack to 5.96.1. The current CVE's fix threshold is 5.98.0. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/overlap-check.md with the Step 4.3 cross-CVE overlap analysis, and write outputs/triage-outcome.md explaining the triage decision.",
       "expected_output": "A triage analysis where Step 4.3 detects related CVE TC-8012 with remediation task TC-8013 that bumps webpack to 5.96.1, but this does NOT meet the current CVE's fix threshold of 5.98.0. The overlap table shows the related CVE and its remediation, but the triage proceeds with new remediation task creation because the existing fix is insufficient.",
-      "files": ["files/vuln-issue-overlap-not-covered.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-overlap-not-covered.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 4.3 extracts the Upstream Affected Component (webpack) from customfield_10632 and uses it to search for related CVE Jiras (§1.59)",
         "Step 4.3 filters search results by matching PS Component (customfield_10669 = pscomponent:org/rhtpa-ui) and Stream (customfield_10832 = rhtpa-2.2)",
@@ -133,7 +168,11 @@
       "id": 10,
       "prompt": "Triage Vulnerability issue TC-8020. The issue details are in vuln-issue-cross-stream-preemptive.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] and the cross-stream version impact analysis shows stream rhtpa-2.1 is also affected (tokio 1.40.0, threshold 1.42.0). A JQL search for sibling CVE Jiras with label CVE-2026-55123 returns no results for stream rhtpa-2.1 — no CVE Jira exists for that stream. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/version-impact.md with the version impact table showing cross-stream impact, write outputs/remediation.md with the remediation tasks for the current stream (Case A) and the preemptive tasks for the other stream (Case B), and write outputs/cross-stream.md with the cross-stream impact comment and preemptive task details.",
       "expected_output": "A triage analysis where Step 8 Case A creates standard remediation tasks for the current stream (rhtpa-2.2), and Step 8 Case B creates proactive preemptive remediation tasks for stream rhtpa-2.1 (which has no CVE Jira). The preemptive tasks include the security-preemptive label and use a 'Related' link to the originating CVE Jira TC-8020.",
-      "files": ["files/vuln-issue-cross-stream-preemptive.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-cross-stream-preemptive.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 8 Case A creates standard remediation tasks for the current stream (rhtpa-2.2) with standard labels ['ai-generated-jira', 'Security', 'CVE-2026-55123'] and 'Depend' link to TC-8020",
         "Step 8 Case B detects that stream rhtpa-2.1 is also affected but has no CVE Jira — creates proactive preemptive remediation tasks (§1.60)",
@@ -146,7 +185,11 @@
       "id": 11,
       "prompt": "Triage Vulnerability issue TC-8021. The issue details are in vuln-issue-preemptive-reconciliation.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.1]. A JQL search for tasks with labels 'security-preemptive' and 'CVE-2026-55123' returns TC-8022 (a preemptive remediation task for rhtpa-2.1 created from prior triage of TC-8020). Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/reconciliation.md with the Step 4.4 preemptive task reconciliation analysis, and write outputs/triage-outcome.md explaining how the existing preemptive task was reconciled.",
       "expected_output": "A triage analysis where Step 4.4 detects existing preemptive task TC-8022 for CVE-2026-55123 in stream rhtpa-2.1. The reconciliation links the new CVE Jira TC-8021 to TC-8022 with 'Depend', removes the 'security-preemptive' label from TC-8022, and skips new remediation task creation in Step 8.",
-      "files": ["files/vuln-issue-preemptive-reconciliation.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-preemptive-reconciliation.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 4.4 searches for preemptive tasks using JQL with labels 'security-preemptive' and 'CVE-2026-55123' (§1.60)",
         "Step 4.4 filters results to match the current stream (rhtpa-2.1) by checking the task summary for the stream name",
@@ -159,7 +202,11 @@
       "id": 12,
       "prompt": "Triage Vulnerability issue TC-8030. The issue details are in vuln-issue-enrichment.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2]. The Jira description says affected versions are 'versions prior to the fix' with no precise threshold. The mock MITRE CVE API response (included in the fixture) shows lessThan 0.4.8 and the mock OSV.dev response shows fixed at 0.4.8. Do NOT actually call Jira MCP, git show, WebFetch, or any external tools. Instead, use the mock API responses embedded in the fixture file and write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data from Step 1, write outputs/enrichment.md with the Step 1.5 external CVE data enrichment analysis including the cross-validation table, write outputs/version-impact.md with the version impact table from Step 2 using the enriched fix threshold, and write outputs/remediation.md with the remediation task descriptions.",
       "expected_output": "A triage analysis where Step 1 extracts imprecise version data from the Jira description ('versions prior to the fix'), Step 1.5 queries MITRE CVE API and OSV.dev to obtain precise fix threshold (0.4.8), the cross-validation table shows agreement between the two external sources, and Step 2.3 uses the enriched threshold (0.4.8) for version impact comparisons.",
-      "files": ["files/vuln-issue-enrichment.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-enrichment.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 1 extracts imprecise affected range from the Jira description — the description lacks a specific version threshold (Step 1 Data Extraction)",
         "Step 1.5 queries MITRE CVE API and extracts lessThan 0.4.8 as the fix threshold from the affected[].versions[] field (§1.62)",
@@ -172,7 +219,11 @@
       "id": 13,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2, and write outputs/remediation.md with the remediation task descriptions AND the description digest comment steps you would perform after creating each task.",
       "expected_output": "A triage analysis whose remediation output describes the full description digest protocol for each created task. The output includes the digest steps for both the upstream backport task and the downstream propagation subtask: re-fetching the description after create_issue, computing a SHA-256 digest using scripts/sha256-digest.py, and posting a digest comment with the marker '[sdlc-workflow] Description digest:' before creating issue links or other comments. Since the eval prohibits actual Jira calls, the output describes these steps as planned procedures — the grader should verify the protocol is correctly described, not that API calls were executed.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "The remediation output describes the digest protocol for the upstream backport task: re-fetching the task description from Jira after create_issue and computing a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
         "The remediation output describes the digest protocol for the downstream propagation subtask: re-fetching the task description from Jira after create_issue and computing a SHA-256 digest using scripts/sha256-digest.py (§1.66)",
@@ -185,7 +236,11 @@
       "id": 14,
       "prompt": "Triage Vulnerability issue TC-8005. The issue details are in vuln-issue-rpm.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] so triage is scoped to the 2.2.x stream. Assume cosign IS available (which cosign returns /usr/bin/cosign). Use the following mock SBOM comparison results for the affected versions: for versions 2.2.0 through 2.2.2, openssl-libs appears in BOTH the final image SBOM and the base image SBOM (confirming base image origin); the rpms.lock.yaml for these versions also lists openssl-libs (explicit install). This means the SBOM classification DISAGREES with the rpms.lock.yaml classification for these versions. Do NOT actually call Jira MCP, git show, cosign, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, and write outputs/version-impact.md with the version impact table from Step 2, including the SBOM verification results from Step 2.3.5 inline in the dependency chain output (showing both rpms.lock.yaml and SBOM signals side by side — do not create a separate file for SBOM results).",
       "expected_output": "A triage analysis for an RPM system package (openssl-libs) where cosign SBOM verification is available. The dependency chain output presents both rpms.lock.yaml classification (explicit install) and SBOM comparison result (base image) side by side. Because the two signals disagree, the discrepancy is flagged to the engineer for manual investigation.",
-      "files": ["files/vuln-issue-rpm.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-rpm.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Dependency chain output includes both the rpms.lock.yaml classification AND the SBOM verification result for the affected versions (Step 2.3.5 Optional SBOM verification)",
         "SBOM verification uses cosign download sbom to compare the final container image SBOM against the base image SBOM (Step 2.3.5 sub-steps 2 and 4)",
@@ -198,7 +253,11 @@
       "id": 15,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config-prodsec.md. Note that the CLAUDE.md includes ProdSec contact configuration (ProdSec contact email: prodsec-team@example.com, ProdSec Jira account ID: 557058:prodsec-mock-account-id). The Vulnerability issue was reported by user 'psirt-analyst' with Jira account ID '557058:psirt-analyst-mock-id'. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2, write outputs/affects-versions.md with the Affects Versions correction comment from Step 3 including any @mentions, and write outputs/remediation.md with the post-triage summary comment from Step 8 including the reporter @mention.",
       "expected_output": "A triage analysis demonstrating both @mention behaviors: (1) the post-triage summary comment in Step 8 includes an @mention of the vulnerability reporter (psirt-analyst, account ID 557058:psirt-analyst-mock-id) using an ADF mention node, and (2) the Affects Versions correction comment in Step 3 includes an @mention of the configured ProdSec contact (account ID 557058:prodsec-mock-account-id) using an ADF mention node.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config-prodsec.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config-prodsec.md"
+      ],
       "assertions": [
         "The post-triage summary comment (Step 8) includes an @mention of the vulnerability issue's reporter using an ADF mention node with account ID '557058:psirt-analyst-mock-id' (§1.67)",
         "The reporter @mention in Step 8 is present by default without any ProdSec configuration — it uses the reporter field from the Jira issue (§1.67)",
@@ -211,7 +270,10 @@
       "id": 16,
       "prompt": "You are invoked without an issue key — run discovery mode. The project CLAUDE.md is in claude-md-security-config.md and the JQL search results are in discovery-mode-results.md. The results include Query 3 (Ready for QA candidates) with three issues: TC-9020 has all linked remediation Tasks completed (TC-9021 Done, TC-9022 Closed), TC-9023 has one open Task (TC-9025 In Progress), and TC-9026 has no Depend links. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your analysis to the workspace outputs/ directory: write outputs/discovery-listing.md with the formatted issue list including the Ready for QA section, and write outputs/ready-for-qa.md with the detailed Ready for QA filtering analysis showing which issues qualified and why.",
       "expected_output": "A discovery mode analysis that constructs the third JQL query for Ready for QA candidates, filters results by checking linked remediation Task completion status, and presents only TC-9020 in the Ready for QA table with a suggestion to transition to ON_QA. TC-9023 and TC-9026 are excluded with documented reasons.",
-      "files": ["files/claude-md-security-config.md", "files/discovery-mode-results.md"],
+      "files": [
+        "files/claude-md-security-config.md",
+        "files/discovery-mode-results.md"
+      ],
       "assertions": [
         "The third JQL query uses labels IN (ai-cve-triaged) AND status NOT IN (Closed, Verified, ON_QA) to find triaged CVEs still in a pre-QA state",
         "For each query 3 result, the skill checks issuelinks for linked Tasks with link type Depend and fetches each linked Task's status",
@@ -226,7 +288,11 @@
       "id": 17,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config-embargo.md. Note that the CLAUDE.md includes an Embargo policy URL (https://example.com/security/embargo-policy). The CVE (CVE-2026-31812) has CVSS 7.5 (High severity). Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/embargo-check.md with the Step 1.7 embargo check analysis showing the severity evaluation and the warning gate presented to the engineer, write outputs/version-impact.md with the version impact table from Step 2, and write outputs/remediation.md with the remediation task descriptions.",
       "expected_output": "A triage analysis demonstrating the embargo warning gate behavior: Step 0 extracts the Embargo policy URL from the Security Configuration, Step 1.7 evaluates the CVE severity (CVSS 7.5, High — meets the Critical/Important threshold), presents the embargo warning gate with the configured URL, and proceeds only after the engineer confirms. The rest of the triage follows the standard flow.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config-embargo.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config-embargo.md"
+      ],
       "assertions": [
         "Step 0 extracts the Embargo policy URL from the Security Configuration as an optional field without raising an error (§1.71 — backward compatible extraction)",
         "Step 1.7 evaluates the CVE severity — CVSS 7.5 (High) meets the Critical/Important threshold (CVSS >= 7.0) and triggers the embargo warning gate (§1.70)",
@@ -239,7 +305,11 @@
       "id": 18,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard-already-triaged.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has ALREADY been triaged in a prior run: it has the ai-cve-triaged label, Status is In Progress, two remediation tasks (TC-8100, TC-8101) are linked via Depend, a description digest comment exists, and a post-triage summary comment exists. This is a RE-RUN of triage on the same issue. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/idempotency-check.md with the analysis of all pre-existing triage artifacts detected and skipped, and write outputs/triage-outcome.md explaining why the second run produces no new mutations.",
       "expected_output": "A triage analysis where the second run detects all pre-existing triage artifacts — ai-cve-triaged label, In Progress status, existing Depend links to remediation tasks TC-8100 and TC-8101, existing description digest comment, and existing post-triage summary comment — and skips all mutations. No new remediation tasks are created, no labels are added, no status transition occurs, no duplicate comments are posted, and no duplicate links are created. The output documents each idempotent skip with an explanation.",
-      "files": ["files/vuln-issue-standard-already-triaged.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard-already-triaged.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 8 detects existing remediation tasks TC-8100 and TC-8101 via the Depend links on the issue and skips remediation task creation — does NOT create duplicate tasks (idempotency)",
         "The ai-cve-triaged label is already present on the issue — the triage does NOT attempt to add it again (label idempotency)",
@@ -252,7 +322,11 @@
       "id": 19,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-stale-mock.md (which has a Last-Updated timestamp of 2026-05-01T10:00:00Z — more than 14 days old), and the project CLAUDE.md is in claude-md-security-config.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/staleness-check.md with the Step 0.3 staleness detection output including the warning message and user options.",
       "expected_output": "A staleness check that detects the security-matrix.md timestamp (2026-05-01T10:00:00Z) is older than the 14-day default threshold and presents a warning with three options: refresh now, proceed anyway, or stop.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-stale-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-stale-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment and parses the ISO 8601 value",
         "Step 0.3 detects that the matrix is older than the 14-day default threshold and displays a staleness warning",
@@ -265,7 +339,11 @@
       "id": 20,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md (which has a recent Last-Updated timestamp within the 14-day threshold), and the project CLAUDE.md is in claude-md-security-config.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/staleness-check.md documenting the Step 0.3 result, and write outputs/data-extraction.md with the parsed CVE data table from Step 1.",
       "expected_output": "Step 0.3 reads the Last-Updated timestamp, finds it within the 14-day threshold, and proceeds silently to the next step without any warning or user prompt.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment",
         "Step 0.3 determines the matrix is within the 14-day threshold and proceeds without displaying a staleness warning",
@@ -277,7 +355,11 @@
       "id": 21,
       "prompt": "Triage Vulnerability issue TC-8020. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has customfield_10632 (Upstream Affected Component) set to 'quinn-proto'. Assume that the Upstream Affected Component custom field is configured in Security Configuration. When you reach Step 7 (Concurrent Triage Detection), assume a JQL search for in-progress triages with cf[10632] ~ 'quinn-proto' AND status IN ('In Progress', 'Code Review') AND key != TC-8020 returns one result: TC-8019 with status 'In Progress', assigned to 'engineer-b@example.com'. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/concurrent-triage.md with the Step 7 concurrent triage detection analysis, and write outputs/triage-outcome.md explaining the triage decision.",
       "expected_output": "A triage analysis where Step 7 detects that TC-8019 is concurrently triaging the same upstream component (quinn-proto). The output warns the user about the concurrent triage and presents three options: wait, skip, or proceed with overlap label.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 7 detects concurrent triage TC-8019 on the same upstream component (quinn-proto) with status In Progress",
         "The concurrent triage warning includes the conflicting CVE issue key (TC-8019) and its assignee",
@@ -289,7 +371,11 @@
       "id": 22,
       "prompt": "Triage Vulnerability issue TC-8021. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has customfield_10632 (Upstream Affected Component) set to 'quinn-proto'. Assume that the Upstream Affected Component custom field is configured in Security Configuration. When you reach Step 7 (Concurrent Triage Detection), assume a JQL search for in-progress triages with cf[10632] ~ 'quinn-proto' AND status IN ('In Progress', 'Code Review') AND key != TC-8021 returns zero results. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data, write outputs/concurrent-triage.md with the Step 7 analysis, and write outputs/triage-outcome.md explaining the triage decision.",
       "expected_output": "A triage analysis where Step 7 finds no concurrent triages on the same upstream component and proceeds silently to Case A/B/C branching without warning the user.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 7 executes the concurrent triage check for upstream component quinn-proto",
         "No concurrent triages are detected — the JQL search returns zero results",
@@ -301,7 +387,11 @@
       "id": 23,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config-deploy-ctx.md. Note that the CLAUDE.md Source Repositories table includes a Deployment Context column with the value 'customer-shipped' for rhtpa-backend. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1 including the deployment context lookup result, and write outputs/remediation.md with the remediation task descriptions including the coordination guidance section.",
       "expected_output": "A triage analysis where Step 0 extracts the Deployment Context column from the Source Repositories table, Step 1 looks up the deployment context for the affected repository (rhtpa-backend → customer-shipped), and Step 8 remediation task descriptions include a Coordination Guidance subsection with customer-shipped guidance text.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config-deploy-ctx.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config-deploy-ctx.md"
+      ],
       "assertions": [
         "Step 0 extracts the Deployment Context column from the Source Repositories table and parses rhtpa-backend as customer-shipped (§1.77)",
         "Step 1 looks up the deployment context for the affected repository and records customer-shipped as part of the CVE metadata",
@@ -313,7 +403,11 @@
       "id": 24,
       "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. Note that the CLAUDE.md Source Repositories table does NOT have a Deployment Context column. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, and write outputs/remediation.md with the remediation task descriptions.",
       "expected_output": "A triage analysis where Step 0 detects the absence of the Deployment Context column in the Source Repositories table, defaults all repositories to upstream, and Step 8 remediation task descriptions do NOT include a Coordination Guidance subsection (backward compatibility).",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 0 detects the absence of the Deployment Context column in the Source Repositories table and defaults all repositories to upstream (§1.78)",
         "Remediation task descriptions do NOT include a Coordination Guidance subsection — the section is omitted entirely when no Deployment Context column exists",
@@ -325,7 +419,11 @@
       "id": 25,
       "prompt": "Triage Vulnerability issue TC-8040. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. However, assume the Ecosystem detection in Step 1 resolves to 'Go modules' — an ecosystem that is NOT listed in the Ecosystem Mappings table. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data including the ecosystem detection result, and write outputs/unsupported-ecosystem.md with the unsupported ecosystem notification you would present to the user.",
       "expected_output": "A triage analysis where Step 1 Ecosystem detection resolves to Go modules, which is not in the Ecosystem Mappings table. The skill presents the unsupported ecosystem message using the detected ecosystem name ('Go modules') in the notification, and stops automated triage for that ecosystem.",
-      "files": ["files/vuln-issue-standard.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "The unsupported ecosystem notification uses the detected ecosystem name ('Go modules') — not a hard-coded ecosystem name (Step 5.3 unsupported ecosystem handling)",
         "The notification follows the template pattern: the message contains the actual ecosystem name substituted into the placeholder, matching the angle-bracket placeholder convention used by other user-facing messages in the skill",
@@ -337,7 +435,11 @@
       "id": 26,
       "prompt": "Triage Vulnerability issue TC-8050. The issue details are in vuln-issue-dev-dependency.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] so triage is scoped to the 2.2.x stream. The vulnerable library (criterion) is a dev-only dependency — the mock dependency chain data in the fixture shows it is declared in [dev-dependencies] and is NOT present in production builds. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2 including the dependency chain context from Step 2.3.5, and write outputs/remediation.md with the remediation task descriptions showing the dev-dependency label and Normal priority override.",
       "expected_output": "A triage analysis where Step 2.3.5 identifies criterion as a dev-only dependency (in [dev-dependencies], not shipped in production). The dependency scope decision tree is applied: remediation tasks are still created (supply chain risk) but with the dev-dependency label and Normal priority instead of inheriting the CVE's priority. The remediation task description includes a note that the dependency is dev/build-only.",
-      "files": ["files/vuln-issue-dev-dependency.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-dev-dependency.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 2.3.5 dependency chain context identifies criterion as a dev-only dependency based on its presence in [dev-dependencies] in the manifest",
         "The dependency scope decision tree classifies criterion as 'dev-only — not shipped in production' and applies the dev-dependency remediation handling",
@@ -350,7 +452,11 @@
       "id": 27,
       "prompt": "Triage Vulnerability issue TC-8051. The issue details are in vuln-issue-feature-gated.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] so triage is scoped to the 2.2.x stream. The vulnerable library (rustls) is an optional dependency gated behind the non-default 'tls-rustls' feature flag — the mock dependency chain data in the fixture shows the default features do NOT include tls-rustls. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2 including the dependency chain context from Step 2.3.5, and write outputs/feature-gate-prompt.md with the VEX justification prompt presented to the user for the feature-gated dependency.",
       "expected_output": "A triage analysis where Step 2.3.5 identifies rustls as a feature-gated optional dependency behind the non-default 'tls-rustls' feature. The dependency scope decision tree presents the user with a VEX justification prompt: option 1 to skip remediation with 'Vulnerable Code not in Execute Path' justification, or option 2 to proceed with standard remediation. The prompt includes the library name, feature flag name, and the recommended VEX justification.",
-      "files": ["files/vuln-issue-feature-gated.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-feature-gated.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 2.3.5 dependency chain context identifies rustls as a feature-gated optional dependency behind the non-default 'tls-rustls' feature flag",
         "The dependency scope decision tree presents a VEX justification prompt to the user with two options: skip remediation or proceed with standard remediation",
@@ -363,13 +469,82 @@
       "id": 28,
       "prompt": "Triage Vulnerability issue TC-8060. The issue details are in vuln-issue-transitive.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The issue has stream suffix [rhtpa-2.2] so triage is scoped to the 2.2.x stream. The vulnerable library (h2) is a transitive dependency — the mock dependency chain data in the fixture shows h2 is pulled in through reqwest → hyper → h2 (3 levels deep). Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/data-extraction.md with the parsed CVE data table from Step 1, write outputs/version-impact.md with the version impact table from Step 2 including the dependency chain context from Step 2.3.5, and write outputs/remediation.md with the remediation task descriptions showing the full dependency chain and two-tier remediation approach.",
       "expected_output": "A triage analysis where Step 2.3.5 identifies h2 as a transitive dependency (3 levels deep: reqwest → hyper → h2). The remediation task descriptions include the full dependency chain in the Implementation Notes and use the two-tier remediation approach: preferred approach is to bump reqwest (the direct dependency) to a version whose transitive closure includes h2 >= 0.4.5; fallback approach is to pin h2 directly via cargo add h2@0.4.5.",
-      "files": ["files/vuln-issue-transitive.md", "files/security-matrix-mock.md", "files/claude-md-security-config.md"],
+      "files": [
+        "files/vuln-issue-transitive.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
       "assertions": [
         "Step 2.3.5 dependency chain context identifies h2 as a transitive dependency with the chain: backend → reqwest → hyper → h2 (3 levels deep)",
         "The dependency chain output labels h2 as transitive (not direct) and includes the full chain path in the version impact output",
         "Remediation task Implementation Notes include the dependency type as transitive with the dependency chain",
         "Remediation task Implementation Notes describe the two-tier remediation approach: preferred is bumping reqwest (the direct dependency), fallback is pinning h2 directly",
         "The fallback approach specifies the ecosystem-specific pinning mechanism: cargo add h2@0.4.5 for Cargo"
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-mock.md, and the project CLAUDE.md is in claude-md-security-config.md. The canonical template is at docs/templates/security-matrix.template.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/matrix-validation.md with the Step 2.1.1 format validation results for each matrix file loaded.",
+      "expected_output": "A format validation where the valid mock matrix (security-matrix-mock.md) passes all structural checks in Step 2.1.1: required sections are present, Ecosystem Mappings columns match the template, and tables are parsable. The validation proceeds silently with no warnings or user prompts.",
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-mock.md",
+        "files/claude-md-security-config.md"
+      ],
+      "assertions": [
+        "Step 2.1.1 loads the canonical template at docs/templates/security-matrix.template.md and extracts required section headings and Ecosystem Mappings column names",
+        "Step 2.1.1 validates that all required sections (Supportability Matrix, Ecosystem Mappings, Source Pinning Method, Forward Pointer) are present in the mock matrix",
+        "Step 2.1.1 validates that the Ecosystem Mappings columns match the template (Ecosystem, Repository, Lock File, Check Command, Upstream Branch)",
+        "Step 2.1.1 validates that both tables are parsable (header row, separator row, data rows)",
+        "The validation result is Pass — no warnings, no auto-repairs, no user prompt — triage proceeds silently to aggregation"
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-missing-section-mock.md (which is missing the Ecosystem Mappings section entirely), and the project CLAUDE.md is in claude-md-security-config.md. The canonical template is at docs/templates/security-matrix.template.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/matrix-validation.md with the Step 2.1.1 format validation results showing the missing section warning.",
+      "expected_output": "A format validation where Step 2.1.1 detects that the matrix file is missing the required Ecosystem Mappings section. A warning is emitted and processing is halted for that stream. The user is presented with options to continue with partial data or abort.",
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-missing-section-mock.md",
+        "files/claude-md-security-config.md"
+      ],
+      "assertions": [
+        "Step 2.1.1 detects that the Ecosystem Mappings section is missing from the matrix file",
+        "Step 2.1.1 emits a warning that halts processing for the affected stream — the warning includes the matrix file path and the missing section name",
+        "Step 2.1.1 presents the user with options: continue with partial data (skip the stream) or abort triage",
+        "The missing section is NOT auto-repaired — only Forward Pointer is eligible for auto-repair"
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-wrong-columns-mock.md (which has Ecosystem Mappings columns that do not match the template), and the project CLAUDE.md is in claude-md-security-config.md. The canonical template is at docs/templates/security-matrix.template.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/matrix-validation.md with the Step 2.1.1 format validation results showing the column mismatch warning with expected vs actual diff.",
+      "expected_output": "A format validation where Step 2.1.1 detects that the Ecosystem Mappings table has wrong column names. A warning is emitted showing the expected columns (from the template) vs the actual columns found in the matrix file.",
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-wrong-columns-mock.md",
+        "files/claude-md-security-config.md"
+      ],
+      "assertions": [
+        "Step 2.1.1 detects that the Ecosystem Mappings columns do not match the template — the actual columns (Ecosystem, Repo, Lock File Path, Command, Branch) differ from the expected columns (Ecosystem, Repository, Lock File, Check Command, Upstream Branch)",
+        "Step 2.1.1 emits a warning showing a diff of expected vs actual column names",
+        "The column mismatch is NOT auto-repaired — it requires user decision",
+        "Step 2.1.1 presents the user with options: continue with partial data or abort triage"
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "Triage Vulnerability issue TC-8001. The issue details are in vuln-issue-standard.md, the security matrix is in security-matrix-no-forward-pointer-mock.md (which has all required sections except Forward Pointer), and the project CLAUDE.md is in claude-md-security-config.md. The canonical template is at docs/templates/security-matrix.template.md. Do NOT actually call Jira MCP, git show, or any external tools. Instead, write your triage analysis to the workspace outputs/ directory: write outputs/matrix-validation.md with the Step 2.1.1 format validation results showing the auto-repair of the missing Forward Pointer section.",
+      "expected_output": "A format validation where Step 2.1.1 detects that the Forward Pointer section is missing and auto-repairs it by appending the section with content 'None'. The auto-repair is reported to the user but does not require user confirmation — triage proceeds after reporting the repair.",
+      "files": [
+        "files/vuln-issue-standard.md",
+        "files/security-matrix-no-forward-pointer-mock.md",
+        "files/claude-md-security-config.md"
+      ],
+      "assertions": [
+        "Step 2.1.1 detects that the Forward Pointer section is missing from the matrix file",
+        "Step 2.1.1 auto-repairs by appending the Forward Pointer section with content None — this is a safe fix that does not require user confirmation",
+        "Step 2.1.1 logs the auto-repair action including the matrix file path",
+        "The validation result is Repaired (not Warning) — the triage proceeds without prompting the user since only auto-fixable issues were found"
       ]
     }
   ]
