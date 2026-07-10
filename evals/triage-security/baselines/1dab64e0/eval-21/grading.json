@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 detects concurrent triage TC-8019 on the same upstream component (quinn-proto) with status In Progress",
+      "passed": true,
+      "evidence": "concurrent-triage.md shows the JQL search returned one result: 'TC-8019 | In Progress | engineer-b@example.com'. The document states 'A concurrent triage has been detected. TC-8019 is actively being triaged by engineer-b@example.com and affects the same upstream component (quinn-proto).' The JQL query filters on cf[10632] ~ 'quinn-proto' and status IN ('In Progress', 'Code Review')."
+    },
+    {
+      "text": "The concurrent triage warning includes the conflicting CVE issue key (TC-8019) and its assignee",
+      "passed": true,
+      "evidence": "concurrent-triage.md includes a search results table with columns 'CVE Issue | Status | Assignee' containing 'TC-8019 | In Progress | engineer-b@example.com'. The warning section also repeats both: 'TC-8019 | In Progress | engineer-b@example.com'."
+    },
+    {
+      "text": "The output presents three options: wait for the other triage to complete, skip remediation task creation, or proceed with a concurrent-triage-overlap label",
+      "passed": true,
+      "evidence": "concurrent-triage.md lists three options: '1. Wait -- pause until the other triage completes, then re-run Step 4.3 to detect any overlap', '2. Skip -- skip remediation task creation for this CVE', '3. Proceed -- create tasks anyway with a concurrent-triage-overlap label so the other engineer's Step 4.3 catches the overlap'. Each option is further detailed in the 'Option Details' section."
+    },
+    {
+      "text": "The concurrent triage check runs before Case A/B/C branching in Step 8",
+      "passed": true,
+      "evidence": "concurrent-triage.md is titled 'Step 7 -- Concurrent Triage Detection' and concludes: 'The engineer must choose one of the three options before triage can proceed to remediation (Case A/B/C branching in Step 8). No Jira mutations should occur until the engineer responds.' triage-outcome.md confirms this ordering: 'Remediation Tasks (pending concurrent triage resolution)' and 'Concurrent Triage Gate (Step 7)' appears before the remediation task details, stating 'Remediation task creation is blocked by concurrent triage detection.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

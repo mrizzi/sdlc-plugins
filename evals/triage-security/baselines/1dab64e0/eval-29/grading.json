@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 2.1.1 loads the canonical template at docs/templates/security-matrix.template.md and extracts required section headings and Ecosystem Mappings column names",
+      "passed": true,
+      "evidence": "The output explicitly references the canonical template ('Canonical template: docs/templates/security-matrix.template.md') and lists the four required section headings (Supportability Matrix, Source Pinning Method, Ecosystem Mappings, Forward Pointer). It also extracts the expected Ecosystem Mappings columns: 'Ecosystem | Repository | Lock File | Check Command | Upstream Branch'. These match the actual template file."
+    },
+    {
+      "text": "Step 2.1.1 validates that all required sections (Supportability Matrix, Ecosystem Mappings, Source Pinning Method, Forward Pointer) are present in the mock matrix",
+      "passed": true,
+      "evidence": "For both streams, the 'Required Sections Present' table explicitly checks all four sections (Supportability Matrix, Source Pinning Method, Ecosystem Mappings, Forward Pointer) and marks each as 'Yes' / 'PASS'."
+    },
+    {
+      "text": "Step 2.1.1 validates that the Ecosystem Mappings columns match the template (Ecosystem, Repository, Lock File, Check Command, Upstream Branch)",
+      "passed": true,
+      "evidence": "For both streams, the output shows Expected vs Actual columns comparison: 'Expected: Ecosystem | Repository | Lock File | Check Command | Upstream Branch' and 'Actual: Ecosystem | Repository | Lock File | Check Command | Upstream Branch' with 'Result: PASS -- column names and order match the template exactly.'"
+    },
+    {
+      "text": "Step 2.1.1 validates that both tables are parsable (header row, separator row, data rows)",
+      "passed": true,
+      "evidence": "For both streams, the 'Table Parsability' section checks Supportability Matrix and Ecosystem Mappings tables. Each shows Header Row: Yes, Separator Row: Yes, Data Rows present, Result: PASS. Stream 1 has 2+2 rows, Stream 2 has 5+2 rows."
+    },
+    {
+      "text": "The validation result is Pass — no warnings, no auto-repairs, no user prompt — triage proceeds silently to aggregation",
+      "passed": true,
+      "evidence": "Both streams show 'Auto-Repairs Applied: None required' and 'Warnings: None' and 'Overall Result: PASS / No issues found. Proceed without user interruption.' The final summary states: 'Overall validation result: PASS -- all matrix files conform to the canonical template... No auto-repairs were needed and no warnings were raised. Proceeding silently per Step 2.1.1 rules.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

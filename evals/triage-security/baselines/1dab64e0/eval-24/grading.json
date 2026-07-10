@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 detects the absence of the Deployment Context column in the Source Repositories table and defaults all repositories to upstream (§1.78)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 29-31, section 'Deployment Context': 'Source Repositories table does not have a Deployment Context column. Per backward compatibility rules, all repositories default to `upstream`. Coordination guidance is omitted from remediation task descriptions.' The absence is explicitly detected and the upstream default is applied."
+    },
+    {
+      "text": "Remediation task descriptions do NOT include a Coordination Guidance subsection — the section is omitted entirely when no Deployment Context column exists",
+      "passed": true,
+      "evidence": "remediation.md contains four tasks. Each task's Implementation Notes section contains only the 'Remediation approach (direct dependency)' subsection (Tasks 1 and 3) or pinning method details (Tasks 2 and 4). No '### Coordination Guidance' subsection appears anywhere in the file. Searched all Implementation Notes sections: Task 1 (lines 44-54), Task 2 (lines 99-105), Task 3 (lines 164-172), Task 4 (lines 228-232) — none contain Coordination Guidance."
+    },
+    {
+      "text": "The triage proceeds normally through all steps without errors from the missing Deployment Context column",
+      "passed": true,
+      "evidence": "Both output files are complete and well-formed. data-extraction.md includes all expected sections: Parsed CVE Data, Stream Scope Resolution, Deployment Context (gracefully handled), Version Impact Analysis, Dependency Chain Context, Affects Versions Correction, and Cross-Stream Impact. remediation.md includes all 4 remediation tasks (Case A: 2 tasks for 2.2.x, Case B: 2 preemptive tasks for 2.1.x) and a complete Post-Triage Summary with 5 enumerated triage actions. No error messages or exception traces appear in any output."
+    },
+    {
+      "text": "Backward compatibility is maintained — existing eval behavior is unaffected by the absence of the Deployment Context column",
+      "passed": true,
+      "evidence": "data-extraction.md explicitly invokes backward compatibility: 'Per backward compatibility rules, all repositories default to `upstream`.' The outputs demonstrate identical triage behavior to what would be expected without the feature: version impact analysis, affects versions correction, cross-stream impact detection, and all 4 remediation tasks are produced with proper structure. The only difference is the omission of the Coordination Guidance subsection, which is the correct behavior when deployment context defaults to upstream."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

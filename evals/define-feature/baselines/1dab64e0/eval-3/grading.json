@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "Line 1: \"Please run `/setup` first to configure your project\"; Line 11: \"Run `/setup` to configure your project, then re-run `/define-feature`.\""
+    },
+    {
+      "text": "outputs/response.md contains 'Project Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "Line 1: \"This skill requires Project Configuration in your CLAUDE.md.\"; Line 9: \"The `# Project Configuration` section was not found in your CLAUDE.md.\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "Read attempt returned: \"File does not exist.\""
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "Read attempt returned: \"File does not exist.\""
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "Read attempt returned: \"File does not exist.\""
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the 9 section headings (Feature Overview, Background and Strategic Fit, Goals, Requirements, etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "Full file content (12 lines) contains none of the 9 section headings: no 'Feature Overview', no 'Background and Strategic Fit', no 'Goals', no 'Requirements', no 'User Stories', no 'Acceptance Criteria', no 'Technical Considerations', no 'Dependencies', no 'Out of Scope'. The file only discusses missing Project Configuration and the /setup recommendation."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/response.md contains a reference to '/setup' or 'setup' as the recommended next step",
+      "passed": true,
+      "evidence": "response.md line 7 contains: \"Please run `/setup` first to configure your project, then re-run this skill.\""
+    },
+    {
+      "text": "outputs/response.md contains 'Bug Configuration' indicating what is missing",
+      "passed": true,
+      "evidence": "response.md line 3 states: \"the `## Bug Configuration` section is missing under `# Project Configuration`\" and line 7 states: \"This skill requires Bug Configuration in your CLAUDE.md.\""
+    },
+    {
+      "text": "outputs/preview.md does NOT exist (the skill stopped before collecting sections)",
+      "passed": true,
+      "evidence": "File /tmp/report-bug-eval-baseline/eval-3/outputs/preview.md does not exist. Only response.md is present in the outputs directory."
+    },
+    {
+      "text": "outputs/jira-create.md does NOT exist (the skill stopped before creating an issue)",
+      "passed": true,
+      "evidence": "File /tmp/report-bug-eval-baseline/eval-3/outputs/jira-create.md does not exist. Only response.md is present in the outputs directory."
+    },
+    {
+      "text": "outputs/jira-comment.md does NOT exist (the skill stopped before posting a comment)",
+      "passed": true,
+      "evidence": "File /tmp/report-bug-eval-baseline/eval-3/outputs/jira-comment.md does not exist. Only response.md is present in the outputs directory."
+    },
+    {
+      "text": "outputs/response.md does NOT contain any of the template section headings ('### **Issue Description**', '### **Steps to Reproduce**', etc.) — the skill must not proceed to collect section content",
+      "passed": true,
+      "evidence": "Full file content (7 lines) was read. It contains no markdown H3 headings with bold text matching template section headings. The only content discusses the missing Bug Configuration and recommends running /setup."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

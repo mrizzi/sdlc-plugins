@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment",
+      "passed": true,
+      "evidence": "staleness-check.md lines 46 and 52 show the Last-Updated timestamp was extracted: 'Last-Updated timestamp: 2026-06-28T10:00:00Z' for both streams (2.1.x and 2.2.x). The ISO 8601 format is consistent with an HTML comment source. The step explicitly names 'Last-Updated timestamp' as the field read from the security matrix file (line 43: 'The security matrix file covers both streams')."
+    },
+    {
+      "text": "Step 0.3 determines the matrix is within the 14-day threshold and proceeds without displaying a staleness warning",
+      "passed": true,
+      "evidence": "staleness-check.md lines 47-49 (stream 2.1.x) and lines 53-56 (stream 2.2.x) both show: Age: 12 days, Threshold: 14 days, Result: FRESH -- matrix is within the 14-day threshold. Line 62 confirms: 'No staleness warning is displayed and no user prompt or options are presented.'"
+    },
+    {
+      "text": "No user prompt or options are presented for a fresh matrix — the check is silent on success",
+      "passed": true,
+      "evidence": "staleness-check.md line 62 explicitly states: 'No staleness warning is displayed and no user prompt or options are presented. The check passes silently and triage proceeds to Step 0.5 (JIRA Access Initialization) and beyond without interruption.'"
+    },
+    {
+      "text": "The triage continues to Step 0.5 and beyond without interruption from the staleness check",
+      "passed": true,
+      "evidence": "staleness-check.md line 62 states: 'triage proceeds to Step 0.5 (JIRA Access Initialization) and beyond without interruption.' Additionally, data-extraction.md demonstrates Step 1 (Data Extraction) was completed successfully, confirming the triage continued past the staleness check through Step 0.5 and into subsequent steps."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

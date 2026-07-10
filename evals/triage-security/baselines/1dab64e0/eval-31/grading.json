@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 2.1.1 detects that the Ecosystem Mappings columns do not match the template — the actual columns (Ecosystem, Repo, Lock File Path, Command, Branch) differ from the expected columns (Ecosystem, Repository, Lock File, Check Command, Upstream Branch)",
+      "passed": true,
+      "evidence": "The output states 'Result: WARNING -- column name mismatch' and shows: 'Expected: Ecosystem | Repository | Lock File | Check Command | Upstream Branch' vs 'Actual: Ecosystem | Repo | Lock File Path | Command | Branch'. The actual column names exactly match the assertion's expected mismatch."
+    },
+    {
+      "text": "Step 2.1.1 emits a warning showing a diff of expected vs actual column names",
+      "passed": true,
+      "evidence": "The output includes a 'Column diff' table showing each position (1-5) with Expected, Actual, and Match? columns. Position 1 (Ecosystem) matches, while positions 2-5 show mismatches: Repository vs Repo (NO), Lock File vs Lock File Path (NO), Check Command vs Command (NO), Upstream Branch vs Branch (NO). This is a detailed diff of expected vs actual."
+    },
+    {
+      "text": "The column mismatch is NOT auto-repaired — it requires user decision",
+      "passed": true,
+      "evidence": "The output states 'This is a non-auto-repairable warning' and 'Auto-Repairs Applied: None.' It then presents user options, confirming it requires user decision rather than auto-repair."
+    },
+    {
+      "text": "Step 2.1.1 presents the user with options: continue with partial data or abort triage",
+      "passed": true,
+      "evidence": "The output ends with: 'Matrix validation found issues that cannot be auto-repaired.\n1. Continue with partial data (skip streams with critical warnings)\n2. Abort triage to fix the matrix files first\nChoose (1/2):'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

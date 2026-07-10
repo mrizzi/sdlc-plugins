@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 2.1.1 detects that the Ecosystem Mappings section is missing from the matrix file",
+      "passed": true,
+      "evidence": "The Section Presence Check table shows '## Ecosystem Mappings' as 'No' with status 'CRITICAL WARNING'. The warning section also states: 'Matrix file security-matrix.md (stream 2.2.x) is missing required section ## Ecosystem Mappings.'"
+    },
+    {
+      "text": "Step 2.1.1 emits a warning that halts processing for the affected stream — the warning includes the matrix file path and the missing section name",
+      "passed": true,
+      "evidence": "The output contains: 'WARNING: Matrix file security-matrix.md (stream 2.2.x) is missing required section ## Ecosystem Mappings. This stream cannot be processed.' The Validation Summary shows stream 2.2.x result as 'Warning' with issue 'Missing required section: ## Ecosystem Mappings'. The warning includes both the file path (security-matrix.md) and the missing section name (## Ecosystem Mappings)."
+    },
+    {
+      "text": "Step 2.1.1 presents the user with options: continue with partial data (skip the stream) or abort triage",
+      "passed": true,
+      "evidence": "The output ends with a prompt: 'Matrix validation found issues that cannot be auto-repaired.\n1. Continue with partial data (skip streams with critical warnings)\n2. Abort triage to fix the matrix files first\nChoose (1/2):'"
+    },
+    {
+      "text": "The missing section is NOT auto-repaired — only Forward Pointer is eligible for auto-repair",
+      "passed": true,
+      "evidence": "The 'Auto-Repairs Applied' section states: 'None -- no auto-repairable issues found. (The ## Forward Pointer section is present, so no auto-repair is needed.)' This confirms the Ecosystem Mappings section was not auto-repaired and implicitly confirms only Forward Pointer is eligible for auto-repair."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

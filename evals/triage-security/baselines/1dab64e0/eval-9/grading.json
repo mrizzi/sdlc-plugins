@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 4.3 extracts the Upstream Affected Component (webpack) from customfield_10632 and uses it to search for related CVE Jiras (§1.59)",
+      "passed": true,
+      "evidence": "overlap-check.md line 5: 'Upstream Affected Component custom field (customfield_10632): **configured** -- value is `webpack`'. Lines 13-15 show the JQL query: 'project = TC AND issuetype = 10024 AND cf[10632] ~ 'webpack' AND key != TC-8011', confirming webpack was extracted from customfield_10632 and used to search for related CVE Jiras."
+    },
+    {
+      "text": "Step 4.3 filters search results by matching PS Component (customfield_10669 = pscomponent:org/rhtpa-ui) and Stream (customfield_10832 = rhtpa-2.2)",
+      "passed": true,
+      "evidence": "overlap-check.md lines 26-28: 'TC-8012 matches on all three fields: PS Component: `pscomponent:org/rhtpa-ui` -- **matches** current issue; Stream: `rhtpa-2.2` -- **matches** current issue'. The results table on line 20-22 explicitly lists customfield_10669 and customfield_10832 columns with values checked against the current issue."
+    },
+    {
+      "text": "Step 4.3 traverses issuelinks on TC-8012 to find remediation task TC-8013 via the 'Depend' link type",
+      "passed": true,
+      "evidence": "overlap-check.md line 32: 'TC-8012 has a linked remediation Task via \"Depend\" link type:' followed by a table (lines 34-38) showing TC-8013 with Summary 'Bump webpack to 5.96.1 in rhtpa-ui [rhtpa-2.2]', Status 'Closed (Done)', and Link Type 'Depend'."
+    },
+    {
+      "text": "Step 4.3 compares the remediation task's bump version (5.96.1) against the current CVE's fix threshold (5.98.0) and determines the fix does NOT cover this CVE",
+      "passed": true,
+      "evidence": "overlap-check.md lines 43-51: 'TC-8013 bumps webpack from 5.95.0 to **5.96.1**', 'Current CVE (CVE-2026-45678) fix threshold: **5.98.0**', 'Comparison: 5.96.1 < 5.98.0', '**Result: The existing remediation does NOT cover this CVE.**'"
+    },
+    {
+      "text": "The overlap table is presented to the engineer showing TC-8012 and TC-8013 with 'Covers This CVE? = No' — the triage proceeds to create new remediation tasks rather than recommending closure",
+      "passed": true,
+      "evidence": "overlap-check.md lines 60-63 present a table: '| CVE-2026-43210 | TC-8012 | TC-8013 | 5.96.1 | No (threshold: 5.98.0) |'. Lines 64-65: 'No existing remediation covers this CVE's fix threshold. Proceeding with new remediation task creation.' Lines 72-74 confirm: 'No close recommendation is made based on overlap' and 'Triage proceeds to Steps 5-8 with new remediation task creation required'. triage-outcome.md line 5 confirms: 'Decision: Case A -- Affected. Create new remediation tasks.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 executes the concurrent triage check for upstream component quinn-proto",
+      "passed": true,
+      "evidence": "concurrent-triage.md is titled 'Step 7 -- Concurrent Triage Detection for TC-8021' and states: 'The Upstream Affected Component custom field (customfield_10632) is configured in Security Configuration. The field is populated on TC-8021 with the value quinn-proto. Step 7 proceeds.' The JQL query filters on cf[10632] ~ 'quinn-proto'."
+    },
+    {
+      "text": "No concurrent triages are detected -- the JQL search returns zero results",
+      "passed": true,
+      "evidence": "concurrent-triage.md states under 'Result': 'Zero results returned. No other engineer is currently triaging a Vulnerability issue for the quinn-proto upstream component.'"
+    },
+    {
+      "text": "The analysis proceeds directly to Case A/B/C branching without a concurrent triage warning",
+      "passed": true,
+      "evidence": "concurrent-triage.md states: 'No concurrent triage detected. Proceeding silently to Case A/B/C branching for remediation task creation.' triage-outcome.md confirms direct progression: 'Step 7 -- Concurrent Triage Detection: No concurrent triages detected for upstream component quinn-proto. Proceeding with remediation task creation.' followed immediately by 'Remediation Tasks (Step 8, Case A)' and 'Cross-Stream Impact (Step 8, Case B)' sections with no blocking gate."
+    },
+    {
+      "text": "The output does not present wait/skip/proceed options since no conflict exists",
+      "passed": true,
+      "evidence": "No wait/skip/proceed options appear in any of the three output files (concurrent-triage.md, data-extraction.md, triage-outcome.md). concurrent-triage.md contains only the zero-results finding and the decision to proceed silently. triage-outcome.md proceeds directly to remediation task creation without presenting any options to the engineer."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

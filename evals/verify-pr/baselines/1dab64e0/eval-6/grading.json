@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "Test Quality verdict is WARN (not N/A or PASS) — the Eval Quality component is WARN because eval-3 has 2 failing assertions, and WARN in any component produces WARN in the combined Test Quality verdict",
+      "passed": true,
+      "evidence": "report.md Verdict Mapping row: 'Test Quality | WARN | Eval Quality: WARN (eval-3: 85% pass rate, 2 regression failures -- convention upgrade eligibility not evaluated, no sub-task created for index suggestion); Repetitive Test Detection: N/A; Test Documentation: N/A'. The Style/Conventions section also confirms: 'Eval Quality | WARN | Eval results present; eval-3 has 2 failing assertions at 85% pass rate (11/13)'. Test Quality is WARN because Eval Quality is WARN."
+    },
+    {
+      "text": "The eval result review from github-actions[bot] is correctly identified as an eval result — the report's Test Quality or Eval Quality section reflects eval metrics (pass rates, failing assertions) extracted from the eval review, confirming the orchestrator detected and processed it",
+      "passed": true,
+      "evidence": "report.md 'Eval Result Detection' section states: 'All three criteria matched for review ID 40001. The eval result review body was extracted and passed to the Style/Conventions sub-agent for Check 5 (Eval Quality) processing.' The Eval Quality Details section lists per-eval pass rates (eval-1 through eval-5) and the two failing assertions from eval-3, confirming eval metrics were extracted and processed."
+    },
+    {
+      "text": "The human reviewer comment from reviewer-b (comment id 50001) is NOT misidentified as an eval result — it is processed as a normal review comment (classified in review-50001.md) and its classification does not reference eval detection or eval metrics",
+      "passed": true,
+      "evidence": "review-50001.md exists and classifies comment 50001 as 'CODE CHANGE REQUEST' with reasoning based on directive phrasing, review state CHANGES_REQUESTED, and substantive concern -- all standard review classification criteria. While the file has a separate 'Eval Result Identification: NOT an eval result' section confirming it is not an eval result, the classification itself (CODE CHANGE REQUEST) and its reasoning do not reference eval metrics or eval detection. The report also confirms: 'Review ID 40002 from reviewer-b is a human reviewer comment and was NOT identified as an eval result'."
+    },
+    {
+      "text": "Eval pass rate and failing assertion details appear in the verification report's Test Quality row — the report includes eval-3's failing assertions about convention upgrade eligibility and sub-task creation",
+      "passed": true,
+      "evidence": "report.md Verdict Mapping Test Quality row: 'WARN | Eval Quality: WARN (eval-3: 85% pass rate, 2 regression failures -- convention upgrade eligibility not evaluated, no sub-task created for index suggestion)'. The Eval Quality Details section further lists per-eval pass rates and the full failing assertion text: (1) 'Convention upgrade eligibility is evaluated for review comment 30002 (index suggestion)...' and (2) 'Review comment 30002 (index suggestion) results in a sub-task regardless of classification path...', both with evidence text."
+    },
+    {
+      "text": "An eval failure sub-task is created for failing eval-3 — a sub-task description file targets eval-3 assertion failures and includes the failing assertion text and evidence",
+      "passed": true,
+      "evidence": "subtask-2.md exists with Description: 'Fix eval-3 assertion failures in the verify-pr skill. Two assertions are failing at 85% pass rate (11/13 passed, 2 failed).' The Review Context section quotes both failing assertions with full text and evidence: Failing Assertion 1 about convention upgrade eligibility with evidence 'The output file review-30002.md classifies the comment as a suggestion but does not evaluate convention upgrade eligibility...', and Failing Assertion 2 about sub-task creation with evidence 'No sub-task was created for review comment 30002...'."
+    },
+    {
+      "text": "Sub-task descriptions include Review Context with the failing assertion text and evidence from the eval review — the Review Context section quotes the two failing assertions about convention upgrade eligibility and sub-task creation, including the evidence text explaining what was missing",
+      "passed": true,
+      "evidence": "subtask-2.md '## Review Context' section includes: Failing Assertion 1 with assertion text about convention upgrade eligibility and evidence: 'The output file review-30002.md classifies the comment as a suggestion but does not evaluate convention upgrade eligibility --- no CONVENTIONS.md lookup or codebase pattern analysis is documented in the classification reasoning'. Failing Assertion 2 with assertion text about sub-task creation and evidence: 'No sub-task was created for review comment 30002 --- it was classified as suggestion and no convention upgrade was attempted, so the suggestion was not elevated to a code change request'."
+    },
+    {
+      "text": "Sub-task descriptions include a Target PR section pointing to the PR URL https://github.com/RHEcosystemAppEng/sdlc-plugins/pull/747 so that implement-task adds commits to the existing PR branch",
+      "passed": true,
+      "evidence": "subtask-1.md ends with '## Target PR\\nhttps://github.com/RHEcosystemAppEng/sdlc-plugins/pull/747'. subtask-2.md ends with '## Target PR\\nhttps://github.com/RHEcosystemAppEng/sdlc-plugins/pull/747'. Both sub-task descriptions include the Target PR section with the correct URL."
+    },
+    {
+      "text": "Root-cause investigation runs on the created eval failure sub-tasks — the report includes a Root-Cause Investigation verdict that is not N/A, indicating the investigation pipeline processed the eval failure sub-tasks",
+      "passed": true,
+      "evidence": "report.md Verdict Mapping row: 'Root-Cause Investigation | DONE | Investigation completed for 2 sub-tasks; 1 convention gap, 1 skill gap identified'. The Root-Cause Investigation section details investigation for both subtask-1 (convention gap) and subtask-2 (skill gap in implement-task phase), including universality tests, convention checks, and classifications. The verdict is 'DONE', not 'N/A'."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, creates sub-task descriptions, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "The outputs directory contains only analysis/reporting files: report.md (verification report), review-50001.md and review-40002.md (classification files), subtask-1.md and subtask-2.md (sub-task descriptions), and criterion-1.md through criterion-7.md (acceptance criteria evaluations). No code files (e.g., .ts, .py, .js, .md skill files) appear in the outputs. The sub-task files specify 'Files to Modify' for future implementation but do not contain modifications themselves."
+    },
+    {
+      "text": "Non-eval checks (Scope Containment, Sensitive Patterns, Acceptance Criteria) are unaffected by eval processing — Scope Containment compares the diff files against the task's Files to Modify, Sensitive Patterns scans the diff for secrets, and Acceptance Criteria evaluates each criterion against the diff content independently of the eval results",
+      "passed": true,
+      "evidence": "report.md shows: Scope Containment: 'PASS | PR modifies exactly the 2 files specified in the task (style-conventions.md, SKILL.md); no out-of-scope or unimplemented files' -- evaluated against task's Files to Modify, no eval reference. Sensitive Pattern Scan: 'PASS | No sensitive patterns detected in added lines; all additions are Markdown documentation content' -- evaluated against diff content, no eval reference. Acceptance Criteria: 'PASS | 7/7 acceptance criteria satisfied' with 7 individual criterion evaluations each referencing specific diff content (e.g., 'Step 6a Identify New Symbols added with scanning procedure', 'Step 6b Check Documentation Comments added with 5 language-specific patterns') -- all evaluated against diff content independently of eval results."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

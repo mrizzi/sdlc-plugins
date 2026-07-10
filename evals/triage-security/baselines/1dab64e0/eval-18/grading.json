@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 8 detects existing remediation tasks TC-8100 and TC-8101 via the Depend links on the issue and skips remediation task creation — does NOT create duplicate tasks (idempotency)",
+      "passed": true,
+      "evidence": "idempotency-check.md Section 3 explicitly detects 'TC-8100' and 'TC-8101 (linked via Depend)' and states 'No new remediation tasks need to be created. Creating duplicate tasks would produce redundant work items.' triage-outcome.md Step 8 confirms: 'remediation tasks already exist: TC-8100 (upstream backport): already linked to TC-8001 via Depend... TC-8101 (downstream propagation): already linked to TC-8001 via Depend... Result: No new tasks created. No new links created.'"
+    },
+    {
+      "text": "The ai-cve-triaged label is already present on the issue — the triage does NOT attempt to add it again (label idempotency)",
+      "passed": true,
+      "evidence": "idempotency-check.md Section 1 states 'The ai-cve-triaged label is already present on TC-8001' with Action: 'No mutation needed. The label already exists; adding it again would be a no-op.' triage-outcome.md Post-Triage Summary confirms: 'The ai-cve-triaged label is already present on TC-8001. Result: No label addition needed (already present).'"
+    },
+    {
+      "text": "The issue is already In Progress — the triage does NOT attempt to transition the status again or warns that the issue is already in a post-triage state (status idempotency)",
+      "passed": true,
+      "evidence": "idempotency-check.md Section 2 states 'TC-8001 is already in In Progress status (not New or Assigned)' and 'Step 0.7 skips the transition silently... Step 8's transition to In Progress is also a no-op since the issue is already In Progress.' triage-outcome.md Step 0.7 confirms: 'The issue is already in In Progress status, which is a later state than Assigned... Result: No meaningful mutation. Transition skipped.' Step 8: 'No transition needed (already In Progress).'"
+    },
+    {
+      "text": "The existing description digest comment is detected — no duplicate digest comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md lists 'Description digest comment: [sdlc-workflow] Description digest: sha256-md:a1b2c3d4e5f6...' as existing comment #1. idempotency-check.md Section 4 confirms detection and states 'No new digest comment needed. The existing digest comment already captures the description state.' triage-outcome.md point 4 under 'Why Zero Mutations': 'The description digest comment and post-triage summary comment are already present. Re-posting them would add noise without value.'"
+    },
+    {
+      "text": "The existing post-triage summary comment is detected — no duplicate summary comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md lists the post-triage summary as existing comment #2, documenting version impact, Affects Versions correction, label addition, remediation tasks TC-8100/TC-8101, and transition. idempotency-check.md Section 5 confirms detection and states 'No new summary comment needed. The existing summary already documents the complete triage outcome.' triage-outcome.md Post-Triage Summary: 'No summary comment needed (already posted). No mutations.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

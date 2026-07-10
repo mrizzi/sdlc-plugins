@@ -1,0 +1,110 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/preview.md contains the heading '## Feature Overview'",
+      "passed": true,
+      "evidence": "preview.md line 13: '## Feature Overview'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Background and Strategic Fit'",
+      "passed": true,
+      "evidence": "preview.md line 23: '## Background and Strategic Fit'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Goals'",
+      "passed": true,
+      "evidence": "preview.md line 33: '## Goals'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 50: '## Requirements'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Non-Functional Requirements'",
+      "passed": true,
+      "evidence": "preview.md line 62: '## Non-Functional Requirements'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Use Cases' or '## Use Cases (User Experience & Workflow)'",
+      "passed": true,
+      "evidence": "preview.md line 72: '## Use Cases (User Experience & Workflow)'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Customer Considerations'",
+      "passed": true,
+      "evidence": "preview.md line 105: '## Customer Considerations'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Customer Information/Supportability'",
+      "passed": true,
+      "evidence": "preview.md line 114: '## Customer Information/Supportability'"
+    },
+    {
+      "text": "outputs/preview.md contains the heading '## Documentation Considerations'",
+      "passed": true,
+      "evidence": "preview.md line 123: '## Documentation Considerations'"
+    },
+    {
+      "text": "outputs/preview.md contains 'Major' in the priority field display",
+      "passed": true,
+      "evidence": "preview.md line 3: '**Priority:** Major'"
+    },
+    {
+      "text": "outputs/preview.md contains '1.5.0' in the fix version field display",
+      "passed": true,
+      "evidence": "preview.md line 5: '**Fix Version:** 1.5.0'"
+    },
+    {
+      "text": "outputs/jira-create.md references project key 'TC'",
+      "passed": true,
+      "evidence": "jira-create.md line 6: 'projectKey=\"TC\"' and line 25: '| projectKey | `TC` |'"
+    },
+    {
+      "text": "outputs/jira-create.md references issue type ID '10142'",
+      "passed": true,
+      "evidence": "jira-create.md line 7: 'issueTypeId=\"10142\"' and line 26: '| issueTypeId | `10142` |'"
+    },
+    {
+      "text": "outputs/jira-create.md includes the label 'ai-generated-jira'",
+      "passed": true,
+      "evidence": "jira-create.md line 12: '\"labels\": [\"ai-generated-jira\"]' and line 29: '| labels | `[\"ai-generated-jira\"]` |'"
+    },
+    {
+      "text": "outputs/jira-create.md includes an assignee (self-assignment was chosen)",
+      "passed": true,
+      "evidence": "jira-create.md line 13: '\"assignee\": { \"accountId\": \"<user-account-id>\" }' and line 30: '| assignee | `{ \"accountId\": \"<user-account-id>\" }` |'"
+    },
+    {
+      "text": "outputs/jira-create.md includes priority with name 'Major' in additional_fields",
+      "passed": true,
+      "evidence": "jira-create.md line 14: '\"priority\": { \"name\": \"Major\" }' inside additional_fields block, and line 31: '| priority | `{ \"name\": \"Major\" }` |'"
+    },
+    {
+      "text": "outputs/jira-create.md includes fixVersions with name '1.5.0' in additional_fields",
+      "passed": true,
+      "evidence": "jira-create.md line 15: '\"fixVersions\": [{ \"name\": \"1.5.0\" }]' inside additional_fields block, and line 32: '| fixVersions | `[{ \"name\": \"1.5.0\" }]` |'"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'sdlc-workflow/define-feature'",
+      "passed": true,
+      "evidence": "jira-comment.md line 209: '\"text\": \"sdlc-workflow/define-feature\"' in ADF JSON, and line 226: 'sdlc-workflow/define-feature' in the rendered footnote"
+    },
+    {
+      "text": "outputs/jira-comment.md contains 'https://github.com/RHEcosystemAppEng/sdlc-plugins'",
+      "passed": true,
+      "evidence": "jira-comment.md line 205: '\"href\": \"https://github.com/RHEcosystemAppEng/sdlc-plugins\"' in ADF JSON, and line 226: '[sdlc-workflow/define-feature](https://github.com/RHEcosystemAppEng/sdlc-plugins)' in the rendered footnote"
+    },
+    {
+      "text": "outputs/jira-comment.md contains a version string (e.g., 'v0.' or version from plugin.json)",
+      "passed": true,
+      "evidence": "jira-comment.md line 212: '\"text\": \" v0.13.1.\"' in ADF JSON, and line 226: 'v0.13.1' in the rendered footnote"
+    }
+  ],
+  "summary": {
+    "passed": 20,
+    "failed": 0,
+    "total": 20,
+    "pass_rate": 1.0
+  }
+}

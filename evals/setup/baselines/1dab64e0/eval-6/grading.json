@@ -1,0 +1,45 @@
+{
+  "assertion_results": [
+    {
+      "text": "outputs/claude-md-result.md preserves the existing Security Configuration section with Product Lifecycle, Version Streams, and Source Repositories unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 42-64 contain the full Security Configuration section with all three subsections (Product Lifecycle, Version Streams, Source Repositories) exactly matching the reference file lines 52-73. All values are identical: Product pages URL (https://access.example.com/product-lifecycle), Jira version prefix (MYPRODUCT), Vulnerability issue type ID (10200), Component label pattern (pscomponent:), VEX Justification custom field (customfield_12345), Version Stream 2.1.x row, and both Source Repositories (backend, frontend-ui)."
+    },
+    {
+      "text": "outputs/discovery-log.md reports that Security Configuration is already fully configured or up to date",
+      "passed": true,
+      "evidence": "discovery-log.md lines 32-39 state: 'Already fully configured — section exists with all subsections populated', enumerates all subsections (Product Lifecycle: all 5 fields present, Version Streams: 1 stream configured, Source Repositories: 2 repositories configured), and concludes 'No changes needed'."
+    },
+    {
+      "text": "outputs/changes-log.md indicates Security Configuration was preserved with no changes needed",
+      "passed": true,
+      "evidence": "changes-log.md lines 24-26 state: '## Security Configuration' / '- Preserved unchanged (Product Lifecycle, Version Streams, Source Repositories all fully populated)' / '- No changes needed'. The summary on lines 28-30 also confirms: 'No changes were made. All sections of the Project Configuration were already fully configured and were preserved as-is.'"
+    },
+    {
+      "text": "The skill does NOT offer the Security Configuration opt-in prompt — it detects the section already exists and is fully populated (idempotency skip)",
+      "passed": true,
+      "evidence": "discovery-log.md line 37 explicitly states: 'Security Configuration opt-in prompt not shown — section already exists and is fully populated'. This confirms the idempotency skip behavior. No output file contains any indication of an opt-in prompt being offered."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Repository Registry entries (backend and frontend-ui) unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 4-8 contain the Repository Registry table with both entries exactly matching the reference: 'backend | Rust backend service | serena_backend | /home/user/backend' and 'frontend-ui | TypeScript frontend | serena_ui | /home/user/frontend-ui'. discovery-log.md line 11 confirms: 'Already configured with 2 repositories: backend (serena_backend), frontend-ui (serena_ui)'."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves all existing Jira Configuration fields unchanged",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 12-16 contain all 5 Jira Configuration fields identical to the reference: Project key: TC, Cloud ID: 2b9e35e3-6bd3-4cec-b838-f4249ee02432, Feature issue type ID: 10142, Git Pull Request custom field: customfield_10875, GitHub Issue custom field: customfield_10747."
+    },
+    {
+      "text": "outputs/claude-md-result.md preserves the existing '## Bug Configuration' section with all three fields (Bug issue type ID, Bug template, Bug-to-Task link type) unchanged — the skill reports Bug Configuration is up to date",
+      "passed": true,
+      "evidence": "claude-md-result.md lines 37-40 contain the Bug Configuration section with all three fields matching the reference: Bug issue type ID: 10001, Bug template: docs/bug-template.md, Bug-to-Task link type: Blocks. discovery-log.md lines 27-29 confirm: 'Already fully configured with all 3 fields (Bug issue type ID: 10001, Bug template: docs/bug-template.md, Bug-to-Task link type: Blocks)' and 'Bug Configuration prompt not shown — section already exists and is fully populated'. changes-log.md lines 19-21 confirm: 'Preserved unchanged (all 3 fields present: Bug issue type ID, Bug template, Bug-to-Task link type)' / 'No changes needed'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  }
+}
