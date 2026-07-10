@@ -485,6 +485,7 @@ For each code change request (including upgraded suggestions) that requires a fi
 create a Jira sub-task:
 
 jira.create_issue with:
+- **Issue Type:** Sub-task
 - **Parent:** the current task's Jira issue ID
 - **Summary:** concise description of the required fix
 - **Labels:** `["ai-generated-jira", "review-feedback"]`
@@ -514,6 +515,7 @@ Process `create-sub-task` actions from the Correctness sub-agent. For each actio
    files, and Root cause fields:
 
    jira.create_issue with:
+   - **Issue Type:** Sub-task
    - **Parent:** the current task's Jira issue ID
    - **Summary:** the action's Title (e.g., "Fix failing lint check: unused import in handler.rs")
    - **Labels:** `["ai-generated-jira", "review-feedback"]`
@@ -556,6 +558,7 @@ and sub-task creation below.
 3. **Create sub-task:** For each failing eval, create a Jira sub-task:
 
    jira.create_issue with:
+   - **Issue Type:** Sub-task
    - **Parent:** the current task's Jira issue ID
    - **Summary:** "Fix <eval-id> assertion failures: <brief description of failures>"
    - **Labels:** `["ai-generated-jira", "eval-failure"]`
