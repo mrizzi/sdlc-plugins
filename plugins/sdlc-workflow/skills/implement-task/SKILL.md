@@ -1073,10 +1073,34 @@ Use a scope when relevant (e.g. `feat(api): add AIBOM endpoint`).
 The footer MUST reference the Jira issue ID.
 Always include `--trailer="Assisted-by: Claude Code"` to attribute AI assistance.
 
+### Fork detection
+
+Before creating a PR, detect whether the working directory is a fork by checking
+for an `upstream` remote:
+
+```
+git remote get-url upstream 2>/dev/null
+```
+
+- If the command succeeds, an `upstream` remote exists — the user is working in a fork.
+  Parse `<upstream-owner/repo>` from the upstream remote URL and `<fork-owner>` from
+  the origin remote URL. Handle both HTTPS (`https://github.com/<owner>/<repo>.git`)
+  and SSH (`git@github.com:<owner>/<repo>.git`) URL formats.
+- If the command fails, no upstream remote exists — skip fork-specific flags and use
+  the default `gh pr create` behavior.
+
 **Default flow (no Target PR, no Bookend Type):**
 
 Push the branch and open a pull request. Always specify `--base <target-branch>`
-explicitly to ensure the PR targets the correct branch:
+explicitly to ensure the PR targets the correct branch.
+
+When a fork is detected (upstream remote exists):
+
+```
+gh pr create -R <upstream-owner/repo> --head <fork-owner>:<branch> --base <target-branch> ...
+```
+
+When no fork is detected:
 
 ```
 gh pr create --base <target-branch> ...
@@ -1115,7 +1139,15 @@ instead of creating a new PR:
 
 When Bookend Type is `merge-branch`, create a PR from the feature branch to main.
 No new commits are needed — the PR aggregates all commits already on the feature
-branch:
+branch.
+
+When a fork is detected (upstream remote exists):
+
+```
+gh pr create -R <upstream-owner/repo> --head <fork-owner>:<feature-branch-name> --base main ...
+```
+
+When no fork is detected:
 
 ```
 gh pr create --base main --head <feature-branch-name> ...
