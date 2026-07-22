@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "The response describes locating the digest comment using the marker string '[sdlc-workflow] Description digest:' from shared/description-digest-protocol.md",
+      "passed": true,
+      "evidence": "Line 5 references the protocol: 'This uses the digest protocol defined in shared/description-digest-protocol.md'. Line 19 explicitly states: 'Search all returned comments for bodies starting with the marker string [sdlc-workflow] Description digest:'. This matches the marker string defined in shared/description-digest-protocol.md."
+    },
+    {
+      "text": "The response describes detecting a mismatch between the stored digest and the computed digest of the current description",
+      "passed": true,
+      "evidence": "Section '7. Compare hex digests -- MISMATCH DETECTED' (lines 72-77) shows the stored digest (all zeros) vs the computed digest (e3b0c44...) and explicitly states: 'The hex digests do NOT match. This means the task description for TC-9201 was modified after plan-feature originally created it.'"
+    },
+    {
+      "text": "The response alerts the user that the description was modified after plan-feature created the task and displays the expected vs actual digest values",
+      "passed": true,
+      "evidence": "Lines 85-94 present a WARNING to the user stating 'The task description has been modified since plan-feature created it.' A table displays Expected (sha256-md:000...000) vs Actual (sha256-md:e3b0c44...) digest values. It also explains: 'This means someone (or something) edited the Jira task description after the planning phase completed.'"
+    },
+    {
+      "text": "The response offers the user a choice: (1) proceed with the current description, or (2) stop so they can re-run plan-feature",
+      "passed": true,
+      "evidence": "Lines 96-99 present two explicit options: '1. Proceed -- implement the task using the current (modified) description as-is' and '2. Stop -- abort implementation so you can re-run plan-feature to regenerate tasks with a consistent plan'. A 'Choose (1/2):' prompt follows."
+    },
+    {
+      "text": "The response stops execution and does not proceed to Step 2 or implementation planning until the user responds — following the same pause-and-ask pattern as the incomplete description handling",
+      "passed": true,
+      "evidence": "Lines 103-104 explicitly state: 'Execution is halted immediately. No subsequent steps are performed -- Step 2 (Verify Dependencies), Step 3 (Transition to In Progress), Step 4 (Understand the Code), Step 5 (Create Branch), Step 6 (Implement Changes), and all later steps are NOT executed. The skill waits for the user's explicit response before taking any further action.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

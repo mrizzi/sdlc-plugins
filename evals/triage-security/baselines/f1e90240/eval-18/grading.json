@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 8 detects existing remediation tasks TC-8100 and TC-8101 via the Depend links on the issue and skips remediation task creation — does NOT create duplicate tasks (idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md documents existing Depend links to TC-8100 and TC-8101 (lines 47-54). idempotency-check.md Artifact 3 (lines 27-36) explicitly states the skill checks existing issue links, finds both tasks already linked via 'Depend', verifies summaries match expected templates ('Backport quinn-proto fix...' and 'Propagate quinn-proto bump...'), and marks action as 'Skipped -- no new tasks created, no new links created.' Step-by-step trace confirms: 'Step 8 | Remediation | Existing remediation tasks TC-8100 and TC-8101 already linked -- no new tasks.' triage-outcome.md confirms 'New tasks created: 0'."
+    },
+    {
+      "text": "The ai-cve-triaged label is already present on the issue — the triage does NOT attempt to add it again (label idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md line 21 shows Labels include 'ai-cve-triaged'. idempotency-check.md Artifact 1 (lines 13-16) detects the label is already present and marks action as 'Skipped -- no label mutation needed. The label is already on the issue.' Step-by-step trace: 'Post | ai-cve-triaged label | Already present -- no mutation.' triage-outcome.md confirms 'Label changes: 0'."
+    },
+    {
+      "text": "The issue is already In Progress — the triage does NOT attempt to transition the status again or warns that the issue is already in a post-triage state (status idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md line 19 shows Status is 'In Progress'. idempotency-check.md Artifact 2 (lines 19-23) states the transition to Assigned is skipped because 'In Progress is a later status than Assigned' and additionally notes the skill 'detects that the issue is in In Progress and would present a warning: This issue is already in In Progress. It may be actively worked on.' Step-by-step trace: 'transition to Assigned skipped (already In Progress)'. triage-outcome.md: 'Status transitions: 0'. Both conditions of the assertion (no transition AND warns) are satisfied."
+    },
+    {
+      "text": "The existing description digest comment is detected — no duplicate digest comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 39-41 document the existing description digest comment with sha256-md hash. idempotency-check.md Artifact 4 (lines 39-47) confirms detection: 'Comment 1 on the issue is a description digest comment' matching the expected format. Action is 'Skipped -- existing digest comment is valid and current.' triage-outcome.md: 'The description digest comment already exists... No new digest comment is needed.' Net effect: 'New comments posted: 0'."
+    },
+    {
+      "text": "The existing post-triage summary comment is detected — no duplicate summary comment is posted (comment idempotency)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 43-45 document the existing post-triage summary comment. idempotency-check.md Artifact 5 (lines 49-56) confirms detection and marks action as 'Skipped -- a post-triage summary already exists documenting the same triage outcome.' Step-by-step trace: 'Post | Summary comment | Already exists -- no new comment.' triage-outcome.md: 'New comments posted: 0'."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 extracts the Deployment Context column from the Source Repositories table and parses rhtpa-backend as customer-shipped (§1.77)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 37-46: 'Deployment Context Lookup' section extracts the Source Repositories table entry for rhtpa-backend showing Deployment Context = 'customer-shipped'. Line 45 explicitly states 'Deployment context: **customer-shipped**'. The table on lines 41-44 includes the Deployment Context column with value 'customer-shipped'."
+    },
+    {
+      "text": "Step 1 looks up the deployment context for the affected repository and records customer-shipped as part of the CVE metadata",
+      "passed": true,
+      "evidence": "data-extraction.md (titled 'Step 1 -- Data Extraction: TC-8001') includes a 'Deployment Context Lookup' section (lines 37-47) that maps the affected component to repository rhtpa-backend, looks up its deployment context as 'customer-shipped', and records it alongside other CVE metadata (CVE ID, affected component, CVSS, etc.). Line 47 states 'This deployment context will be used in Step 8 (Remediation) to generate coordination guidance'."
+    },
+    {
+      "text": "Remediation task descriptions include a Coordination Guidance subsection in Implementation Notes with customer-shipped guidance text",
+      "passed": true,
+      "evidence": "remediation.md contains four remediation tasks, each with a '### Coordination Guidance' subsection nested under '## Implementation Notes': Task 1 (line 77), Task 2 (line 129), Task 3 (line 216), Task 4 (line 273). Each contains identical customer-shipped guidance text: 'This component is shipped to customers. Coordinate with Product Security for CVE assignment, advisory preparation, and formal disclosure.'"
+    },
+    {
+      "text": "The customer-shipped guidance mentions coordinating with Product Security for CVE assignment, advisory preparation, and formal disclosure",
+      "passed": true,
+      "evidence": "All four Coordination Guidance subsections contain the exact text: 'Coordinate with Product Security for CVE assignment, advisory preparation, and formal disclosure. Fix must be released via a security advisory with explicit CVE-to-component mapping.' This explicitly mentions all three required elements: CVE assignment, advisory preparation, and formal disclosure."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

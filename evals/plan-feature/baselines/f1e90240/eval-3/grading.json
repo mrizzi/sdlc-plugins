@@ -1,0 +1,85 @@
+{
+  "assertion_results": [
+    {
+      "text": "Tasks target both 'trustify-backend' and 'trustify-ui' repositories with at least one task per repo",
+      "passed": true,
+      "evidence": "Backend tasks: Task 2 (trustify-backend), Task 3 (trustify-backend), Task 4 (trustify-backend). Frontend tasks: Task 5 (trustify-ui), Task 6 (trustify-ui), Task 7 (trustify-ui), Task 8 (trustify-ui). Bookend tasks 1 and 9 target both repos. Impact map confirms this split with separate 'Repository: trustify-backend' and 'Repository: trustify-ui' sections."
+    },
+    {
+      "text": "Backend tasks have lower task numbers than the frontend tasks that depend on them",
+      "passed": true,
+      "evidence": "Backend tasks are numbered 2, 3, 4. Frontend tasks are numbered 5, 6, 7, 8. Task 5 (frontend) explicitly depends on Task 4 (backend) with note 'cross-repo: trustify-backend comparison endpoint must be defined to ensure type alignment'. The impact map dependency graph shows Task 4 -> Task 5 as the cross-repo dependency link. All backend numbers (2-4) are strictly lower than all frontend numbers (5-8)."
+    },
+    {
+      "text": "UI-facing frontend tasks (pages, components) reference Figma design context mentioning specific PatternFly components and visual specifications — API-layer frontend tasks (API types, client functions, hooks) are exempt from this requirement",
+      "passed": true,
+      "evidence": "Task 7 (comparison page, UI-facing) contains a 'Figma Design References' section listing PatternFly components: Select (single, typeahead), Button, Dropdown, ExpandableSection, Badge, composable Table, EmptyState, CodeBranchIcon, Skeleton, and specifies badge colors and critical row highlighting per Figma spec. Task 8 (route + tests, UI-facing) also has a 'Figma Design References' section mentioning EmptyState, ExpandableSection headers with Badge counts, and column headers. API-layer tasks (Task 5: API types/client, Task 6: React Query hook) have no Figma references and are correctly exempt."
+    },
+    {
+      "text": "Cross-repo dependency ordering is enforced: either at least one frontend task explicitly depends on a backend task in its Dependencies section, or all tasks target a shared feature branch where backend tasks have lower task numbers than frontend tasks (implicit ordering via feature-branch workflow)",
+      "passed": true,
+      "evidence": "Task 5 (trustify-ui) header states 'Dependencies: Task 4 (cross-repo: trustify-backend comparison endpoint must be defined to ensure type alignment)'. This is an explicit cross-repo dependency from a frontend task to a backend task. Additionally, the impact map notes 'Task 5 (trustify-ui: API types + client) depends on Task 4 (trustify-backend: comparison endpoint + tests) ** cross-repo dependency **' in the dependency graph."
+    },
+    {
+      "text": "Frontend tasks reference paths from repo-frontend.md; backend tasks reference paths from repo-backend.md",
+      "passed": true,
+      "evidence": "Backend tasks reference paths matching repo-backend.md: modules/fundamental/src/sbom/model/mod.rs (manifest line 41), modules/fundamental/src/sbom/service/sbom.rs (line 46), modules/fundamental/src/sbom/endpoints/mod.rs (line 48), modules/fundamental/src/sbom/endpoints/list.rs and get.rs (lines 49-50), entity/src/sbom_package.rs (line 100), entity/src/package.rs (line 101), entity/src/sbom_advisory.rs (line 99), entity/src/package_license.rs (line 103), common/src/error.rs (line 32), tests/api/sbom.rs (line 111). Frontend tasks reference paths matching repo-frontend.md: src/api/models.ts (line 25), src/api/rest.ts (line 26), src/api/client.ts (line 24), src/hooks/useSbomById.ts (line 29), src/hooks/useSboms.ts (line 28), src/components/SeverityBadge.tsx (line 49), src/routes.tsx (line 53), tests/mocks/handlers.ts (line 60), tests/e2e/sbom-list.spec.ts (line 65). No cross-contamination of paths between repos."
+    },
+    {
+      "text": "Every generated task description contains a Repository section with a single repository name (not multiple repos per task)",
+      "passed": false,
+      "evidence": "Task 1 (task-1-create-feature-branch.md) has '## Repository\\n\\ntrustify-backend, trustify-ui' listing two repositories. Task 9 (task-9-merge-feature-branch.md) has '## Repository\\n\\ntrustify-backend, trustify-ui' listing two repositories. The task-description-template.md rule states 'Repository must be a single repository per task'. Tasks 2-8 correctly have single repositories, but the assertion requires EVERY task to comply."
+    },
+    {
+      "text": "Every generated task description contains Target Branch, Description, Acceptance Criteria, and Test Requirements sections as required by the handoff contract in task-description-template.md",
+      "passed": true,
+      "evidence": "All 9 tasks contain the required sections: Task 1 has Target Branch (main), Description, Acceptance Criteria (3 items), Test Requirements. Task 2 has Target Branch (TC-9003), Description, Acceptance Criteria (4 items), Test Requirements. Task 3 has Target Branch (TC-9003), Description, Acceptance Criteria (8 items), Test Requirements. Task 4 has Target Branch (TC-9003), Description, Acceptance Criteria (6 items), Test Requirements. Task 5 has Target Branch (TC-9003), Description, Acceptance Criteria (5 items), Test Requirements. Task 6 has Target Branch (TC-9003), Description, Acceptance Criteria (5 items), Test Requirements. Task 7 has Target Branch (TC-9003), Description, Acceptance Criteria (14 items), Test Requirements. Task 8 has Target Branch (TC-9003), Description, Acceptance Criteria (6 items), Test Requirements. Task 9 has Target Branch (main), Description, Acceptance Criteria (6 items), Test Requirements."
+    },
+    {
+      "text": "File paths in Files to Modify and Files to Create reference paths from the corresponding mock repository structure manifests (repo-backend.md or repo-frontend.md), not invented paths",
+      "passed": false,
+      "evidence": "Task 4 lists 'tests/api/mod.rs or test harness' under Files to Modify, but repo-backend.md does not include tests/api/mod.rs in its directory tree. The manifest lists tests/api/sbom.rs, tests/api/advisory.rs, and tests/api/search.rs but no mod.rs file. All other Files to Modify paths are verified in the manifests: modules/fundamental/src/sbom/model/mod.rs, modules/fundamental/src/sbom/service/mod.rs, modules/fundamental/src/sbom/endpoints/mod.rs (all in repo-backend.md); src/api/models.ts, src/api/rest.ts, src/routes.tsx, tests/mocks/handlers.ts (all in repo-frontend.md). Files to Create paths follow manifest directory patterns correctly."
+    },
+    {
+      "text": "Implementation Notes in every non-bookend, non-documentation task reference specific file paths and code patterns from the repository, not abstract or generic guidance — bookend tasks (create-branch, merge-branch) and documentation tasks are exempt as they omit Implementation Notes by design",
+      "passed": true,
+      "evidence": "Task 1 (bookend) and Task 9 (bookend) have no Implementation Notes — correctly exempt. Task 2 references 'modules/fundamental/src/sbom/model/summary.rs and details.rs', serde derive macros, #[serde(rename_all)] pattern. Task 3 references 'modules/fundamental/src/sbom/service/sbom.rs', DatabaseConnection, entity/src/sbom_package.rs, entity/src/package.rs, entity/src/sbom_advisory.rs, entity/src/package_license.rs, HashSet/HashMap usage. Task 4 references endpoints/compare.rs, list.rs, get.rs patterns, Axum Query extractor with code sample, endpoints/mod.rs route registration, tests/api/sbom.rs test pattern. Task 5 references src/api/models.ts with SbomSummary and AdvisorySummary names, src/api/rest.ts with fetchSboms() pattern, src/api/client.ts Axios instance, includes code sample. Task 6 references src/hooks/useSbomById.ts pattern with complete code sample showing useQuery usage. Task 7 references src/pages/SbomComparePage/ directory, useSearchParams, DiffSection interface, PatternFly Table, react-window, src/components/SeverityBadge.tsx. Task 8 references src/routes.tsx with React.lazy pattern, tests/mocks/handlers.ts MSW pattern, tests/e2e/sbom-list.spec.ts, all with code samples."
+    },
+    {
+      "text": "Every generated task description contains a Target Branch section — either all set to 'main' (direct-to-main workflow) or bookend tasks set to 'main' with intermediate tasks set to the feature issue ID (feature-branch workflow)",
+      "passed": true,
+      "evidence": "Feature-branch workflow with issue ID TC-9003. Bookend tasks: Task 1 Target Branch = 'main', Task 9 Target Branch = 'main'. Intermediate tasks: Task 2 Target Branch = 'TC-9003', Task 3 = 'TC-9003', Task 4 = 'TC-9003', Task 5 = 'TC-9003', Task 6 = 'TC-9003', Task 7 = 'TC-9003', Task 8 = 'TC-9003'. Impact map confirms: 'Bookend tasks (1 and 9) target main; all intermediate tasks target TC-9003.'"
+    },
+    {
+      "text": "For each task created, a description digest is produced — evidenced by a separate digest file (e.g., task-N-digest.md), a digest entry in the impact map, or a '[sdlc-workflow] Description digest: sha256-md:<64-char-hex>' marker in any output file. The digest must contain a format-tagged SHA-256 hash — exactly 64 lowercase hex characters prefixed by 'sha256-md:' or 'sha256-adf:', not a placeholder, abbreviated value, or example string",
+      "passed": true,
+      "evidence": "All 9 tasks have separate digest files with valid sha256-md: hashes (64 lowercase hex chars each): task-1-digest.md: sha256-md:b7a55eae5c206be157ab614d9581ea2356481ad19b1d7a4864af66bfd117a336, task-2-digest.md: sha256-md:91ea7b1dd0e9cf20ae593370204862cf175282f008c03ff7c2a537c794995054, task-3-digest.md: sha256-md:d666214287771f5f8186b45cf9cec1b9edfa83d15c5823187324d4c4267cf6cf, task-4-digest.md: sha256-md:c57fe7f4450ceb40b67f4391a20d80caa87bb3df2971d66d4bc7ae92185482eb, task-5-digest.md: sha256-md:cb3d5ab958734d6e1ab4fd95e1e3face5e671610283c17bfc1b3fb52c22260c3, task-6-digest.md: sha256-md:a2369bfe59b0595833187b1ecad6980f67faba2b335c9c73455b89a78f7384f9, task-7-digest.md: sha256-md:f59bc2e52dc78c8b1491898cc3a4988b0729726cead8711cf26d51808e40a663, task-8-digest.md: sha256-md:b2859ee30f83672d41a8524f46393bb6dc3e283031308564bacd814030187e07, task-9-digest.md: sha256-md:b3092d8154460525254da729d4fa62de0713c205e2a3edc91c3e1fb3c5490f75. All use '[sdlc-workflow] Description digest:' marker format."
+    },
+    {
+      "text": "Convention-aware enrichment validates file-type applicability per shared/convention-applicability-rules.md before including a convention — inapplicable conventions are excluded entirely (not listed with 'Not applicable' annotations), and applicable ones include a rationale in the prescribed format ('Applies: task modifies <file> matching the convention's <scope>'), not free-form prose",
+      "passed": true,
+      "evidence": "All tasks with conventions use the prescribed rationale format. Task 2: 'Applies: task modifies modules/fundamental/src/sbom/model/ matching the convention's module structure scope.' Task 3: two conventions with 'Applies: task modifies/creates ... matching the convention's ... scope.' Task 4: four conventions all using prescribed format. Task 5: 'Applies: task modifies src/api/models.ts and src/api/rest.ts matching the convention's API layer scope.' Task 6: two conventions with prescribed format. Task 7: three conventions with prescribed format. Task 8: two conventions with prescribed format. No inapplicable conventions are listed anywhere — no 'Not applicable' or 'N/A' annotations found. Bookend tasks (1, 9) have no Applicable Conventions section, which is correct. All rationales follow 'Applies: task modifies/creates <file(s)> matching the convention's <scope>' format, not free-form prose."
+    },
+    {
+      "text": "When the Feature issue has a priority set (not 'Undefined'), the plan documents that the Feature's priority is inherited by created tasks — evidenced by priority field values in the impact map, task creation log, or task description files. When the Feature's priority is 'Undefined', the plan documents that priority inheritance is skipped (not propagated as null or 'Undefined')",
+      "passed": true,
+      "evidence": "summary-comment.md documents: 'Priority: Critical -- Propagated to all 9 child tasks. Every task header includes Priority: Critical.' The inherited fields table shows: '| Priority | Critical | All tasks | Tasks 1-9 |'. Every task description file includes '**Priority**: Critical' in its header (verified in all 9 task files)."
+    },
+    {
+      "text": "When the Feature issue has a non-empty fixVersions array and the fixVersion scope config (from ### Jira Field Defaults in CLAUDE.md) is 'task' or 'both' (or absent, defaulting to 'both'), the plan documents that fixVersions are inherited by created tasks — evidenced by fixVersion values in the impact map, task creation log, or task description files. When fixVersion scope is 'feature' or the Feature has no fixVersions, the plan documents that fixVersion inheritance is skipped",
+      "passed": true,
+      "evidence": "CLAUDE.md has no '### Jira Field Defaults' section, so the default scope 'both' applies. summary-comment.md documents: 'Fix Versions: RHTPA 1.5.0 -- Propagated to all 9 child tasks with default scope \"both\", meaning it applies to tasks targeting both trustify-backend (Tasks 2-4) and trustify-ui (Tasks 5-8), as well as cross-repo bookend tasks (Tasks 1, 9).' The inherited fields table shows: '| Fix Versions | RHTPA 1.5.0 | Both repositories (default scope) | Tasks 1-9 |'. Every task description file includes '**Fix Versions**: RHTPA 1.5.0' in its header (verified in all 9 task files)."
+    },
+    {
+      "text": "A summary of inherited field propagation is produced — evidenced by a summary-comment.md file in the outputs directory, or a summary section in the impact map that includes the inherited priority and fixVersion values propagated to tasks, or states they were omitted and why",
+      "passed": true,
+      "evidence": "summary-comment.md exists in the outputs directory with title 'Field Propagation Summary: TC-9003'. It contains an 'Inherited Fields' table showing Priority (Critical) and Fix Versions (RHTPA 1.5.0) with scope and task application details. A 'Propagation Details' section explains each field's propagation. A 'Task Summary' table lists all 9 tasks with their repository and target branch. A 'Workflow Mode' section explains the feature-branch selection rationale."
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "failed": 2,
+    "total": 15,
+    "pass_rate": 0.867
+  }
+}

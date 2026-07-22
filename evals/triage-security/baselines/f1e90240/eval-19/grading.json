@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment and parses the ISO 8601 value",
+      "passed": true,
+      "evidence": "The output explicitly references the parsed ISO 8601 timestamp '2026-05-01T10:00:00Z' for both streams (lines 9, 19, 30), demonstrating it was read and parsed from the matrix."
+    },
+    {
+      "text": "Step 0.3 detects that the matrix is older than the 14-day default threshold and displays a staleness warning",
+      "passed": true,
+      "evidence": "The summary on line 30-32 explicitly states 'exceeds the 14-day staleness threshold by 68 days' and the per-stream entries note the matrices are 82 days old with warnings that they 'may not reflect recent releases'."
+    },
+    {
+      "text": "The staleness warning includes the stream name, the last-updated date, and the number of days since the last update",
+      "passed": true,
+      "evidence": "Each warning includes all three: stream name ('2.1.x', '2.2.x'), last-updated date ('2026-05-01T10:00:00Z'), and days since update ('82 days ago'). See lines 9-10 and 19-20."
+    },
+    {
+      "text": "The warning presents three options: refresh now (re-run setup Step 10.6), proceed anyway, or stop",
+      "passed": true,
+      "evidence": "Lines 12-15 and 22-25 present exactly three options: '1. Refresh now — re-run matrix population (setup Step 10.6)', '2. Proceed anyway — continue triage with the current matrix', '3. Stop — halt triage so I can investigate'."
+    },
+    {
+      "text": "Step 0.3 runs before Step 0.5 (JIRA Access Initialization) — no Jira operations are attempted before the staleness check",
+      "passed": true,
+      "evidence": "The output file is titled 'Step 0.3 — Matrix Staleness Check' and ends with 'Awaiting user choice before proceeding with triage' (line 34). There is no evidence of any Jira operations (no Jira API calls, no JQL queries, no issue transitions). The only Jira reference is the issue key 'TC-8001' identifying the bug being triaged, which is input context, not a Jira operation. The output confirms the workflow halts at Step 0.3 awaiting user input before any further steps."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

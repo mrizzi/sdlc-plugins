@@ -1,0 +1,70 @@
+{
+  "assertion_results": [
+    {
+      "text": "The verification report marks all 5 acceptance criteria as PASS — the diff implements single license filter, comma-separated filter, 400 validation, pagination integration, and unchanged response shape",
+      "passed": true,
+      "evidence": "report.md line 12: 'Acceptance Criteria | PASS | 5 of 5 criteria met'. Lines 21-29 enumerate all 5 criteria with detailed evidence: (1) single license filter via spdx::Expression::parse and is_in clause, (2) comma-separated filter via split on commas with Condition::any(), (3) invalid license returns 400 via AppError::BadRequest, (4) pagination integration with total reflecting filtered results, (5) response shape unchanged as Result<Json<PaginatedResults<PackageSummary>>, AppError>. criterion-1.md through criterion-5.md each contain 'Verdict: PASS' with detailed analysis."
+    },
+    {
+      "text": "Scope containment is PASS — all files in the diff (list.rs, service/mod.rs, tests/api/package.rs) are listed in the task's Files to Modify or Files to Create",
+      "passed": true,
+      "evidence": "report.md line 7: 'Scope Containment | PASS | PR modifies exactly the 3 files specified in the task: `list.rs`, `service/mod.rs`, and `tests/api/package.rs` (2 modified, 1 created)'"
+    },
+    {
+      "text": "No sub-tasks are created because there are no review comments (Review Feedback is N/A)",
+      "passed": true,
+      "evidence": "report.md line 5: 'Review Feedback | N/A | No review comments on this PR'. Line 6: 'Root-Cause Investigation | N/A | No sub-tasks created; nothing to investigate'. No mention of sub-task creation anywhere in any output file."
+    },
+    {
+      "text": "The skill does NOT modify any code files — it only reads, verifies, and reports (constraint 1.11)",
+      "passed": true,
+      "evidence": "All output files are verification/report files: report.md and criterion-1.md through criterion-5.md. The report analyzes code changes made by the PR under review but does not modify any source code files. The analysis in criterion files (e.g., criterion-1.md discussing list.rs and service/mod.rs) is purely descriptive, quoting code to explain the PR's changes rather than making changes."
+    },
+    {
+      "text": "The report does NOT auto-merge the PR — it presents findings for human review (constraint 1.13)",
+      "passed": true,
+      "evidence": "report.md concludes with 'Overall: PASS' and 'No issues requiring attention were identified.' It presents verification findings but contains no merge action, no gh pr merge command, and no indication of automated merging. The report is purely informational for human review."
+    },
+    {
+      "text": "Sensitive pattern scan is PASS — the diff contains no passwords, API keys, or private keys",
+      "passed": true,
+      "evidence": "report.md line 10: 'Sensitive Patterns | PASS | No secrets, credentials, API keys, or sensitive patterns detected in added lines'"
+    },
+    {
+      "text": "The report contains a Test Change Classification row with ADDITIVE — only new test files were added (tests/api/package.rs is a new file)",
+      "passed": true,
+      "evidence": "report.md line 14: 'Test Change Classification | ADDITIVE | `tests/api/package.rs` is a new file with 4 new test functions and 0 removed tests'"
+    },
+    {
+      "text": "The verification report assembles verdicts from all four domain sub-agents: Scope Containment, Diff Size, and Commit Traceability from Intent Alignment; Sensitive Patterns from Security; CI Status, Acceptance Criteria, and Verification Commands from Correctness; Test Quality (combining Repetitive Test Detection, Test Documentation, and Eval Quality) and Test Change Classification from Style/Conventions",
+      "passed": true,
+      "evidence": "report.md summary table contains all expected verdicts: Intent Alignment — Scope Containment (line 7, PASS), Diff Size (line 8, PASS), Commit Traceability (line 9, N/A); Security — Sensitive Patterns (line 10, PASS); Correctness — CI Status (line 11, PASS), Acceptance Criteria (line 12, PASS), Verification Commands (line 15, N/A); Style/Conventions — Test Quality (line 13, PASS, combining 'no repetitive test patterns detected' + 'doc comments' + 'Eval Quality: N/A'), Test Change Classification (line 14, ADDITIVE). All four domains are represented with their component checks."
+    },
+    {
+      "text": "The report includes detailed findings with specific evidence for each domain — file-by-file scope comparison (Intent Alignment), line-level pattern scanning results (Security), per-criterion code-level verification (Correctness), and test quality assessment (Style/Conventions) — not just pass/fail verdicts in the summary table",
+      "passed": false,
+      "evidence": "Correctness has detailed findings: report.md lines 19-33 provide per-criterion code-level verification with specific implementation details, and criterion-1.md through criterion-5.md contain extensive analysis with code snippets, test coverage references, and conclusions. However, Intent Alignment lacks a detailed file-by-file scope comparison section — only the table cell on line 7 mentions the 3 files without a section mapping each file against the task spec. Security lacks line-level pattern scanning results — only the table cell on line 10 states no patterns were detected without detailing what patterns were scanned for or in which files. Style/Conventions lacks a detailed test quality assessment section — only the table cell on line 13 provides a one-line summary ('All 4 test functions have doc comments; no repetitive test patterns detected'). Three of four domains have findings limited to summary table cells rather than detailed sections with specific evidence."
+    },
+    {
+      "text": "Eval Quality is N/A because no eval result reviews exist in the PR — no reviews match the eval result detection criteria, so Eval Quality does not affect the Test Quality combination",
+      "passed": true,
+      "evidence": "report.md line 13: 'Test Quality | PASS | All 4 test functions have doc comments; no repetitive test patterns detected; Eval Quality: N/A'. Eval Quality is explicitly marked N/A and Test Quality is PASS, confirming N/A Eval Quality does not negatively affect the Test Quality combination."
+    },
+    {
+      "text": "No eval failure sub-tasks are created because Eval Quality is N/A — eval failure sub-tasks are only created when Eval Quality is WARN (at least one eval assertion failed)",
+      "passed": true,
+      "evidence": "report.md line 13 shows 'Eval Quality: N/A'. Line 6: 'Root-Cause Investigation | N/A | No sub-tasks created; nothing to investigate'. No mention of eval failure sub-tasks anywhere in any output file."
+    },
+    {
+      "text": "Review Feedback and Root-Cause Investigation verdicts are determined by the orchestrator independently from domain analysis — Review Feedback is N/A because no review comments exist, Root-Cause Investigation is N/A because no sub-tasks were created",
+      "passed": true,
+      "evidence": "report.md lines 5-6: 'Review Feedback | N/A | No review comments on this PR' and 'Root-Cause Investigation | N/A | No sub-tasks created; nothing to investigate'. Both appear at the top of the summary table (lines 5-6) before domain-specific verdicts (lines 7+), consistent with orchestrator-level determination independent of domain analysis. The reasons are self-contained: Review Feedback depends on PR review comments existing, Root-Cause Investigation depends on sub-task existence."
+    }
+  ],
+  "summary": {
+    "passed": 11,
+    "failed": 1,
+    "total": 12,
+    "pass_rate": 0.92
+  }
+}

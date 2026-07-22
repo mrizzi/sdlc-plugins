@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Dependency chain output includes both the rpms.lock.yaml classification AND the SBOM verification result for the affected versions (Step 2.3.5 Optional SBOM verification)",
+      "passed": true,
+      "evidence": "Section 2.3.5 in version-impact.md shows dependency chain blocks for each affected version (2.2.0, 2.2.1, 2.2.2). Each block includes both: (1) rpms.lock.yaml classification (e.g., 'rpms.lock.yaml: present (3.0.7-25.el9_3) -> explicit install') and (2) SBOM verification result (e.g., 'SBOM verification: present in BOTH final image SBOM and base image SBOM -> base image')."
+    },
+    {
+      "text": "SBOM verification uses cosign download sbom to compare the final container image SBOM against the base image SBOM (Step 2.3.5 sub-steps 2 and 4)",
+      "passed": false,
+      "evidence": "The outputs mention comparison between final image SBOM and base image SBOM (e.g., 'present in BOTH final image SBOM and base image SBOM') but never reference 'cosign download sbom' or 'cosign' anywhere. There is no evidence that cosign was used as the mechanism to retrieve the SBOMs. The assertion specifically requires cosign download sbom as the tool, and it is absent from both output files."
+    },
+    {
+      "text": "When SBOM classification (base image) disagrees with rpms.lock.yaml classification (explicit install), the discrepancy is flagged to the engineer with a warning (Step 2.3.5 sub-step 5 disagreement handling)",
+      "passed": true,
+      "evidence": "Each affected version's dependency chain block contains an explicit 'WARNING: SBOM classification DISAGREES with rpms.lock.yaml' message, with detailed breakdown of both classifications and an 'Investigate manually' instruction. Additionally, a summary table at the end of section 2.3.5 shows DISAGREE status for all three affected versions (2.2.0, 2.2.1, 2.2.2) and advises the engineer to investigate."
+    },
+    {
+      "text": "The rpms.lock.yaml classification remains the primary signal — the SBOM result supplements but does not override it (Step 2.3.5 non-MVP enhancement)",
+      "passed": true,
+      "evidence": "The version impact table (section 2.4) determines affected/not-affected status based entirely on rpms.lock.yaml versions (comparing openssl-libs version against the fix threshold 3.0.7-28.el9_4). The SBOM result does not change any triage outcome. In section 2.3.5, the SBOM is presented as additional context that raises questions ('Manual investigation required') but does not override the rpms.lock.yaml-driven classification. The remediation section presents both paths but defers to the engineer to resolve the discrepancy."
+    },
+    {
+      "text": "The SBOM verification result is presented alongside the rpms.lock.yaml result in the dependency chain output, not as a separate section (Step 2.3.5 sub-step 6)",
+      "passed": true,
+      "evidence": "Within each version's dependency chain code block (e.g., Version 2.2.0), the SBOM verification line ('SBOM verification: present in BOTH final image SBOM and base image SBOM -> base image') appears immediately after the rpms.lock.yaml line ('rpms.lock.yaml: present (3.0.7-25.el9_3) -> explicit install'), as part of the same indented dependency chain block. Both results are co-located within a single unified dependency chain output per version."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

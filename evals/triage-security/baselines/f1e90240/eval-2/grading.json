@@ -1,0 +1,35 @@
+{
+  "assertion_results": [
+    {
+      "text": "Version impact table shows NO (not affected) for all supported versions — every version ships a dependency version outside the CVE's affected range",
+      "passed": true,
+      "evidence": "version-impact.md Step 2.4 tables show all versions as NO: stream 2.2.x (2.2.0=1.0.138, 2.2.1=1.0.138, 2.2.2=retag, 2.2.3=1.0.139, 2.2.4=1.0.139) and stream 2.1.x (2.1.0=1.0.137, 2.1.1=1.0.137), all >= fix threshold 1.0.135."
+    },
+    {
+      "text": "Triage outcome recommends closing as Not a Bug with resolution, not creating remediation tasks (Step 8 Case C)",
+      "passed": true,
+      "evidence": "triage-outcome.md heading: 'Triage Decision: Case C — No Supported Versions Affected'. Section 'Recommendation: Close as Not a Bug' and action item '3. Transition to Closed with resolution \"Not a Bug\"'. Final section: 'No Remediation Tasks Required'."
+    },
+    {
+      "text": "The close recommendation includes a comment documenting the version impact evidence — listing each version and its dependency version as proof of non-impact",
+      "passed": true,
+      "evidence": "triage-outcome.md section '1. Add comment documenting the version impact analysis' includes a table listing each version with its serde_json version: 2.2.0=1.0.138, 2.2.1=1.0.138, 2.2.2=retag, 2.2.3=1.0.139, 2.2.4=1.0.139, plus cross-stream 2.1.0=1.0.137, 2.1.1=1.0.137."
+    },
+    {
+      "text": "VEX Justification is set to 'Component not Present' or appropriate value when the VEX field is configured (Step 8 VEX Justification)",
+      "passed": true,
+      "evidence": "triage-outcome.md section '2. Set VEX Justification': 'Set customfield_12345 (VEX Justification) to \"Component not Present\"'. The VEX field customfield_12345 was identified in data-extraction.md configuration."
+    },
+    {
+      "text": "The analysis does NOT create any remediation tasks — no upstream backport, no downstream propagation (Step 8 Case C closes the issue)",
+      "passed": true,
+      "evidence": "triage-outcome.md final section: 'No Remediation Tasks Required — Since no supported versions are affected (Case C), no remediation tasks are created. The vulnerability was already resolved in all shipped versions before PSIRT detected it.' No upstream backport or downstream propagation tasks appear anywhere in the outputs."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

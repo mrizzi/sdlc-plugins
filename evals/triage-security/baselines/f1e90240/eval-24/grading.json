@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0 detects the absence of the Deployment Context column in the Source Repositories table and defaults all repositories to upstream (§1.78)",
+      "passed": true,
+      "evidence": "data-extraction.md lines 37-39 explicitly detect the missing column: 'Source Repositories table does not have a Deployment Context column. Per backward compatibility rules, coordination guidance is omitted from remediation tasks.' The upstream default is behaviorally evidenced: all 4 remediation tasks follow upstream-only patterns (direct backport to release branches, standard downstream propagation), no fork-specific handling appears anywhere, and backward compatibility rules are invoked."
+    },
+    {
+      "text": "Remediation task descriptions do NOT include a Coordination Guidance subsection — the section is omitted entirely when no Deployment Context column exists",
+      "passed": true,
+      "evidence": "All 4 task descriptions in remediation.md (Tasks 1-4, lines 26-65, 78-115, 130-178, 188-234) contain only Repository, Target Branch, Description, Implementation Notes, Acceptance Criteria, Test Requirements, and Dependencies sections. None contain a Coordination Guidance subsection. The summary-level note at line 252 ('### Coordination Guidance / Omitted') is under the organizational 'Summary of All Remediation Tasks' section, not within any individual task description."
+    },
+    {
+      "text": "The triage proceeds normally through all steps without errors from the missing Deployment Context column",
+      "passed": true,
+      "evidence": "Both output files show complete, well-structured results with no error messages or incomplete processing. data-extraction.md contains all standard sections (CVE data, stream scope, ecosystem detection, version impact table, affects versions correction, cross-stream impact). remediation.md contains 4 complete remediation tasks (2 Case A for 2.2.x, 2 Case B preemptive for 2.1.x) with summary table and linkage information. The missing column was handled gracefully via backward compatibility rules without any errors."
+    },
+    {
+      "text": "Backward compatibility is maintained — existing eval behavior is unaffected by the absence of the Deployment Context column",
+      "passed": true,
+      "evidence": "Both files explicitly reference backward compatibility (data-extraction.md line 39: 'Per backward compatibility rules'; remediation.md line 254: 'backward compatibility'). All standard eval outputs are present and well-formed: CVE parsing, version impact analysis, affects versions correction (RHTPA 2.0.0 corrected to 2.2.0/2.2.1/2.2.2), cross-stream impact detection (2.1.x), 4 remediation tasks with proper structure, proper Jira linkage (Depend vs Related for preemptive), and proper labeling (security-preemptive for Case B). The only absent content is Coordination Guidance, which is deployment-context-dependent."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

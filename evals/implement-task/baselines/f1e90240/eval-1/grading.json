@@ -1,0 +1,60 @@
+{
+  "assertion_results": [
+    {
+      "text": "The plan references inspecting existing code before modifying it — mentions reading or analyzing at least 2 of: advisory/endpoints/get.rs, advisory/service/advisory.rs, advisory/model/summary.rs, common/src/error.rs (constraint 1.5)",
+      "passed": true,
+      "evidence": "Step 4 of plan.md explicitly references all 4 files: (1) 'get_symbols_overview on modules/fundamental/src/advisory/service/advisory.rs' (line 85), (2) 'find_symbol on the get handler in endpoints/get.rs with include_body=true' (line 92), (3) 'find_symbol on AdvisorySummary with include_body=true in model/summary.rs' (line 91), (4) 'search_for_pattern for AppError in common/src/error.rs' (line 100). Additionally, each file-N-description.md includes a 'Pre-Implementation Inspection' section describing code to inspect before modifying."
+    },
+    {
+      "text": "All files listed in the plan are within the scope defined by the task's Files to Modify and Files to Create sections — no unrelated files are modified (constraint 1.4, 5.1)",
+      "passed": true,
+      "evidence": "The Files Summary table (plan.md lines 213-220) lists exactly 6 files: 3 modified (advisory/service/advisory.rs, endpoints/mod.rs, model/mod.rs) and 3 created (model/severity_summary.rs, endpoints/severity_summary.rs, tests/api/advisory_summary.rs). server/src/main.rs is explicitly noted as 'File confirmed as no changes needed' (line 146). The docs/api.md mention in Step 9 is a conditional verification check ('Check if docs/api.md needs updating'), not a committed modification. No out-of-scope files are in the modification list."
+    },
+    {
+      "text": "The plan includes creating the 3 new files listed in Files to Create: severity_summary.rs model, severity_summary.rs endpoint handler, and advisory_summary.rs test file",
+      "passed": true,
+      "evidence": "Files Summary table entries: File 4 'modules/fundamental/src/advisory/model/severity_summary.rs - Create - SeveritySummary response struct', File 5 'modules/fundamental/src/advisory/endpoints/severity_summary.rs - Create - GET handler for /api/v2/sbom/{id}/advisory-summary', File 6 'tests/api/advisory_summary.rs - Create - Integration tests for the new endpoint'. Each has a corresponding file-N-description.md with full implementation details."
+    },
+    {
+      "text": "The plan includes modifying the 3 files listed in Files to Modify: advisory/service/advisory.rs, advisory/endpoints/mod.rs, and advisory/model/mod.rs",
+      "passed": true,
+      "evidence": "Files Summary table entries: File 1 'modules/fundamental/src/advisory/service/advisory.rs - Modify - Add severity_summary method to AdvisoryService', File 2 'modules/fundamental/src/advisory/endpoints/mod.rs - Modify - Register the new GET route', File 3 'modules/fundamental/src/advisory/model/mod.rs - Modify - Add pub mod severity_summary; declaration'. Each has a corresponding file-N-description.md with detailed changes."
+    },
+    {
+      "text": "The planned commit message follows Conventional Commits format (type(scope): description) and references TC-9201 in the footer (constraint 2.1, 2.2)",
+      "passed": true,
+      "evidence": "Plan.md lines 179-187 show the commit message: 'feat(advisory): add severity aggregation endpoint for SBOM advisories' (Conventional Commits format with type=feat, scope=advisory), followed by a body, and footer 'Implements TC-9201' referencing the Jira key."
+    },
+    {
+      "text": "The plan mentions using --trailer='Assisted-by: Claude Code' in the commit (constraint 2.3)",
+      "passed": true,
+      "evidence": "Plan.md line 189 states: 'With `--trailer=\"Assisted-by: Claude Code\"`.' directly after the commit message block."
+    },
+    {
+      "text": "The plan references creating a branch named TC-9201 or notes the branch naming convention (constraint 3.1), and references the Target Branch value from the task description",
+      "passed": true,
+      "evidence": "Plan.md Step 5 (lines 123-129) shows: 'Default flow (no Target PR, no Bookend Type). Target Branch is `main`.' followed by 'git checkout main / git pull / git checkout -b TC-9201'. Branch name TC-9201 matches the Jira key, and main is identified as the target branch. Also line 197: 'gh pr create --base main'."
+    },
+    {
+      "text": "The conventions analysis identifies at least 2 patterns from sibling code: error handling with Result<T, AppError> and .context(), and the model/service/endpoints module structure",
+      "passed": true,
+      "evidence": "conventions.md Error Handling section (lines 22-24): 'All endpoint handlers return `Result<T, AppError>` where `AppError` is defined in `common/src/error.rs`' and 'Error wrapping uses `.context()` method for adding context to errors before returning.' Module Structure section (lines 7-10): 'Each domain module (sbom, advisory, package) follows a consistent `model/ + service/ + endpoints/` structure within `modules/fundamental/src/`.' Both patterns are clearly identified from sibling analysis."
+    },
+    {
+      "text": "The plan extracts and references the Target Branch section from the task description, identifying 'main' as the target branch",
+      "passed": true,
+      "evidence": "Plan.md line 8: '**Target Branch**: main'. Line 47: '**Target Branch extraction**: `main` -- stored for use in Steps 5 and 10.' Step 5 line 123: 'Target Branch is `main`.' Step 10 line 197: 'gh pr create --base main'. The target branch is consistently identified as 'main' throughout the plan."
+    },
+    {
+      "text": "The plan mentions checking for a description digest comment (Step 1.5) and notes that when no digest is found, it proceeds with a warning rather than blocking execution (backward compatibility per shared/description-digest-protocol.md)",
+      "passed": true,
+      "evidence": "Plan.md Step 1.5 (lines 53-66) describes the full digest verification flow. Line 56: 'Search for comments starting with `[sdlc-workflow] Description digest:`'. Line 57: 'If no digest comment found, log warning and proceed: \"No description digest found -- skipping integrity check.\"' This explicitly shows backward-compatible behavior of warning rather than blocking when no digest is found."
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,28 @@
+## Plan Summary for TC-9005: Drop status table and migrate to enum column
+
+### Tasks Created
+
+| # | Summary | Repository | Target Branch | Type |
+|---|---|---|---|---|
+| 1 | Create feature branch TC-9005 from main | trustify-backend | main | Bookend (create-branch) |
+| 2 | Create migration: add advisory_status_enum type, backfill status column, drop lookup table | trustify-backend | TC-9005 | Implementation |
+| 3 | Update SeaORM entity definitions for advisory status enum | trustify-backend | TC-9005 | Implementation |
+| 4 | Update advisory service and endpoints to use enum status column | trustify-backend | TC-9005 | Implementation |
+| 5 | Update advisory ingestion pipeline to write enum values directly | trustify-backend | TC-9005 | Implementation |
+| 6 | Update advisory integration tests for enum status | trustify-backend | TC-9005 | Implementation |
+| 7 | Update internal architecture documentation | trustify-backend | TC-9005 | Documentation |
+| 8 | Merge feature branch TC-9005 to main | trustify-backend | main | Bookend (merge-branch) |
+
+### Repositories Affected
+- **trustify-backend** -- all changes are within this single repository
+
+### Architecture Summary
+This feature replaces the `advisory_status` lookup table with a PostgreSQL enum column (`advisory_status_enum`) on the `advisory` table. The migration creates the enum type, adds the column, backfills existing data, drops the foreign key, and drops the lookup table -- all atomically. Downstream code changes update the SeaORM entity definitions, advisory service/endpoint queries (eliminating the join), the ingestion pipeline (writing enum values directly), and integration tests. The external API response shape is unchanged.
+
+### Workflow Mode
+**Feature-branch** (`TC-9005`) -- all intermediate task PRs target the feature branch. The migration and code changes are tightly coupled: neither side can be merged to `main` independently without breaking the application. A `workflow:feature-branch` label is applied to the feature issue.
+
+### Inherited Field Values
+
+- **Priority:** `High` -- inherited from Feature TC-9005 and propagated to all created tasks.
+- **Fix Versions:** `RHTPA 2.0.0` -- inherited from Feature TC-9005 and propagated to all created tasks.

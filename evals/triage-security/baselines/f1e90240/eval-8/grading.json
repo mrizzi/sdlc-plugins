@@ -1,0 +1,50 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 4.3 extracts the Upstream Affected Component (axios) from customfield_10632 and uses it to search for related CVE Jiras (§1.59)",
+      "passed": true,
+      "evidence": "overlap-check.md Step 4.3.1 states: 'The current issue TC-8010 has `customfield_10632` (Upstream Affected Component) set to **axios**.' Step 4.3.2 shows a JQL query using this field: 'cf[10632] ~ \"axios\"' to search for related CVE Jiras. data-extraction.md also confirms 'Upstream Affected Component (customfield_10632) | axios'."
+    },
+    {
+      "text": "Step 4.3 filters search results by matching PS Component (customfield_10669 = pscomponent:org/rhtpa-ui) and Stream (customfield_10832 = rhtpa-2.2)",
+      "passed": true,
+      "evidence": "overlap-check.md Step 4.3.3 explicitly filters results: 'TC-8008: PS Component = `pscomponent:org/rhtpa-ui` (matches current issue) -- **MATCH**' and 'TC-8008: Stream = `rhtpa-2.2` (matches current issue) -- **MATCH**'. The prerequisites check in Step 4.3 also confirms customfield_10669 and customfield_10832 are configured."
+    },
+    {
+      "text": "Step 4.3 traverses issuelinks on TC-8008 to find remediation task TC-8009 via the 'Depend' link type",
+      "passed": true,
+      "evidence": "overlap-check.md Step 4.3.4 states: 'Inspecting TC-8008's issuelinks for linked remediation Tasks (link type \"Depend\"): TC-8008 has a **Depend** link to **TC-8009**' with summary 'Bump axios to 1.9.0 in rhtpa-ui [rhtpa-2.2]'."
+    },
+    {
+      "text": "Step 4.3 compares the remediation task's bump version (1.9.0) against the current CVE's fix threshold (1.8.2) and determines the fix is already covered",
+      "passed": true,
+      "evidence": "overlap-check.md Step 4.3.5 provides a comparison table: 'Current CVE (TC-8010) fix threshold | >= 1.8.2', 'TC-8009 bump target version | 1.9.0', 'Comparison | 1.9.0 >= 1.8.2', 'Result | **COVERED** -- the existing remediation meets or exceeds the fix threshold'."
+    },
+    {
+      "text": "Triage outcome recommends closing the issue because existing remediation task TC-8009 already bumps axios past the fix threshold — no new remediation task is created",
+      "passed": true,
+      "evidence": "triage-outcome.md states: 'Decision: Close TC-8010 -- fix already covered by existing remediation task TC-8009.' and 'No new remediation tasks are created.' The rationale explicitly says: 'TC-8009 bumps axios to 1.9.0, which meets or exceeds the fix threshold of 1.8.2 for CVE-2026-44492. No separate remediation task is needed.'"
+    },
+    {
+      "text": "Step 4.3 creates a Related link between the current CVE (TC-8010) and the related CVE (TC-8008) with an idempotency check on existing issuelinks before creating",
+      "passed": true,
+      "evidence": "overlap-check.md Step 4.3.6 documents: 'Related link: TC-8010 <-> TC-8008 (same upstream component -- axios)' with idempotency check: 'Check existing issuelinks on TC-8010 first (currently none) -- no existing Related link to TC-8008' followed by 'Action: Create Related link between TC-8010 and TC-8008'. triage-outcome.md confirms: 'Related link: TC-8010 <-> TC-8008 (same upstream component overlap)'."
+    },
+    {
+      "text": "Step 4.3 creates a Depend link from the covering remediation task (TC-8009) to the current CVE (TC-8010) with an idempotency check on existing issuelinks before creating",
+      "passed": true,
+      "evidence": "overlap-check.md Step 4.3.6 documents: 'Depend link: TC-8010 -> TC-8009 (covering remediation task)' with idempotency check: 'Check existing issuelinks on TC-8010 first (currently none) -- no existing Depend link to TC-8009' followed by 'Action: Create Depend link from TC-8010 to TC-8009'. The Depend link is between TC-8009 and TC-8010 establishing the dependency relationship (TC-8010 depends on TC-8009 as the covering remediation). triage-outcome.md also confirms: 'Depend link: TC-8010 -> TC-8009 (covering remediation task)'."
+    },
+    {
+      "text": "A comment is posted on the current CVE documenting the cross-CVE overlap finding — including the related CVE key (TC-8008), covering task key (TC-8009), library (axios), bump version (1.9.0), and fix threshold (1.8.2)",
+      "passed": true,
+      "evidence": "overlap-check.md Step 4.3.6 under 'Comment to Post on TC-8010' contains: 'existing remediation task TC-8009 (from CVE-2026-42035 / TC-8008) already bumps axios to 1.9.0, which meets or exceeds this CVE's fix threshold (1.8.2).' All required elements present: TC-8008 (related CVE key), TC-8009 (covering task key), axios (library), 1.9.0 (bump version), 1.8.2 (fix threshold). triage-outcome.md also confirms: 'Post Cross-CVE Overlap Comment on TC-8010' as a proposed Jira action."
+    }
+  ],
+  "summary": {
+    "passed": 8,
+    "failed": 0,
+    "total": 8,
+    "pass_rate": 1.0
+  }
+}

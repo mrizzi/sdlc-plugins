@@ -1,0 +1,40 @@
+{
+  "assertion_results": [
+    {
+      "text": "Data extraction identifies the ecosystem as RPM based on the library name (openssl-libs) and component context, not Cargo (Step 1 Ecosystem detection — read ecosystems from Ecosystem Mappings config)",
+      "passed": true,
+      "evidence": "data-extraction.md line 13 states 'Ecosystem | RPM (system package in container image)'. Lines 39-41 explain: 'The vulnerable library openssl-libs is a system RPM package. The 2.2.x stream's Ecosystem Mappings table confirms RPM is a configured ecosystem with lock file rpms.lock.yaml and check command git show <tag>:rpms.lock.yaml.' The ecosystem is correctly identified as RPM based on the library name and Ecosystem Mappings config, not Cargo."
+    },
+    {
+      "text": "Version impact table includes ALL versions from the 2.2.x stream supportability matrix (2.2.0 through 2.2.4) and uses rpms.lock.yaml data for version extraction (Step 2.3)",
+      "passed": true,
+      "evidence": "version-impact.md Stream 2.2.x table includes all five versions: 2.2.0 (v0.4.5, 3.0.7-25.el9_3), 2.2.1 (v0.4.8, 3.0.7-27.el9_4), 2.2.2 (v0.4.9, retag of 2.2.1), 2.2.3 (v0.4.11, 3.0.7-28.el9_4), and 2.2.4 (v0.4.12, 3.0.7-28.el9_4). The column header 'openssl-libs (rpms.lock.yaml)' confirms rpms.lock.yaml is the data source for version extraction."
+    },
+    {
+      "text": "Dependency chain context identifies openssl-libs as present in rpms.lock.yaml and uses this to determine the package origin — the lock file presence is the primary classification signal (Step 2.3.5)",
+      "passed": true,
+      "evidence": "version-impact.md dependency chain block (lines 27-33) states 'rpms.lock.yaml: present --> explicit install' and 'Origin: explicit install (openssl-libs specified in rpms.lock.yaml)'. Lines 36-39 reinforce: 'The openssl-libs package is present in rpms.lock.yaml at each pinned tag, confirming it is an explicitly installed RPM (not inherited from the base image)' and 'Classification relies on rpms.lock.yaml evidence only.' The lock file presence is explicitly used as the primary classification signal."
+    },
+    {
+      "text": "Remediation creates a single task for the Konflux release repo — not the two-task upstream backport + downstream propagation flow used for source dependency ecosystems (Step 8 Remediation Task Creation — system package path)",
+      "passed": true,
+      "evidence": "remediation.md line 14 explicitly states: 'Since openssl-libs is an RPM system package (not a source dependency), a single remediation task is created per affected stream (no upstream/downstream split).' Only one remediation task is created for the 2.2.x stream, and it targets the Konflux release repo 'rhtpa-release.0.4.z' (line 30). No upstream backport task exists."
+    },
+    {
+      "text": "Remediation task description follows task-description-template.md format with Repository, Target Branch, Description, Implementation Notes, and Acceptance Criteria sections — Files to Modify is intentionally omitted per remediation-templates.md (Step 8 Remediation Task Creation)",
+      "passed": true,
+      "evidence": "remediation.md task description contains all required sections: Repository (line 29), Target Branch (line 33), Description (line 37), Implementation Notes (line 56), and Acceptance Criteria (line 67). The 'Files to Modify' section is absent from the task description, consistent with intentional omission per remediation-templates.md for system package remediation."
+    },
+    {
+      "text": "The version impact output addresses SBOM verification in the dependency chain context — either noting that verification was skipped because cosign is not available or because external tools are prohibited, or presenting the SBOM classification result (Step 2.3.5 Optional SBOM verification)",
+      "passed": true,
+      "evidence": "version-impact.md dependency chain block line 29 states 'SBOM verification: skipped -- cosign not available'. Lines 37-39 elaborate: 'SBOM cross-validation via cosign was not performed because cosign is not available in this environment. Classification relies on rpms.lock.yaml evidence only.' The output explicitly addresses SBOM verification and explains why it was skipped."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

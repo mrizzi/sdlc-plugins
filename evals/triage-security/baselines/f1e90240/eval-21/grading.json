@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 7 detects concurrent triage TC-8019 on the same upstream component (quinn-proto) with status In Progress",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 21-25 show the JQL query filtering on cf[10632] ~ 'quinn-proto' returned 1 result: TC-8019 with status 'In Progress'. The file is explicitly titled 'Step 7 -- Concurrent Triage Detection' and confirms the upstream component is quinn-proto."
+    },
+    {
+      "text": "The concurrent triage warning includes the conflicting CVE issue key (TC-8019) and its assignee",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 38-53 show the 'Warning Presented to Engineer' section containing a table with TC-8019 as the CVE Issue and 'engineer-b@example.com' as the Assignee. Both the issue key and assignee are present in the warning."
+    },
+    {
+      "text": "The output presents three options: wait for the other triage to complete, skip remediation task creation, or proceed with a concurrent-triage-overlap label",
+      "passed": true,
+      "evidence": "concurrent-triage.md lines 48-53 list exactly three options: '1. Wait -- pause until the other triage completes, then re-run Step 4.3', '2. Skip -- skip remediation task creation for this CVE', '3. Proceed -- create tasks anyway with a concurrent-triage-overlap label so the other engineer's Step 4.3 catches the overlap'."
+    },
+    {
+      "text": "The concurrent triage check runs before Case A/B/C branching in Step 8",
+      "passed": true,
+      "evidence": "concurrent-triage.md is labeled 'Step 7' and line 65 states 'If Proceed: Add concurrent-triage-overlap label to TC-8020 and continue to Case A/B/C branching for remediation task creation.' triage-outcome.md line 63 explicitly states 'Before proceeding to Case A/B task creation, Step 7 detected that TC-8019 (In Progress, assigned to engineer-b@example.com) is actively being triaged'. This confirms the concurrent triage check (Step 7) gates entry into Case A/B/C branching."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

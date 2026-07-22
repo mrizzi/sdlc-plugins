@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 0.3 reads the Last-Updated timestamp from the security-matrix.md HTML comment",
+      "passed": true,
+      "evidence": "staleness-check.md lines 20-22 show the HTML comment timestamp was extracted: '<!-- Last-Updated: 2026-06-28T10:00:00Z -->' with the parsed value '2026-06-28T10:00:00Z'."
+    },
+    {
+      "text": "Step 0.3 determines the matrix is within the 14-day threshold and proceeds without displaying a staleness warning",
+      "passed": false,
+      "evidence": "staleness-check.md lines 28-29 compute the age as 24 days and the assessment tables (lines 39-40, 49-50) explicitly state 'STALE (24 days > 14-day threshold)'. Line 54 confirms 'The security matrix was last updated on 2026-06-28 (24 days ago), which exceeds the 14-day staleness threshold.' The matrix was determined to be stale, not within the threshold, and a staleness warning was displayed."
+    },
+    {
+      "text": "No user prompt or options are presented for a fresh matrix — the check is silent on success",
+      "passed": false,
+      "evidence": "staleness-check.md lines 58-73 present explicit user-facing options for both streams: '1. Refresh now', '2. Proceed anyway', '3. Stop'. The check was not silent; it surfaced a staleness warning with interactive options because the matrix was deemed stale (24 days old)."
+    },
+    {
+      "text": "The triage continues to Step 0.5 and beyond without interruption from the staleness check",
+      "passed": false,
+      "evidence": "staleness-check.md line 76 states 'The staleness warning should be acknowledged before proceeding to Step 1', confirming the staleness check caused an interruption. The workflow only continues because line 76 assumes 'the engineer chooses Option 2: Proceed anyway', meaning continuation was conditional on user acknowledgment rather than uninterrupted."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 3,
+    "total": 4,
+    "pass_rate": 0.25
+  }
+}

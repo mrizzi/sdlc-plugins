@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Step 2.1.1 detects that the Ecosystem Mappings section is missing from the matrix file",
+      "passed": true,
+      "evidence": "Line 17 of matrix-validation.md shows '## Ecosystem Mappings' marked as '**No** | FAIL (critical)' in the Required Sections Check table. The document title confirms this is Step 2.1.1 output."
+    },
+    {
+      "text": "Step 2.1.1 emits a warning that halts processing for the affected stream — the warning includes the matrix file path and the missing section name",
+      "passed": true,
+      "evidence": "Line 35 emits: '**Warning**: Matrix file `security-matrix-missing-section-mock.md` is missing required section `## Ecosystem Mappings`. This stream cannot be processed.' The warning includes the matrix file path (security-matrix-missing-section-mock.md), the missing section name (## Ecosystem Mappings), and halts processing (line 48: 'Streams available for processing: None')."
+    },
+    {
+      "text": "Step 2.1.1 presents the user with options: continue with partial data (skip the stream) or abort triage",
+      "passed": true,
+      "evidence": "Lines 51-53 present two options: '1. Continue with partial data (skip streams with critical warnings)' and '2. Abort triage to fix the matrix files first', followed by 'Choose (1/2):'."
+    },
+    {
+      "text": "The missing section is NOT auto-repaired — only Forward Pointer is eligible for auto-repair",
+      "passed": false,
+      "evidence": "The missing section was not auto-repaired (line 41: 'None.' under Auto-Repairs Applied; line 45: 'non-repairable issues found'). However, the output never states that only Forward Pointer is eligible for auto-repair. No auto-repair eligibility rules are mentioned anywhere in the output, so the Forward Pointer exclusivity claim cannot be verified."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  }
+}

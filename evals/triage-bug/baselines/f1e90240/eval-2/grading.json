@@ -1,0 +1,30 @@
+{
+  "assertion_results": [
+    {
+      "text": "Validation identifies that the Bug description is missing the Steps to Reproduce section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 28 shows '| Steps to Reproduce | `### **Steps to Reproduce**` | **MISSING** |' in the Required Section Analysis table. Lines 41 further elaborates: '**Steps to Reproduce** (`### **Steps to Reproduce**`) -- Not present in the bug description.'"
+    },
+    {
+      "text": "Validation identifies that the Bug description is missing the Expected Result section (required by bug-template-mock.md) (Step 1)",
+      "passed": true,
+      "evidence": "validation-result.md line 29 shows '| Expected Result | `### **Expected Result**` | **MISSING** |' in the Required Section Analysis table. Line 42 further elaborates: '**Expected Result** (`### **Expected Result**`) -- Not present in the bug description.'"
+    },
+    {
+      "text": "The skill stops execution after identifying missing sections — it does NOT proceed to Steps 2-5 (Step 1 stop rule)",
+      "passed": true,
+      "evidence": "validation-result.md lines 44-46 state: 'Execution has been **stopped at Step 1**. Two required sections defined by the bug template are missing from the ACME-501 description. Steps 2 through 5 (investigation, root cause analysis, task creation) were **not executed**.' No output files for Steps 2-5 exist in the outputs directory."
+    },
+    {
+      "text": "The error message lists the specific missing sections and references the Bug template path from Bug Configuration",
+      "passed": true,
+      "evidence": "The missing sections are specifically listed in the 'Sections Missing' block (lines 39-42): 'Steps to Reproduce' and 'Expected Result'. The bug template path is referenced on line 48: 'per the bug template at `docs/templates/bug-template.md`' and also in Step 0 at line 12: 'Bug template path: `docs/templates/bug-template.md`'."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}
