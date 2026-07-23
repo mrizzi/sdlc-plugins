@@ -202,6 +202,9 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
 
+      - name: Install sandbox dependencies
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends bubblewrap socat
+
       - name: Install Claude Code
         run: curl -fsSL https://claude.ai/install.sh | bash
 
