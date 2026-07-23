@@ -113,24 +113,34 @@ jobs:
 
             const skillPattern = /^plugins\/sdlc-workflow\/skills\/([^/]+)\//;
             const evalPattern = /^evals\/([^/]+)\//;
-            const seen = new Set();
+            const candidates = new Set();
+            const filenames = new Set(files.map(f => f.filename));
 
             for (const f of files) {
-              let match = f.filename.match(skillPattern) || f.filename.match(evalPattern);
-              if (match) {
-                const skill = match[1];
-                const evalFile = files.find(ef => ef.filename === `evals/${skill}/evals.json`)
-                  || await github.rest.repos.getContent({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    path: `evals/${skill}/evals.json`,
-                    ref: `refs/pull/${prNumber}/merge`
-                  }).then(() => true).catch(() => false);
-                if (evalFile) seen.add(skill);
+              const match = f.filename.match(skillPattern) || f.filename.match(evalPattern);
+              if (match) candidates.add(match[1]);
+            }
+
+            const confirmed = [];
+            for (const skill of candidates) {
+              if (filenames.has(`evals/${skill}/evals.json`)) {
+                confirmed.push(skill);
+                continue;
+              }
+              try {
+                await github.rest.repos.getContent({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  path: `evals/${skill}/evals.json`,
+                  ref: `refs/pull/${prNumber}/merge`
+                });
+                confirmed.push(skill);
+              } catch {
+                console.log(`  Skipping ${skill} — no evals.json`);
               }
             }
 
-            const skills = [...seen].join(',');
+            const skills = confirmed.join(',');
             core.setOutput('skills', skills);
             console.log(`Discovered changed skills with evals: ${skills || 'none'}`);
 
