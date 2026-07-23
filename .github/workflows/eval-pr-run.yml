@@ -42,7 +42,7 @@ jobs:
       trusted: ${{ steps.pr.outputs.trusted }}
     steps:
       - name: Set pending commit status
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.repos.createCommitStatus({
@@ -57,7 +57,7 @@ jobs:
 
       - name: Resolve PR identity and check trust
         id: pr
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             // listPullRequestsAssociatedWithCommit returns empty for fork PRs
@@ -97,7 +97,7 @@ jobs:
 
       - name: Discover changed skills
         id: discover
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const prNumber = parseInt('${{ steps.pr.outputs.pr_number }}');
@@ -146,7 +146,7 @@ jobs:
 
       - name: Update status for approval gate
         if: steps.pr.outputs.trusted != 'true' && steps.pr.outputs.pr_number != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.repos.createCommitStatus({
@@ -283,7 +283,7 @@ jobs:
         env:
           SKILLS_CSV: ${{ needs.discover.outputs.skills }}
           PR_NUMBER: ${{ needs.discover.outputs.pr_number }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
@@ -345,7 +345,7 @@ jobs:
           DISCOVER_RESULT: ${{ needs.discover.result }}
           EVALS_RESULT: ${{ needs.run-evals.result }}
           GATE_RESULT: ${{ needs.gate.result }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const discoverResult = process.env.DISCOVER_RESULT;
