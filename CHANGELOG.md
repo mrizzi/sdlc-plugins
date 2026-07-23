@@ -5,6 +5,17 @@ All notable changes to the sdlc-workflow plugin are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.4] - 2026-07-23
+
+### Added
+
+- Affects Version extraction and resolution in `triage-bug` — extracts version from bug description, matches against Jira project versions, and sets affectsVersions field
+- Affects Version constraints §1.88–1.91 for `triage-bug`
+
+### Fixed
+
+- CI sandbox credential isolation for eval pipeline
+
 ## [0.13.3] - 2026-07-22
 
 ### Added
